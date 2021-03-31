@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  text-align: left;
 }
 
 .App-logo {
@@ -35,4 +35,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+input:focus, textarea:focus {
+  outline: 0;
+}
+.task {
+  border-radius: 0%;
+  border-color: white;
+  border-width: 0;
+  border-style: none;
 }

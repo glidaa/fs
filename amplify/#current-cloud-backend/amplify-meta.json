@@ -1,0 +1,63 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-forwardslash-dev-55446-authRole",
+      "UnauthRoleArn": "arn:aws:iam::476202956165:role/amplify-forwardslash-dev-55446-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::476202956165:role/amplify-forwardslash-dev-55446-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-forwardslash-dev-55446-deployment",
+      "UnauthRoleName": "amplify-forwardslash-dev-55446-unauthRole",
+      "StackName": "amplify-forwardslash-dev-55446",
+      "StackId": "arn:aws:cloudformation:us-east-1:476202956165:stack/amplify-forwardslash-dev-55446/6805f4e0-9189-11eb-aa71-0e007e135db7",
+      "AmplifyAppId": "de3brnf10r2oa"
+    }
+  },
+  "auth": {
+    "forwardslashb8b51a1a": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "output": {
+        "UserPoolId": "us-east-1_2xUXW9n3P",
+        "AppClientIDWeb": "jt4cpbfkd05ot2h2lp4ivk5f2",
+        "AppClientID": "561970k3nu6nknsroc12s3fld7",
+        "HostedUIDomain": "forwardslash-dev",
+        "IdentityPoolId": "us-east-1:fd7cde2b-e95f-4f4f-9799-874c93504e98",
+        "IdentityPoolName": "forwardslashb8b51a1a_identitypool_b8b51a1a__dev",
+        "OAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://forwardslash.ch/\"],\"LogoutURLs\":[\"https://forwardslash.ch/\"]}",
+        "UserPoolName": "forwardslashb8b51a1a_userpool_b8b51a1a"
+      },
+      "lastPushTimeStamp": "2021-03-30T20:08:24.135Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-dev-55446-deployment/amplify-cfn-templates/auth/forwardslashb8b51a1a-cloudformation-template.yml",
+        "logicalId": "authforwardslashb8b51a1a"
+      }
+    }
+  },
+  "api": {
+    "todo": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "authConfig": {
+          "defaultAuthentication": {
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authforwardslashb8b51a1a"
+            }
+          },
+          "additionalAuthenticationProviders": []
+        },
+        "GraphQLAPIIdOutput": "akgx26lqcjeqtmv7dlxniq6nxm",
+        "GraphQLAPIEndpointOutput": "https://da5tscgfh5h3hgxnew5yuxcira.appsync-api.us-east-1.amazonaws.com/graphql"
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-dev-55446-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apitodo"
+      },
+      "lastPushTimeStamp": "2021-03-30T20:08:25.071Z",
+      "lastPushDirHash": "VD1Zw+xiWvQXrqUSnwSvx83V7mQ="
+    }
+  }
+}
