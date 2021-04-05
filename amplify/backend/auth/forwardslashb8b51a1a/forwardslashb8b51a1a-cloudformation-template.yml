@@ -75,10 +75,10 @@ Parameters:
   userpoolClientGenerateSecret:
     Type: String
             
-    
   userpoolClientRefreshTokenValidity:
-    Type: Number
-          
+    Type: String
+  
+            
         
   userpoolClientWriteAttributes:
     Type: CommaDelimitedList
@@ -125,31 +125,10 @@ Parameters:
     Type: String
   
             
-  hostedUIDomainName:
-    Type: String
-  
-            
-        
-  authProvidersUserPool:
-    Type: CommaDelimitedList
-      
-  hostedUIProviderMeta:
-    Type: String
-  
-            
-  hostedUIProviderCreds:
-    Type: String
-  
-            
-  oAuthMetadata:
-    Type: String
-  
-            
         
   userPoolGroupList:
     Type: CommaDelimitedList
       
-            
   serviceName:
     Type: String
   
@@ -170,6 +149,46 @@ Parameters:
   dependsOn:
     Type: CommaDelimitedList
       
+  hostedUIDomainName:
+    Type: String
+  
+            
+        
+  authProvidersUserPool:
+    Type: CommaDelimitedList
+      
+  hostedUIProviderMeta:
+    Type: String
+  
+            
+        
+  authProviders:
+    Type: CommaDelimitedList
+      
+  hostedUIProviderCreds:
+    Type: String
+  
+            
+  
+  thirdPartyAuth:
+    Type: String
+            
+  
+  userPoolGroups:
+    Type: String
+            
+  
+  adminQueries:
+    Type: String
+            
+  oAuthMetadata:
+    Type: String
+  
+            
+  adminQueryGroup:
+    Type: String
+  
+            
 Conditions:
   ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
   

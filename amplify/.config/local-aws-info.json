@@ -3,5 +3,10 @@
     "configLevel": "project",
     "useProfile": true,
     "profileName": "shopbot01"
+  },
+  "live": {
+    "configLevel": "project",
+    "useProfile": true,
+    "profileName": "shopbot01"
   }
 }

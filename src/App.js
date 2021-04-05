@@ -4,7 +4,7 @@ import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Amplify, {API,graphqlOperation} from 'aws-amplify';
 import aws_exports from './aws-exports'; // specify the location of aws-exports.js file on your project
-
+import Nestable from 'react-nestable';
 Amplify.configure(aws_exports);
 
 
@@ -111,11 +111,33 @@ class App extends Component {
         </button>
       </div>
       )
+      const renderItem = ({ item }) => item.text;
+      console.log(this.state.notes)
     return (
       <div className="App">
          <br/>
         <div className="container">
-          {data}
+        <Nestable
+          collapsed={true}
+          maxDepth={3}
+          items={this.state.notes}
+          renderItem={({ item, collapseIcon }) => (
+            <div className=" alert-primary alert-dismissible show" role="alert">
+        <span key={item.i} onClick={this.selectNote.bind(this, item)}>{item.note}</span>
+        <button key={item.i} type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.handleDelete.bind(this, item.id)}>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+          )}
+          onChange={this.handleOnChangeSort}
+          renderCollapseIcon={({ isCollapsed }) =>
+            isCollapsed ? (
+              <span className="iconCollapse">+</span>
+            ) : (
+              <span className="iconCollapse">-</span>
+            )
+          }
+        />
         </div>
       
         <br/>
@@ -130,11 +152,9 @@ class App extends Component {
           : null }
           {this.state.displayUpdate ?
             <form onSubmit={this.handleUpdate}>
-              <div className=" mb-3">
-                <input type="text" className="" placeholder="Update Note" aria-label="Note" aria-describedby="basic-addon2" value={this.state.value} onChange={this.handleChange}/>
-                <div className="input-group-append">
-                  <button className="btn btn-primary" type="submit">Update Note</button>
-                </div>
+              <div className="">
+                <input type="text" className="task" placeholder="Update Note" aria-label="Note" aria-describedby="basic-addon2" value={this.state.value} onChange={this.handleChange}/>
+                
               </div>
             </form>
           : null }

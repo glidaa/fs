@@ -71,7 +71,7 @@
     "authforwardslashb8b51a1a": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-dev-55446-deployment/amplify-cfn-templates/auth/forwardslashb8b51a1a-cloudformation-template.yml",
+        "TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-live-181642-deployment/amplify-cfn-templates/auth/forwardslashb8b51a1a-cloudformation-template.yml",
         "Parameters": {
           "identityPoolName": "forwardslashb8b51a1a_identitypool_b8b51a1a",
           "allowUnauthenticatedIdentities": false,
@@ -82,14 +82,14 @@
           "mfaTypes": "SMS Text Message",
           "smsAuthenticationMessage": "Your authentication code is {####}",
           "smsVerificationMessage": "Your verification code is {####}",
-          "emailVerificationSubject": "Your verification code",
+          "emailVerificationSubject": "Forwardslash Authentication Code",
           "emailVerificationMessage": "Your verification code is {####}",
           "defaultPasswordPolicy": false,
           "passwordPolicyMinLength": 8,
           "passwordPolicyCharacters": "",
           "requiredAttributes": "email",
           "userpoolClientGenerateSecret": false,
-          "userpoolClientRefreshTokenValidity": 30,
+          "userpoolClientRefreshTokenValidity": "30",
           "userpoolClientWriteAttributes": "email",
           "userpoolClientReadAttributes": "email",
           "userpoolClientLambdaRole": "forwarb8b51a1a_userpoolclient_lambda_role",
@@ -109,15 +109,11 @@
               "Arn"
             ]
           },
-          "useDefault": "defaultSocial",
+          "useDefault": "manual",
           "hostedUI": true,
           "usernameAttributes": "email",
           "triggers": "{}",
-          "hostedUIDomainName": "forwardslash",
-          "authProvidersUserPool": "Facebook,Google,LoginWithAmazon",
-          "hostedUIProviderMeta": "[{\"ProviderName\":\"Facebook\",\"authorize_scopes\":\"email,public_profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"id\"}},{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}},{\"ProviderName\":\"LoginWithAmazon\",\"authorize_scopes\":\"profile profile:user_id\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"user_id\"}}]",
-          "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://forwardslash.ch/\"],\"LogoutURLs\":[\"https://forwardslash.ch/\"]}",
-          "userPoolGroupList": "",
+          "userPoolGroupList": "forwardslash",
           "serviceName": "Cognito",
           "usernameCaseSensitive": false,
           "parentStack": {
@@ -125,15 +121,24 @@
           },
           "permissions": "",
           "dependsOn": "",
+          "hostedUIDomainName": "forwardslashc5dd4dd3-c5dd4dd3",
+          "authProvidersUserPool": "",
+          "hostedUIProviderMeta": "[]",
+          "authProviders": "",
+          "thirdPartyAuth": false,
+          "userPoolGroups": true,
+          "adminQueries": true,
+          "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://forwardslash.ch/\"],\"LogoutURLs\":[\"https://forwardslash.ch/\"]}",
+          "adminQueryGroup": "forwardslash",
           "hostedUIProviderCreds": "[]",
-          "env": "dev"
+          "env": "live"
         }
       }
     },
     "apitodo": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-dev-55446-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-live-181642-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "Parameters": {
           "CreateAPIKey": 0,
           "AppSyncApiName": "todo",
@@ -145,9 +150,26 @@
               "Outputs.UserPoolId"
             ]
           },
-          "S3DeploymentBucket": "amplify-forwardslash-dev-55446-deployment",
+          "S3DeploymentBucket": "amplify-forwardslash-live-181642-deployment",
           "S3DeploymentRootKey": "amplify-appsync-files/7f7475e7f8007c88f14f816c50cb6163905908ee",
-          "env": "dev"
+          "env": "live"
+        }
+      }
+    },
+    "functionAdminQueries7641bc8b": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-live-181642-deployment/amplify-cfn-templates/function/AdminQueries7641bc8b-cloudformation-template.json",
+        "Parameters": {
+          "deploymentBucketName": "amplify-forwardslash-live-181642-deployment",
+          "s3Key": "amplify-builds/AdminQueries7641bc8b-596f42713057304c444c-build.zip",
+          "authforwardslashb8b51a1aUserPoolId": {
+            "Fn::GetAtt": [
+              "authforwardslashb8b51a1a",
+              "Outputs.UserPoolId"
+            ]
+          },
+          "env": "live"
         }
       }
     },

@@ -13,7 +13,50 @@
     },
     "categories": {
       "auth": {
+        "forwardslashb8b51a1a": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "AdminQueries7641bc8b": {
+          "deploymentBucketName": "amplify-forwardslash-dev-55446-deployment",
+          "s3Key": "amplify-builds/AdminQueries7641bc8b-596f42713057304c444c-build.zip"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "de3brnf10r2oa",
+          "type": "cicd"
+        }
+      }
+    }
+  },
+  "live": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-forwardslash-live-181642-authRole",
+      "UnauthRoleArn": "arn:aws:iam::476202956165:role/amplify-forwardslash-live-181642-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::476202956165:role/amplify-forwardslash-live-181642-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-forwardslash-live-181642-deployment",
+      "UnauthRoleName": "amplify-forwardslash-live-181642-unauthRole",
+      "StackName": "amplify-forwardslash-live-181642",
+      "StackId": "arn:aws:cloudformation:us-east-1:476202956165:stack/amplify-forwardslash-live-181642/39e196f0-92ba-11eb-a524-126643f85ad9",
+      "AmplifyAppId": "demidcrdkabg6"
+    },
+    "categories": {
+      "auth": {
         "forwardslashb8b51a1a": {}
+      },
+      "function": {
+        "AdminQueries7641bc8b": {
+          "deploymentBucketName": "amplify-forwardslash-live-181642-deployment",
+          "s3Key": "amplify-builds/AdminQueries7641bc8b-596f42713057304c444c-build.zip"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "demidcrdkabg6",
+          "type": "cicd"
+        }
       }
     }
   }
