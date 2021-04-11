@@ -22,7 +22,7 @@
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-live-181642-deployment/amplify-cfn-templates/auth/forwardslashb8b51a1a-cloudformation-template.yml",
         "logicalId": "authforwardslashb8b51a1a"
       },
-      "lastPushTimeStamp": "2021-04-01T07:35:43.986Z",
+      "lastPushTimeStamp": "2021-04-11T10:15:14.597Z",
       "output": {
         "UserPoolId": "us-east-1_moXj9J67h",
         "AppClientIDWeb": "3jf9ainnmlk7oq3tm4puhsgb0e",
@@ -57,18 +57,11 @@
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-live-181642-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "logicalId": "apitodo"
       },
-      "lastPushTimeStamp": "2021-04-01T07:35:43.993Z",
-      "lastPushDirHash": "VD1Zw+xiWvQXrqUSnwSvx83V7mQ="
+      "lastPushTimeStamp": "2021-04-11T10:15:16.102Z",
+      "lastPushDirHash": "6+LRIT0KmcDjr/ve16T8VYSWAyM="
     }
   },
-  "hosting": {
-    "amplifyhosting": {
-      "service": "amplifyhosting",
-      "type": "cicd",
-      "lastPushTimeStamp": "2021-04-01T07:17:32.103Z",
-      "cicd": "cicd"
-    }
-  },
+  "hosting": {},
   "function": {
     "AdminQueries7641bc8b": {
       "service": "Lambda",
@@ -94,7 +87,7 @@
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-forwardslash-live-181642-deployment/amplify-cfn-templates/function/AdminQueries7641bc8b-cloudformation-template.json",
         "logicalId": "functionAdminQueries7641bc8b"
       },
-      "lastPushTimeStamp": "2021-04-01T07:35:43.996Z",
+      "lastPushTimeStamp": "2021-04-11T10:15:14.603Z",
       "output": {
         "Region": "us-east-1",
         "Arn": "arn:aws:lambda:us-east-1:476202956165:function:AdminQueries7641bc8b-live",

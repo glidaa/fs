@@ -51,12 +51,6 @@
           "deploymentBucketName": "amplify-forwardslash-live-181642-deployment",
           "s3Key": "amplify-builds/AdminQueries7641bc8b-596f42713057304c444c-build.zip"
         }
-      },
-      "hosting": {
-        "amplifyhosting": {
-          "appId": "demidcrdkabg6",
-          "type": "cicd"
-        }
       }
     }
   }

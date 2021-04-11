@@ -2,14 +2,14 @@ projects:
   todo:
     schemaPath: src/graphql/schema.json
     includes:
-      - ''
+      - src/graphql/*.*
     excludes:
       - ./amplify/**
     extensions:
       amplify:
         codeGenTarget: javascript
         generatedFileName: ''
-        docsFilePath: .
+        docsFilePath: src/graphql
 extensions:
   amplify:
     version: 3

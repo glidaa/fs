@@ -151,7 +151,7 @@
             ]
           },
           "S3DeploymentBucket": "amplify-forwardslash-live-181642-deployment",
-          "S3DeploymentRootKey": "amplify-appsync-files/7f7475e7f8007c88f14f816c50cb6163905908ee",
+          "S3DeploymentRootKey": "amplify-appsync-files/45eb5bcb0d47e27644715348eb5478a16dc5786e",
           "env": "live"
         }
       }
