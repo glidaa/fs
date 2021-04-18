@@ -62,10 +62,32 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
+    this.addNote = this.addNote.bind(this);
   }
 
+  async addNote(note) {
+    if(!this.state.notes.includes(note)){
+      await API.graphql(graphqlOperation(createNote, note));
+    }
+    this.listNotes();
+
+    
+    const todos = JSON.parse(window.localStorage.getItem('notes'));
+    if(this.state.notes.length > todos.length || this.state.notes.length === todos.length){
+      window.localStorage.removeItem('notes')
+    }
+  }
   async componentDidMount(){
     const notes = await API.graphql(graphqlOperation(readNote));
+
+    var todos = JSON.parse(window.localStorage.getItem('notes'));
+    if(todos && todos.length > 0) {
+      todos.map(item =>  {
+        this.addNote(item);
+      });
+    }
+   
+
     this.setState({notes:notes.data.listNotes.items});
   }
 
@@ -101,7 +123,9 @@ class App extends Component {
     this.setState({notes:notes.data.listNotes.items});
   }
   
+
   render() {
+
     const data = [].concat(this.state.notes)
       .map((item,i)=> 
       <div className="alert alert-primary alert-dismissible show" role="alert">
