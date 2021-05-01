@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
+import './index.css';
 import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Amplify, {API,graphqlOperation} from 'aws-amplify';
-import aws_exports from './aws-exports'; // specify the location of aws-exports.js file on your project
+import aws_exports from '../../aws-exports'; // specify the location of aws-exports.js file on your project
 import Nestable from 'react-nestable';
 Amplify.configure(aws_exports);
 
@@ -49,7 +49,7 @@ const deleteNote = `mutation deleteNote($id: ID!){
   }
 }`;
 
-class App extends Component {
+class Index extends Component {
   constructor(props){
     super(props);
     this.state={
@@ -71,7 +71,7 @@ class App extends Component {
     }
     this.listNotes();
 
-    
+
     const todos = JSON.parse(window.localStorage.getItem('notes'));
     if(this.state.notes.length > todos.length || this.state.notes.length === todos.length){
       window.localStorage.removeItem('notes')
@@ -86,7 +86,7 @@ class App extends Component {
         this.addNote(item);
       });
     }
-   
+
 
     this.setState({notes:notes.data.listNotes.items});
   }
@@ -122,12 +122,12 @@ class App extends Component {
     const notes = await API.graphql(graphqlOperation(readNote));
     this.setState({notes:notes.data.listNotes.items});
   }
-  
+
 
   render() {
 
     const data = [].concat(this.state.notes)
-      .map((item,i)=> 
+      .map((item,i)=>
       <div className="alert alert-primary alert-dismissible show" role="alert">
         <span key={item.i} onClick={this.selectNote.bind(this, item)}>{item.note}</span>
         <button key={item.i} type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.handleDelete.bind(this, item.id)}>
@@ -163,7 +163,7 @@ class App extends Component {
           }
         />
         </div>
-      
+
         <br/>
 
         <div className="container">
@@ -178,7 +178,7 @@ class App extends Component {
             <form onSubmit={this.handleUpdate}>
               <div className="">
                 <input type="text" className="task" placeholder="Update Note" aria-label="Note" aria-describedby="basic-addon2" value={this.state.value} onChange={this.handleChange}/>
-                
+
               </div>
             </form>
           : null }
@@ -188,5 +188,5 @@ class App extends Component {
     );
   }
 }
-export default withAuthenticator(App, { includeGreetings: true });
+export default withAuthenticator(Index, { includeGreetings: true });
 

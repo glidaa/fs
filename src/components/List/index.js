@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./App.css";
+import "../App/index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Amplify, { API, graphqlOperation } from "aws-amplify";
 import {
@@ -7,9 +7,9 @@ import {
   AmplifyContainer,
   AmplifySignOut,
 } from "@aws-amplify/ui-react";
-import aws_exports from "./aws-exports"; // specify the location of aws-exports.js file on your project
+import aws_exports from "../../aws-exports"; // specify the location of aws-exports.js file on your project
 import Nestable from "react-nestable";
-import { SIGNIN, SIGNUP } from "./constants";
+import { SIGNIN, SIGNUP } from "../../constants";
 Amplify.configure(aws_exports);
 
 const createNote = `mutation createNote($note: String!){
@@ -161,6 +161,7 @@ class App extends Component {
           <>
             <div className="container">
               <Nestable
+                className="test"
                 collapsed={true}
                 maxDepth={3}
                 items={this.state.notes}

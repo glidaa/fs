@@ -1,12 +1,12 @@
 import React from 'react';
-import './App.css';
+import '../App/index.css';
 import Amplify from 'aws-amplify';
-import AppList from './App';
-import List from './List';
+import AppList from '../App';
+import List from '../List';
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
-import awsconfig from './aws-exports';
+import awsConfig from '../../aws-exports';
 
-Amplify.configure(awsconfig);
+Amplify.configure(awsConfig);
 
 const App = () => {
 	const [authState, setAuthState] = React.useState();
