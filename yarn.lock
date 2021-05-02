@@ -5025,10 +5025,10 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@*":
-  "integrity" "sha512-eeWwWjlqxvBxc4oQdkueW5OF/gtfSceKk4OnOAGlUSwS/liBRtZppbJuz1YkgbrbfGOoeBHun9fOvXnjNwrSOw=="
-  "resolved" "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.22.tgz"
-  "version" "26.0.22"
+"@types/jest@*", "@types/jest@^26.0.23":
+  "integrity" "sha512-ZHLmWMJ9jJ9PTiT58juykZpL7KjwJywFN3Rr2pTSkyQfydf/rk22yS7W8p5DaVUMQ2BQC7oYiU3FjbTM/mYrOA=="
+  "resolved" "https://registry.npmjs.org/@types/jest/-/jest-26.0.23.tgz"
+  "version" "26.0.23"
   dependencies:
     "jest-diff" "^26.0.0"
     "pretty-format" "^26.0.0"
@@ -5077,10 +5077,10 @@
     "@types/node" "*"
     "form-data" "^3.0.0"
 
-"@types/node@*":
-  "integrity" "sha512-vFHy/ezP5qI0rFgJ7aQnjDXwAMrG0KqqIH7tQG5PPv3BWBayOPIQNBjVc/P6hhdZfMx51REc6tfDNXHUio893g=="
-  "resolved" "https://registry.yarnpkg.com/@types/node/-/node-14.14.31.tgz"
-  "version" "14.14.31"
+"@types/node@*", "@types/node@^15.0.1":
+  "integrity" "sha512-TMkXt0Ck1y0KKsGr9gJtWGjttxlZnnvDtphxUOSd0bfaR6Q1jle+sPvrzNR1urqYTWMinoKvjKfXUGsumaO1PA=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-15.0.1.tgz"
+  "version" "15.0.1"
 
 "@types/node@^14.0.10":
   "integrity" "sha512-3pwDJjp1PWacPTpH0LcfhgjvurQvrZFBrC6xxjaUEZ7ifUtT32jtjPxEMMblpqd2Mvx+k8haqQJLQxolyGN/cQ=="
@@ -5147,6 +5147,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-dom@^17.0.3":
+  "integrity" "sha512-4NnJbCeWE+8YBzupn/YrJxZ8VnjcJq5iR1laqQ1vkpQgBiA7bwk0Rp24fxsdNinzJY2U+HHS4dJJDPdoMjdJ7w=="
+  "resolved" "https://registry.npmjs.org/@types/react-dom/-/react-dom-17.0.3.tgz"
+  "version" "17.0.3"
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-syntax-highlighter@11.0.5":
   "integrity" "sha512-VIOi9i2Oj5XsmWWoB72p3KlZoEbdRAcechJa8Ztebw7bDl2YmR+odxIqhtJGp1q2EozHs02US+gzxJ9nuf56qg=="
   "resolved" "https://registry.yarnpkg.com/@types/react-syntax-highlighter/-/react-syntax-highlighter-11.0.5.tgz"
@@ -5154,7 +5161,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*":
+"@types/react@*", "@types/react@^17.0.4":
   "integrity" "sha512-onz2BqScSFMoTRdJUZUDD/7xrusM8hBA2Fktk2qgaTYPCgPvWnDEgkrOs8hhPUf2jfcIXkJ5yK6VfYormJS3Jw=="
   "resolved" "https://registry.yarnpkg.com/@types/react/-/react-17.0.4.tgz"
   "version" "17.0.4"
@@ -17199,6 +17206,11 @@
   "integrity" "sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c="
   "resolved" "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz"
   "version" "0.0.6"
+
+"typescript@^3.2.1 || ^4", "typescript@^4.2.4", "typescript@>= 3.x", "typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta":
+  "integrity" "sha512-V+evlYHZnQkaz8TRBuxTA92yZBPotr5H+WhQ7bD3hZUndx5tGOa1fuCgeSjxAzM1RiN5IzvadIXTVefuuwZCRg=="
+  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.2.4.tgz"
+  "version" "4.2.4"
 
 "ua-parser-js@^0.7.18":
   "integrity" "sha512-VwIvGlFNmpKbjzRt51jpbbFTrKIEgGHxIwA8Y69K1Bqc6bTIV7TaGGABOkghSFQWsLmcRB4drGvpfv9z2szqoQ=="
