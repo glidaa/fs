@@ -159,6 +159,7 @@ class App extends Component {
           </AmplifyContainer>
         ) : (
           <>
+          <h1 className="title">Notes</h1>
             <div className="container">
               <Nestable
                 collapsed={true}
@@ -168,6 +169,7 @@ class App extends Component {
                   <div
                     className=" alert-primary alert-dismissible show"
                     role="alert"
+                    className="list-menu"
                   >
                     <span
                       key={item.i}
