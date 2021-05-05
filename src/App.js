@@ -2,11 +2,20 @@ import React, { Component } from 'react';
 import './App.css';
 import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Amplify, {API,graphqlOperation} from 'aws-amplify';
+import Amplify, { API, graphqlOperation, Auth } from 'aws-amplify';
 import aws_exports from './aws-exports'; // specify the location of aws-exports.js file on your project
 import Nestable from 'react-nestable';
+import {
+  SIGNIN,
+  SIGNUP,
+  MARKASDONE,
+  SIGNOUT,
+  suggestionsList,
+  suggestionsDescription
+} from "./constants";
+import { SidePanel } from "./SidePanel";
+import { Specials } from "./Specials"
 Amplify.configure(aws_exports);
-
 
 const createNote = `mutation createNote($note: String!){
   createNote(input:{
@@ -52,13 +61,18 @@ const deleteNote = `mutation deleteNote($id: ID!){
 class App extends Component {
   constructor(props){
     super(props);
-    this.state={
-      id:"",
-      notes:[],
-      value:"",
-      displayAdd:true,
-      displayUpdate:false
+    this.state = {
+      id: "",
+      notes: [],
+      value: "",
+      displayAdd: true,
+      displayUpdate: false,
+      isPanelOpened: false,
+      isDropdownOpened: false
     };
+    this.isDone = false
+    this.addForm = null;
+    this.updateForm = null;
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -70,62 +84,123 @@ class App extends Component {
       await API.graphql(graphqlOperation(createNote, note));
     }
     this.listNotes();
-
-    
     const todos = JSON.parse(window.localStorage.getItem('notes'));
     if(this.state.notes.length > todos.length || this.state.notes.length === todos.length){
       window.localStorage.removeItem('notes')
     }
   }
+
   async componentDidMount(){
     const notes = await API.graphql(graphqlOperation(readNote));
-
     var todos = JSON.parse(window.localStorage.getItem('notes'));
     if(todos && todos.length > 0) {
-      todos.map(item =>  {
-        this.addNote(item);
-      });
+      todos.map(item => this.addNote(item));
     }
-   
-
-    this.setState({notes:notes.data.listNotes.items});
+    this.setState({
+      notes: notes.data.listNotes.items
+    });
   }
 
   handleChange(event) {
-    this.setState({value:event.target.value});
+    const {
+      target: { value }
+    } = event;
+    const special = /^.*(\/\w)$/m.exec(value)?.[1]
+    if (special === SIGNIN || special === SIGNUP) {
+      if (!this.state.auth) {
+        this.setState({
+          auth: true
+        });
+      }
+    } else if (special === SIGNOUT) {
+      Auth.signOut()
+    }
+    if (/^.*\/\/$/m.test(event.target.value)) {
+      this.setState({ value: event.target.value.replace(/^(.*)\/\/$/m, "$1/") });
+    } else {
+      this.setState({ value: event.target.value });
+    }
+    if (/^.*\/$/m.test(event.target.value)) {
+      this.setState({ isDropdownOpened: true })
+    } else {
+      this.setState({ isDropdownOpened: false })
+    }
+    if (special === MARKASDONE) {
+      this.isDone = true
+      if (this.state.displayAdd) {
+        this.addForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
+      } else if (this.state.displayUpdate) {
+        this.updateForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
+      }
+    }
   }
+
   async handleSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
-    const note = {"note":this.state.value}
+    const note = {
+      "note": this.state.value.replace(/^(.*)(?:\/\w|\/)$/m, "$1"),
+      "isDone": this.isDone
+    }
     await API.graphql(graphqlOperation(createNote, note));
     this.listNotes();
-    this.setState({value:""});
+    this.setState({
+      value: ""
+    });
+    this.isDone = false
   }
+
   async handleDelete(id) {
     const noteId = {"id":id};
     await API.graphql(graphqlOperation(deleteNote, noteId));
     this.listNotes();
   }
+
   async handleUpdate(event) {
     event.preventDefault();
     event.stopPropagation();
-    const note = {"id":this.state.id,"note":this.state.value};
+    const note = {
+      "id": this.state.id,
+      "note": this.state.value.replace(/^(.*)(?:\/\w|\/)$/m, "$1"),
+      "isDone": this.isDone
+    };
     await API.graphql(graphqlOperation(updateNote, note));
     this.listNotes();
-    this.setState({displayAdd:true,displayUpdate:false,value:""});
+    this.setState({
+      displayAdd: true,
+      displayUpdate: false,
+      value: "",
+      isPanelOpened: false
+    });
+    this.isDone = false
   }
+
   selectNote(note){
-    this.setState({id:note.id,value:note.note,displayAdd:false,displayUpdate:true});
+    this.setState({
+      id: note.id,
+      value: note.note,
+      displayAdd: false,
+      displayUpdate: true,
+      isPanelOpened: true
+    });
   }
+
+  chooseSugestion(suggestion) {
+    this.handleChange({
+      target: {
+        value: this.state.value + suggestion
+      }
+    })
+  }
+
   async listNotes(){
     const notes = await API.graphql(graphqlOperation(readNote));
-    this.setState({notes:notes.data.listNotes.items});
+    this.setState({
+      notes: notes.data.listNotes.items
+    });
   }
-  
 
   render() {
-
     const data = [].concat(this.state.notes)
       .map((item,i)=> 
       <div className="alert alert-primary alert-dismissible show" role="alert">
@@ -140,6 +215,15 @@ class App extends Component {
     return (
       <div className="App">
          <br/>
+         <div className="mainPage">
+         {this.state.isPanelOpened && (
+          <div className="leftSide">
+          <SidePanel
+            selectedNote={this.state.selectedNote}
+          />
+          </div>
+        )}
+        <div className="rightSide">
         <div className="container">
         <Nestable
           collapsed={true}
@@ -147,7 +231,9 @@ class App extends Component {
           items={this.state.notes}
           renderItem={({ item, collapseIcon }) => (
             <div className=" alert-primary alert-dismissible show" role="alert">
-        <span key={item.i} onClick={this.selectNote.bind(this, item)}>{item.note}</span>
+        <span key={item.i} onClick={this.selectNote.bind(this, item)}>
+          {item.isDone ? <strike>{item.note}</strike> : item.note}
+        </span>
         <button key={item.i} type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.handleDelete.bind(this, item.id)}>
           <span aria-hidden="true">&times;</span>
         </button>
@@ -168,20 +254,59 @@ class App extends Component {
 
         <div className="container">
           {this.state.displayAdd ?
-            <form onSubmit={this.handleSubmit}>
+            <form ref={(ref) => this.addForm = ref} onSubmit={this.handleSubmit}>
               <div className="">
-                <input type="text" className="task" placeholder="Enter task" aria-label="Note" aria-describedby="basic-addon2" value={this.state.value} onChange={this.handleChange}/>
+                <input
+                  type="text"
+                  className="task"
+                  placeholder="Enter task"
+                  aria-label="Note"
+                  aria-describedby="basic-addon2"
+                  value={this.state.value}
+                  onChange={this.handleChange}
+                />
+                {this.state.isDropdownOpened && <Specials
+                  onChooseSuggestion={this.chooseSugestion.bind(this)}
+                  suggestionsList={suggestionsList}
+                  suggestionsCondition={[
+                    false,
+                    false,
+                    true,
+                    true
+                  ]}
+                  suggestionsDescription={suggestionsDescription}
+                />}
               </div>
             </form>
           : null }
           {this.state.displayUpdate ?
-            <form onSubmit={this.handleUpdate}>
+            <form ref={(ref) => this.updateForm = ref } onSubmit={this.handleUpdate}>
               <div className="">
-                <input type="text" className="task" placeholder="Update Note" aria-label="Note" aria-describedby="basic-addon2" value={this.state.value} onChange={this.handleChange}/>
-                
+                <input
+                  type="text"
+                  className="task"
+                  placeholder="Update Note"
+                  aria-label="Note"
+                  aria-describedby="basic-addon2"
+                  value={this.state.value}
+                  onChange={this.handleChange}
+                />
+                {this.state.isDropdownOpened && <Specials
+                  onChooseSuggestion={this.chooseSugestion.bind(this)}
+                  suggestionsList={suggestionsList}
+                  suggestionsCondition={[
+                    false,
+                    false,
+                    true,
+                    true
+                  ]}
+                  suggestionsDescription={suggestionsDescription}
+                />}
               </div>
             </form>
           : null }
+        </div>
+        </div>
         </div>
         <AmplifySignOut />
       </div>
@@ -189,4 +314,3 @@ class App extends Component {
   }
 }
 export default withAuthenticator(App, { includeGreetings: true });
-
