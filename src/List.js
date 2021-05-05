@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Amplify, { API, graphqlOperation } from "aws-amplify";
+import Amplify, { API, graphqlOperation, Auth, strike } from "aws-amplify";
 import {
   AmplifyAuthenticator,
   AmplifyContainer,
@@ -9,7 +9,16 @@ import {
 } from "@aws-amplify/ui-react";
 import aws_exports from "./aws-exports"; // specify the location of aws-exports.js file on your project
 import Nestable from "react-nestable";
-import { SIGNIN, SIGNUP } from "./constants";
+import {
+  SIGNIN,
+  SIGNUP,
+  MARKASDONE,
+  SIGNOUT,
+  suggestionsList,
+  suggestionsDescription
+} from "./constants";
+import { SidePanel } from "./SidePanel";
+import { Specials } from "./Specials"
 Amplify.configure(aws_exports);
 
 const createNote = `mutation createNote($note: String!){
@@ -64,7 +73,12 @@ class App extends Component {
       displayAdd: true,
       displayUpdate: false,
       auth: false,
+      isPanelOpened: false,
+      isDropdownOpened: false
     };
+    this.isDone = false
+    this.addForm = null;
+    this.updateForm = null;
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -77,21 +91,53 @@ class App extends Component {
 
   handleChange(event) {
     const {
-      target: { value },
+      target: { value }
     } = event;
-    if (value.includes(SIGNIN) || value.includes(SIGNUP)) {
-      this.setState({ auth: true });
+    const special = /^.*(\/\w)$/m.exec(value)?.[1]
+    if (special === SIGNIN || special === SIGNUP) {
+      if (!this.state.auth) {
+        this.setState({
+          auth: true
+        });
+      }
+    } else if (special === SIGNOUT) {
+      Auth.signOut()
     }
-    this.setState({ value: event.target.value });
+    if (/^.*\/\/$/m.test(event.target.value)) {
+      this.setState({ value: event.target.value.replace(/^(.*)\/\/$/m, "$1/") });
+    } else {
+      this.setState({ value: event.target.value });
+    }
+    if (/^.*\/$/m.test(event.target.value)) {
+      this.setState({ isDropdownOpened: true })
+    } else {
+      this.setState({ isDropdownOpened: false })
+    }
+    if (special === MARKASDONE) {
+      this.isDone = true
+      if (this.state.displayAdd) {
+        this.addForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
+      } else if (this.state.displayUpdate) {
+        this.updateForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
+      }
+    }
   }
+
   async handleSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
-    const note = { note: this.state.value };
+    const note = {
+      note: this.state.value.replace(/^(.*)(?:\/\w|\/)$/m, "$1"),
+      isDone: this.isDone
+    };
     this.state.notes.push(note);
-    this.setState({ value: "" });
+    this.setState({
+      value: ""
+    });
+    this.isDone = false
     window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
   }
+
   async handleDelete(id) {
     const updatedNotes = this.state.notes.map(item =>  {
         if(item.note === id.note){
@@ -104,29 +150,48 @@ class App extends Component {
     })
     window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
   }
+
   async handleUpdate(event) {
     const { target: { value }} = event;
     event.preventDefault();
     event.stopPropagation();
     const updatedNotes = this.state.notes.map(item =>  {
         if(item.note === this.state.selectedNote){
-            item.note = this.state.value;
+            item.note = this.state.value.replace(/^(.*)(?:\/\w|\/)$/m, "$1");
+            item.isDone = this.isDone;
         }
         return item;
     })
     this.setState({
         notes: updatedNotes,
+        displayAdd: true,
+        displayUpdate: false,
+        value: "",
+        isPanelOpened: false
     })
+    this.isDone = false
     window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
   }
+
   selectNote(note) {
     this.setState({
       id: note.id,
       selectedNote: note.note,
+      value: note.note,
       displayAdd: false,
       displayUpdate: true,
+      isPanelOpened: true
     });
   }
+
+  chooseSugestion(suggestion) {
+    this.handleChange({
+      target: {
+        value: this.state.value + suggestion
+      }
+    })
+  }
+  
   async listNotes() {
     const notes = await API.graphql(graphqlOperation(readNote));
     this.setState({ notes: notes.data.listNotes.items });
@@ -158,7 +223,15 @@ class App extends Component {
             <AmplifyAuthenticator />
           </AmplifyContainer>
         ) : (
-          <>
+            <div className="mainPage">
+            {this.state.isPanelOpened && (
+              <div className="leftSide">
+                <SidePanel
+                  selectedNote={this.state.selectedNote}
+                />
+              </div>
+            )}
+            <div className="rightSide">
             <div className="container">
               <Nestable
                 collapsed={true}
@@ -173,7 +246,7 @@ class App extends Component {
                       key={item.i}
                       onClick={this.selectNote.bind(this, item)}
                     >
-                      {item.note}
+                      {item.isDone ? <strike>{item.note}</strike> : item.note}
                     </span>
                     <button
                       key={item.i}
@@ -202,7 +275,7 @@ class App extends Component {
 
             <div className="container">
               {this.state.displayAdd ? (
-                <form onSubmit={this.handleSubmit}>
+                <form ref={(ref) => this.addForm = ref } onSubmit={this.handleSubmit}>
                   <div className="">
                     <input
                       type="text"
@@ -213,11 +286,22 @@ class App extends Component {
                       value={this.state.value}
                       onChange={this.handleChange}
                     />
+                    {this.state.isDropdownOpened && <Specials
+                      onChooseSuggestion={this.chooseSugestion.bind(this)}
+                      suggestionsList={suggestionsList}
+                      suggestionsCondition={[
+                        true,
+                        true,
+                        true,
+                        false
+                      ]}
+                      suggestionsDescription={suggestionsDescription}
+                    />}
                   </div>
                 </form>
               ) : null}
               {this.state.displayUpdate ? (
-                <form onSubmit={this.handleUpdate}>
+                <form ref={(ref) => this.updateForm = ref } onSubmit={this.handleUpdate}>
                   <div className="">
                     <input
                       type="text"
@@ -228,11 +312,23 @@ class App extends Component {
                       value={this.state.value}
                       onChange={this.handleChange}
                     />
+                    {this.state.isDropdownOpened && <Specials
+                      onChooseSuggestion={this.chooseSugestion.bind(this)}
+                      suggestionsList={suggestionsList}
+                      suggestionsCondition={[
+                        true,
+                        true,
+                        true,
+                        false
+                      ]}
+                      suggestionsDescription={suggestionsDescription}
+                    />}
                   </div>
                 </form>
               ) : null}
             </div>
-          </>
+            </div>
+          </div>
         )}
       </div>
     );
