@@ -40,9 +40,23 @@
 input:focus, textarea:focus {
   outline: 0;
 }
+
 .task {
   border-radius: 0%;
   border-color: white;
   border-width: 0;
   border-style: none;
+}
+
+.mainPage {
+  display: flex;
+  flex-direction: row;
+}
+
+.rightSide {
+  flex: 2;
+}
+
+.leftSide {
+  flex: 1;
 }
