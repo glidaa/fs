@@ -1,8 +1,11 @@
+import { useReducer } from "react"
 import styledComponents from "styled-components";
 
 export const SidePanel = (props) => {
+  const [_, forceUpdate] = useReducer(x => x + 1, 0);
   const handleChange = (e) => {
     props.higherScope.currentNoteState[e.target.name] = e.target.value
+    forceUpdate();
   }
   return (
     <Overlay data-testid="sidePanel">
