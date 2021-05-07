@@ -7,7 +7,7 @@ export const Specials = (props) => {
     <DropdownContainer data-testid="specialsDropdown">
       {props.suggestionsList.map((x, i) => (
         props.suggestionsCondition[i] ? (
-        <Suggestion key={x} onClick={() => props.onChooseSuggestion(x)}>
+        <Suggestion key={x} onClick={() => props.onChooseSuggestion('/' + x)}>
             <b>/{x}</b> - {props.suggestionsDescription[i]}
         </Suggestion>
         ) : null
