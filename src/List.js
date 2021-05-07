@@ -54,6 +54,15 @@ class App extends Component {
     this.handleUpdate = this.handleUpdate.bind(this);
   }
 
+  componentDidMount() {
+    const localNotes = JSON.parse(window.localStorage.getItem("notes"))
+    if (localNotes) {
+      this.setState({
+        notes: [...localNotes]
+      })
+    }
+  }
+
   handleChange(event) {
     const {
       target: { value }
