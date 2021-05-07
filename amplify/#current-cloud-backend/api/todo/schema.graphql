@@ -1,5 +1,16 @@
-type Note @model @auth(rules: [{allow: owner}]){
-  id: ID!
-  note: String!
-  Description: String
+type Note @model @auth(rules: [{ allow: owner }]) {
+	id: ID!
+	note: String!
+	isDone: Boolean!
+	task: String
+	description: String
+	steps: String
+	due: String
+	assigned: String
+	watcher: String
+	project: String
+	tag: String
+	sprint: String
+	status: String
+	comment: String
 }

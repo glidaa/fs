@@ -53,10 +53,10 @@ input:focus, textarea:focus {
   flex-direction: row;
 }
 
-.rightSide {
+.leftSide {
   flex: 2;
 }
 
-.leftSide {
+.rightSide {
   flex: 1;
 }

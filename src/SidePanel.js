@@ -1,47 +1,142 @@
 import styledComponents from "styled-components";
-import serialize from "form-serialize"
 
 export const SidePanel = (props) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const data = serialize(e.target, { hash: true })
-  };
+  const handleChange = (e) => {
+    props.higherScope.currentNoteState[e.target.name] = e.target.value
+  }
   return (
-    <Overlay>
+    <Overlay data-testid="sidePanel">
       <Panel>
-        <DetailsForm onSubmit={handleSubmit}>
-          <h2>
-            Note Details
-          </h2>
+        <DetailsForm>
+          <h2>Note Details</h2>
           <label htmlFor="task">Task - Pull from task</label>
-          <input type="text" name="task"></input>
+          <input
+            type="text"
+            name="task"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.task
+                ? props.higherScope.currentNoteState.task
+                : ""
+            }
+          ></input>
           <label htmlFor="description">Description</label>
-          <input type="text" name="description"></input>
+          <input
+            type="text"
+            name="description"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.description
+                ? props.higherScope.currentNoteState.description
+                : ""
+            }
+          ></input>
           <label htmlFor="steps">
             Steps - These are sub tasks only seen here
           </label>
-          <input type="text" name="steps"></input>
+          <input
+            type="text"
+            name="steps"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.steps
+                ? props.higherScope.currentNoteState.steps
+                : ""
+            }
+          ></input>
           <label htmlFor="due">Due date field</label>
-          <input type="date" name="due"></input>
+          <input
+            type="date"
+            name="due"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.due
+                ? props.higherScope.currentNoteState.due
+                : ""
+            }
+          ></input>
           <label htmlFor="assigned">Assigned a username from IAM</label>
-          <input type="text" name="assigned"></input>
+          <input
+            type="text"
+            name="assigned"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.assigned
+                ? props.higherScope.currentNoteState.assigned
+                : ""
+            }
+          ></input>
           <label htmlFor="watcher">Watcher - A username from IAM</label>
-          <input type="text" name="watcher"></input>
+          <input
+            type="text"
+            name="watcher"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.watcher
+                ? props.higherScope.currentNoteState.watcher
+                : ""
+            }
+          ></input>
           <label htmlFor="project">Project - Name of project</label>
-          <input type="text" name="project"></input>
+          <input
+            type="text"
+            name="project"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.project
+                ? props.higherScope.currentNoteState.project
+                : ""
+            }
+          ></input>
           <label htmlFor="tag">Tag - Multiple tags</label>
-          <input type="text" name="tag"></input>
+          <input
+            type="text"
+            name="tag"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.tag
+                ? props.higherScope.currentNoteState.tag
+                : ""
+            }
+          ></input>
           <label htmlFor="sprint">Sprint - A text field</label>
-          <input type="text" name="sprint"></input>
+          <input
+            type="text"
+            name="sprint"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.sprint
+                ? props.higherScope.currentNoteState.sprint
+                : ""
+            }
+          ></input>
           <label htmlFor="status">Status</label>
-          <input type="text" name="status"></input>
+          <input
+            type="text"
+            name="status"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.status
+                ? props.higherScope.currentNoteState.status
+                : ""
+            }
+          ></input>
           <label htmlFor="comment">Comment</label>
-          <input type="text" name="comment"></input>
+          <input
+            type="text"
+            name="comment"
+            onChange={handleChange}
+            value={
+              props.higherScope.currentNoteState.comment
+                ? props.higherScope.currentNoteState.comment
+                : ""
+            }
+          ></input>
           <input type="submit" name="submit" value="Submit"></input>
         </DetailsForm>
       </Panel>
     </Overlay>
-  );
+  );  
 }
 
 const Overlay = styledComponents.div`
@@ -73,14 +168,6 @@ const DetailsForm = styledComponents.form`
     cursor: pointer;
   }
   & > input[type="submit"] {
-    background-color: #000000;
-    color: #FFFFFF;
-    width: fit-content;
-    height: fit-content;
-    margin-top: 10px;
-    border: none;
-    border-radius: 5px;
-    padding: 8px;
-    align-self: flex-end;
+    display: none;
   }
 `;

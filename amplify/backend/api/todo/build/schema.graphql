@@ -1,7 +1,18 @@
 type Note {
   id: ID!
   note: String!
-  Description: String
+  isDone: Boolean!
+  task: String
+  description: String
+  steps: String
+  due: String
+  assigned: String
+  watcher: String
+  project: String
+  tag: String
+  sprint: String
+  status: String
+  comment: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String
@@ -93,7 +104,18 @@ input ModelSizeInput {
 input ModelNoteFilterInput {
   id: ModelIDInput
   note: ModelStringInput
-  Description: ModelStringInput
+  isDone: ModelBooleanInput
+  task: ModelStringInput
+  description: ModelStringInput
+  steps: ModelStringInput
+  due: ModelStringInput
+  assigned: ModelStringInput
+  watcher: ModelStringInput
+  project: ModelStringInput
+  tag: ModelStringInput
+  sprint: ModelStringInput
+  status: ModelStringInput
+  comment: ModelStringInput
   and: [ModelNoteFilterInput]
   or: [ModelNoteFilterInput]
   not: ModelNoteFilterInput
@@ -120,13 +142,35 @@ type Query {
 input CreateNoteInput {
   id: ID
   note: String!
-  Description: String
+  isDone: Boolean!
+  task: String
+  description: String
+  steps: String
+  due: String
+  assigned: String
+  watcher: String
+  project: String
+  tag: String
+  sprint: String
+  status: String
+  comment: String
 }
 
 input UpdateNoteInput {
   id: ID!
   note: String
-  Description: String
+  isDone: Boolean
+  task: String
+  description: String
+  steps: String
+  due: String
+  assigned: String
+  watcher: String
+  project: String
+  tag: String
+  sprint: String
+  status: String
+  comment: String
 }
 
 input DeleteNoteInput {
@@ -141,7 +185,18 @@ type Mutation {
 
 input ModelNoteConditionInput {
   note: ModelStringInput
-  Description: ModelStringInput
+  isDone: ModelBooleanInput
+  task: ModelStringInput
+  description: ModelStringInput
+  steps: ModelStringInput
+  due: ModelStringInput
+  assigned: ModelStringInput
+  watcher: ModelStringInput
+  project: ModelStringInput
+  tag: ModelStringInput
+  sprint: ModelStringInput
+  status: ModelStringInput
+  comment: ModelStringInput
   and: [ModelNoteConditionInput]
   or: [ModelNoteConditionInput]
   not: ModelNoteConditionInput

@@ -1,12 +1,7 @@
 {
   "dev": {
     "configLevel": "project",
-    "useProfile": true,
-    "profileName": "shopbot01"
-  },
-  "live": {
-    "configLevel": "project",
-    "useProfile": true,
-    "profileName": "shopbot01"
+    "useProfile": false,
+    "awsConfigFilePath": "C:\\Users\\Ahmed Hassan\\.amplify\\awscloudformation\\Yb0vLRx8Ln"
   }
 }

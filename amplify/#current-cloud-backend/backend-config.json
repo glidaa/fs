@@ -1,12 +1,4 @@
 {
-  "auth": {
-    "forwardslashb8b51a1a": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "customAuth": false
-    }
-  },
   "api": {
     "todo": {
       "service": "AppSync",
@@ -16,35 +8,65 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authforwardslashb8b51a1a"
+              "userPoolId": "authforwardslashe21e583a"
             }
           },
           "additionalAuthenticationProviders": []
         }
       }
+    },
+    "AdminQueries": {
+      "service": "API Gateway",
+      "providerPlugin": "awscloudformation",
+      "authorizationType": "AMAZON_COGNITO_USER_POOLS",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "forwardslashe21e583a",
+          "attributes": [
+            "UserPoolId"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "AdminQueries7d56620a",
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
+        }
+      ]
     }
   },
-  "hosting": {
-    "amplifyhosting": {
-      "service": "amplifyhosting",
-      "type": "cicd",
-      "lastPushTimeStamp": "2021-03-31T07:05:01.600Z"
+  "auth": {
+    "forwardslashe21e583a": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
     }
   },
   "function": {
-    "AdminQueries7641bc8b": {
+    "AdminQueries7d56620a": {
       "service": "Lambda",
       "providerPlugin": "awscloudformation",
       "build": true,
       "dependsOn": [
         {
           "category": "auth",
-          "resourceName": "forwardslashb8b51a1a",
+          "resourceName": "forwardslashe21e583a",
           "attributes": [
             "UserPoolId"
           ]
         }
       ]
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "service": "amplifyhosting",
+      "providerPlugin": "awscloudformation",
+      "type": "manual"
     }
   }
 }

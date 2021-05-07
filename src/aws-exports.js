@@ -3,12 +3,22 @@
 
 const awsmobile = {
     "aws_project_region": "us-east-1",
-    "aws_cognito_identity_pool_id": "us-east-1:5fb72ae6-fd9a-4d58-b8f8-45e68c69f865",
+    "aws_appsync_graphqlEndpoint": "https://5p25bquijna7lkjo3q6knyg7sy.appsync-api.us-east-1.amazonaws.com/graphql",
+    "aws_appsync_region": "us-east-1",
+    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+    "aws_cloud_logic_custom": [
+        {
+            "name": "AdminQueries",
+            "endpoint": "https://3dvlcyamx5.execute-api.us-east-1.amazonaws.com/dev",
+            "region": "us-east-1"
+        }
+    ],
+    "aws_cognito_identity_pool_id": "us-east-1:f4cd7a01-ebdb-4ecd-bb82-d4c4251bf24d",
     "aws_cognito_region": "us-east-1",
-    "aws_user_pools_id": "us-east-1_moXj9J67h",
-    "aws_user_pools_web_client_id": "3jf9ainnmlk7oq3tm4puhsgb0e",
+    "aws_user_pools_id": "us-east-1_S6CDXWCwf",
+    "aws_user_pools_web_client_id": "2n4pl7rgnbtredfmfgbb9aqs9f",
     "oauth": {
-        "domain": "forwardslashc5dd4dd3-c5dd4dd3-live.auth.us-east-1.amazoncognito.com",
+        "domain": "forwardslashc5dd4dd3-c5dd4dd3-dev.auth.us-east-1.amazoncognito.com",
         "scope": [
             "phone",
             "email",
@@ -16,14 +26,11 @@ const awsmobile = {
             "profile",
             "aws.cognito.signin.user.admin"
         ],
-        "redirectSignIn": "https://forwardslash.ch/",
-        "redirectSignOut": "https://forwardslash.ch/",
+        "redirectSignIn": "https://forwardslash.ch/,https://forwardslash.ch/",
+        "redirectSignOut": "https://forwardslash.ch/,https://forwardslash.ch/",
         "responseType": "code"
     },
-    "federationTarget": "COGNITO_USER_POOLS",
-    "aws_appsync_graphqlEndpoint": "https://ruvhr6x7dbavznsvdqj6sw4hvu.appsync-api.us-east-1.amazonaws.com/graphql",
-    "aws_appsync_region": "us-east-1",
-    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS"
+    "federationTarget": "COGNITO_USER_POOLS"
 };
 
 

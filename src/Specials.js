@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 export const Specials = (props) => {
   return (
-    <DropdownContainer>
+    <DropdownContainer data-testid="specialsDropdown">
       {props.suggestionsList.map((x, i) => (
         props.suggestionsCondition[i] ? (
         <Suggestion key={x} onClick={() => props.onChooseSuggestion(x)}>

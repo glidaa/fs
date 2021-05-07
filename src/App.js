@@ -3,8 +3,10 @@ import './App.css';
 import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Amplify, { API, graphqlOperation, Auth } from 'aws-amplify';
-import aws_exports from './aws-exports'; // specify the location of aws-exports.js file on your project
+import aws_exports from './aws-exports';
 import Nestable from 'react-nestable';
+import { createNote, deleteNote, updateNote } from "./graphqlOperations"
+import { listNotes } from "./graphqlOperations"
 import {
   SIGNIN,
   SIGNUP,
@@ -17,52 +19,10 @@ import { SidePanel } from "./SidePanel";
 import { Specials } from "./Specials"
 Amplify.configure(aws_exports);
 
-const createNote = `mutation createNote($note: String!){
-  createNote(input:{
-    note: $note
-  }){
-    __typename
-    id
-    note
-  }
-}`;
-
-const readNote = `query listNotes{
-  listNotes{
-    items{
-      __typename
-      id
-      note
-    }
-  }
-}`;
-
-const updateNote = `mutation updateNote($id: ID!,$note: String){
-  updateNote(input:{
-    id: $id
-    note: $note
-  }){
-    __typename
-    id
-    note
-  }
-}`;
-
-const deleteNote = `mutation deleteNote($id: ID!){
-  deleteNote(input:{
-    id: $id
-  }){
-    __typename
-    id
-    note
-  }
-}`;
-
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      id: "",
       notes: [],
       value: "",
       displayAdd: true,
@@ -70,7 +30,23 @@ class App extends Component {
       isPanelOpened: false,
       isDropdownOpened: false
     };
-    this.isDone = false
+    this.initNoteState = {
+      id: "",
+      note: "",
+      isDone: false,
+      task: null,
+      description: null,
+      steps: null,
+      due: null,
+      assigned: null,
+      watcher: null,
+      project: null,
+      tag: null,
+      sprint: null,
+      status: null,
+      comment: null
+    }
+    this.currentNoteState = {...this.initNoteState}
     this.addForm = null;
     this.updateForm = null;
     this.handleChange = this.handleChange.bind(this);
@@ -91,7 +67,7 @@ class App extends Component {
   }
 
   async componentDidMount(){
-    const notes = await API.graphql(graphqlOperation(readNote));
+    const notes = await API.graphql(graphqlOperation(listNotes));
     var todos = JSON.parse(window.localStorage.getItem('notes'));
     if(todos && todos.length > 0) {
       todos.map(item => this.addNote(item));
@@ -106,6 +82,7 @@ class App extends Component {
       target: { value }
     } = event;
     const special = /^.*(\/\w)$/m.exec(value)?.[1]
+    this.currentNoteState.note = value.replace(/\/(\w|)/g, "")
     if (special === SIGNIN || special === SIGNUP) {
       if (!this.state.auth) {
         this.setState({
@@ -114,44 +91,41 @@ class App extends Component {
       }
     } else if (special === SIGNOUT) {
       Auth.signOut()
-    }
-    if (/^.*\/\/$/m.test(event.target.value)) {
-      this.setState({ value: event.target.value.replace(/^(.*)\/\/$/m, "$1/") });
-    } else {
-      this.setState({ value: event.target.value });
-    }
-    if (/^.*\/$/m.test(event.target.value)) {
-      this.setState({ isDropdownOpened: true })
-    } else {
-      this.setState({ isDropdownOpened: false })
-    }
-    if (special === MARKASDONE) {
-      this.isDone = true
+    } else if (special === MARKASDONE) {
+      this.currentNoteState.isDone = true
       if (this.state.displayAdd) {
         this.addForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
       } else if (this.state.displayUpdate) {
         this.updateForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
       }
     }
+    if (new RegExp(`^.*(\\/(\\/|[^${suggestionsList.join()}]))$`, "m").test(value)) {
+      this.setState({ value: value.slice(0, -1) });
+    } else {
+      this.setState({ value: value });
+    }
+    if (/^.*\/$/m.test(value)) {
+      this.setState({ isDropdownOpened: true })
+    } else {
+      this.setState({ isDropdownOpened: false })
+    }
   }
 
   async handleSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
-    const note = {
-      "note": this.state.value.replace(/^(.*)(?:\/\w|\/)$/m, "$1"),
-      "isDone": this.isDone
-    }
-    await API.graphql(graphqlOperation(createNote, note));
+    await API.graphql(graphqlOperation(createNote, this.currentNoteState));
     this.listNotes();
     this.setState({
       value: ""
     });
-    this.isDone = false
+    this.currentNoteState = {...this.initNoteState}
   }
 
   async handleDelete(id) {
-    const noteId = {"id":id};
+    const noteId = { 
+      "id": id
+    };
     await API.graphql(graphqlOperation(deleteNote, noteId));
     this.listNotes();
   }
@@ -159,12 +133,7 @@ class App extends Component {
   async handleUpdate(event) {
     event.preventDefault();
     event.stopPropagation();
-    const note = {
-      "id": this.state.id,
-      "note": this.state.value.replace(/^(.*)(?:\/\w|\/)$/m, "$1"),
-      "isDone": this.isDone
-    };
-    await API.graphql(graphqlOperation(updateNote, note));
+    await API.graphql(graphqlOperation(updateNote, this.currentNoteState));
     this.listNotes();
     this.setState({
       displayAdd: true,
@@ -172,12 +141,27 @@ class App extends Component {
       value: "",
       isPanelOpened: false
     });
-    this.isDone = false
+    this.currentNoteState = {...this.initNoteState}
   }
 
-  selectNote(note){
-    this.setState({
+  selectNote(note) {
+    this.currentNoteState = {
       id: note.id,
+      note: note.note,
+      isDone: false,
+      task: note.task,
+      description: note.description,
+      steps: note.steps,
+      due: note.due,
+      assigned: note.assigned,
+      watcher: note.watcher,
+      project: note.project,
+      tag: note.tag,
+      sprint: note.sprint,
+      status: note.status,
+      comment: note.comment
+    }
+    this.setState({
       value: note.note,
       displayAdd: false,
       displayUpdate: true,
@@ -188,42 +172,24 @@ class App extends Component {
   chooseSugestion(suggestion) {
     this.handleChange({
       target: {
-        value: this.state.value + suggestion
+        value: this.currentNoteState.note + suggestion
       }
     })
   }
 
   async listNotes(){
-    const notes = await API.graphql(graphqlOperation(readNote));
+    const notes = await API.graphql(graphqlOperation(listNotes));
     this.setState({
       notes: notes.data.listNotes.items
     });
   }
 
   render() {
-    const data = [].concat(this.state.notes)
-      .map((item,i)=> 
-      <div className="alert alert-primary alert-dismissible show" role="alert">
-        <span key={item.i} onClick={this.selectNote.bind(this, item)}>{item.note}</span>
-        <button key={item.i} type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.handleDelete.bind(this, item.id)}>
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      )
-      const renderItem = ({ item }) => item.text;
-      console.log(this.state.notes)
     return (
       <div className="App">
          <br/>
-         <div className="mainPage">
-         {this.state.isPanelOpened && (
-          <div className="leftSide">
-          <SidePanel
-            selectedNote={this.state.selectedNote}
-          />
-          </div>
-        )}
-        <div className="rightSide">
+        <div className="mainPage">
+        <div className="leftSide">
         <div className="container">
         <Nestable
           collapsed={true}
@@ -255,7 +221,7 @@ class App extends Component {
         <div className="container">
           {this.state.displayAdd ?
             <form ref={(ref) => this.addForm = ref} onSubmit={this.handleSubmit}>
-              <div className="">
+              <div>
                 <input
                   type="text"
                   className="task"
@@ -281,7 +247,7 @@ class App extends Component {
           : null }
           {this.state.displayUpdate ?
             <form ref={(ref) => this.updateForm = ref } onSubmit={this.handleUpdate}>
-              <div className="">
+              <div>
                 <input
                   type="text"
                   className="task"
@@ -307,6 +273,14 @@ class App extends Component {
           : null }
         </div>
         </div>
+        {this.state.isPanelOpened && (
+          <div className="rightSide">
+          <SidePanel
+            higherScope={this}
+            selectedNote={this.currentNoteState}
+          />
+          </div>
+        )}
         </div>
         <AmplifySignOut />
       </div>
