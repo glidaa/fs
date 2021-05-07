@@ -61,8 +61,10 @@ class App extends Component {
     }
     this.listNotes();
     const todos = JSON.parse(window.localStorage.getItem('notes'));
-    if(this.state.notes.length > todos.length || this.state.notes.length === todos.length){
-      window.localStorage.removeItem('notes')
+    if (todos) {
+      if(this.state.notes.length > todos.length || this.state.notes.length === todos.length){
+        window.localStorage.removeItem('notes')
+      }
     }
   }
 
