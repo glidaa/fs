@@ -1,97 +1,115 @@
 import React, { Component } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Amplify, { API, graphqlOperation } from "aws-amplify";
-import {
-  AmplifyAuthenticator,
-  AmplifyContainer,
-  AmplifySignOut,
-} from "@aws-amplify/ui-react";
+import Amplify, { API, graphqlOperation, Auth } from "aws-amplify";
+import { AmplifyAuthenticator, AmplifyContainer } from "@aws-amplify/ui-react";
 import aws_exports from "./aws-exports"; // specify the location of aws-exports.js file on your project
 import Nestable from "react-nestable";
-import { SIGNIN, SIGNUP } from "./constants";
+import {
+  SIGNIN,
+  SIGNUP,
+  MARKASDONE,
+  SIGNOUT,
+  suggestionsList,
+  suggestionsDescription
+} from "./constants";
+import { SidePanel } from "./SidePanel";
+import { Specials } from "./Specials"
 Amplify.configure(aws_exports);
-
-const createNote = `mutation createNote($note: String!){
-  createNote(input:{
-    note: $note
-  }){
-    __typename
-    id
-    note
-  }
-}`;
-
-const readNote = `query listNotes{
-  listNotes{
-    items{
-      __typename
-      id
-      note
-    }
-  }
-}`;
-
-const updateNote = `mutation updateNote($id: ID!,$note: String){
-  updateNote(input:{
-    id: $id
-    note: $note
-  }){
-    __typename
-    id
-    note
-  }
-}`;
-
-const deleteNote = `mutation deleteNote($id: ID!){
-  deleteNote(input:{
-    id: $id
-  }){
-    __typename
-    id
-    note
-  }
-}`;
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: "",
       notes: [],
       value: "",
       selectedNote: "",
       displayAdd: true,
       displayUpdate: false,
       auth: false,
+      isPanelOpened: false,
+      isDropdownOpened: false
     };
+    this.initNoteState = {
+      id: "",
+      note: "",
+      isDone: false,
+      task: null,
+      description: null,
+      steps: null,
+      due: null,
+      assigned: null,
+      watcher: null,
+      project: null,
+      tag: null,
+      sprint: null,
+      status: null,
+      comment: null
+    }
+    this.currentNoteState = {...this.initNoteState}
+    this.addForm = null;
+    this.updateForm = null;
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
   }
 
-  async componentDidMount() {
-    const notes = await API.graphql(graphqlOperation(readNote));
-    this.setState({ notes: notes.data.listNotes.items });
+  componentDidMount() {
+    const localNotes = JSON.parse(window.localStorage.getItem("notes"))
+    if (localNotes) {
+      this.setState({
+        notes: [...localNotes]
+      })
+    }
   }
 
   handleChange(event) {
     const {
-      target: { value },
+      target: { value }
     } = event;
-    if (value.includes(SIGNIN) || value.includes(SIGNUP)) {
-      this.setState({ auth: true });
+    const special = /^.*(\/\w)$/m.exec(value)?.[1]
+    this.currentNoteState.note = value.replace(/\/(\w|)/g, "")
+    if (special === SIGNIN || special === SIGNUP) {
+      if (!this.state.auth) {
+        this.setState({
+          auth: true
+        });
+      }
+    } else if (special === SIGNOUT) {
+      Auth.signOut()
+    } else if (special === MARKASDONE) {
+      this.currentNoteState.isDone = true
+      if (this.state.displayAdd) {
+        this.addForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
+      } else if (this.state.displayUpdate) {
+        this.updateForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
+      }
     }
-    this.setState({ value: event.target.value });
+    if (new RegExp(`^.*(\\/(\\/|[^${suggestionsList.join()}]))$`, "m").test(value)) {
+      this.setState({ value: value.slice(0, -1) });
+    } else {
+      this.setState({ value: value });
+    }
+    if (/^.*\/$/m.test(value)) {
+      this.setState({ isDropdownOpened: true })
+    } else {
+      this.setState({ isDropdownOpened: false })
+    }
   }
+
   async handleSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
-    const note = { note: this.state.value };
-    this.state.notes.push(note);
-    this.setState({ value: "" });
-    window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
+    if (this.currentNoteState !== "") {
+      this.state.notes.push(this.currentNoteState);
+      this.setState({
+        value: ""
+      });
+      this.currentNoteState = {...this.initNoteState}
+      window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
+    }
   }
+
   async handleDelete(id) {
     const updatedNotes = this.state.notes.map(item =>  {
         if(item.note === id.note){
@@ -104,53 +122,62 @@ class App extends Component {
     })
     window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
   }
+
   async handleUpdate(event) {
-    const { target: { value }} = event;
     event.preventDefault();
     event.stopPropagation();
     const updatedNotes = this.state.notes.map(item =>  {
         if(item.note === this.state.selectedNote){
-            item.note = this.state.value;
+            item = {...this.currentNoteState}
         }
         return item;
     })
     this.setState({
         notes: updatedNotes,
+        displayAdd: true,
+        displayUpdate: false,
+        value: "",
+        isPanelOpened: false
     })
+    this.currentNoteState = {...this.initNoteState}
     window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
   }
+
   selectNote(note) {
+    this.currentNoteState = {
+      id: "",
+      note: note.note,
+      isDone: false,
+      task: note.task,
+      description: note.description,
+      steps: note.steps,
+      due: note.due,
+      assigned: note.assigned,
+      watcher: note.watcher,
+      project: note.project,
+      tag: note.tag,
+      sprint: note.sprint,
+      status: note.status,
+      comment: note.comment
+    }
     this.setState({
-      id: note.id,
       selectedNote: note.note,
+      value: note.note,
       displayAdd: false,
       displayUpdate: true,
+      isPanelOpened: true
     });
   }
-  async listNotes() {
-    const notes = await API.graphql(graphqlOperation(readNote));
-    this.setState({ notes: notes.data.listNotes.items });
+
+  chooseSugestion(suggestion) {
+    this.handleChange({
+      target: {
+        value: this.currentNoteState.note + suggestion
+      }
+    })
   }
 
   render() {
-    const data = [].concat(this.state.notes).map((item, i) => (
-      <div className="alert alert-primary alert-dismissible show" role="alert">
-        <span key={item.i} onClick={this.selectNote.bind(this, item)}>
-          {item.note}
-        </span>
-        <button
-          key={item.i}
-          type="button"
-          className="close"
-          data-dismiss="alert"
-          aria-label="Close"
-          onClick={this.handleDelete.bind(item.note)}
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    ));
-    const renderItem = ({ item }) => item.text;
     return (
       <div className="App">
         {this.state.auth ? (
@@ -158,24 +185,25 @@ class App extends Component {
             <AmplifyAuthenticator />
           </AmplifyContainer>
         ) : (
-          <>
-          <h1 className="title">Notes</h1>
+            <div className="mainPage">
+            <div className="leftSide">
             <div className="container">
+              <h1 className="title">Notes</h1>
               <Nestable
                 collapsed={true}
                 maxDepth={3}
                 items={this.state.notes}
-                renderItem={({ item, collapseIcon }) => (
+                className="list-menu"
+                renderItem={({ item }) => (
                   <div
                     className=" alert-primary alert-dismissible show"
                     role="alert"
-                    className="list-menu"
                   >
                     <span
                       key={item.i}
                       onClick={this.selectNote.bind(this, item)}
                     >
-                      {item.note}
+                      {item.isDone ? <strike>{item.note}</strike> : item.note}
                     </span>
                     <button
                       key={item.i}
@@ -204,25 +232,46 @@ class App extends Component {
 
             <div className="container">
               {this.state.displayAdd ? (
-                <form onSubmit={this.handleSubmit}>
-                  <div className="">
+                <form
+                  data-testid="newTaskForm"
+                  ref={(ref) => this.addForm = ref }
+                  onSubmit={this.handleSubmit}
+                >
+                  <div>
                     <input
                       type="text"
                       className="task"
+                      data-testid="newTaskField"
                       placeholder="Enter task"
                       aria-label="Note"
                       aria-describedby="basic-addon2"
                       value={this.state.value}
                       onChange={this.handleChange}
                     />
+                    {this.state.isDropdownOpened && <Specials
+                      onChooseSuggestion={this.chooseSugestion.bind(this)}
+                      suggestionsList={suggestionsList}
+                      suggestionsCondition={[
+                        true,
+                        true,
+                        true,
+                        false
+                      ]}
+                      suggestionsDescription={suggestionsDescription}
+                    />}
                   </div>
                 </form>
               ) : null}
               {this.state.displayUpdate ? (
-                <form onSubmit={this.handleUpdate}>
-                  <div className="">
+                <form
+                  data-testid="updateTaskForm"
+                  ref={(ref) => this.updateForm = ref }
+                  onSubmit={this.handleUpdate}
+                >
+                  <div>
                     <input
                       type="text"
+                      data-testid="updateTaskField"
                       className="task"
                       placeholder="Update Note"
                       aria-label="Note"
@@ -230,11 +279,31 @@ class App extends Component {
                       value={this.state.value}
                       onChange={this.handleChange}
                     />
+                    {this.state.isDropdownOpened && <Specials
+                      onChooseSuggestion={this.chooseSugestion.bind(this)}
+                      suggestionsList={suggestionsList}
+                      suggestionsCondition={[
+                        true,
+                        true,
+                        true,
+                        false
+                      ]}
+                      suggestionsDescription={suggestionsDescription}
+                    />}
                   </div>
                 </form>
               ) : null}
             </div>
-          </>
+            </div>
+            {this.state.isPanelOpened && (
+              <div className="rightSide">
+                <SidePanel
+                  higherScope={this}
+                  selectedNote={this.state.selectedNote}
+                />
+              </div>
+            )}
+          </div>
         )}
       </div>
     );
