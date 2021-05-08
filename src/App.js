@@ -202,6 +202,8 @@ class App extends Component {
         <span key={item.i} onClick={this.selectNote.bind(this, item)}>
           {item.isDone ? <strike>{item.note}</strike> : item.note}
         </span>
+            <div className=" alert-primary alert-dismissible show list-menu" role="alert">
+        <span key={item.i} onClick={this.selectNote.bind(this, item)}>{item.note}</span>
         <button key={item.i} type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.handleDelete.bind(this, item.id)}>
           <span aria-hidden="true">&times;</span>
         </button>

@@ -187,6 +187,8 @@ class App extends Component {
         ) : (
             <div className="mainPage">
             <div className="leftSide">
+          <>
+          <h1 className="title">Notes</h1>
             <div className="container">
               <Nestable
                 collapsed={true}
