@@ -118,9 +118,9 @@ class App extends Component {
         return item;
     })
     this.setState({
-        notes: updatedNotes,
+        notes: [...updatedNotes],
     })
-    window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
+    window.localStorage.setItem("notes", JSON.stringify([...updatedNotes]))
   }
 
   async handleUpdate(event) {
@@ -133,14 +133,14 @@ class App extends Component {
         return item;
     })
     this.setState({
-        notes: updatedNotes,
+        notes: [...updatedNotes],
         displayAdd: true,
         displayUpdate: false,
         value: "",
         isPanelOpened: false
     })
     this.currentNoteState = {...this.initNoteState}
-    window.localStorage.setItem("notes", JSON.stringify(this.state.notes))
+    window.localStorage.setItem("notes", JSON.stringify([...updatedNotes]))
   }
 
   selectNote(note) {
