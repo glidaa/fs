@@ -135,7 +135,7 @@ class App extends Component {
   async handleUpdate(event) {
     event.preventDefault();
     event.stopPropagation();
-    await API.graphql(graphqlOperation(updateNote, this.currentNoteState));
+    await API.graphql(graphqlOperation(updateNote, {...this.currentNoteState}));
     this.listNotes();
     this.setState({
       displayAdd: true,
