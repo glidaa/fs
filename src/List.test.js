@@ -28,7 +28,7 @@ it('Testing removing redundant slashes functionality', async () => {
   const newTaskField = getByTestId("newTaskField")
   fireEvent.change(newTaskField, { target: { value: "Good Morning  //" } })
   fireEvent.submit(newTaskForm)
-  const taskItem = container.querySelector(".nestable-list > .nestable-item:nth-child(1) span:nth-child(1)")
+  const taskItem = container.querySelector(".nestable-list > .nestable-item:nth-child(2) span:nth-child(1)")
   expect(taskItem).toHaveTextContent("Good Morning")
 })
 
@@ -38,12 +38,12 @@ it('Testing adding done task functionality', async () => {
   const newTaskField = getByTestId("newTaskField")
   fireEvent.change(newTaskField, { target: { value: "Good Evening/x" } })
   fireEvent.submit(newTaskForm)
-  const taskItem = container.querySelector(".nestable-list > .nestable-item:nth-child(1) strike:nth-child(1)")
+  const taskItem = container.querySelector(".nestable-list > .nestable-item:nth-child(3) strike:nth-child(1)")
   expect(taskItem).toHaveTextContent("Good Evening")
 })
 
 it('Testing dropdown', async () => {
-  const { getByTestId, container } = render(<List />)
+  const { getByTestId } = render(<List />)
   const newTaskField = getByTestId("newTaskField")
   fireEvent.change(newTaskField, { target: { value: "Cat is an animal  /" } })
   const specialsDropdown = getByTestId("specialsDropdown")
