@@ -187,18 +187,17 @@ class App extends Component {
         ) : (
             <div className="mainPage">
             <div className="leftSide">
-          <>
-          <h1 className="title">Notes</h1>
             <div className="container">
+              <h1 className="title">Notes</h1>
               <Nestable
                 collapsed={true}
                 maxDepth={3}
                 items={this.state.notes}
+                className="list-menu"
                 renderItem={({ item }) => (
                   <div
                     className=" alert-primary alert-dismissible show"
                     role="alert"
-                    className="list-menu"
                   >
                     <span
                       key={item.i}
