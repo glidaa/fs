@@ -196,6 +196,7 @@ class App extends Component {
                   <div
                     className=" alert-primary alert-dismissible show"
                     role="alert"
+                    className="list-menu"
                   >
                     <span
                       key={item.i}
