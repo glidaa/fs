@@ -16,6 +16,6 @@ type Note @model @auth(rules: [{ allow: owner }]) {
 }
 
 type Subscription {
-  onCreateNote(owner: String!): Note
+  noteCreated(owner: String!): Note
     @aws_subscribe(mutations: ["createNote"])
 }
