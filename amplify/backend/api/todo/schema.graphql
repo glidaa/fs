@@ -9,8 +9,15 @@ type Note @model @auth(rules: [{ allow: owner }]) {
 	assigned: String
 	watcher: String
 	project: String
-	tag: String
+	tag: [String]
 	sprint: String
 	status: String
-	comment: String
+	comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
+}
+
+type Comment @model
+  @key(name: "byNote", fields: ["noteID"]) {
+  id: ID!
+  noteID: ID!
+  content: String!
 }
