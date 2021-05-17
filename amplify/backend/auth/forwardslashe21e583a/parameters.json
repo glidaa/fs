@@ -47,9 +47,6 @@
     },
     "useDefault": "defaultSocial",
     "hostedUI": true,
-    "usernameAttributes": [
-        "username"
-    ],
     "triggers": "{}",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
