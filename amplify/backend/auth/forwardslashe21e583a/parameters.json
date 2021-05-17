@@ -49,7 +49,7 @@
     "hostedUI": true,
     "usernameAttributes": [
         "email"
-    ]
+    ],
     "triggers": "{}",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
