@@ -48,7 +48,7 @@
     "useDefault": "defaultSocial",
     "hostedUI": true,
     "usernameAttributes": [
-        "email"
+        "username"
     ],
     "triggers": "{}",
     "userPoolGroupList": [],
