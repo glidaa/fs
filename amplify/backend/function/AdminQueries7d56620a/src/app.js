@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 const allowedGroup = process.env.GROUP;
 
 const checkGroup = function(req, res, next) {
-  if (req.path == '/signUserOut') {
+  if (req.path == '/signUserOut' || req.path == '/listUsers' || req.path == '/getUser') {
     return next();
   }
 
