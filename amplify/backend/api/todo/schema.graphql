@@ -1,4 +1,4 @@
-type Note @model @auth(rules: [{allow: private}]) {
+type Note @model @auth(rules: [{allow: owner}]) {
   id: ID!
   note: String!
   isDone: Boolean!
@@ -13,9 +13,10 @@ type Note @model @auth(rules: [{allow: private}]) {
   sprint: String
   status: String
   comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
+  owner: String
 }
 
-type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [{allow: private}]) {
+type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [{allow: owner}]) {
   id: ID!
   noteID: ID!
   owner: String!
