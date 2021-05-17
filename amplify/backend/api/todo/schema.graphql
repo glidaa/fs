@@ -18,7 +18,8 @@ type Note @model @auth(rules: [{allow: private}]) {
 type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [{allow: private}]) {
   id: ID!
   noteID: ID!
-  commenter: String
+  owner: String!
+  date: AWSTimestamp!
   content: String!
 }
  
