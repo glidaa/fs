@@ -13,14 +13,18 @@ type Note @model @auth(rules: [{allow: owner}]) {
   sprint: String
   status: String
   comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
   owner: String
 }
 
 type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [{allow: owner}]) {
   id: ID!
   noteID: ID!
-  owner: String!
   date: AWSTimestamp!
   content: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  owner: String
 }
  
