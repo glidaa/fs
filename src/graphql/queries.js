@@ -17,10 +17,21 @@ export const getNote = /* GraphQL */ `
       tag
       sprint
       status
-      comment
       createdAt
       updatedAt
       owner
+      comments {
+        items {
+          id
+          noteID
+          date
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -45,7 +56,42 @@ export const listNotes = /* GraphQL */ `
         tag
         sprint
         status
-        comment
+        createdAt
+        updatedAt
+        owner
+        comments {
+          nextToken
+        }
+      }
+      nextToken
+    }
+  }
+`;
+export const getComment = /* GraphQL */ `
+  query GetComment($id: ID!) {
+    getComment(id: $id) {
+      id
+      noteID
+      date
+      content
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listComments = /* GraphQL */ `
+  query ListComments(
+    $filter: ModelCommentFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        noteID
+        date
+        content
         createdAt
         updatedAt
         owner
