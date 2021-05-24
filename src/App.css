@@ -28,13 +28,13 @@
   color: #61dafb;
 }
 
-.title{
-  padding-top: 75px;
-  padding-left: 150px;
+.title {
+  font-weight: 600;
+  margin-left: 8px;
 }
 
 .container {
-  padding-top: 75px;
+  padding-top: 40px;
 }
 @keyframes App-logo-spin {
   from {
@@ -50,10 +50,13 @@ input:focus, textarea:focus {
 }
 
 .task {
-  border-radius: 0%;
-  border-color: white;
-  border-width: 0;
-  border-style: none;
+  border: none;
+  width: 100%;
+  padding: 1px 0;
+}
+
+.newTask {
+  margin: 10px 0 0;
 }
 
 .mainPage {
@@ -61,10 +64,11 @@ input:focus, textarea:focus {
   flex-direction: row;
 }
 
-.leftSide {
-  flex: 2;
+.center {
+  flex: 3;
+  padding: 20px 40px;
 }
 
-.rightSide {
-  flex: 1;
+input:-internal-autofill-selected {
+  background-color: none!important;
 }

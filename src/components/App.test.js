@@ -1,11 +1,10 @@
-import { render, cleanup, screen, fireEvent, waitForElement } from '@testing-library/react'
-import userEvent from "@testing-library/user-event"
-import List from './List'
+import { render, cleanup, fireEvent } from '@testing-library/react'
+import App from './App'
 
 afterEach(cleanup)
 
 it('Testing adding & updating task functionality', async () => {
-  const { getByTestId, container } = render(<List />)
+  const { getByTestId, container } = render(<App />)
   const newTaskField = getByTestId("newTaskField")
   const newTaskForm = getByTestId("newTaskForm")
   fireEvent.change(newTaskField, { target: { value: "Hello World" } })
@@ -23,7 +22,7 @@ it('Testing adding & updating task functionality', async () => {
 })
 
 it('Testing removing redundant slashes functionality', async () => {
-  const { getByTestId, container } = render(<List />)
+  const { getByTestId, container } = render(<App />)
   const newTaskForm = getByTestId("newTaskForm")
   const newTaskField = getByTestId("newTaskField")
   fireEvent.change(newTaskField, { target: { value: "Good Morning  //" } })
@@ -33,7 +32,7 @@ it('Testing removing redundant slashes functionality', async () => {
 })
 
 it('Testing adding done task functionality', async () => {
-  const { getByTestId, container } = render(<List />)
+  const { getByTestId, container } = render(<App />)
   const newTaskForm = getByTestId("newTaskForm")
   const newTaskField = getByTestId("newTaskField")
   fireEvent.change(newTaskField, { target: { value: "Good Evening/x" } })
@@ -43,7 +42,7 @@ it('Testing adding done task functionality', async () => {
 })
 
 it('Testing dropdown', async () => {
-  const { getByTestId } = render(<List />)
+  const { getByTestId } = render(<App />)
   const newTaskField = getByTestId("newTaskField")
   fireEvent.change(newTaskField, { target: { value: "Cat is an animal  /" } })
   const specialsDropdown = getByTestId("specialsDropdown")
