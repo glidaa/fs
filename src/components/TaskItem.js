@@ -15,7 +15,7 @@ export const TaskItem = (props) => {
           <div className="taskInputContainer">
             <input
               type="text"
-              data-testid="updateTaskField"
+              data-testid="taskInputField"
               className="task"
               placeholder="Note…"
               value={props.higherScope.state.value}
