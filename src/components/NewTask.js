@@ -7,7 +7,7 @@ export const NewTask = (props) => {
        <div>
           <img alt="item handler" src={addIcon} width="20" />
           <div className="newTaskContainer">
-            <span onClick={props.higherScope.newData}>Note…</span>
+            <span data-testid="newTaskBtn" onClick={props.higherScope.newData}>Note…</span>
           </div>
         </div>
     </NewTaskContainer>
