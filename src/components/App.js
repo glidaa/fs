@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import "../App.css";
 import Amplify, { API, graphqlOperation, Auth, PubSub } from "aws-amplify";
 import { createNote, deleteNote, updateNote } from "../graphql/mutations"
@@ -18,12 +18,13 @@ import {
 } from "../constants";
 import { ProjectsPanel } from "./ProjectsPanel";
 import { SidePanel } from "./SidePanel";
-import { TaskItem } from "./TaskItem"
-import { NewTask } from "./NewTask"
-import handlerIcon from "../assets/apps.svg"
-import shareIcon from "../assets/share-outline.svg"
+import { TaskItem } from "./TaskItem";
+import { NewTask } from "./NewTask";
+import handlerIcon from "../assets/apps.svg";
+import shareIcon from "../assets/share-outline.svg";
+import { stringify } from "querystring";
 Amplify.configure(aws_exports);
-PubSub.configure(aws_exports)
+PubSub.configure(aws_exports);
 
 class App extends Component {
   constructor(props) {
@@ -40,6 +41,7 @@ class App extends Component {
     };
     this.initNoteState = {
       id: "",
+      url: "",
       note: "",
       isDone: false,
       task: null,
@@ -169,10 +171,36 @@ class App extends Component {
       shouldUnSelectNote = true
     }
     let suitableSuggestionsList = [...suggestionsList];
+
+    if (this.currentNoteState.url == "" || this.currentNoteState.url == undefined) {
+      let randomWords = require('random-words');
+      this.currentNoteState.url = randomWords({exactly: 2, join: ''})
+    }
+
     if (this.state.authState === AuthState.SignedIn) {
       suitableSuggestionsList = suitableSuggestionsList.filter(x => x !== "s")
+      this.state.notes.map(item => {
+        if (this.currentNoteState.url == item.url) {
+          if (this.currentNoteState.id !== item.id) {
+            let randomWords = require('random-words');
+            let urlName = this.state.authData.username + '/' + randomWords({exactly: 2, join: ''})
+            this.currentNoteState.url = urlName
+          }
+        }
+      })
+      window.history.replaceState(null, "New Page Title", urlName)
     } else if (this.state.authState !== AuthState.SignedIn) {
       suitableSuggestionsList = suitableSuggestionsList.filter(x => x !== "q")
+
+      this.state.notes.map(item => {
+        if (this.currentNoteState.url == item.url) {
+          if (this.currentNoteState.id !== item.id) {
+            let randomWords = require('random-words');
+            this.currentNoteState.url = randomWords({exactly: 2, join: ''})
+          }
+        }
+      })
+      window.history.replaceState(null, "New Page Title", this.currentNoteState.url)
     }
     if (new RegExp(`^.*(\\/(\\/|[^${suitableSuggestionsList.join()}]))$`, "m").test(value)) {
       this.setState({ value: value.slice(0, -1) });
@@ -240,10 +268,17 @@ class App extends Component {
     this.setState({
         notes: [...updatedNotes]
     })
+    if (this.currentNoteState.url == "" || this.currentNoteState.url == undefined) {
+      let randomWords = require('random-words');
+      this.currentNoteState.url = randomWords({exactly: 2, join: ''})
+    }
     if (this.state.authState === AuthState.SignedIn) {
       await API.graphql(graphqlOperation(updateNote, { input: this.currentNoteState }))
+      let urlName = this.state.authData.username + '/' + this.currentNoteState.url
+      window.history.replaceState(null, "New Page Title", urlName)
     } else {
       window.localStorage.setItem("notes", JSON.stringify(updatedNotes))
+      window.history.replaceState(null, "New Page Title", this.currentNoteState.url)
     }
   }
 
@@ -259,6 +294,7 @@ class App extends Component {
   selectNote(note) {
     this.currentNoteState = {
       id: note.id,
+      url: note.url,
       note: note.note,
       isDone: false,
       task: note.task,
@@ -339,12 +375,14 @@ class App extends Component {
               <ProjectsPanel />
             <div className="center">
             <div className="container">
-              <img
-                alt="share button"
-                src={shareIcon}
-                style={{float: "right"}}
-                width="20"
-              />
+              <button style={{float: "right"}}>
+                <img
+                  alt="share button"
+                  src={shareIcon}
+                  width="20"
+                  onClick={() => {navigator.clipboard.writeText(window.location.href)}}
+                />
+              </button>
               <h1 className="title">Notes</h1>
               <Nestable
                 collapsed={true}
