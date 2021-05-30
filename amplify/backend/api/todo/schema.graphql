@@ -26,7 +26,6 @@ type Note @model @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
   description: String
   steps: String
   due: String
-  assigned: String
   watcher: String
   project: String
   tag: [String]
@@ -39,13 +38,17 @@ type Note @model @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
   assignees: [String!]
 }
 
-type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [{allow: owner}]) {
+type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [
+    { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
+    { allow: owner, ownerField: "assignees", operations: [read] },
+  ]) {
   id: ID!
   noteID: ID!
   content: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
+  assignees: [String!]
 }
 
 type Subscription {
