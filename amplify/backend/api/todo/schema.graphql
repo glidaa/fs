@@ -2,7 +2,6 @@ type Project @model @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
   ])
-  @key(fields: ["id"])
   @key(name: "ByPermalink", fields: ["permalink"]) {
   id: ID!
   permalink: String!
