@@ -2,6 +2,7 @@ type Project @model @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
   ])
+  @key(fields: ["id"])
   @key(name: "ByPermalink", fields: ["permalink"]) {
   id: ID!
   permalink: String!
@@ -18,7 +19,7 @@ type Note @model @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
     { allow: owner, ownerField: "assignees", operations: [read] },
   ]) {
   id: ID!
-  projectID: String!
+  projectID: ID!
   note: String!
   isDone: Boolean!
   task: String
