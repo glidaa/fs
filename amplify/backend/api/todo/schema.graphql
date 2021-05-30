@@ -31,6 +31,7 @@ type Note @model @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
   tag: [String]
   sprint: String
   status: String
+  project: Project! @connection(fields: ["projectID"])
   comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -45,6 +46,7 @@ type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [
   id: ID!
   noteID: ID!
   content: String!
+  note: Note! @connection(fields: ["noteID"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
