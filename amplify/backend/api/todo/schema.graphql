@@ -7,7 +7,7 @@ type Project @model @auth(rules: [
   id: ID!
   permalink: String!
   title: String!
-  Notes: [Note] @connection(keyName: "byProject", fields: ["id"])
+  notes: [Note] @connection(keyName: "byProject", fields: ["id"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
