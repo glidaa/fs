@@ -56,3 +56,12 @@ type Subscription {
   onDeleteCommentByNoteId(noteID: ID!): Comment
     @aws_subscribe(mutations: ["deleteComment"])
 }
+
+type Subscription {
+  onCreateNoteByProjectId(projectID: ID!): Note
+    @aws_subscribe(mutations: ["createNote"])
+  onUpdateNoteByProjectId(projectID: ID!): Note
+    @aws_subscribe(mutations: ["updateNote"])
+  onDeleteNoteByProjectId(projectID: ID!): Note
+    @aws_subscribe(mutations: ["deleteNote"])
+}
