@@ -27,7 +27,6 @@ type Note @model @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
   steps: String
   due: String
   watcher: String
-  project: String
   tag: [String]
   sprint: String
   status: String
@@ -60,9 +59,6 @@ type Subscription {
     @aws_subscribe(mutations: ["updateComment"])
   onDeleteCommentByNoteId(noteID: ID!): Comment
     @aws_subscribe(mutations: ["deleteComment"])
-}
-
-type Subscription {
   onCreateNoteByProjectId(projectID: ID!): Note
     @aws_subscribe(mutations: ["createNote"])
   onUpdateNoteByProjectId(projectID: ID!): Note
