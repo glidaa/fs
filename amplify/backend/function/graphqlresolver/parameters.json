@@ -1,7 +1,7 @@
 {
     "apiGraphQLAPIIdOutput":{
         "Fn::GetAtt":[
-            "api&lt;nameOfYourAppSyncAPI&gt;",
+            "apitodo",
             "Outputs.GraphQLAPIIdOutput"
         ]
     }
