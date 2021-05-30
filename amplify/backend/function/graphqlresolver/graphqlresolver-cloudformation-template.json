@@ -202,18 +202,6 @@
                                             }
                                         }
                                     ]
-                                },
-                                {
-                                    "Fn::Sub":[
-                                        "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}/index/*",
-                                        {
-                                            "tablename":{
-                                                "Fn::ImportValue":{
-                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:CommentTable:Name"
-                                                }
-                                            }
-                                        }
-                                    ]
                                 }
                             ]
                         }
