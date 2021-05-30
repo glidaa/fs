@@ -1,5 +1,25 @@
-type Note @model @auth(rules: [{allow: owner}]) {
+type Project @model @auth(rules: [
+    { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
+    { allow: owner, ownerField: "assignees", operations: [read] },
+  ])
+  @key(fields: ["id"])
+  @key(name: "ByPermalink", fields: ["permalink"]) {
   id: ID!
+  permalink: String!
+  title: String!
+  Notes: [Note] @connection(keyName: "byProject", fields: ["id"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  owner: String!
+  assignees: [String!]!
+}
+
+type Note @model @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
+    { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
+    { allow: owner, ownerField: "assignees", operations: [read] },
+  ]) {
+  id: ID!
+  projectID: String!
   note: String!
   isDone: Boolean!
   task: String
@@ -15,16 +35,24 @@ type Note @model @auth(rules: [{allow: owner}]) {
   comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
-  owner: String
+  owner: String!
+  assignees: [String!]!
 }
 
 type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [{allow: owner}]) {
   id: ID!
   noteID: ID!
-  date: AWSTimestamp!
   content: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String
 }
- 
+
+type Subscription {
+  onCreateCommentByNoteId(noteID: ID!): Comment
+    @aws_subscribe(mutations: ["createComment"])
+  onCreateCommentByNoteId(noteID: ID!): Comment
+    @aws_subscribe(mutations: ["updateComment"])
+  onDeleteCommentByNoteId(noteID: ID!): Comment
+    @aws_subscribe(mutations: ["deleteComment"])
+}
