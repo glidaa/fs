@@ -1,0 +1,8 @@
+{
+    "apiGraphQLAPIIdOutput":{
+        "Fn::GetAtt":[
+            "api&lt;nameOfYourAppSyncAPI&gt;",
+            "Outputs.GraphQLAPIIdOutput"
+        ]
+    }
+}
