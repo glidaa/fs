@@ -68,7 +68,7 @@ type Subscription {
 }
 
 type Mutation {
-  deleteNoteAndComments(postId: ID!): DeleteNoteAndCommentsResponse
+  deleteNoteAndComments(noteId: ID!): DeleteNoteAndCommentsResponse
     @function(name: "graphqlresolver-${env}")
 }
 
