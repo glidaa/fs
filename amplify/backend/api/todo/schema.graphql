@@ -4,21 +4,20 @@ type Project
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
   ])
-  @key(fields: ["id"])
-  @key(name: "ByPermalink", fields: ["permalink"]) {
+  @key(name: "ByOwner", fields: ["owner"]) {
   id: ID!
   permalink: String!
   title: String!
-  notes: [Note] @connection(keyName: "byProject", fields: ["id"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
-  assignees: [String!]
 }
 
 type Note
   @model(mutations: null, subscriptions: null)
-  @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
+  @key(name: "byOwner", fields: ["owner"])
+  @key(name: "byProject", fields: ["projectID"])
+@auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
   ]) {
@@ -34,8 +33,6 @@ type Note
 	tag: [String]
 	sprint: String
 	status: String
-  project: Project! @connection(fields: ["projectID"])
-  comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
 	createdAt: AWSDateTime
 	updatedAt: AWSDateTime
 	owner: String!
@@ -52,7 +49,6 @@ type Comment
   id: ID!
   noteID: ID!
   content: String!
-  note: Note! @connection(fields: ["noteID"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
@@ -116,7 +112,6 @@ input CreateProjectInput {
 	createdAt: AWSDateTime
 	updatedAt: AWSDateTime
 	owner: String!
-	assignees: [String!]
 }
 
 input CreateNoteInput {
