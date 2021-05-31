@@ -1,4 +1,6 @@
-type Project @model @auth(rules: [
+type Project
+  @model
+  @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
   ])
@@ -7,45 +9,45 @@ type Project @model @auth(rules: [
   id: ID!
   permalink: String!
   title: String!
-  notes: [Note] @connection(keyName: "byProject", fields: ["id"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
   assignees: [String!]
 }
 
-type Note @model @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
+type Note
+  @model(mutations: null)
+  @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
   ]) {
-  id: ID!
-  projectID: ID!
-  note: String!
-  isDone: Boolean!
-  task: String
-  description: String
-  steps: String
-  due: String
-  watcher: String
-  tag: [String]
-  sprint: String
-  status: String
-  project: Project! @connection(fields: ["projectID"])
-  comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-  owner: String!
-  assignees: [String!]
+	id: ID
+	projectID: ID!
+	note: String!
+	isDone: Boolean!
+	task: String
+	description: String
+	steps: String
+	due: String
+	watcher: String
+	tag: [String]
+	sprint: String
+	status: String
+	createdAt: AWSDateTime
+	updatedAt: AWSDateTime
+	owner: String!
+	assignees: [String!]!
 }
 
-type Comment @model @key(name: "byNote", fields: ["noteID"]) @auth(rules: [
+type Comment
+  @model
+  @key(name: "byNote", fields: ["noteID"]) @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
   ]) {
   id: ID!
   noteID: ID!
   content: String!
-  note: Note! @connection(fields: ["noteID"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
@@ -68,10 +70,16 @@ type Subscription {
 }
 
 type Mutation {
-  deleteNoteAndComments(noteId: ID!): DeleteNoteAndCommentsResponse
+  @aws_cognito_user_pools
+  createNote(input: Note!): Note
     @function(name: "graphqlresolver-${env}")
+    @aws_iam
+  @aws_cognito_user_pools
+  deleteNoteAndComments(noteId: ID!): RemovalResponse
+    @function(name: "graphqlresolver-${env}")
+  @aws_iam
 }
 
-type DeleteNoteAndCommentsResponse {
+type RemovalResponse {
   id: ID!
 }

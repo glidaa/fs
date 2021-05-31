@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const AWSXRay = require("aws-xray-sdk-core");
 const AWS = AWSXRay.captureAWS(require("aws-sdk"));
 
@@ -8,29 +9,53 @@ const COMMENTTABLE = process.env.COMMENTTABLE;
 
 const resolvers = {
   Mutation: {
-    deleteNoteAndComments: (event) => {
-      return deleteNoteAndComments(event);
+    createNote: (ctx) => {
+      return createNote(ctx);
+    },
+    deleteNoteAndComments: (ctx) => {
+      return deleteNoteAndComments(ctx);
     },
   },
 };
 
-exports.handler = async function (event, context) {
-  console.log(event);
+exports.handler = async function (ctx, context) {
+  console.log(ctx);
   console.log(context);
 
-  const typeHandler = resolvers[event.typeName];
+  const typeHandler = resolvers[ctx.typeName];
   if (typeHandler) {
-    const resolver = typeHandler[event.fieldName];
+    const resolver = typeHandler[ctx.fieldName];
     if (resolver) {
-      return await resolver(event);
+      return await resolver(ctx);
     }
   }
   throw new Error("Resolver not found.");
 };
 
-async function deleteNoteAndComments(event) {
-  const removeCommentsProm = removeCommentsOfNote(event.arguments.noteId);
-  const removeNoteProm = removeNote(event.arguments.noteId);
+async function createNote(ctx) {
+  const noteData = {
+    ...ctx.arguments,
+    id: uuidv4(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    owner: ctx.identity.username,
+    assignees: []
+  }
+  var params = {
+    TableName: NOTETABLE,
+    Item: noteData
+  };
+  try {
+    await docClient.put(params).promise();
+    return noteData;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function deleteNoteAndComments(ctx) {
+  const removeCommentsProm = removeCommentsOfNote(ctx.arguments.noteId);
+  const removeNoteProm = removeNote(ctx.arguments.noteId);
   const [_, deletedNote] = await Promise.all([
     removeCommentsProm,
     removeNoteProm,
