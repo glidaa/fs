@@ -9,6 +9,7 @@ import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 import { AmplifyAuthenticator, AmplifyContainer, AmplifySignUp } from "@aws-amplify/ui-react";
 import aws_exports from "../aws-exports";
 import Nestable from "react-nestable";
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import {
   SIGNIN,
   SIGNUP,
@@ -323,6 +324,14 @@ class App extends Component {
     })
   }
 
+  openUrlNote() {
+    this.state.notes.map(item => {
+      if (item.url == window.location.pathname) {
+        this.state.selectedNote = item.id
+      }
+    })
+  }
+
   render() {
     return (
       <div className="App">
@@ -372,6 +381,7 @@ class App extends Component {
           </AmplifyContainer>
         ) : (
             <div className="mainPage">
+              <Router>
               <ProjectsPanel />
             <div className="center">
             <div className="container">
@@ -380,40 +390,52 @@ class App extends Component {
                   alt="share button"
                   src={shareIcon}
                   width="20"
-                  onClick={() => {navigator.clipboard.writeText(window.location.href)}}
+                  onClick={() => {navigator.clipboard.writeText(window.location.origin + '/' + this.currentNoteState.url)}}
                 />
               </button>
               <h1 className="title">Notes</h1>
-              <Nestable
-                collapsed={true}
-                maxDepth={3}
-                items={this.state.notes}
-                handler={<img alt="item handler" src={handlerIcon} width="20" />}
-                className="list-menu"
-                renderItem={({ item, handler }) => (
-                  <TaskItem
-                    key={item.id}
-                    item={item}
-                    handler={handler}
-                    higherScope={this}
-                  />
-                )}
-                onChange={this.handleOnChangeSort}
-                renderCollapseIcon={({ isCollapsed }) =>
-                  isCollapsed ? (
-                    <span className="iconCollapse">+</span>
-                  ) : (
-                    <span className="iconCollapse">-</span>
-                  )
-                }
+              <Route path="/" exact>
+                <Nestable
+                  collapsed={true}
+                  maxDepth={3}
+                  items={this.state.notes}
+                  handler={<img alt="item handler" src={handlerIcon} width="20" />}
+                  className="list-menu"
+                  renderItem={({ item, handler }) => (
+                    <TaskItem
+                      key={item.id}
+                      item={item}
+                      handler={handler}
+                      higherScope={this}
+                    />
+                  )}
+                  onChange={this.handleOnChangeSort}
+                  renderCollapseIcon={({ isCollapsed }) =>
+                    isCollapsed ? (
+                      <span className="iconCollapse">+</span>
+                    ) : (
+                      <span className="iconCollapse">-</span>
+                    )
+                  }
+                />
+                <NewTask higherScope={this}/>
+              </Route>
+              <Route path='/:url' >
+                {this.state.notes.map(item => {
+                  if ('/' + item.url == window.location.pathname) {
+                    if (this.state.selectedNote == '') {
+                      this.selectNote(item)
+                    }
+                  }
+                })}
+              </Route>
+              </div>
+              </div>
+              <SidePanel
+                higherScope={this}
+                selectedNote={this.state.selectedNote}
               />
-              <NewTask higherScope={this}/>
-            </div>
-            </div>
-            <SidePanel
-              higherScope={this}
-              selectedNote={this.state.selectedNote}
-            />
+            </Router>
           </div>
         )}
       </div>
