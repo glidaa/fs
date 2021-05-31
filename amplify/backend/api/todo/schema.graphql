@@ -76,7 +76,7 @@ type Subscription {
 
 type Mutation {
   @aws_cognito_user_pools
-  createNote(input: CreateNoteInput!): CreateNoteInput
+  createNote(input: CreateNoteInput!): Note
     @function(name: "graphqlresolver-${env}")
     @aws_iam
   @aws_cognito_user_pools
