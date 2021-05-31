@@ -199,16 +199,16 @@ async function listNotesForProject(ctx) {
       TableName: NOTETABLE,
       IndexName: "byProject",
       KeyConditionExpression: "projectID = :projectID",
-      FilterExpression: "owner = :client OR contains (assignees, :client)",
       ExpressionAttributeValues: {
-        ":projectID": projectID,
-        ":client": client
+        ":projectID": projectID
       },
     };
     try {
       const data = await docClient.query(params).promise();
       return {
-        items: data.Items
+        items: data.Items.filter(item => (
+          client === item.owner || item.assignees.includes(client)
+        ))
       }
     } catch (err) {
       return err;
