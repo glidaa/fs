@@ -47,11 +47,13 @@ async function createNote(ctx) {
     ReturnValues: "ALL_NEW"
   };
   try {
+    console.log("Starting")
     const data = await docClient.put(params).promise();
     console.log("Hello")
     console.log(data)
     return data;
   } catch (err) {
+    console.error(err)
     return err;
   }
 }
