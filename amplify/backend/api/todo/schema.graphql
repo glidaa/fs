@@ -9,8 +9,7 @@ type Project
   id: ID!
   permalink: String!
   title: String!
-  project: Project! @connection(fields: ["projectID"])
-  comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
+  notes: [Note] @connection(keyName: "byProject", fields: ["id"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
@@ -68,10 +67,6 @@ type Subscription {
     @aws_subscribe(mutations: ["deleteComment"])
   onCreateNoteByProjectId(projectID: ID!): Note
     @aws_subscribe(mutations: ["createNote"])
-  onUpdateNoteByProjectId(projectID: ID!): Note
-    @aws_subscribe(mutations: ["updateNote"])
-  onDeleteNoteByProjectId(projectID: ID!): Note
-    @aws_subscribe(mutations: ["deleteNote"])
 }
 
 type Mutation {
