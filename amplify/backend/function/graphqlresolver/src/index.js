@@ -48,7 +48,7 @@ async function createNote(ctx) {
   };
   try {
     const data = await docClient.put(params).promise();
-    return data.Attributes;
+    return data;
   } catch (err) {
     return err;
   }
