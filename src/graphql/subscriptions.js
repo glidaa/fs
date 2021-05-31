@@ -5,6 +5,7 @@ export const onCreateNote = /* GraphQL */ `
   subscription OnCreateNote($owner: String) {
     onCreateNote(owner: $owner) {
       id
+      url
       note
       isDone
       task
@@ -39,6 +40,7 @@ export const onUpdateNote = /* GraphQL */ `
   subscription OnUpdateNote($owner: String) {
     onUpdateNote(owner: $owner) {
       id
+      url
       note
       isDone
       task
@@ -73,6 +75,7 @@ export const onDeleteNote = /* GraphQL */ `
   subscription OnDeleteNote($owner: String) {
     onDeleteNote(owner: $owner) {
       id
+      url
       note
       isDone
       task
