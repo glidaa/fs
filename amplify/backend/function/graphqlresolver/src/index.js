@@ -38,7 +38,7 @@ async function createNote(ctx) {
     id: uuidv4(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    owner: ctx.identity.username,
+    owner: ctx.identity.claims["cognito:username"],
     assignees: []
   }
   var params = {
@@ -48,6 +48,8 @@ async function createNote(ctx) {
   };
   try {
     const data = await docClient.put(params).promise();
+    console.log("Hello")
+    console.log(data)
     return data;
   } catch (err) {
     return err;
