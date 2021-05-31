@@ -12,6 +12,7 @@ type Project
 type Note
   @model(mutations: null, subscriptions: null)
   @key(name: "byOwner", fields: ["owner"])
+  @key(name: "byAssignee", fields: ["assignee"])
   @key(name: "byProject", fields: ["projectID"]) {
 	id: ID!
 	projectID: ID!
@@ -28,7 +29,7 @@ type Note
 	createdAt: AWSDateTime
 	updatedAt: AWSDateTime
 	owner: String!
-	assignees: [String!]!
+	assignee: String!
 }
 
 type Comment
@@ -83,6 +84,14 @@ type Mutation {
 }
 
 type Query {
+  listOwnedProjects(): ProjectsList
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  listAssignedProjects(): ProjectsList
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
   listNotesForProject(projectID: ID!): NotesList
     @function(name: "graphqlresolver-${env}")
     @aws_iam
@@ -118,7 +127,7 @@ input CreateNoteInput {
 	createdAt: AWSDateTime
 	updatedAt: AWSDateTime
 	owner: String!
-	assignees: [String!]
+	assignee: String!
 }
 
 input CreateCommentInput {
@@ -128,6 +137,10 @@ input CreateCommentInput {
 	createdAt: AWSDateTime
 	updatedAt: AWSDateTime
 	owner: String!
+}
+
+type ProjectsList {
+  items: [Project!]
 }
 
 type NotesList {
