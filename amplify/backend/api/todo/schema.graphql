@@ -84,11 +84,19 @@ type Mutation {
 }
 
 type Query {
-  listOwnedProjects(): ProjectsList
+  getProjectByID(projectID: ID!): Project
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
-  listAssignedProjects(): ProjectsList
+  getProjectByPermalink(permalink: String!): Project
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  listOwnedProjects: ProjectsList
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  listAssignedProjects: ProjectsList
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
