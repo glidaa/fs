@@ -47,8 +47,8 @@ async function createNote(ctx) {
     ReturnValues: "ALL_NEW"
   };
   try {
-    await docClient.put(params).promise();
-    return noteData.Attributes;
+    const data = await docClient.put(params).promise();
+    return data.Attributes;
   } catch (err) {
     return err;
   }
