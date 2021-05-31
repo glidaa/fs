@@ -1,5 +1,5 @@
 type Project
-  @model(mutations: null)
+  @model(mutations: null, subscriptions: null)
   @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
@@ -17,7 +17,7 @@ type Project
 }
 
 type Note
-  @model(mutations: null)
+  @model(mutations: null, subscriptions: null)
   @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
@@ -43,7 +43,7 @@ type Note
 }
 
 type Comment
-  @model(mutations: null)
+  @model(mutations: null, subscriptions: null)
   @key(name: "byNote", fields: ["noteID"]) @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },

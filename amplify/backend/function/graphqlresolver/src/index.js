@@ -62,7 +62,7 @@ async function isProjectOwner(projectID, client) {
     }
   }
   const data = await docClient.get(params).promise()
-  return client === data.owner
+  return client === data.Item.owner
 }
 
 async function isNoteOwner(noteID, client) {
@@ -73,7 +73,7 @@ async function isNoteOwner(noteID, client) {
     }
   }
   const data = await docClient.get(params).promise()
-  return client === data.owner
+  return client === data.Item.owner
 }
 
 async function isCommentOwner(commentID, client) {
@@ -84,7 +84,7 @@ async function isCommentOwner(commentID, client) {
     }
   }
   const data = await docClient.get(params).promise()
-  return client === data.owner
+  return client === data.Item.owner
 }
 
 async function isProjectOwnerOrAssignee(projectID, client) {
@@ -95,7 +95,7 @@ async function isProjectOwnerOrAssignee(projectID, client) {
     }
   }
   const data = await docClient.get(params).promise()
-  return client === data.owner || data.assignees.includes(client)
+  return client === data.Item.owner || data.Item.assignees.includes(client)
 }
 
 async function isNoteOwnerOrAssignee(noteID, client) {
@@ -106,7 +106,7 @@ async function isNoteOwnerOrAssignee(noteID, client) {
     }
   }
   const data = await docClient.get(params).promise()
-  return client === data.owner || data.assignees.includes(client)
+  return client === data.Item.owner || data.Item.assignees.includes(client)
 }
 
 async function createProject(ctx) {
