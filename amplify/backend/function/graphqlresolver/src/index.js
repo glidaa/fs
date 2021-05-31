@@ -43,15 +43,14 @@ async function createNote(ctx) {
   }
   var params = {
     TableName: NOTETABLE,
-    Item: noteData,
-    ReturnValues: "ALL_NEW"
+    Item: noteData
   };
   try {
     console.log("Starting")
     const data = await docClient.put(params).promise();
     console.log("Hello")
     console.log(data)
-    return data;
+    return noteData;
   } catch (err) {
     console.error(err)
     return err;
