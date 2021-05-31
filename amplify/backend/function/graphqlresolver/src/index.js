@@ -4,6 +4,7 @@ const AWS = AWSXRay.captureAWS(require("aws-sdk"));
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+const PROJECTTABLE = process.env.PROJECTTABLE;
 const NOTETABLE = process.env.NOTETABLE;
 const COMMENTTABLE = process.env.COMMENTTABLE;
 
@@ -32,7 +33,22 @@ exports.handler = async function (ctx, context) {
   throw new Error("Resolver not found.");
 };
 
+async function isProjectOwner(projectID, client) {
+  const params = {
+    TableName: PROJECTTABLE,
+    Key:{
+        "id": projectID
+    }
+  }
+  const data = await docClient.get(params).promise()
+  console.log("Hey")
+  console.log(data)
+}
+
 async function createNote(ctx) {
+  const projectID = ctx.arguments.input.projectID
+  const client = ctx.identity.claims["cognito:username"]
+  await isProjectOwner(projectID, client)
   const noteData = {
     ...ctx.arguments.input,
     id: uuidv4(),
@@ -41,15 +57,12 @@ async function createNote(ctx) {
     owner: ctx.identity.claims["cognito:username"],
     assignees: []
   }
-  var params = {
+  const params = {
     TableName: NOTETABLE,
     Item: noteData
   };
   try {
-    console.log("Starting")
-    const data = await docClient.put(params).promise();
-    console.log("Hello")
-    console.log(data)
+    await docClient.put(params).promise();
     return noteData;
   } catch (err) {
     console.error(err)
