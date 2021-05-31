@@ -44,7 +44,8 @@ type Note
 
 type Comment
   @model(mutations: null, subscriptions: null)
-  @key(name: "byNote", fields: ["noteID"]) @auth(rules: [
+  @key(name: "byNote", fields: ["noteID"])
+  @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
   ]) {
@@ -75,15 +76,23 @@ type Mutation {
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
-  deleteProjectAndNotes(projectID: ID!): RemovalResponse
+  deleteProjectAndNotes(projectID: ID!): Project
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
-  deleteNoteAndComments(noteId: ID!): RemovalResponse
+  deleteNoteAndComments(noteId: ID!): Note
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
-  deleteComment(commentID: ID!): RemovalResponse
+  deleteComment(commentID: ID!): Comment
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  assignNote(noteID: ID! assignee: String!): Note
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  disallowNote(noteID: ID! assignee: String!): Note
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools

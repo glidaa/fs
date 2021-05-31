@@ -27,8 +27,11 @@ const resolvers = {
     deleteNoteAndComments: (ctx) => {
       return deleteNoteAndComments(ctx);
     },
-    deleteComment: (ctx) => {
-      return deleteComment(ctx);
+    assignNote: (ctx) => {
+      return assignNote(ctx);
+    },
+    disallowNote: (ctx) => {
+      return disallowNote(ctx);
     },
   },
   Query: {
@@ -108,6 +111,8 @@ async function isNoteOwnerOrAssignee(noteID, client) {
   const data = await docClient.get(params).promise()
   return client === data.Item.owner || data.Item.assignees.includes(client)
 }
+
+
 
 async function createProject(ctx) {
   const client = ctx.identity.claims["cognito:username"]
@@ -191,6 +196,132 @@ async function createComment(ctx) {
   }
 }
 
+async function assignNote(ctx) {
+  const noteID = ctx.arguments.noteID
+  const client = ctx.identity.claims["cognito:username"]
+  const noteGetParams = {
+    TableName: NOTETABLE,
+    Key: {
+      "id": noteID
+    }
+  }
+  const noteData = await docClient.get(noteGetParams).promise()
+  if (client === noteData.Item.owner) {
+    const projectGetParams = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": noteData.Item.projectID
+      }
+    }
+    const projectData = await docClient.get(projectGetParams).promise()
+    let shouldUpdateProject = false
+    const projectAssignees = projectData.Item.assignees
+    if (!projectAssignees.includes(ctx.arguments.assignee)) {
+      projectAssignees.push(ctx.arguments.assignee)
+      shouldUpdateProject = true
+    }
+    const noteAssignees = noteData.Item.assignees
+    noteAssignees.push(ctx.arguments.assignee)
+    const noteUpdateParams = {
+      TableName: NOTETABLE,
+      Key: {
+        "id": noteID
+      },
+      UpdateExpression: "set assignees=:assignees",
+      ExpressionAttributeValues: {
+        ":assignees": noteAssignees
+      },
+      ReturnValues: "ALL_NEW"
+    };
+    const projectUpdateParams = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": noteData.Item.projectID
+      },
+      UpdateExpression: "set assignees=:assignees",
+      ExpressionAttributeValues: {
+        ":assignees": projectAssignees
+      },
+      ReturnValues: "NONE"
+    };
+    try {
+      const updatedNote = await docClient.update(noteUpdateParams).promise();
+      if (shouldUpdateProject) {
+        await docClient.update(projectUpdateParams).promise();
+      }
+      return updatedNote.Attributes;
+    } catch (err) {
+      console.error(err)
+      return err;
+    }
+  } else {
+    return null;
+  }
+}
+
+async function disallowNote(ctx) {
+  const noteID = ctx.arguments.noteID
+  const client = ctx.identity.claims["cognito:username"]
+  const noteGetParams = {
+    TableName: NOTETABLE,
+    Key: {
+      "id": noteID
+    }
+  }
+  const noteData = await docClient.get(noteGetParams).promise()
+  if (client === noteData.Item.owner) {
+    const projectGetParams = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": noteData.Item.projectID
+      }
+    }
+    const projectData = await docClient.get(projectGetParams).promise()
+    let shouldUpdateProject = false
+    const projectAssignees = projectData.Item.assignees
+    if (!projectAssignees.includes(ctx.arguments.assignee)) {
+      projectAssignees.push(ctx.arguments.assignee)
+      shouldUpdateProject = true
+    }
+    const noteAssignees = noteData.Item.assignees
+    noteAssignees.remove(ctx.arguments.assignee)
+    const noteUpdateParams = {
+      TableName: NOTETABLE,
+      Key: {
+        "id": noteID
+      },
+      UpdateExpression: "set assignees=:assignees",
+      ExpressionAttributeValues: {
+        ":assignees": noteAssignees
+      },
+      ReturnValues: "ALL_NEW"
+    };
+    const projectUpdateParams = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": noteData.Item.projectID
+      },
+      UpdateExpression: "set assignees=:assignees",
+      ExpressionAttributeValues: {
+        ":assignees": projectAssignees
+      },
+      ReturnValues: "NONE"
+    };
+    try {
+      const updatedNote = await docClient.update(noteUpdateParams).promise();
+      if (shouldUpdateProject) {
+        await docClient.update(projectUpdateParams).promise();
+      }
+      return updatedNote.Attributes;
+    } catch (err) {
+      console.error(err)
+      return err;
+    }
+  } else {
+    return null;
+  }
+}
+
 async function listNotesForProject(ctx) {
   const projectID = ctx.arguments.projectID
   const client = ctx.identity.claims["cognito:username"]
@@ -249,10 +380,7 @@ async function deleteComment(ctx) {
     }
     try {
       const data = await docClient.delete(params).promise();
-      const deletedNote = data.Attributes;
-      return {
-        id: deletedNote.id
-      };
+      return data.Attributes
     } catch (err) {
       return err;
     }
@@ -271,11 +399,9 @@ async function deleteProjectAndNotes(ctx) {
       removeNotesProm,
       removeProjectProm,
     ]);
-    return {
-      id: deletedProject.id
-    };
+    return deletedProject
   } else {
-    return
+    return null;
   }
 }
 
@@ -289,11 +415,9 @@ async function deleteNoteAndComments(ctx) {
       removeCommentsProm,
       removeNoteProm,
     ]);
-    return {
-      id: deletedNote.id
-    };
+    return deletedNote
   } else {
-    return
+    return null;
   }
 }
 
