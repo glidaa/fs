@@ -164,6 +164,9 @@
                                 "dynamodb:BatchWriteItem",
                                 "dynamodb:List*",
                                 "dynamodb:Query",
+                                "dynamodb:GetItem",
+                                "dynamodb:Update*",
+                                "dynamodb:PutItem",
                                 "dynamodb:Delete*"
                             ],
                             "Resource":[

@@ -17,7 +17,7 @@ type Project
 }
 
 type Note
-  @model
+  @model(mutations: null)
   @key(name: "byProject", fields: ["projectID"]) @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
@@ -70,7 +70,7 @@ type Subscription {
 }
 
 type Mutation {
-  createNotee(input: CreateNoteInput!): CreateNoteInput
+  createNote(input: CreateNoteInput!): Note
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
