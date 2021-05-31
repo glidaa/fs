@@ -9,8 +9,8 @@ const COMMENTTABLE = process.env.COMMENTTABLE;
 
 const resolvers = {
   Mutation: {
-    createNote: (ctx) => {
-      return createNote(ctx);
+    createNotee: (ctx) => {
+      return createNotee(ctx);
     },
     deleteNoteAndComments: (ctx) => {
       return deleteNoteAndComments(ctx);
@@ -32,7 +32,7 @@ exports.handler = async function (ctx, context) {
   throw new Error("Resolver not found.");
 };
 
-async function createNote(ctx) {
+async function createNotee(ctx) {
   const noteData = {
     ...ctx.arguments,
     id: uuidv4(),
@@ -41,14 +41,14 @@ async function createNote(ctx) {
     owner: ctx.identity.username,
     assignees: []
   }
-  var params = {
+  const params = {
     TableName: NOTETABLE,
     Item: noteData,
     ReturnValues: "ALL_NEW"
   };
   try {
     const data = await docClient.put(params).promise();
-    return data;
+    return noteData;
   } catch (err) {
     return err;
   }
