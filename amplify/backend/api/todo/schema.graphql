@@ -9,6 +9,8 @@ type Project
   id: ID!
   permalink: String!
   title: String!
+  project: Project! @connection(fields: ["projectID"])
+  comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
@@ -33,6 +35,8 @@ type Note
 	tag: [String]
 	sprint: String
 	status: String
+  project: Project! @connection(fields: ["projectID"])
+  comments: [Comment] @connection(keyName: "byNote", fields: ["id"])
 	createdAt: AWSDateTime
 	updatedAt: AWSDateTime
 	owner: String!
@@ -48,6 +52,7 @@ type Comment
   id: ID!
   noteID: ID!
   content: String!
+  note: Note! @connection(fields: ["noteID"])
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
@@ -71,13 +76,32 @@ type Subscription {
 
 type Mutation {
   @aws_cognito_user_pools
-  createNote(input: Note!): Note
+  createNote(input: Note!): CreateNoteInput
     @function(name: "graphqlresolver-${env}")
     @aws_iam
   @aws_cognito_user_pools
   deleteNoteAndComments(noteId: ID!): RemovalResponse
     @function(name: "graphqlresolver-${env}")
   @aws_iam
+}
+
+input CreateNoteInput {
+	id: ID
+	projectID: ID!
+	note: String!
+	isDone: Boolean!
+	task: String
+	description: String
+	steps: String
+	due: String
+	watcher: String
+	tag: [String]
+	sprint: String
+	status: String
+	createdAt: AWSDateTime
+	updatedAt: AWSDateTime
+	owner: String!
+	assignees: [String!]
 }
 
 type RemovalResponse {
