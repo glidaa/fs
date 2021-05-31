@@ -1,5 +1,5 @@
 type Project
-  @model
+  @model(mutations: null)
   @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
@@ -43,7 +43,7 @@ type Note
 }
 
 type Comment
-  @model
+  @model(mutations: null)
   @key(name: "byNote", fields: ["noteID"]) @auth(rules: [
     { allow: owner, ownerField: "owner", operations: [create, update, delete, read] },
     { allow: owner, ownerField: "assignees", operations: [read] },
@@ -55,22 +55,27 @@ type Comment
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
-  assignees: [String!]
 }
 
 type Subscription {
   onCreateCommentByNoteId(noteID: ID!): Comment
     @aws_subscribe(mutations: ["createComment"])
-  onUpdateCommentByNoteId(noteID: ID!): Comment
-    @aws_subscribe(mutations: ["updateComment"])
-  onDeleteCommentByNoteId(noteID: ID!): Comment
-    @aws_subscribe(mutations: ["deleteComment"])
-  onCreateNoteByProjectId(projectID: ID!): Note
-    @aws_subscribe(mutations: ["createNote"])
 }
 
 type Mutation {
+  createProject(input: CreateProjectInput!): Project
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
   createNote(input: CreateNoteInput!): Note
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  createComment(input: CreateCommentInput!): Comment
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  deleteProjectAndNotes(projectID: ID!): RemovalResponse
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
@@ -78,10 +83,35 @@ type Mutation {
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
+  deleteComment(commentID: ID!): RemovalResponse
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+}
+
+type Query {
+  listNotesForProject(projectID: ID!): NotesList
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  listCommentsForNote(noteID: ID!): CommentsList
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+}
+
+input CreateProjectInput {
+	id: ID
+	permalink: String!
+	title: String!
+	createdAt: AWSDateTime
+	updatedAt: AWSDateTime
+	owner: String!
+	assignees: [String!]
 }
 
 input CreateNoteInput {
-	id: ID!
+	id: ID
 	projectID: ID!
 	note: String!
 	isDone: Boolean!
@@ -97,6 +127,23 @@ input CreateNoteInput {
 	updatedAt: AWSDateTime
 	owner: String!
 	assignees: [String!]
+}
+
+input CreateCommentInput {
+	id: ID
+	noteID: ID!
+	content: String!
+	createdAt: AWSDateTime
+	updatedAt: AWSDateTime
+	owner: String!
+}
+
+type NotesList {
+  items: [Note!]
+}
+
+type CommentsList {
+  items: [Comment!]
 }
 
 type RemovalResponse {
