@@ -67,39 +67,39 @@ const resolvers = {
     },
     listCommentsForNote: (ctx) => {
       return listCommentsForNote(ctx);
-    },
-    Subscription: {
-      onAssignNote: (ctx) => {
-        return onAssignNote(ctx);
-      },
-      onDisallowNote: (ctx) => {
-        return onDisallowNote(ctx);
-      },
-      onUpdateAssignedNote: (ctx) => {
-        return onUpdateAssignedNote(ctx);
-      },
-      onDeleteAssignedNote: (ctx) => {
-        return onDeleteAssignedNote(ctx);
-      },
-      onCreateOwnedNoteByProjectID: (ctx) => {
-        return onCreateOwnedNoteByProjectID(ctx);
-      },
-      onUpdateOwnedNoteByProjectID: (ctx) => {
-        return onUpdateOwnedNoteByProjectID(ctx);
-      },
-      onDeleteOwnedNoteByProjectID: (ctx) => {
-        return onDeleteOwnedNoteByProjectID(ctx);
-      },
-      onCreateCommentByNoteId: (ctx) => {
-        return onCreateCommentByNoteId(ctx);
-      },
-      onUpdateCommentByNoteId: (ctx) => {
-        return onUpdateCommentByNoteId(ctx);
-      },
-      onDeleteCommentByNoteId: (ctx) => {
-        return onDeleteCommentByNoteId(ctx);
-      },
     }
+  }, 
+  Subscription: {
+    onAssignNote: (ctx) => {
+      return onAssignNote(ctx);
+    },
+    onDisallowNote: (ctx) => {
+      return onDisallowNote(ctx);
+    },
+    onUpdateAssignedNote: (ctx) => {
+      return onUpdateAssignedNote(ctx);
+    },
+    onDeleteAssignedNote: (ctx) => {
+      return onDeleteAssignedNote(ctx);
+    },
+    onCreateOwnedNoteByProjectID: (ctx) => {
+      return onCreateOwnedNoteByProjectID(ctx);
+    },
+    onUpdateOwnedNoteByProjectID: (ctx) => {
+      return onUpdateOwnedNoteByProjectID(ctx);
+    },
+    onDeleteOwnedNoteByProjectID: (ctx) => {
+      return onDeleteOwnedNoteByProjectID(ctx);
+    },
+    onCreateCommentByNoteId: (ctx) => {
+      return onCreateCommentByNoteId(ctx);
+    },
+    onUpdateCommentByNoteId: (ctx) => {
+      return onUpdateCommentByNoteId(ctx);
+    },
+    onDeleteCommentByNoteId: (ctx) => {
+      return onDeleteCommentByNoteId(ctx);
+    },
   }
 };
 
