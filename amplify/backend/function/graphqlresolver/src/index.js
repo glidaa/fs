@@ -69,17 +69,26 @@ const resolvers = {
     }
   }, 
   Subscription: {
+    onCreateProject: (ctx) => {
+      return onCreateProject(ctx);
+    },
+    onUpdateProject: (ctx) => {
+      return onUpdateProject(ctx);
+    },
+    onDeleteProject: (ctx) => {
+      return onDeleteProject(ctx);
+    },
     onAssignNote: (ctx) => {
       return onAssignNote(ctx);
     },
     onDisallowNote: (ctx) => {
       return onDisallowNote(ctx);
     },
-    onUpdateAssignedNote: (ctx) => {
-      return onUpdateAssignedNote(ctx);
+    onUpdateAssignedNoteByProjectID: (ctx) => {
+      return onUpdateAssignedNoteByProjectID(ctx);
     },
-    onDeleteAssignedNote: (ctx) => {
-      return onDeleteAssignedNote(ctx);
+    onDeleteAssignedNoteByProjectID: (ctx) => {
+      return onDeleteAssignedNoteByProjectID(ctx);
     },
     onCreateOwnedNoteByProjectID: (ctx) => {
       return onCreateOwnedNoteByProjectID(ctx);
@@ -602,13 +611,71 @@ async function deleteNoteAndComments(ctx) {
   }
 }
 
+async function onCreateProject(ctx) {
+  const client = ctx.identity.claims["cognito:username"]
+  const owner = ctx.arguments.owner
+  if (client === owner) {
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      permalink: "dump-project",
+      title: "Dump Project",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client
+    }
+  } else {
+    return UNAUTHORIZED
+  }
+}
 
+async function onUpdateProject(ctx) {
+  const client = ctx.identity.claims["cognito:username"]
+  const owner = ctx.arguments.owner
+  if (client === owner) {
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      permalink: "dump-project",
+      title: "Dump Project",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client
+    }
+  } else {
+    return UNAUTHORIZED
+  }
+}
+
+async function onDeleteProject(ctx) {
+  const client = ctx.identity.claims["cognito:username"]
+  const owner = ctx.arguments.owner
+  if (client === owner) {
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      permalink: "dump-project",
+      title: "Dump Project",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client
+    }
+  } else {
+    return UNAUTHORIZED
+  }
+}
 
 async function onAssignNote(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      projectID: "00000000-0000-0000-0000-000000000000",
+      note: "Dump Note",
+      isDone: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client,
+      assignee: client
+    }
   } else {
     return UNAUTHORIZED
   }
@@ -618,27 +685,54 @@ async function onDisallowNote(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      projectID: "00000000-0000-0000-0000-000000000000",
+      note: "Dump Note",
+      isDone: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client,
+      assignee: client
+    }
   } else {
     return UNAUTHORIZED
   }
 }
 
-async function onUpdateAssignedNote(ctx) {
+async function onUpdateAssignedNoteByProjectID(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      projectID: "00000000-0000-0000-0000-000000000000",
+      note: "Dump Note",
+      isDone: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client,
+      assignee: client
+    }
   } else {
     return UNAUTHORIZED
   }
 }
 
-async function onDeleteAssignedNote(ctx) {
+async function onDeleteAssignedNoteByProjectID(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      projectID: "00000000-0000-0000-0000-000000000000",
+      note: "Dump Note",
+      isDone: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client,
+      assignee: client
+    }
   } else {
     return UNAUTHORIZED
   }
@@ -648,7 +742,16 @@ async function onCreateOwnedNoteByProjectID(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      projectID: "00000000-0000-0000-0000-000000000000",
+      note: "Dump Note",
+      isDone: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client,
+      assignee: client
+    }
   } else {
     return UNAUTHORIZED
   }
@@ -658,7 +761,16 @@ async function onUpdateOwnedNoteByProjectID(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      projectID: "00000000-0000-0000-0000-000000000000",
+      note: "Dump Note",
+      isDone: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client,
+      assignee: client
+    }
   } else {
     return UNAUTHORIZED
   }
@@ -668,7 +780,16 @@ async function onDeleteOwnedNoteByProjectID(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      projectID: "00000000-0000-0000-0000-000000000000",
+      note: "Dump Note",
+      isDone: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client,
+      assignee: client
+    }
   } else {
     return UNAUTHORIZED
   }
@@ -678,7 +799,14 @@ async function onCreateCommentByNoteId(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      noteID: "00000000-0000-0000-0000-000000000000",
+      content: {},
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client
+    }
   } else {
     return UNAUTHORIZED
   }
@@ -688,7 +816,14 @@ async function onUpdateCommentByNoteId(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      noteID: "00000000-0000-0000-0000-000000000000",
+      content: {},
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client
+    }
   } else {
     return UNAUTHORIZED
   }
@@ -698,7 +833,14 @@ async function onDeleteCommentByNoteId(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
-    return {}
+    return {
+      id: "00000000-0000-0000-0000-000000000000",
+      noteID: "00000000-0000-0000-0000-000000000000",
+      content: {},
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: client
+    }
   } else {
     return UNAUTHORIZED
   }

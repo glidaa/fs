@@ -119,6 +119,21 @@ type Query {
 }
 
 type Subscription {
+  onCreateProject(owner: String!): Project
+    @aws_subscribe(mutations: ["createProject"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onUpdateProject(owner: String!): Project
+    @aws_subscribe(mutations: ["updateProject"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onDeleteProject(owner: String!): Project
+    @aws_subscribe(mutations: ["deleteProjectAndNotes"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
   onAssignNote(assignee: String!): Note
     @aws_subscribe(mutations: ["assignNote"])
     @function(name: "graphqlresolver-${env}")
@@ -129,12 +144,12 @@ type Subscription {
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
-  onUpdateAssignedNote(assignee: String!): Note
+  onUpdateAssignedNoteByProjectID(projectID: ID!, assignee: String!): Note
     @aws_subscribe(mutations: ["updateNote"])
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
-  onDeleteAssignedNote(assignee: String!): Note
+  onDeleteAssignedNoteByProjectID(projectID: ID!, assignee: String!): Note
     @aws_subscribe(mutations: ["deleteNoteAndComments"])
     @function(name: "graphqlresolver-${env}")
     @aws_iam
