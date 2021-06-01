@@ -44,14 +44,6 @@ type Comment
   owner: String!
 }
 
-type Subscription {
-  onCreateCommentByNoteId(noteID: ID!): Comment
-    @aws_subscribe(mutations: ["createComment"])
-    @function(name: "graphqlresolver-${env}")
-    @aws_iam
-    @aws_cognito_user_pools
-}
-
 type Mutation {
   createProject(input: CreateProjectInput!): Project
     @function(name: "graphqlresolver-${env}")
@@ -126,6 +118,59 @@ type Query {
     @aws_cognito_user_pools
 }
 
+type Subscription {
+  onAssignNote(assignee: String!): Note
+    @aws_subscribe(mutations: ["assignNote"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onDisallowNote(assignee: String!): Note
+    @aws_subscribe(mutations: ["disallowNote"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onUpdateAssignedNote(assignee: String!): Note
+    @aws_subscribe(mutations: ["updateNote"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onDeleteAssignedNote(assignee: String!): Note
+    @aws_subscribe(mutations: ["deleteNoteAndComments"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onCreateOwnedNoteByProjectID(projectID: ID!): Note
+    @aws_subscribe(mutations: ["createNote"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onUpdateOwnedNoteByProjectID(projectID: ID!): Note
+    @aws_subscribe(mutations: ["updateNote", "assignNote", "disallowNote"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onDeleteOwnedNoteByProjectID(projectID: ID!): Note
+    @aws_subscribe(mutations: ["deleteNoteAndComments"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onCreateCommentByNoteId(noteID: ID!): Comment
+    @aws_subscribe(mutations: ["createComment"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onUpdateCommentByNoteId(noteID: ID!): Comment
+    @aws_subscribe(mutations: ["updateComment"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+  onDeleteCommentByNoteId(noteID: ID!): Comment
+    @aws_subscribe(mutations: ["deleteComment"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
+}
+
 input CreateProjectInput {
 	permalink: String!
 	title: String!
@@ -151,11 +196,13 @@ input CreateCommentInput {
 }
 
 input UpdateProjectInput {
+  id: ID!
 	permalink: String
 	title: String
 }
 
 input UpdateNoteInput {
+  id: ID!
 	note: String
 	isDone: Boolean
 	task: String
@@ -169,6 +216,7 @@ input UpdateNoteInput {
 }
 
 input UpdateCommentInput {
+  id: ID!
 	content: AWSJSON
 }
 
