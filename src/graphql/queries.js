@@ -1,93 +1,102 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getProjectById = /* GraphQL */ `
-  query GetProjectById($projectID: ID!) {
-    getProjectByID(projectID: $projectID) {
+export const getNote = /* GraphQL */ `
+  query GetNote($id: ID!) {
+    getNote(id: $id) {
       id
-      permalink
-      title
+      note
+      isDone
+      task
+      description
+      steps
+      due
+      assigned
+      watcher
+      project
+      tag
+      sprint
+      status
       createdAt
       updatedAt
       owner
-    }
-  }
-`;
-export const getProjectByPermalink = /* GraphQL */ `
-  query GetProjectByPermalink($permalink: String!) {
-    getProjectByPermalink(permalink: $permalink) {
-      id
-      permalink
-      title
-      createdAt
-      updatedAt
-      owner
-    }
-  }
-`;
-export const listOwnedProjects = /* GraphQL */ `
-  query ListOwnedProjects {
-    listOwnedProjects {
-      items {
-        id
-        permalink
-        title
-        createdAt
-        updatedAt
-        owner
+      comments {
+        items {
+          id
+          noteID
+          date
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
       }
     }
   }
 `;
-export const listAssignedProjects = /* GraphQL */ `
-  query ListAssignedProjects {
-    listAssignedProjects {
+export const listNotes = /* GraphQL */ `
+  query ListNotes(
+    $filter: ModelNoteFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listNotes(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        permalink
-        title
-        createdAt
-        updatedAt
-        owner
-      }
-    }
-  }
-`;
-export const listNotesForProject = /* GraphQL */ `
-  query ListNotesForProject($projectID: ID!) {
-    listNotesForProject(projectID: $projectID) {
-      items {
-        id
-        projectID
         note
         isDone
         task
         description
         steps
         due
+        assigned
         watcher
+        project
         tag
         sprint
         status
         createdAt
         updatedAt
         owner
-        assignee
+        comments {
+          nextToken
+        }
       }
+      nextToken
     }
   }
 `;
-export const listCommentsForNote = /* GraphQL */ `
-  query ListCommentsForNote($noteID: ID!) {
-    listCommentsForNote(noteID: $noteID) {
+export const getComment = /* GraphQL */ `
+  query GetComment($id: ID!) {
+    getComment(id: $id) {
+      id
+      noteID
+      date
+      content
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listComments = /* GraphQL */ `
+  query ListComments(
+    $filter: ModelCommentFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         noteID
+        date
         content
         createdAt
         updatedAt
         owner
       }
+      nextToken
     }
   }
 `;

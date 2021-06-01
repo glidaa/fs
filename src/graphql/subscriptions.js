@@ -1,165 +1,114 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onAssignNote = /* GraphQL */ `
-  subscription OnAssignNote($assignee: String!) {
-    onAssignNote(assignee: $assignee) {
+export const onCreateNote = /* GraphQL */ `
+  subscription OnCreateNote($owner: String) {
+    onCreateNote(owner: $owner) {
       id
-      projectID
       note
       isDone
       task
       description
       steps
       due
+      assigned
       watcher
+      project
       tag
       sprint
       status
       createdAt
       updatedAt
       owner
-      assignee
+      comments {
+        items {
+          id
+          noteID
+          date
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
     }
   }
 `;
-export const onDisallowNote = /* GraphQL */ `
-  subscription OnDisallowNote($assignee: String!) {
-    onDisallowNote(assignee: $assignee) {
+export const onUpdateNote = /* GraphQL */ `
+  subscription OnUpdateNote($owner: String) {
+    onUpdateNote(owner: $owner) {
       id
-      projectID
       note
       isDone
       task
       description
       steps
       due
+      assigned
       watcher
+      project
       tag
       sprint
       status
       createdAt
       updatedAt
       owner
-      assignee
+      comments {
+        items {
+          id
+          noteID
+          date
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
     }
   }
 `;
-export const onUpdateAssignedNote = /* GraphQL */ `
-  subscription OnUpdateAssignedNote($assignee: String!) {
-    onUpdateAssignedNote(assignee: $assignee) {
+export const onDeleteNote = /* GraphQL */ `
+  subscription OnDeleteNote($owner: String) {
+    onDeleteNote(owner: $owner) {
       id
-      projectID
       note
       isDone
       task
       description
       steps
       due
+      assigned
       watcher
+      project
       tag
       sprint
       status
       createdAt
       updatedAt
       owner
-      assignee
+      comments {
+        items {
+          id
+          noteID
+          date
+          content
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
     }
   }
 `;
-export const onDeleteAssignedNote = /* GraphQL */ `
-  subscription OnDeleteAssignedNote($assignee: String!) {
-    onDeleteAssignedNote(assignee: $assignee) {
-      id
-      projectID
-      note
-      isDone
-      task
-      description
-      steps
-      due
-      watcher
-      tag
-      sprint
-      status
-      createdAt
-      updatedAt
-      owner
-      assignee
-    }
-  }
-`;
-export const onCreateOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnCreateOwnedNoteByProjectId($projectID: ID!) {
-    onCreateOwnedNoteByProjectID(projectID: $projectID) {
-      id
-      projectID
-      note
-      isDone
-      task
-      description
-      steps
-      due
-      watcher
-      tag
-      sprint
-      status
-      createdAt
-      updatedAt
-      owner
-      assignee
-    }
-  }
-`;
-export const onUpdateOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnUpdateOwnedNoteByProjectId($projectID: ID!) {
-    onUpdateOwnedNoteByProjectID(projectID: $projectID) {
-      id
-      projectID
-      note
-      isDone
-      task
-      description
-      steps
-      due
-      watcher
-      tag
-      sprint
-      status
-      createdAt
-      updatedAt
-      owner
-      assignee
-    }
-  }
-`;
-export const onDeleteOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnDeleteOwnedNoteByProjectId($projectID: ID!) {
-    onDeleteOwnedNoteByProjectID(projectID: $projectID) {
-      id
-      projectID
-      note
-      isDone
-      task
-      description
-      steps
-      due
-      watcher
-      tag
-      sprint
-      status
-      createdAt
-      updatedAt
-      owner
-      assignee
-    }
-  }
-`;
-export const onCreateCommentByNoteId = /* GraphQL */ `
-  subscription OnCreateCommentByNoteId($noteID: ID!) {
-    onCreateCommentByNoteId(noteID: $noteID) {
+export const onCreateComment = /* GraphQL */ `
+  subscription OnCreateComment($owner: String) {
+    onCreateComment(owner: $owner) {
       id
       noteID
+      date
       content
       createdAt
       updatedAt
@@ -167,11 +116,12 @@ export const onCreateCommentByNoteId = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateCommentByNoteId = /* GraphQL */ `
-  subscription OnUpdateCommentByNoteId($noteID: ID!) {
-    onUpdateCommentByNoteId(noteID: $noteID) {
+export const onUpdateComment = /* GraphQL */ `
+  subscription OnUpdateComment($owner: String) {
+    onUpdateComment(owner: $owner) {
       id
       noteID
+      date
       content
       createdAt
       updatedAt
@@ -179,11 +129,12 @@ export const onUpdateCommentByNoteId = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteCommentByNoteId = /* GraphQL */ `
-  subscription OnDeleteCommentByNoteId($noteID: ID!) {
-    onDeleteCommentByNoteId(noteID: $noteID) {
+export const onDeleteComment = /* GraphQL */ `
+  subscription OnDeleteComment($owner: String) {
+    onDeleteComment(owner: $owner) {
       id
       noteID
+      date
       content
       createdAt
       updatedAt
