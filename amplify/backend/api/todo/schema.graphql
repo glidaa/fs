@@ -34,6 +34,7 @@ type Note
 
 type Comment
   @model(queries: null, mutations: null, subscriptions: null)
+  @key(name: "byOwner", fields: ["owner"])
   @key(name: "byNote", fields: ["noteID"]) {
   id: ID!
   noteID: ID!
@@ -46,6 +47,9 @@ type Comment
 type Subscription {
   onCreateCommentByNoteId(noteID: ID!): Comment
     @aws_subscribe(mutations: ["createComment"])
+    @function(name: "graphqlresolver-${env}")
+    @aws_iam
+    @aws_cognito_user_pools
 }
 
 type Mutation {
@@ -85,11 +89,11 @@ type Mutation {
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
-  assignNote(noteID: ID! assignee: String!): Note
+  assignNote(noteID: ID!, assignee: String!): Note
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
-  disallowNote(noteID: ID! assignee: String!): Note
+  disallowNote(noteID: ID!, assignee: String!): Note
     @function(name: "graphqlresolver-${env}")
     @aws_iam
     @aws_cognito_user_pools
