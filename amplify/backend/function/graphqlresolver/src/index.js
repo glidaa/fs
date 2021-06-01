@@ -1,6 +1,4 @@
-const {
-  v4: uuidv4
-} = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 const AWSXRay = require("aws-xray-sdk-core");
 const AWS = AWSXRay.captureAWS(require("aws-sdk"));
 
@@ -9,6 +7,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const UNAUTHORIZED = "UNAUTHORIZED";
 const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
 const USER_NOT_ASSIGNED = "USER_NOT_ASSIGNED";
+
 const PROJECTTABLE = process.env.PROJECTTABLE;
 const NOTETABLE = process.env.NOTETABLE;
 const COMMENTTABLE = process.env.COMMENTTABLE;
@@ -99,7 +98,7 @@ const resolvers = {
     },
     onDeleteCommentByNoteId: (ctx) => {
       return onDeleteCommentByNoteId(ctx);
-    },
+    }
   }
 };
 
