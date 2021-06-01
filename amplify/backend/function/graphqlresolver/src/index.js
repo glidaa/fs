@@ -69,14 +69,14 @@ const resolvers = {
     }
   }, 
   Subscription: {
-    onCreateProject: (ctx) => {
-      return onCreateProject(ctx);
+    onCreateOwnedProject: (ctx) => {
+      return onCreateOwnedProject(ctx);
     },
-    onUpdateProject: (ctx) => {
-      return onUpdateProject(ctx);
+    onUpdateOwnedProject: (ctx) => {
+      return onUpdateOwnedProject(ctx);
     },
-    onDeleteProject: (ctx) => {
-      return onDeleteProject(ctx);
+    onDeleteOwnedProject: (ctx) => {
+      return onDeleteOwnedProject(ctx);
     },
     onAssignNote: (ctx) => {
       return onAssignNote(ctx);
@@ -611,7 +611,7 @@ async function deleteNoteAndComments(ctx) {
   }
 }
 
-async function onCreateProject(ctx) {
+async function onCreateOwnedProject(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const owner = ctx.arguments.owner
   if (client === owner) {
@@ -628,7 +628,7 @@ async function onCreateProject(ctx) {
   }
 }
 
-async function onUpdateProject(ctx) {
+async function onUpdateOwnedProject(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const owner = ctx.arguments.owner
   if (client === owner) {
@@ -645,7 +645,7 @@ async function onUpdateProject(ctx) {
   }
 }
 
-async function onDeleteProject(ctx) {
+async function onDeleteOwnedProject(ctx) {
   const client = ctx.identity.claims["cognito:username"]
   const owner = ctx.arguments.owner
   if (client === owner) {
