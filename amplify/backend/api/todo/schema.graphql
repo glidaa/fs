@@ -1,6 +1,5 @@
 type Project
-  @model(queries: null, mutations: null, subscriptions: null)
-  @key(name: "byOwner", fields: ["owner"]) {
+  @model(queries: null, mutations: null, subscriptions: null) {
   id: ID!
   permalink: String!
   title: String!
