@@ -376,7 +376,7 @@ async function assignNote(ctx) {
   }
   const noteData = await docClient.get(noteGetParams).promise()
   if (client === noteData.Item.owner) {
-    if (!noteData.Item.assignee) {
+    if (noteData.Item.assignee === NOT_ASSIGNED) {
       const noteUpdateParams = {
         TableName: NOTETABLE,
         Key: {
@@ -422,7 +422,7 @@ async function disallowNote(ctx) {
         },
         UpdateExpression: "set assignee=:assignee",
         ExpressionAttributeValues: {
-          ":assignee": ""
+          ":assignee": NOT_ASSIGNED
         },
         ReturnValues: "ALL_NEW"
       };
