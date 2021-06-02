@@ -7,7 +7,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const UNAUTHORIZED = "UNAUTHORIZED";
 const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
 const USER_NOT_ASSIGNED = "USER_NOT_ASSIGNED";
-const NOT_ASSGINED = "NOT_ASSGINED";
+const NOT_ASSIGNED = "NOT_ASSIGNED";
 
 const PROJECTTABLE = process.env.PROJECTTABLE;
 const NOTETABLE = process.env.NOTETABLE;
@@ -218,7 +218,7 @@ async function createNote(ctx) {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client,
-      assignee: NOT_ASSGINED
+      assignee: NOT_ASSIGNED
     }
     const params = {
       TableName: NOTETABLE,
