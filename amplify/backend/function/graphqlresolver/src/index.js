@@ -475,7 +475,6 @@ async function listOwnedProjects(ctx) {
   };
   try {
     const data = await docClient.query(params).promise();
-    console.log(data);
     return {
       items: data.Items
     }
