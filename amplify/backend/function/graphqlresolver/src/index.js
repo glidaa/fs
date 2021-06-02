@@ -490,7 +490,7 @@ async function listAssignedProjects(ctx) {
   const params = {
     TableName: NOTETABLE,
     IndexName: "byAssignee",
-    AttributesToGet: ["projectID"],
+    ProjectionExpression: "projectID",
     KeyConditionExpression: "assignee = :assignee",
     ExpressionAttributeValues: {
       ":assignee": client
