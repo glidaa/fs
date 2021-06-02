@@ -467,9 +467,9 @@ async function listOwnedProjects(ctx) {
   const params = {
     TableName: PROJECTTABLE,
     IndexName: "byOwner",
-    KeyConditionExpression: "owner = :owner",
+    KeyConditionExpression: "owner = :client",
     ExpressionAttributeValues: {
-      ":owner": client
+      ":client": client
     },
   };
   try {
