@@ -510,7 +510,6 @@ async function listAssignedProjects(ctx) {
         }
       })
     }
-    console.log(projects)
     return {
       items: projects
     }
