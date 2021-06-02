@@ -498,11 +498,13 @@ async function listAssignedProjects(ctx) {
   };
   try {
     const data = await docClient.query(params).promise();
+    console.log(data)
     let projects = new Set()
     for (const item of data.Items) {
       projects.add(item.projectID)
     }
     projects = Array.from(projects)
+    console.log(projects)
     for (const [i, projectID] of projects) {
       projects[i] = await getProjectByID({
         arguments: {
@@ -510,6 +512,7 @@ async function listAssignedProjects(ctx) {
         }
       })
     }
+    console.log(projects)
     return {
       items: projects
     }
