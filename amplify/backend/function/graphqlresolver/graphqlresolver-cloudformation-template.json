@@ -172,6 +172,18 @@
                             "Resource":[
                                 {
                                     "Fn::Sub":[
+                                        "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}/index/*",
+                                        {
+                                            "tablename":{
+                                                "Fn::ImportValue":{
+                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::Sub":[
                                         "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}",
                                         {
                                             "tablename":{
