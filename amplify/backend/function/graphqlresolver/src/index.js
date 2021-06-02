@@ -182,7 +182,7 @@ async function isNoteOwnerOrAssignee(noteID, client) {
 
 
 async function createProject(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (client) {
     const projectData = {
       ...ctx.arguments.input,
@@ -209,7 +209,7 @@ async function createProject(ctx) {
 
 async function createNote(ctx) {
   const projectID = ctx.arguments.input.projectID
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (await isProjectOwner(projectID, client)) {
     const noteData = {
       ...ctx.arguments.input,
@@ -237,7 +237,7 @@ async function createNote(ctx) {
 
 async function createComment(ctx) {
   const noteID = ctx.arguments.input.noteID
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (await isNoteOwnerOrAssignee(noteID, client)) {
     const commentData = {
       ...ctx.arguments.input,
@@ -265,7 +265,7 @@ async function createComment(ctx) {
 async function updateProject(ctx) {
   const updateData = ctx.arguments.input
   const projectID = updateData.id
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (isProjectOwner(projectID, client)) {
     delete updateData["id"]
     const expAttrVal = {}
@@ -299,7 +299,7 @@ async function updateProject(ctx) {
 async function updateNote(ctx) {
   const updateData = ctx.arguments.input
   const noteID = updateData.id
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (isNoteOwner(noteID, client)) {
     delete updateData["id"]
     const expAttrVal = {}
@@ -333,7 +333,7 @@ async function updateNote(ctx) {
 async function updateComment(ctx) {
   const updateData = ctx.arguments.input
   const commentID = updateData.id
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (isCommentOwner(commentID, client)) {
     delete updateData["id"]
     const expAttrVal = {}
@@ -366,7 +366,7 @@ async function updateComment(ctx) {
 
 async function assignNote(ctx) {
   const noteID = ctx.arguments.noteID
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const noteGetParams = {
     TableName: NOTETABLE,
     Key: {
@@ -404,7 +404,7 @@ async function assignNote(ctx) {
 
 async function disallowNote(ctx) {
   const noteID = ctx.arguments.noteID
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const noteGetParams = {
     TableName: NOTETABLE,
     Key: {
@@ -463,7 +463,7 @@ async function getProjectByPermalink(ctx) {
 }
 
 async function listOwnedProjects(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const params = {
     TableName: PROJECTTABLE,
     IndexName: "byOwner",
@@ -485,7 +485,7 @@ async function listOwnedProjects(ctx) {
 }
 
 async function listAssignedProjects(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const params = {
     TableName: NOTETABLE,
     IndexName: "byAssignee",
@@ -520,7 +520,7 @@ async function listAssignedProjects(ctx) {
 
 async function listNotesForProject(ctx) {
   const projectID = ctx.arguments.projectID
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const params = {
     TableName: NOTETABLE,
     IndexName: "byProject",
@@ -543,7 +543,7 @@ async function listNotesForProject(ctx) {
 
 async function listCommentsForNote(ctx) {
   const noteID = ctx.arguments.noteID
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (await isNoteOwnerOrAssignee(noteID, client)) {
     try {
       const commentsList = await _listCommentsForNote(noteID)
@@ -561,7 +561,7 @@ async function listCommentsForNote(ctx) {
 
 async function deleteComment(ctx) {
   const commentID = ctx.arguments.commentID
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (await isCommentOwner(commentID, client)) {
     const params = {
       TableName: COMMENTTABLE,
@@ -583,7 +583,7 @@ async function deleteComment(ctx) {
 
 async function deleteProjectAndNotes(ctx) {
   const projectID = ctx.arguments.projectID
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (await isProjectOwner(projectID, client)) {
     const removeNotesProm = removeNotesOfProject(projectID);
     const removeProjectProm = deleteProject(projectID);
@@ -599,7 +599,7 @@ async function deleteProjectAndNotes(ctx) {
 
 async function deleteNoteAndComments(ctx) {
   const noteID = ctx.arguments.noteId
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   if (await isNoteOwner(noteID, client)) {
     const removeCommentsProm = removeCommentsOfNote(noteID);
     const removeNoteProm = deleteNote(noteID);
@@ -614,7 +614,7 @@ async function deleteNoteAndComments(ctx) {
 }
 
 async function onCreateOwnedProject(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const owner = ctx.arguments.owner
   if (client === owner) {
     return {
@@ -631,7 +631,7 @@ async function onCreateOwnedProject(ctx) {
 }
 
 async function onUpdateOwnedProject(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const owner = ctx.arguments.owner
   if (client === owner) {
     return {
@@ -648,7 +648,7 @@ async function onUpdateOwnedProject(ctx) {
 }
 
 async function onDeleteOwnedProject(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const owner = ctx.arguments.owner
   if (client === owner) {
     return {
@@ -665,7 +665,7 @@ async function onDeleteOwnedProject(ctx) {
 }
 
 async function onAssignNote(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
@@ -684,7 +684,7 @@ async function onAssignNote(ctx) {
 }
 
 async function onDisallowNote(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
@@ -703,7 +703,7 @@ async function onDisallowNote(ctx) {
 }
 
 async function onUpdateAssignedNoteByProjectID(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
@@ -722,7 +722,7 @@ async function onUpdateAssignedNoteByProjectID(ctx) {
 }
 
 async function onDeleteAssignedNoteByProjectID(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
@@ -741,7 +741,7 @@ async function onDeleteAssignedNoteByProjectID(ctx) {
 }
 
 async function onCreateOwnedNoteByProjectID(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
@@ -760,7 +760,7 @@ async function onCreateOwnedNoteByProjectID(ctx) {
 }
 
 async function onUpdateOwnedNoteByProjectID(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
@@ -779,7 +779,7 @@ async function onUpdateOwnedNoteByProjectID(ctx) {
 }
 
 async function onDeleteOwnedNoteByProjectID(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
@@ -798,7 +798,7 @@ async function onDeleteOwnedNoteByProjectID(ctx) {
 }
 
 async function onCreateCommentByNoteId(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
     return {
@@ -815,7 +815,7 @@ async function onCreateCommentByNoteId(ctx) {
 }
 
 async function onUpdateCommentByNoteId(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
     return {
@@ -832,7 +832,7 @@ async function onUpdateCommentByNoteId(ctx) {
 }
 
 async function onDeleteCommentByNoteId(ctx) {
-  const client = ctx.identity.claims["cognito:username"]
+  const client = ctx.identity.sub
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
     return {
