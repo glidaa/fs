@@ -180,24 +180,110 @@ async function isNoteOwnerOrAssignee(noteID, client) {
   return client === data.Item.owner || client === data.Item.assignee
 }
 
+async function removeProjectOrder(projectID) {
+  const projectParams = {
+    TableName: PROJECTTABLE,
+    Key: {
+      "id": projectID
+    },
+    ProjectionExpression: "prevProject, nextProject"
+  }
+  const projectData = await docClient.get(projectParams).promise()
+  if (projectData.Item) {
+    const { prevProject, nextProject } = projectData.Item
+    const prevProjectUpdateParams = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": prevProject
+      },
+      UpdateExpression: "SET nextProject = :nextProject",
+      ReturnValues: "NONE",
+      ExpressionAttributeValues: {
+        ":nextProject": nextProject
+      }
+    };
+    const nextProjectUpdateParams = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": nextProject
+      },
+      UpdateExpression: "SET prevProject = prevProject",
+      ReturnValues: "NONE",
+      ExpressionAttributeValues: {
+        ":prevProject": prevProject
+      }
+    };
+    try {
+      if (prevProject) {
+        await docClient.update(prevProjectUpdateParams).promise()
+      }
+      if (nextProject) {
+        await docClient.update(nextProjectUpdateParams).promise()
+      }
+    } catch (err) {
+      console.error(err)
+      return err;
+    }
+  }
+}
 
+async function injectProjectOrder(projectID, prevProject, nextProject) {
+  const { prevProject, nextProject } = projectData.Item
+  const prevProjectUpdateParams = {
+    TableName: PROJECTTABLE,
+    Key: {
+      "id": prevProject
+    },
+    UpdateExpression: "SET nextProject = :nextProject",
+    ReturnValues: "NONE",
+    ExpressionAttributeValues: {
+      ":nextProject": projectID
+    }
+  };
+  const nextProjectUpdateParams = {
+    TableName: PROJECTTABLE,
+    Key: {
+      "id": nextProject
+    },
+    UpdateExpression: "SET prevProject = prevProject",
+    ReturnValues: "NONE",
+    ExpressionAttributeValues: {
+      ":prevProject": projectID
+    }
+  };
+  try {
+    if (prevProject) {
+      await docClient.update(prevProjectUpdateParams).promise()
+    }
+    if (nextProject) {
+      await docClient.update(nextProjectUpdateParams).promise()
+    }
+  } catch (err) {
+    console.error(err)
+    return err;
+  }
+}
 
 async function createProject(ctx) {
   const client = ctx.identity.sub
   if (client) {
     const projectData = {
       ...ctx.arguments.input,
+      notesCount: 0,
       id: uuidv4(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
     }
+    projectData.prevProject = projectData.prevProject || null
+    projectData.nextProject = projectData.nextProject || null
     const params = {
       TableName: PROJECTTABLE,
       Item: projectData
     };
     try {
       await docClient.put(params).promise();
+      await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
       return projectData;
     } catch (err) {
       console.error(err)
@@ -208,24 +294,128 @@ async function createProject(ctx) {
   }
 }
 
+async function removeNoteOrder(noteID) {
+  const noteParams = {
+    TableName: NOTETABLE,
+    Key: {
+      "id": noteID
+    },
+    ProjectionExpression: "prevNote, nextNote"
+  }
+  const noteData = await docClient.get(noteParams).promise()
+  if (noteData.Item) {
+    const { prevNote, nextNote } = noteData.Item
+    const prevNoteUpdateParams = {
+      TableName: NOTETABLE,
+      Key: {
+        "id": prevNote
+      },
+      UpdateExpression: "SET nextNote = :nextNote",
+      ReturnValues: "NONE",
+      ExpressionAttributeValues: {
+        ":nextNote": nextNote
+      }
+    };
+    const nextNoteUpdateParams = {
+      TableName: NOTETABLE,
+      Key: {
+        "id": nextNote
+      },
+      UpdateExpression: "SET prevNote = prevNote",
+      ReturnValues: "NONE",
+      ExpressionAttributeValues: {
+        ":prevNote": prevNote
+      }
+    };
+    try {
+      if (prevNote) {
+        await docClient.update(prevNoteUpdateParams).promise()
+      }
+      if (nextNote) {
+        await docClient.update(nextNoteUpdateParams).promise()
+      }
+    } catch (err) {
+      console.error(err)
+      return err;
+    }
+  }
+}
+
+async function injectNoteOrder(noteID, prevNote, nextNote) {
+  const { prevNote, nextNote } = noteData.Item
+  const prevNoteUpdateParams = {
+    TableName: NOTETABLE,
+    Key: {
+      "id": prevNote
+    },
+    UpdateExpression: "SET nextNote = :nextNote",
+    ReturnValues: "NONE",
+    ExpressionAttributeValues: {
+      ":nextNote": noteID
+    }
+  };
+  const nextNoteUpdateParams = {
+    TableName: NOTETABLE,
+    Key: {
+      "id": nextNote
+    },
+    UpdateExpression: "SET prevNote = prevNote",
+    ReturnValues: "NONE",
+    ExpressionAttributeValues: {
+      ":prevNote": noteID
+    }
+  };
+  try {
+    if (prevNote) {
+      await docClient.update(prevNoteUpdateParams).promise()
+    }
+    if (nextNote) {
+      await docClient.update(nextNoteUpdateParams).promise()
+    }
+  } catch (err) {
+    console.error(err)
+    return err;
+  }
+}
+
 async function createNote(ctx) {
   const projectID = ctx.arguments.input.projectID
   const client = ctx.identity.sub
-  if (await isProjectOwner(projectID, client)) {
+  const projectParams = {
+    TableName: PROJECTTABLE,
+    Key: {
+      "id": projectID
+    }
+  }
+  const projectData = await docClient.get(projectParams).promise()
+  if (client === projectData.Item.owner) {
     const noteData = {
       ...ctx.arguments.input,
       id: uuidv4(),
+      permalink: projectData.notesCount + 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client,
       assignee: NOT_ASSIGNED
     }
-    const params = {
+    noteData.prevNote = noteData.prevNote || null
+    noteData.nextNote = noteData.nextNote || null
+    const projectUpdateParams = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": projectID
+      },
+      UpdateExpression: "SET notesCount = notesCount + 1",
+      ReturnValues: "NONE"
+    };
+    const noteParams = {
       TableName: NOTETABLE,
       Item: noteData
     };
     try {
-      await docClient.put(params).promise();
+      await docClient.put(noteParams).promise();
+      await injectNoteOrder(noteData.id, noteData.prevNote, noteData.nextNote)
+      await docClient.update(projectUpdateParams).promise()
       return noteData;
     } catch (err) {
       console.error(err)
@@ -286,6 +476,10 @@ async function updateProject(ctx) {
       ReturnValues: "ALL_NEW"
     };
     try {
+      if (updateData.prevProject !== undefined && updateData.nextProject !== undefined) {
+        await removeProjectOrder(projectID)
+        await injectProjectOrder(projectID, updateData.prevProject, updateData.nextProject)
+      }
       const data = await docClient.update(params).promise();
       return data.Attributes;
     } catch (err) {
@@ -320,6 +514,10 @@ async function updateNote(ctx) {
       ReturnValues: "ALL_NEW"
     };
     try {
+      if (updateData.prevNote !== undefined && updateData.nextNote !== undefined) {
+        await removeNoteOrder(noteID)
+        await injectNoteOrder(noteID, updateData.prevNote, updateData.nextNote)
+      }
       const data = await docClient.update(params).promise();
       return data.Attributes;
     } catch (err) {
@@ -592,6 +790,7 @@ async function deleteProjectAndNotes(ctx) {
       removeNotesProm,
       removeProjectProm,
     ]);
+    await removeProjectOrder(projectID)
     return deletedProject
   } else {
     return UNAUTHORIZED;
@@ -608,6 +807,7 @@ async function deleteNoteAndComments(ctx) {
       removeCommentsProm,
       removeNoteProm,
     ]);
+    await removeNoteOrder(noteID)
     return deletedNote
   } else {
     return UNAUTHORIZED;

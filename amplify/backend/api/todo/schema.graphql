@@ -2,8 +2,8 @@ type Project
 	@model(queries: null, mutations: null, subscriptions: null)
 	@key(name: "byOwner", fields: ["owner"]) {
 	id: ID!
-	prevProject: ID!
-	nextProject: ID!
+	prevProject: ID
+	nextProject: ID
 	permalink: String!
 	title: String!
 	notesCount: Int!
@@ -19,8 +19,8 @@ type Note
 	@key(name: "byProject", fields: ["projectID"]) {
 	id: ID!
 	projectID: ID!
-	prevNote: ID!
-	nextNote: ID!
+	prevNote: ID
+	nextNote: ID
 	permalink: Int!
 	note: String!
 	isDone: Boolean!
@@ -193,16 +193,16 @@ type Subscription {
 }
 
 input CreateProjectInput {
-	prevProject: ID!
-	nextProject: ID!
+	prevProject: ID
+	nextProject: ID
 	permalink: String!
 	title: String!
 }
 
 input CreateNoteInput {
 	projectID: ID!
-	prevNote: ID!
-	nextNote: ID!
+	prevNote: ID
+	nextNote: ID
 	note: String!
 	isDone: Boolean!
 	task: String
