@@ -196,10 +196,11 @@ async function removeProjectOrder(projectID) {
       Key: {
         "id": prevProject
       },
-      UpdateExpression: "SET nextProject = :nextProject",
+      UpdateExpression: "SET nextProject = :nextProject, updatedAt = :updatedAt",
       ReturnValues: "NONE",
       ExpressionAttributeValues: {
-        ":nextProject": nextProject
+        ":nextProject": nextProject,
+        ":updatedAt": new Date().toISOString()
       }
     };
     const nextProjectUpdateParams = {
@@ -207,10 +208,11 @@ async function removeProjectOrder(projectID) {
       Key: {
         "id": nextProject
       },
-      UpdateExpression: "SET prevProject = prevProject",
+      UpdateExpression: "SET prevProject = :prevProject, updatedAt = :updatedAt",
       ReturnValues: "NONE",
       ExpressionAttributeValues: {
-        ":prevProject": prevProject
+        ":prevProject": prevProject,
+        ":updatedAt": new Date().toISOString()
       }
     };
     try {
@@ -234,10 +236,11 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
     Key: {
       "id": prevProject
     },
-    UpdateExpression: "SET nextProject = :nextProject",
+    UpdateExpression: "SET nextProject = :nextProject, updatedAt = :updatedAt",
     ReturnValues: "NONE",
     ExpressionAttributeValues: {
-      ":nextProject": projectID
+      ":nextProject": projectID,
+      ":updatedAt": new Date().toISOString()
     }
   };
   const nextProjectUpdateParams = {
@@ -245,10 +248,11 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
     Key: {
       "id": nextProject
     },
-    UpdateExpression: "SET prevProject = prevProject",
+    UpdateExpression: "SET prevProject = :prevProject, updatedAt = :updatedAt",
     ReturnValues: "NONE",
     ExpressionAttributeValues: {
-      ":prevProject": projectID
+      ":prevProject": projectID,
+      ":updatedAt": new Date().toISOString()
     }
   };
   try {
@@ -310,10 +314,11 @@ async function removeNoteOrder(noteID) {
       Key: {
         "id": prevNote
       },
-      UpdateExpression: "SET nextNote = :nextNote",
+      UpdateExpression: "SET nextNote = :nextNote, updatedAt = :updatedAt",
       ReturnValues: "NONE",
       ExpressionAttributeValues: {
-        ":nextNote": nextNote
+        ":nextNote": nextNote,
+        ":updatedAt": new Date().toISOString()
       }
     };
     const nextNoteUpdateParams = {
@@ -321,10 +326,11 @@ async function removeNoteOrder(noteID) {
       Key: {
         "id": nextNote
       },
-      UpdateExpression: "SET prevNote = prevNote",
+      UpdateExpression: "SET prevNote = :prevNote, updatedAt = :updatedAt",
       ReturnValues: "NONE",
       ExpressionAttributeValues: {
-        ":prevNote": prevNote
+        ":prevNote": prevNote,
+        ":updatedAt": new Date().toISOString()
       }
     };
     try {
@@ -348,10 +354,11 @@ async function injectNoteOrder(noteID, prevNote, nextNote) {
     Key: {
       "id": prevNote
     },
-    UpdateExpression: "SET nextNote = :nextNote",
+    UpdateExpression: "SET nextNote = :nextNote, updatedAt = :updatedAt",
     ReturnValues: "NONE",
     ExpressionAttributeValues: {
-      ":nextNote": noteID
+      ":nextNote": noteID,
+      ":updatedAt": new Date().toISOString()
     }
   };
   const nextNoteUpdateParams = {
@@ -359,10 +366,11 @@ async function injectNoteOrder(noteID, prevNote, nextNote) {
     Key: {
       "id": nextNote
     },
-    UpdateExpression: "SET prevNote = prevNote",
+    UpdateExpression: "SET prevNote = :prevNote, updatedAt = :updatedAt",
     ReturnValues: "NONE",
     ExpressionAttributeValues: {
-      ":prevNote": noteID
+      ":prevNote": noteID,
+      ":updatedAt": new Date().toISOString()
     }
   };
   try {
@@ -405,7 +413,10 @@ async function createNote(ctx) {
       Key: {
         "id": projectID
       },
-      UpdateExpression: "SET notesCount = notesCount + 1",
+      UpdateExpression: "SET notesCount = notesCount + 1, updatedAt = :updatedAt",
+      ExpressionAttributeValues: {
+        ":updatedAt": new Date().toISOString()
+      },
       ReturnValues: "NONE"
     };
     const noteParams = {
@@ -465,6 +476,8 @@ async function updateProject(ctx) {
       expAttrVal[`:${item}`] = updateData[item]
       updateExp.push(`${item}=:${item}`)
     }
+    expAttrVal[":updatedAt"] = new Date().toISOString()
+    updateExp.push("updatedAt=:updatedAt")
     updateExp = `set ${updateExp.join(", ")}`
     const params = {
       TableName: PROJECTTABLE,
@@ -503,6 +516,8 @@ async function updateNote(ctx) {
       expAttrVal[`:${item}`] = updateData[item]
       updateExp.push(`${item}=:${item}`)
     }
+    expAttrVal[":updatedAt"] = new Date().toISOString()
+    updateExp.push("updatedAt=:updatedAt")
     updateExp = `set ${updateExp.join(", ")}`
     const params = {
       TableName: NOTETABLE,
@@ -541,6 +556,8 @@ async function updateComment(ctx) {
       expAttrVal[`:${item}`] = updateData[item]
       updateExp.push(`${item}=:${item}`)
     }
+    expAttrVal[":updatedAt"] = new Date().toISOString()
+    updateExp.push("updatedAt=:updatedAt")
     updateExp = `set ${updateExp.join(", ")}`
     const params = {
       TableName: COMMENTTABLE,
@@ -580,9 +597,10 @@ async function assignNote(ctx) {
         Key: {
           "id": noteID
         },
-        UpdateExpression: "set assignee=:assignee",
+        UpdateExpression: "set assignee=:assignee, updatedAt = :updatedAt",
         ExpressionAttributeValues: {
-          ":assignee": ctx.arguments.assignee
+          ":assignee": ctx.arguments.assignee,
+          ":updatedAt": new Date().toISOString()
         },
         ReturnValues: "ALL_NEW"
       };
@@ -822,6 +840,7 @@ async function onCreateOwnedProject(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dump-project",
       title: "Dump Project",
+      notesCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -839,6 +858,7 @@ async function onUpdateOwnedProject(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dump-project",
       title: "Dump Project",
+      notesCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -856,6 +876,7 @@ async function onDeleteOwnedProject(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dump-project",
       title: "Dump Project",
+      notesCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -873,6 +894,7 @@ async function onAssignNote(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
       note: "Dump Note",
+      permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -892,6 +914,7 @@ async function onDisallowNote(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
       note: "Dump Note",
+      permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -911,6 +934,7 @@ async function onUpdateAssignedNoteByProjectID(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
       note: "Dump Note",
+      permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -930,6 +954,7 @@ async function onDeleteAssignedNoteByProjectID(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
       note: "Dump Note",
+      permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -949,6 +974,7 @@ async function onCreateOwnedNoteByProjectID(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
       note: "Dump Note",
+      permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -968,6 +994,7 @@ async function onUpdateOwnedNoteByProjectID(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
       note: "Dump Note",
+      permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -987,6 +1014,7 @@ async function onDeleteOwnedNoteByProjectID(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
       note: "Dump Note",
+      permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
