@@ -4,6 +4,7 @@ type Project
   id: ID!
   permalink: String!
   title: String!
+  notesCount: Int!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   owner: String!
@@ -16,6 +17,7 @@ type Note
   @key(name: "byProject", fields: ["projectID"]) {
 	id: ID!
 	projectID: ID!
+        permalink: Int!
 	note: String!
 	isDone: Boolean!
 	task: String
