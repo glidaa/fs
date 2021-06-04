@@ -411,8 +411,9 @@ async function createNote(ctx) {
       Key: {
         "id": projectID
       },
-      UpdateExpression: "SET notesCount = notesCount + 1, updatedAt = :updatedAt",
+      UpdateExpression: "SET notesCount = notesCount + :increment, updatedAt = :updatedAt",
       ExpressionAttributeValues: {
+        ":increment": { "N": "1" },
         ":updatedAt": new Date().toISOString()
       },
       ReturnValues: "NONE"
