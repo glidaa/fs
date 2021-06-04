@@ -398,7 +398,7 @@ async function createNote(ctx) {
     const noteData = {
       ...ctx.arguments.input,
       id: uuidv4(),
-      permalink: projectData.notesCount + 1,
+      permalink: projectData.Item.notesCount + 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client,
