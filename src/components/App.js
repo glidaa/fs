@@ -23,7 +23,24 @@ import { TaskItem } from "./TaskItem";
 import { NewTask } from "./NewTask";
 import handlerIcon from "../assets/apps.svg";
 import shareIcon from "../assets/share-outline.svg";
-import { stringify } from "querystring";
+
+import styledComponents from "styled-components";
+
+
+const Button = styledComponents.button`
+background: none;
+border: none;
+font-size: 14px;
+font-weight: 600;
+display: none;
+
+@media only screen and (max-width: 768px) {
+display: block;
+}
+
+
+`;
+
 Amplify.configure(aws_exports);
 PubSub.configure(aws_exports);
 
@@ -38,7 +55,8 @@ class App extends Component {
       isPanelShown: false,
       isDropdownOpened: false,
       authState: AuthState.SignedOut,
-      authData: null
+      authData: null, 
+      hideShowPanel: false
     };
     this.initNoteState = {
       id: "",
@@ -312,7 +330,8 @@ class App extends Component {
     this.setState({
       selectedNote: note.id,
       value: note.note,
-      isPanelShown: true
+      isPanelShown: true,
+      hideShowPanel: false
     });
   }
 
@@ -332,7 +351,17 @@ class App extends Component {
     })
   }
 
+  setHideShowPanel = () => {
+    this.setState((state)=> {
+      return {
+        hideShowPanel: !state.hideShowPanel,
+        isPanelShown : false
+      }
+    })
+  }
+
   render() {
+    let {hideShowPanel} = this.state
     return (
       <div className="App">
         {this.state.auth ? (
@@ -382,10 +411,10 @@ class App extends Component {
         ) : (
             <div className="mainPage">
               <Router>
-              <ProjectsPanel />
+              <ProjectsPanel setHideShowPanel={this.setHideShowPanel} hideShowPanel={hideShowPanel}/>
             <div className="center">
             <div className="container">
-              <button style={{float: "right"}}>
+              <button  style={{float: "right"}}>
                 <img
                   alt="share button"
                   src={shareIcon}
@@ -393,6 +422,7 @@ class App extends Component {
                   onClick={() => {navigator.clipboard.writeText(window.location.origin + '/' + this.currentNoteState.url)}}
                 />
               </button>
+              <Button onClick={()=> this.setHideShowPanel()}>{"< Projects "}</Button>
               <h1 className="title">Notes</h1>
               <Route path="/" exact>
                 <Nestable
@@ -420,7 +450,7 @@ class App extends Component {
                 />
                 <NewTask higherScope={this}/>
               </Route>
-              <Route path='/:url' >
+              {/* <Route path='/:url' >
                 {this.state.notes.map(item => {
                   if ('/' + item.url == window.location.pathname) {
                     if (this.state.selectedNote == '') {
@@ -428,10 +458,15 @@ class App extends Component {
                     }
                   }
                 })}
-              </Route>
+              </Route> */}
               </div>
               </div>
               <SidePanel
+              setHideShowPanel={()=> this.setState(state => {
+                return {
+                  isPanelShown : !state.isPanelShown,
+                }
+              })}
                 higherScope={this}
                 selectedNote={this.state.selectedNote}
               />

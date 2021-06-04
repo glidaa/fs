@@ -1,45 +1,50 @@
-import React, { useState, useRef } from 'react';
-import { useOuterClick } from 'react-outer-click';
-import styledComponents from "styled-components"
+import React, { useState, useRef } from "react";
+import { useOuterClick } from "react-outer-click";
+import styledComponents from "styled-components";
 
 export const Select = (props) => {
-  const selectRef = useRef(null)
-  const [isDropdownOpened, setIsDropdownOpened] = useState(false)
+  const selectRef = useRef(null);
+  const [isDropdownOpened, setIsDropdownOpened] = useState(false);
   const toggleDropdown = (e) => {
-    setIsDropdownOpened(isDropdownOpened ? false : true)
-  }
+    setIsDropdownOpened(isDropdownOpened ? false : true);
+  };
   useOuterClick(selectRef, () => {
     if (isDropdownOpened) {
       setIsDropdownOpened(false);
     }
-  })
+  });
   return (
     <SelectContainer ref={selectRef}>
       <input
         name={props.name}
-        value={props.options[(props.value || props.defaultValue)]}
+        value={props.options[props.value || props.defaultValue]}
         contentEditable={false}
         onClick={toggleDropdown}
         readOnly
       />
-      {isDropdownOpened && <Options>
-        {Object.entries(props.options).map(x => (
-          <span
-            key={x[0]}
-            className={x[0] === (props.value || props.defaultValue) ? "selected" : null}
-            onClick={() => {
-                toggleDropdown()
-                props.onChange({ target: {
-                  value: x[0],
-                  name: props.name
-                }})
+      {isDropdownOpened && (
+        <Options>
+          {Object.entries(props.options).map((x) => (
+            <span
+              key={x[0]}
+              className={
+                x[0] === (props.value || props.defaultValue) ? "selected" : null
               }
-            }
-          >
-            {x[1]}
-          </span>
-        ))}
-      </Options>}
+              onClick={() => {
+                toggleDropdown();
+                props.onChange({
+                  target: {
+                    value: x[0],
+                    name: props.name,
+                  },
+                });
+              }}
+            >
+              {x[1]}
+            </span>
+          ))}
+        </Options>
+      )}
     </SelectContainer>
   );
 };
@@ -65,7 +70,30 @@ const SelectContainer = styledComponents.div`
       box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
     }
   }
-`
+
+  @media only screen and (max-width: 768px) {
+    width: auto;
+    height: auto;
+    & > input {
+      border: 0.5px solid transparent;
+      border-radius: 4px;
+      padding: 9px 10px;
+      font-size: 12px;
+      transition: border 0.3s, box-shadow 0.3s;
+      border: 0.5px solid #6F7782;
+      margin-top: 5px;
+      width: auto;
+      &:hover {
+        border: 0.5px solid #9198a1;
+      }
+      &:focus {
+        border: 0.5px solid #6F7782;
+        box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
+      }
+    }
+  }
+
+`;
 const Options = styledComponents.div`
   position: relative;
   display: flex;
@@ -84,4 +112,4 @@ const Options = styledComponents.div`
   & > span.selected {
     background-color: #E6F7FF;
   }
-`
+`;
