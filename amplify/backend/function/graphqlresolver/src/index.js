@@ -230,7 +230,6 @@ async function removeProjectOrder(projectID) {
 }
 
 async function injectProjectOrder(projectID, prevProject, nextProject) {
-  const { prevProject, nextProject } = projectData.Item
   const prevProjectUpdateParams = {
     TableName: PROJECTTABLE,
     Key: {
@@ -348,7 +347,6 @@ async function removeNoteOrder(noteID) {
 }
 
 async function injectNoteOrder(noteID, prevNote, nextNote) {
-  const { prevNote, nextNote } = noteData.Item
   const prevNoteUpdateParams = {
     TableName: NOTETABLE,
     Key: {
