@@ -1,133 +1,159 @@
-import { useOuterClick } from 'react-outer-click';
-import { useState, useRef, useReducer, useEffect } from "react"
-import { DatePicker } from './DatePicker';
-import {stateToHTML} from 'draft-js-export-html';
-import {Editor, EditorState, ContentState, convertToRaw, convertFromRaw} from 'draft-js';
+import { useOuterClick } from "react-outer-click";
+import { useState, useRef, useReducer, useEffect } from "react";
+import { DatePicker } from "./DatePicker";
+import { stateToHTML } from "draft-js-export-html";
+import {
+  Editor,
+  EditorState,
+  ContentState,
+  convertToRaw,
+  convertFromRaw,
+} from "draft-js";
 import { API, graphqlOperation, Auth } from "aws-amplify";
-import { createComment } from "../graphql/mutations"
-import { listComments } from "../graphql/queries"
-import { onCreateComment } from "../graphql/subscriptions"
-import { AuthState } from '@aws-amplify/ui-components';
+import { createComment } from "../graphql/mutations";
+import { listComments } from "../graphql/queries";
+import { onCreateComment } from "../graphql/subscriptions";
+import { AuthState } from "@aws-amplify/ui-components";
 import styledComponents from "styled-components";
-import { Select } from "./Select"
-import { Tag } from "./Tag"
-import 'draft-js/dist/Draft.css';
+import { Select } from "./Select";
+import { Tag } from "./Tag";
+import "draft-js/dist/Draft.css";
+import useWindowSize from "../utils/useWindowSize";
 
 export const SidePanel = (props) => {
-  const newCommentRef = useRef(null)
-  const [_, forceUpdate] = useReducer(x => x + 1, 0);
-  const [isNewCommentOpened, setIsNewCommentOpened] = useState(false)
-  const [comments, setComments] = useState([])
-  const [commenters, setCommenters] = useState({})
-  const [editorState, setEditorState] = useState(
-    () => EditorState.createEmpty(),
+  const newCommentRef = useRef(null);
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [isNewCommentOpened, setIsNewCommentOpened] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commenters, setCommenters] = useState({});
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
   );
   const getUserName = async (username) => {
-    let firstName = ""
-    let lastName = ""
-    const queryData = { 
-      headers: { 
-        'Content-Type': 'application/json',
-        Authorization: `${(await Auth.currentSession()).getAccessToken().getJwtToken()}`,
+    let firstName = "";
+    let lastName = "";
+    const queryData = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${(await Auth.currentSession())
+          .getAccessToken()
+          .getJwtToken()}`,
       },
       queryStringParameters: {
-          username: username,
+        username: username,
       },
     };
-    const data = await API.get("AdminQueries", "/getUser", queryData)
+    const data = await API.get("AdminQueries", "/getUser", queryData);
     for (const entry of data.UserAttributes) {
       if (entry.Name === "given_name") {
-        firstName = entry.Value
+        firstName = entry.Value;
       } else if (entry.Name === "family_name") {
-        lastName = entry.Value
+        lastName = entry.Value;
       }
     }
-    return `${firstName} ${lastName}`
-  }
+    return `${firstName} ${lastName}`;
+  };
   const openNewComment = () => {
     if (!isNewCommentOpened) {
       setIsNewCommentOpened(true);
     }
-  }
+  };
   const submitComment = async (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
-    await API.graphql(graphqlOperation(createComment, { input:  {
-      content: content,
-      noteID: props.higherScope.currentNoteState.id,
-      date: Date.now()
-    }}))
-    setEditorState(EditorState.push(editorState, ContentState.createFromText('')))
+    e.preventDefault();
+    e.stopPropagation();
+    const content = JSON.stringify(
+      convertToRaw(editorState.getCurrentContent())
+    );
+    await API.graphql(
+      graphqlOperation(createComment, {
+        input: {
+          content: content,
+          noteID: props.higherScope.currentNoteState.id,
+          date: Date.now(),
+        },
+      })
+    );
+    setEditorState(
+      EditorState.push(editorState, ContentState.createFromText(""))
+    );
     setIsNewCommentOpened(false);
-  }
+  };
   const handleChange = (e) => {
-    props.higherScope.currentNoteState[e.target.name] = e.target.value
+    props.higherScope.currentNoteState[e.target.name] = e.target.value;
     if (e.target.name === "note") {
       props.higherScope.setState({
-        value: e.target.value
-      })
+        value: e.target.value,
+      });
     }
-    props.higherScope.updateData()
+    props.higherScope.updateData();
     forceUpdate();
-  }
+  };
   const getComments = async () => {
     try {
       const noteID = props.higherScope.currentNoteState.id;
-      const nextComments = await API.graphql(graphqlOperation(listComments, {
-        filter: {
-          noteID: {
-            eq: noteID
-          }
-        }
-      }))
+      const nextComments = await API.graphql(
+        graphqlOperation(listComments, {
+          filter: {
+            noteID: {
+              eq: noteID,
+            },
+          },
+        })
+      );
       for (const comment of nextComments.data.listComments.items) {
         if (!commenters[comment.owner]) {
-          commenters[comment.owner] = await getUserName(comment.owner)
+          commenters[comment.owner] = await getUserName(comment.owner);
         }
       }
-      setCommenters(commenters)
-      setComments(nextComments.data.listComments.items)
-    } catch(e) {
+      setCommenters(commenters);
+      setComments(nextComments.data.listComments.items);
+    } catch (e) {
       if (props.higherScope.state.authState === AuthState.SignedIn) {
-        console.error("Error occured while fetching comments", e)
+        console.error("Error occured while fetching comments", e);
       }
     }
-  }
-  useEffect(() => {
-    if (props.higherScope.state.authState === AuthState.SignedIn){
-      commenters[props.higherScope.state.authData.username] = `${props.higherScope.state.authData.attributes.given_name} ${props.higherScope.state.authData.attributes.family_name}`
-      setCommenters(commenters)
-    }
-  }, [props.higherScope.state.authState])
+  };
   useEffect(() => {
     if (props.higherScope.state.authState === AuthState.SignedIn) {
-      getComments()
+      commenters[
+        props.higherScope.state.authData.username
+      ] = `${props.higherScope.state.authData.attributes.given_name} ${props.higherScope.state.authData.attributes.family_name}`;
+      setCommenters(commenters);
+    }
+  }, [props.higherScope.state.authState]);
+  useEffect(() => {
+    if (props.higherScope.state.authState === AuthState.SignedIn) {
+      getComments();
       if (props.higherScope.subscriptions[3]) {
-        props.higherScope.subscriptions[3].unsubscribe()
-        props.higherScope.subscriptions[3] = null
+        props.higherScope.subscriptions[3].unsubscribe();
+        props.higherScope.subscriptions[3] = null;
       }
       const subscriptionData = {
         owner: props.higherScope.state.authData.username,
         filter: {
           noteID: {
-            eq: props.higherScope.currentNoteState.id
-          }
-        }
-      }
-      props.higherScope.subscriptions[3] = API.graphql(graphqlOperation(onCreateComment, subscriptionData)).subscribe({
+            eq: props.higherScope.currentNoteState.id,
+          },
+        },
+      };
+      props.higherScope.subscriptions[3] = API.graphql(
+        graphqlOperation(onCreateComment, subscriptionData)
+      ).subscribe({
         next: () => getComments(),
-        error: error => console.warn(error)
-      })
+        error: (error) => console.warn(error),
+      });
     }
-  }, [props.higherScope.currentNoteState.id])
+  }, [props.higherScope.currentNoteState.id]);
   useOuterClick(newCommentRef, () => {
     if (isNewCommentOpened) {
       setIsNewCommentOpened(false);
     }
-  })
+  });
+
+  const { width } = useWindowSize();
   return (
-    <Panel data-testid="sidePanel">
+    <Panel open={props.higherScope.state.isPanelShown} data-testid="sidePanel">
+      {width <= 768 && <Button onClick={props.setHideShowPanel}>X</Button>}
       {props.higherScope.state.isPanelShown && (
         <>
           <DetailsForm onSubmit={(e) => e.preventDefault()}>
@@ -143,168 +169,179 @@ export const SidePanel = (props) => {
               }
             ></input>
             <div>
-            <label htmlFor="task">Task</label>
-            <input
-              type="text"
-              name="task"
-              placeholder="task"
-              onChange={handleChange}
-              value={
-                props.higherScope.currentNoteState.task
-                  ? props.higherScope.currentNoteState.task
-                  : ""
-              }
-            ></input>
+              <label htmlFor="task">Task</label>
+              <input
+                type="text"
+                name="task"
+                placeholder="task"
+                onChange={handleChange}
+                value={
+                  props.higherScope.currentNoteState.task
+                    ? props.higherScope.currentNoteState.task
+                    : ""
+                }
+              ></input>
             </div>
             <div>
-            <label htmlFor="description">Description</label>
-            <input
-              type="text"
-              name="description"
-              placeholder="description"
-              onChange={handleChange}
-              value={
-                props.higherScope.currentNoteState.description
-                  ? props.higherScope.currentNoteState.description
-                  : ""
-              }
-            ></input>
+              <label htmlFor="description">Description</label>
+              <input
+                type="text"
+                name="description"
+                placeholder="description"
+                onChange={handleChange}
+                value={
+                  props.higherScope.currentNoteState.description
+                    ? props.higherScope.currentNoteState.description
+                    : ""
+                }
+              ></input>
             </div>
             <div>
-            <label htmlFor="steps">
-              Steps
-            </label>
-            <input
-              type="text"
-              name="steps"
-              placeholder="steps"
-              onChange={handleChange}
-              value={
-                props.higherScope.currentNoteState.steps
-                  ? props.higherScope.currentNoteState.steps
-                  : ""
-              }
-            ></input>
+              <label htmlFor="steps">Steps</label>
+              <input
+                type="text"
+                name="steps"
+                placeholder="steps"
+                onChange={handleChange}
+                value={
+                  props.higherScope.currentNoteState.steps
+                    ? props.higherScope.currentNoteState.steps
+                    : ""
+                }
+              ></input>
             </div>
             <div>
-            <label htmlFor="due">Due</label>
-             <DatePicker
-              name="due"
-              onChange={handleChange}
-              placeholder="due"
-              value={props.higherScope.currentNoteState.due}
-            />
+              <label htmlFor="due">Due</label>
+              <DatePicker
+                name="due"
+                onChange={handleChange}
+                placeholder="due"
+                value={props.higherScope.currentNoteState.due}
+              />
             </div>
             <div>
-            <label htmlFor="assigned">Assigned</label>
-            <input
-              type="text"
-              name="assigned"
-              placeholder="assigned"
-              onChange={handleChange}
-              value={
-                props.higherScope.currentNoteState.assigned
-                  ? props.higherScope.currentNoteState.assigned
-                  : ""
-              }
-            ></input>
+              <label htmlFor="assigned">Assigned</label>
+              <input
+                type="text"
+                name="assigned"
+                placeholder="assigned"
+                onChange={handleChange}
+                value={
+                  props.higherScope.currentNoteState.assigned
+                    ? props.higherScope.currentNoteState.assigned
+                    : ""
+                }
+              ></input>
             </div>
             <div>
-            <label htmlFor="watcher">Watcher</label>
-            <input
-              type="text"
-              name="watcher"
-              placeholder="watcher"
-              onChange={handleChange}
-              value={
-                props.higherScope.currentNoteState.watcher
-                  ? props.higherScope.currentNoteState.watcher
-                  : ""
-              }
-            ></input>
+              <label htmlFor="watcher">Watcher</label>
+              <input
+                type="text"
+                name="watcher"
+                placeholder="watcher"
+                onChange={handleChange}
+                value={
+                  props.higherScope.currentNoteState.watcher
+                    ? props.higherScope.currentNoteState.watcher
+                    : ""
+                }
+              ></input>
             </div>
             <div>
-            <label htmlFor="project">Project</label>
-            <input
-              type="text"
-              name="project"
-              placeholder="project"
-              onChange={handleChange}
-              value={
-                props.higherScope.currentNoteState.project
-                  ? props.higherScope.currentNoteState.project
-                  : ""
-              }
-            ></input>
+              <label htmlFor="project">Project</label>
+              <input
+                type="text"
+                name="project"
+                placeholder="project"
+                onChange={handleChange}
+                value={
+                  props.higherScope.currentNoteState.project
+                    ? props.higherScope.currentNoteState.project
+                    : ""
+                }
+              ></input>
             </div>
             <div>
-            <label htmlFor="tag">Tag</label>
-            <Tag
-              name="tag"
-              onChange={handleChange}
-              value={props.higherScope.currentNoteState.tag || ["Tag 1", "Tag2", "Tag 3", "Tag4", "Tag5"]}
-            />
+              <label htmlFor="tag">Tag</label>
+              <Tag
+                name="tag"
+                onChange={handleChange}
+                value={
+                  props.higherScope.currentNoteState.tag || [
+                    "Tag 1",
+                    "Tag2",
+                    "Tag 3",
+                    "Tag4",
+                    "Tag5",
+                  ]
+                }
+              />
             </div>
             <div>
-            <label htmlFor="sprint">Sprint</label>
-            <input
-              type="text"
-              name="sprint"
-              placeholder="sprint"
-              onChange={handleChange}
-              value={
-                props.higherScope.currentNoteState.sprint
-                  ? props.higherScope.currentNoteState.sprint
-                  : ""
-              }
-            ></input>
+              <label htmlFor="sprint">Sprint</label>
+              <input
+                type="text"
+                name="sprint"
+                placeholder="sprint"
+                onChange={handleChange}
+                value={
+                  props.higherScope.currentNoteState.sprint
+                    ? props.higherScope.currentNoteState.sprint
+                    : ""
+                }
+              ></input>
             </div>
             <div>
-            <label htmlFor="status">Status</label>
-            <Select
-              name="status"
-              onChange={handleChange}
-              defaultValue="todo"
-              options={{
-                todo: "Todo",
-                started: "Started",
-                finished: "Finished"
-              }}
-              value={props.higherScope.currentNoteState.status}
-            />
+              <label htmlFor="status">Status</label>
+              <Select
+                name="status"
+                onChange={handleChange}
+                defaultValue="todo"
+                options={{
+                  todo: "Todo",
+                  started: "Started",
+                  finished: "Finished",
+                }}
+                value={props.higherScope.currentNoteState.status}
+              />
             </div>
             <input type="submit" name="submit" value="Submit"></input>
           </DetailsForm>
-          {props.higherScope.state.authState === AuthState.SignedIn && <CommentsSection>
-            {comments.map(x => (
-              <CommentUnit key={x.id}>
-                <Avatar>{
-                  commenters[x.owner].split(" ")[0][0].toUpperCase() +
-                  commenters[x.owner].split(" ")[1][0].toUpperCase()
-                }</Avatar>
-                <CommentContent>
-                  <CommentHeader>
-                    <div>
-                      <span>{commenters[x.owner]}</span>
-                      <span>{new Date(x.date).toLocaleString()}</span>
-                    </div>
-                    <div>
-
-                    </div>
-                  </CommentHeader>
-                  <CommentBody
-                    dangerouslySetInnerHTML={({
-                      __html: stateToHTML(convertFromRaw(JSON.parse(x.content)))
-                    })}
-                  />
-                </CommentContent>
-              </CommentUnit>
-            ))}
+          {props.higherScope.state.authState === AuthState.SignedIn && (
+            <CommentsSection>
+              {comments.map((x) => (
+                <CommentUnit key={x.id}>
+                  <Avatar>
+                    {commenters[x.owner].split(" ")[0][0].toUpperCase() +
+                      commenters[x.owner].split(" ")[1][0].toUpperCase()}
+                  </Avatar>
+                  <CommentContent>
+                    <CommentHeader>
+                      <div>
+                        <span>{commenters[x.owner]}</span>
+                        <span>{new Date(x.date).toLocaleString()}</span>
+                      </div>
+                      <div></div>
+                    </CommentHeader>
+                    <CommentBody
+                      dangerouslySetInnerHTML={{
+                        __html: stateToHTML(
+                          convertFromRaw(JSON.parse(x.content))
+                        ),
+                      }}
+                    />
+                  </CommentContent>
+                </CommentUnit>
+              ))}
               <NewComment>
-              <Avatar>{
-                  commenters[props.higherScope.state.authData.username].split(" ")[0][0].toUpperCase() +
-                  commenters[props.higherScope.state.authData.username].split(" ")[1][0].toUpperCase()
-                }</Avatar>
+                <Avatar>
+                  {commenters[props.higherScope.state.authData.username]
+                    .split(" ")[0][0]
+                    .toUpperCase() +
+                    commenters[props.higherScope.state.authData.username]
+                      .split(" ")[1][0]
+                      .toUpperCase()}
+                </Avatar>
                 <CommentField onClick={openNewComment} ref={newCommentRef}>
                   <CommentInput>
                     <Editor
@@ -314,23 +351,33 @@ export const SidePanel = (props) => {
                       expanded={isNewCommentOpened}
                     />
                   </CommentInput>
-                  {isNewCommentOpened && <CommentControls>
-                    <div>
-
-                    </div>
-                    <div>
-                      <button onClick={submitComment}>Comment</button>
-                    </div>
-                  </CommentControls>}
+                  {isNewCommentOpened && (
+                    <CommentControls>
+                      <div></div>
+                      <div>
+                        <button onClick={submitComment}>Comment</button>
+                      </div>
+                    </CommentControls>
+                  )}
                 </CommentField>
               </NewComment>
-          </CommentsSection>
-          }
+            </CommentsSection>
+          )}
         </>
       )}
     </Panel>
-  );  
-}
+  );
+};
+
+const Button = styledComponents.button`
+background: none;
+border: none;
+font-size: 14px;
+font-weight: 600;
+position: absolute;
+top: 1%;
+right: 4px;
+`;
 
 const Panel = styledComponents.div`
   background-color: #FFFFFF;
@@ -339,13 +386,27 @@ const Panel = styledComponents.div`
   box-shadow: 0px 0px 8px 1px #dadada;
   top: 0;
   left: 0;
+
+  @media only screen and (max-width: 768px) {
+    flex-direction: column;
+    background: ${({ theme }) => theme.primaryLight};
+    height: 100vh;
+    width: 100vw;
+    text-align: left;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease-in-out;
+    transform: ${({ open }) => (open ? "translateX(0)" : "translateX(-100%)")};
+    z-index: 1;
+    box-shadow: unset;
+  }
 `;
 
 const DetailsForm = styledComponents.form`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  height: calc(70vh);
   overflow: auto;
   padding: 30px;
   .ant-picker {
@@ -357,6 +418,21 @@ const DetailsForm = styledComponents.form`
       border: 1px solid #d9d9d9;
     }
   }
+
+  @media only screen and (max-width: 768px) {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: unset;
+    padding: unset;
+    & > input {
+      width: unset;
+      padding: 0 20px;
+    }
+  }
+
+
   & > h2 > span {
     cursor: pointer;
   }
@@ -367,7 +443,6 @@ const DetailsForm = styledComponents.form`
     width: 100%;
     font-weight: 600;
     font-size: 24px;
-    margin-left: -8px;
     transition: border 0.3s, box-shadow 0.3s;
     &:hover {
       border: 0.5px solid #9198a1;
@@ -377,6 +452,13 @@ const DetailsForm = styledComponents.form`
       box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
     }
   }
+  @media only screen and (max-width: 768px) {
+    & > input {
+    width: auto;
+    margin: 0 20px;
+    }
+  }
+
   & > div {
     display: flex;
     width: 100%;
@@ -404,6 +486,41 @@ const DetailsForm = styledComponents.form`
       }
     }
   }
+ 
+  @media only screen and (max-width: 768px) {
+    & > div {
+      align-items: initial;
+      width: auto;
+      flex-direction: column;
+      padding: 0 20px;
+      gap: unset;
+      & > label {
+        color: #6F7782;
+        margin-bottom: 0;
+        font-size: 14px;
+        width: auto;
+        font-weight: 600;
+      }
+      & > input {
+        border: 0.5px solid transparent;
+        border-radius: 4px;
+        padding: 9px 10px;
+        font-size: 12px;
+        transition: border 0.3s, box-shadow 0.3s;
+        border: 0.5px solid #6F7782;
+        margin-top: 5px;
+        &:hover {
+          border: 0.5px solid #9198a1;
+        }
+        &:focus {
+          border: 0.5px solid #6F7782;
+          box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
+        }
+      }
+    }
+  }
+
+
   & > input[type="submit"] {
     display: none;
   }
@@ -417,18 +534,18 @@ const CommentsSection = styledComponents.div`
   height: calc(30vh);
   overflow: auto;
   padding: 30px;
-`
+`;
 const CommentUnit = styledComponents.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
-`
+`;
 
 const CommentContent = styledComponents.div`
   display: flex;
   flex-direction: column;
   font-size: 14px;
-`
+`;
 
 const CommentHeader = styledComponents.div`
   display: flex;
@@ -452,18 +569,18 @@ const CommentHeader = styledComponents.div`
       }
     }
   }
-`
+`;
 
 const CommentBody = styledComponents.div`
   width: 100%;
   color: #000000;
-`
+`;
 
 const NewComment = styledComponents.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
-`
+`;
 
 const CommentField = styledComponents.div`
   background-color: #FFFFFF;
@@ -475,17 +592,17 @@ const CommentField = styledComponents.div`
     border: 0.5px solid #6F7782;
     box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
   }
-`
+`;
 
 const CommentInput = styledComponents.div`
-  min-height: ${props => props.expanded ? "50px" : "16px"};
+  min-height: ${(props) => (props.expanded ? "50px" : "16px")};
   max-height: 100px;
   outline: none;
   width: 100%;
   padding: 8px;
   font-size: 14px;
   overflow: auto;
-`
+`;
 
 const CommentControls = styledComponents.div`
   display: flex;
@@ -514,7 +631,7 @@ const CommentControls = styledComponents.div`
       }
     }
   }
-`
+`;
 
 const Avatar = styledComponents.div`
   border-radius: 100%;
@@ -528,4 +645,4 @@ const Avatar = styledComponents.div`
   min-height: 32px;
   width: 32px;
   height: 32px;
-`
+`;
