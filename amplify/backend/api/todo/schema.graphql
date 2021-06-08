@@ -175,17 +175,17 @@ type Subscription {
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onCreateCommentByNoteId(noteID: ID!): Comment
+	onCreateCommentByNoteID(noteID: ID!): Comment
 		@aws_subscribe(mutations: ["createComment"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onUpdateCommentByNoteId(noteID: ID!): Comment
+	onUpdateCommentByNoteID(noteID: ID!): Comment
 		@aws_subscribe(mutations: ["updateComment"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onDeleteCommentByNoteId(noteID: ID!): Comment
+	onDeleteCommentByNoteID(noteID: ID!): Comment
 		@aws_subscribe(mutations: ["deleteComment"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
