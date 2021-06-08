@@ -100,14 +100,14 @@ const resolvers = {
     onDeleteOwnedNoteByProjectID: (ctx) => {
       return onDeleteOwnedNoteByProjectID(ctx);
     },
-    onCreateCommentByNoteId: (ctx) => {
-      return onCreateCommentByNoteId(ctx);
+    onCreateCommentByNoteID: (ctx) => {
+      return onCreateCommentByNoteID(ctx);
     },
-    onUpdateCommentByNoteId: (ctx) => {
-      return onUpdateCommentByNoteId(ctx);
+    onUpdateCommentByNoteID: (ctx) => {
+      return onUpdateCommentByNoteID(ctx);
     },
-    onDeleteCommentByNoteId: (ctx) => {
-      return onDeleteCommentByNoteId(ctx);
+    onDeleteCommentByNoteID: (ctx) => {
+      return onDeleteCommentByNoteID(ctx);
     }
   }
 };
@@ -1025,7 +1025,7 @@ async function onDeleteOwnedNoteByProjectID(ctx) {
   }
 }
 
-async function onCreateCommentByNoteId(ctx) {
+async function onCreateCommentByNoteID(ctx) {
   const client = ctx.identity.sub
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
@@ -1042,7 +1042,7 @@ async function onCreateCommentByNoteId(ctx) {
   }
 }
 
-async function onUpdateCommentByNoteId(ctx) {
+async function onUpdateCommentByNoteID(ctx) {
   const client = ctx.identity.sub
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
@@ -1059,7 +1059,7 @@ async function onUpdateCommentByNoteId(ctx) {
   }
 }
 
-async function onDeleteCommentByNoteId(ctx) {
+async function onDeleteCommentByNoteID(ctx) {
   const client = ctx.identity.sub
   const noteID = ctx.arguments.noteID
   if (isNoteOwnerOrAssignee(noteID, client)) {
