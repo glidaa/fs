@@ -689,12 +689,16 @@ async function importData(ctx) {
     for (const project of data) {
       const notes = project.notes
       const projectData = await createProject({
-        [identity.sub]: client,
-        [arguments.input]: {
-          prevProject: project.prevProject,
-          nextProject: project.nextProject,
-          permalink: project.permalink,
-          title: project.title,
+        identity: {
+          sub: client
+        },
+        arguments: {
+          input: {
+            prevProject: project.prevProject,
+            nextProject: project.nextProject,
+            permalink: project.permalink,
+            title: project.title
+          }
         }
       })
       for (const note of notes) {
