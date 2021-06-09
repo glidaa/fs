@@ -157,7 +157,6 @@ async function listUsers(Limit, PaginationToken) {
 async function searchForUser(Filter, Limit, PaginationToken) {
   const params = {
     UserPoolId: userPoolId,
-    AttributesToGet: ["sub", "email", "given_name", "family_name"],
     ...(Filter && { Filter: `email ^= "${Filter}"`  }),
     ...(Limit && { Limit }),
     ...(PaginationToken && { PaginationToken }),
