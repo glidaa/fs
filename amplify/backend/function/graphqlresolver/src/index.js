@@ -8,6 +8,9 @@ const UNAUTHORIZED = "UNAUTHORIZED";
 const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
 const USER_NOT_ASSIGNED = "USER_NOT_ASSIGNED";
 const NOT_ASSIGNED = "NOT_ASSIGNED";
+const PROJECT_NOT_FOUND = "PROJECT_NOT_FOUND";
+const NOTE_NOT_FOUND = "NOTE_NOT_FOUND";
+const COMMENT_NOT_FOUND = "COMMENT_NOT_FOUND";
 
 const PROJECTTABLE = process.env.PROJECTTABLE;
 const NOTETABLE = process.env.NOTETABLE;
@@ -48,6 +51,9 @@ const resolvers = {
     disallowNote: (ctx) => {
       return disallowNote(ctx);
     },
+    importData: (ctx) => {
+      return importData(ctx);
+    },
   },
   Query: {
     getProjectByID: (ctx) => {
@@ -72,6 +78,9 @@ const resolvers = {
   Subscription: {
     onCreateOwnedProject: (ctx) => {
       return onCreateOwnedProject(ctx);
+    },
+    onImportOwnedProjects: (ctx) => {
+      return onImportOwnedProjects(ctx);
     },
     onUpdateOwnedProject: (ctx) => {
       return onUpdateOwnedProject(ctx);
@@ -119,17 +128,10 @@ exports.handler = async function (ctx) {
   if (typeHandler) {
     const resolver = typeHandler[ctx.fieldName];
     if (resolver) {
-      const data = await resolver(ctx);
-      if (data === UNAUTHORIZED) {
-        throw new Error(UNAUTHORIZED);
-      }
-      if (data === USER_NOT_ASSIGNED) {
-        throw new Error(USER_NOT_ASSIGNED);
-      }
-      if (data === ALREADY_ASSIGNED) {
-        throw new Error(ALREADY_ASSIGNED);
-      } else {
-        return data
+      try {
+        return await resolver(ctx);
+      } catch (err) {
+        throw new Error(err);
       }
     }
   }
@@ -143,8 +145,16 @@ async function isProjectOwner(projectID, client) {
       "id": projectID
     }
   }
-  const data = await docClient.get(params).promise()
-  return client === data.Item.owner
+  try {
+    const data = await docClient.get(params).promise()
+    if (data.Item) {
+      return client === data.Item.owner
+    } else {
+      throw new Error(PROJECT_NOT_FOUND)
+    }
+  } catch (err) {
+    throw new Error(err)
+  }
 }
 
 async function isNoteOwner(noteID, client) {
@@ -154,8 +164,16 @@ async function isNoteOwner(noteID, client) {
       "id": noteID
     }
   }
-  const data = await docClient.get(params).promise()
-  return client === data.Item.owner
+  try {
+    const data = await docClient.get(params).promise()
+    if (data.Item) {
+      return client === data.Item.owner
+    } else {
+      throw new Error(PROJECT_NOT_FOUND)
+    }
+  } catch (err) {
+    throw new Error(err)
+  }
 }
 
 async function isCommentOwner(commentID, client) {
@@ -165,8 +183,16 @@ async function isCommentOwner(commentID, client) {
       "id": commentID
     }
   }
-  const data = await docClient.get(params).promise()
-  return client === data.Item.owner
+  try {
+    const data = await docClient.get(params).promise()
+    if (data.Item) {
+      return client === data.Item.owner
+    } else {
+      throw new Error(COMMENT_NOT_FOUND)
+    }
+  } catch (err) {
+    throw new Error(err)
+  }
 }
 
 async function isNoteOwnerOrAssignee(noteID, client) {
@@ -176,8 +202,16 @@ async function isNoteOwnerOrAssignee(noteID, client) {
       "id": noteID
     }
   }
-  const data = await docClient.get(params).promise()
-  return client === data.Item.owner || client === data.Item.assignee
+  try {
+    const data = await docClient.get(params).promise()
+    if (data.Item) {
+      return client === data.Item.owner || client === data.Item.assignee
+    } else {
+      throw new Error(NOTE_NOT_FOUND)
+    }
+  } catch (err) {
+    throw new Error(err)
+  }
 }
 
 async function removeProjectOrder(projectID) {
@@ -223,8 +257,7 @@ async function removeProjectOrder(projectID) {
         await docClient.update(nextProjectUpdateParams).promise()
       }
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   }
 }
@@ -262,8 +295,7 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
       await docClient.update(nextProjectUpdateParams).promise()
     }
   } catch (err) {
-    console.error(err)
-    return err;
+    throw new Error(err);
   }
 }
 
@@ -289,11 +321,10 @@ async function createProject(ctx) {
       await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
       return projectData;
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -340,8 +371,7 @@ async function removeNoteOrder(noteID) {
         await docClient.update(nextNoteUpdateParams).promise()
       }
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   }
 }
@@ -379,8 +409,7 @@ async function injectNoteOrder(noteID, prevNote, nextNote) {
       await docClient.update(nextNoteUpdateParams).promise()
     }
   } catch (err) {
-    console.error(err)
-    return err;
+    throw new Error(err);
   }
 }
 
@@ -428,11 +457,10 @@ async function createNote(ctx) {
       await docClient.update(projectUpdateParams).promise()
       return noteData;
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -455,11 +483,10 @@ async function createComment(ctx) {
       await docClient.put(params).promise();
       return commentData;
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -495,11 +522,10 @@ async function updateProject(ctx) {
       const data = await docClient.update(params).promise();
       return data.Attributes;
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -535,11 +561,10 @@ async function updateNote(ctx) {
       const data = await docClient.update(params).promise();
       return data.Attributes;
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -571,11 +596,10 @@ async function updateComment(ctx) {
       const data = await docClient.update(params).promise();
       return data.Attributes;
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -607,14 +631,13 @@ async function assignNote(ctx) {
         const updatedNote = await docClient.update(noteUpdateParams).promise();
         return updatedNote.Attributes;
       } catch (err) {
-        console.error(err)
-        return err;
+        throw new Error(err);
       }
     } else {
       return ALREADY_ASSIGNED
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -645,15 +668,61 @@ async function disallowNote(ctx) {
         const updatedNote = await docClient.update(noteUpdateParams).promise();
         return updatedNote.Attributes;
       } catch (err) {
-        console.error(err)
-        return err;
+        throw new Error(err);
       }
     } else {
       return USER_NOT_ASSIGNED
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
+}
+
+async function importData(ctx) {
+  const data = JSON.parse(ctx.arguments.data)
+  const client = ctx.identity.sub
+  const importedProjects = {
+    owner: client,
+    items: []
+  }
+  try {
+    for (const project of data) {
+      const notes = project.notes
+      const projectData = await createProject({
+        [identity.sub]: client,
+        [arguments.input]: {
+          prevProject: project.prevProject,
+          nextProject: project.nextProject,
+          permalink: project.permalink,
+          title: project.title,
+        }
+      })
+      for (const note of notes) {
+        await createNote({
+          [identity.sub]: client,
+          [arguments.input]: {
+            projectID: projectData.id,
+            prevNote: note.prevNote,
+            nextNote: note.nextNote,
+            note: note.note,
+            isDone: note.isDone,
+            task: note.task,
+            description: note.description,
+            steps: note.steps,
+            due: note.due,
+            watcher: note.watcher,
+            tag: note.tag,
+            sprint: note.sprint,
+            status: note.status
+          }
+        })
+      }
+      importedProjects.items.push(projectData)
+    }
+    return importedProjects
+  } catch (err) {
+    throw new Error(err)
+  } 
 }
 
 async function getProjectByID(ctx) {
@@ -695,8 +764,7 @@ async function listOwnedProjects(ctx) {
       items: data.Items
     }
   } catch (err) {
-    console.error(err);
-    return err;
+    throw new Error(err);
   }
 }
 
@@ -729,8 +797,7 @@ async function listAssignedProjects(ctx) {
       items: projects
     }
   } catch (err) {
-    console.error(err)
-    return err;
+    throw new Error(err);
   }
 }
 
@@ -753,7 +820,7 @@ async function listNotesForProject(ctx) {
       ))
     }
   } catch (err) {
-    return err;
+    throw new Error(err);
   }
 }
 
@@ -767,11 +834,10 @@ async function listCommentsForNote(ctx) {
         items: commentsList
       };
     } catch (err) {
-      console.error(err)
-      return err;
+      throw new Error(err);
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -790,10 +856,10 @@ async function deleteComment(ctx) {
       const data = await docClient.delete(params).promise();
       return data.Attributes
     } catch (err) {
-      return err;
+      throw new Error(err);
     }
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -810,7 +876,7 @@ async function deleteProjectAndNotes(ctx) {
     await removeProjectOrder(projectID)
     return deletedProject
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -827,7 +893,7 @@ async function deleteNoteAndComments(ctx) {
     await removeNoteOrder(noteID)
     return deletedNote
   } else {
-    return UNAUTHORIZED;
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -845,7 +911,20 @@ async function onCreateOwnedProject(ctx) {
       owner: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
+  }
+}
+
+async function onImportOwnedProjects(ctx) {
+  const client = ctx.identity.sub
+  const owner = ctx.arguments.owner
+  if (client === owner) {
+    return {
+      owner: client,
+      items: []
+    }
+  } else {
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -863,7 +942,7 @@ async function onUpdateOwnedProject(ctx) {
       owner: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -881,7 +960,7 @@ async function onDeleteOwnedProject(ctx) {
       owner: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -901,7 +980,7 @@ async function onAssignNote(ctx) {
       assignee: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -921,7 +1000,7 @@ async function onDisallowNote(ctx) {
       assignee: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -941,7 +1020,7 @@ async function onUpdateAssignedNoteByProjectID(ctx) {
       assignee: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -961,7 +1040,7 @@ async function onDeleteAssignedNoteByProjectID(ctx) {
       assignee: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -981,7 +1060,7 @@ async function onCreateOwnedNoteByProjectID(ctx) {
       assignee: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -1001,7 +1080,7 @@ async function onUpdateOwnedNoteByProjectID(ctx) {
       assignee: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -1021,7 +1100,7 @@ async function onDeleteOwnedNoteByProjectID(ctx) {
       assignee: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -1038,7 +1117,7 @@ async function onCreateCommentByNoteID(ctx) {
       owner: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -1055,7 +1134,7 @@ async function onUpdateCommentByNoteID(ctx) {
       owner: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -1072,7 +1151,7 @@ async function onDeleteCommentByNoteID(ctx) {
       owner: client
     }
   } else {
-    return UNAUTHORIZED
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -1099,7 +1178,7 @@ async function _listNotesForProject(projectID) {
     const data = await docClient.query(params).promise();
     return data.Items;
   } catch (err) {
-    return err;
+    throw new Error(err);
   }
 }
 
@@ -1116,7 +1195,7 @@ async function _listCommentsForNote(noteId) {
     const data = await docClient.query(params).promise();
     return data.Items;
   } catch (err) {
-    return err;
+    throw new Error(err);
   }
 }
 
@@ -1205,7 +1284,7 @@ async function deleteProject(id) {
     const response = data.Attributes;
     return response;
   } catch (err) {
-    return err;
+    throw new Error(err);
   }
 }
 
@@ -1222,6 +1301,6 @@ async function deleteNote(id) {
     const response = data.Attributes;
     return response;
   } catch (err) {
-    return err;
+    throw new Error(err);
   }
 }

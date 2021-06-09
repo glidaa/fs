@@ -95,6 +95,10 @@ type Mutation {
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
+	importData(data: String!): ImportedProjectsList
+		@function(name: "graphqlresolver-${env}")
+		@aws_iam
+		@aws_cognito_user_pools
 }
 
 type Query {
@@ -127,6 +131,11 @@ type Query {
 type Subscription {
 	onCreateOwnedProject(owner: String!): Project
 		@aws_subscribe(mutations: ["createProject"])
+		@function(name: "graphqlresolver-${env}")
+		@aws_iam
+		@aws_cognito_user_pools
+	onImportOwnedProjects(owner: String!): ImportedProjectsList
+		@aws_subscribe(mutations: ["importData"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -250,6 +259,11 @@ input UpdateCommentInput {
 }
 
 type ProjectsList {
+	items: [Project!]
+}
+
+type ImportedProjectsList {
+	owner: String!
 	items: [Project!]
 }
 
