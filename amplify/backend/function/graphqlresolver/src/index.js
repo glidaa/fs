@@ -342,8 +342,11 @@ async function createProject(ctx, isInternal = false) {
     };
     try {
       await docClient.put(params).promise();
-      if (!isInternal || isCont) {
+      if (!isInternal) {
         await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
+      }
+      if (isInternal && isCont) {
+        await injectProjectOrder(projectData.id, projectData.prevProject, null)
       }
       return projectData;
     } catch (err) {
@@ -483,8 +486,11 @@ async function createNote(ctx, isInternal = false) {
     };
     try {
       await docClient.put(noteParams).promise();
-      if (!isInternal || isCont) {
+      if (!isInternal) {
         await injectNoteOrder(noteData.id, noteData.prevNote, noteData.nextNote)
+      }
+      if (isInternal && isCont) {
+        await injectNoteOrder(noteData.id, noteData.prevNote, null)
       }
       await docClient.update(projectUpdateParams).promise()
       return noteData;
