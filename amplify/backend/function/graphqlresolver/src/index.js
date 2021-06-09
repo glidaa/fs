@@ -262,6 +262,26 @@ async function removeProjectOrder(projectID) {
   }
 }
 
+function parseLinkedList (arr, prevKey, nextKey) {
+  const list = {}
+  for (const arrItem of arr) {
+    list[arrItem.id] = arrItem
+  }
+  const sortedArray = []
+  const firstItemArr = arr.filter(x => !x[prevKey])
+  if (firstItemArr.length === 1) {
+    sortedArray.push(firstItemArr[0])
+    let nextItem = firstItemArr[0][nextKey]
+    while (nextItem) {
+      sortedArray.push(list[nextItem])
+      nextItem = list[nextItem][nextKey]
+    }
+    return sortedArray
+  } else {
+    return []
+  }
+}
+
 async function injectProjectOrder(projectID, prevProject, nextProject) {
   const prevProjectUpdateParams = {
     TableName: PROJECTTABLE,
@@ -299,7 +319,7 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
   }
 }
 
-async function createProject(ctx) {
+async function createProject(ctx, isInternal = false) {
   const client = ctx.identity.sub
   if (client) {
     const projectData = {
@@ -318,7 +338,9 @@ async function createProject(ctx) {
     };
     try {
       await docClient.put(params).promise();
-      await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
+      if (!isInternal) {
+        await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
+      }
       return projectData;
     } catch (err) {
       throw new Error(err);
@@ -413,7 +435,7 @@ async function injectNoteOrder(noteID, prevNote, nextNote) {
   }
 }
 
-async function createNote(ctx) {
+async function createNote(ctx, isInternal = false) {
   const projectID = ctx.arguments.input.projectID
   const client = ctx.identity.sub
   const projectParams = {
@@ -453,7 +475,9 @@ async function createNote(ctx) {
     };
     try {
       await docClient.put(noteParams).promise();
-      await injectNoteOrder(noteData.id, noteData.prevNote, noteData.nextNote)
+      if (!isInternal) {
+        await injectNoteOrder(noteData.id, noteData.prevNote, noteData.nextNote)
+      }
       await docClient.update(projectUpdateParams).promise()
       return noteData;
     } catch (err) {
@@ -709,8 +733,10 @@ async function importData(ctx) {
     items: []
   }
   try {
-    for (const project of data) {
+    const sortedProjects = parseLinkedList(data, "prevProject", "nextProject")
+    for (const project of sortedProjects) {
       const notes = project.notes
+      const oldProjectID = project.id
       const projectData = await createProject({
         identity: {
           sub: client
@@ -723,9 +749,20 @@ async function importData(ctx) {
             title: project.title
           }
         }
+      }, isInternal = true)
+      sortedProjects = sortedProjects.map(x => {
+        if (x.prevProject === oldProjectID) {
+          x.prevProject = projectData.id
+        }
+        if (x.nextProject === oldProjectID) {
+          x.nextProject = projectData.id
+        }
+        return x
       })
-      for (const note of notes) {
-        await createNote({
+      const sortedNotes = parseLinkedList(notes, "prevNote", "nextNote")
+      for (const note of sortedNotes) {
+        const oldNoteID = note.id
+        const noteData = await createNote({
           identity: {
             sub: client
           },
@@ -746,6 +783,15 @@ async function importData(ctx) {
               status: note.status
             }
           }
+        }, isInternal = true)
+        sortedNotes = sortedNotes.map(x => {
+          if (x.prevNote === oldNoteID) {
+            x.prevNote = noteData.id
+          }
+          if (x.nextNote === oldNoteID) {
+            x.nextNote = noteData.id
+          }
+          return x
         })
       }
       importedProjects.items.push(projectData)

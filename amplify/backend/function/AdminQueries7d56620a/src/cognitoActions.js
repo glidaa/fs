@@ -154,6 +154,31 @@ async function listUsers(Limit, PaginationToken) {
   }
 }
 
+async function searchForUser(Filter, Limit, PaginationToken) {
+  const params = {
+    UserPoolId: userPoolId,
+    AttributesToGet: ["username", "sub", "email", "given_name", "family_name"],
+    ...(Filter && { Filter: `email ^= "${Filter}"`  }),
+    ...(Limit && { Limit }),
+    ...(PaginationToken && { PaginationToken }),
+  };
+
+  console.log('Attempting to list users');
+
+  try {
+    const result = await cognitoIdentityServiceProvider.listUsers(params).promise();
+
+    // Rename to NextToken for consistency with other Cognito APIs
+    result.NextToken = result.PaginationToken;
+    delete result.PaginationToken;
+
+    return result;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+
 async function listGroups(Limit, PaginationToken) {
   const params = {
     UserPoolId: userPoolId,
@@ -251,6 +276,7 @@ module.exports = {
   disableUser,
   enableUser,
   getUser,
+  searchForUser,
   listUsers,
   listGroups,
   listGroupsForUser,
