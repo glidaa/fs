@@ -726,21 +726,25 @@ async function importData(ctx) {
       })
       for (const note of notes) {
         await createNote({
-          [identity.sub]: client,
-          [arguments.input]: {
-            projectID: projectData.id,
-            prevNote: note.prevNote,
-            nextNote: note.nextNote,
-            note: note.note,
-            isDone: note.isDone,
-            task: note.task,
-            description: note.description,
-            steps: note.steps,
-            due: note.due,
-            watcher: note.watcher,
-            tag: note.tag,
-            sprint: note.sprint,
-            status: note.status
+          identity: {
+            sub: client
+          },
+          arguments: {
+            input: {
+              projectID: projectData.id,
+              prevNote: note.prevNote,
+              nextNote: note.nextNote,
+              note: note.note,
+              isDone: note.isDone,
+              task: note.task,
+              description: note.description,
+              steps: note.steps,
+              due: note.due,
+              watcher: note.watcher,
+              tag: note.tag,
+              sprint: note.sprint,
+              status: note.status
+            }
           }
         })
       }
