@@ -330,7 +330,11 @@ async function createProject(ctx, isInternal = false) {
       updatedAt: new Date().toISOString(),
       owner: client
     }
-    projectData.prevProject = projectData.prevProject || await getLastProject(client)
+    let isCont = false
+    if (!projectData.prevProject) {
+      projectData.prevProject = await getLastProject(client)
+      isCont = true
+    }
     projectData.nextProject = projectData.nextProject || null
     const params = {
       TableName: PROJECTTABLE,
@@ -338,7 +342,7 @@ async function createProject(ctx, isInternal = false) {
     };
     try {
       await docClient.put(params).promise();
-      if (!isInternal) {
+      if (!isInternal || isCont) {
         await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
       }
       return projectData;
@@ -455,7 +459,11 @@ async function createNote(ctx, isInternal = false) {
       owner: client,
       assignee: NOT_ASSIGNED
     }
-    noteData.prevNote = noteData.prevNote || null
+    let isCont = false
+    if (!noteData.prevNote) {
+      noteData.prevNote = await getLastNote(client)
+      isCont = true
+    }
     noteData.nextNote = noteData.nextNote || null
     const projectUpdateParams = {
       TableName: PROJECTTABLE,
@@ -475,7 +483,7 @@ async function createNote(ctx, isInternal = false) {
     };
     try {
       await docClient.put(noteParams).promise();
-      if (!isInternal) {
+      if (!isInternal || isCont) {
         await injectNoteOrder(noteData.id, noteData.prevNote, noteData.nextNote)
       }
       await docClient.update(projectUpdateParams).promise()
@@ -706,7 +714,7 @@ async function getLastProject (client) {
   const params = {
     TableName: PROJECTTABLE,
     IndexName: "byOwner",
-    ProjectionExpression: "nextProject",
+    ProjectionExpression: "id, nextProject",
     KeyConditionExpression: "#owner = :owner",
     ExpressionAttributeNames: { "#owner": "owner" },
     ExpressionAttributeValues: {
@@ -717,6 +725,29 @@ async function getLastProject (client) {
     const data = await docClient.query(params).promise();
     if (data.Items.length > 0) {
       return data.Items.filter(x => !x.nextProject)[0].id
+    } else {
+      return null
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+async function getLastNote (client) {
+  const params = {
+    TableName: NOTETABLE,
+    IndexName: "byOwner",
+    ProjectionExpression: "id, nextNote",
+    KeyConditionExpression: "#owner = :owner",
+    ExpressionAttributeNames: { "#owner": "owner" },
+    ExpressionAttributeValues: {
+      ":owner": client
+    },
+  };
+  try {
+    const data = await docClient.query(params).promise();
+    if (data.Items.length > 0) {
+      return data.Items.filter(x => !x.nextNote)[0].id
     } else {
       return null
     }
