@@ -310,7 +310,7 @@ async function createProject(ctx) {
       updatedAt: new Date().toISOString(),
       owner: client
     }
-    projectData.prevProject = projectData.prevProject || null
+    projectData.prevProject = projectData.prevProject || await getLastProject(client)
     projectData.nextProject = projectData.nextProject || null
     const params = {
       TableName: PROJECTTABLE,
@@ -675,6 +675,29 @@ async function disallowNote(ctx) {
     }
   } else {
     throw new Error(UNAUTHORIZED)
+  }
+}
+
+async function getLastProject (client) {
+  const params = {
+    TableName: PROJECTTABLE,
+    IndexName: "byOwner",
+    ProjectionExpression: "nextProject",
+    KeyConditionExpression: "#owner = :owner",
+    ExpressionAttributeNames: { "#owner": "owner" },
+    ExpressionAttributeValues: {
+      ":owner": client
+    },
+  };
+  try {
+    const data = await docClient.query(params).promise();
+    if (data.Items.length > 0) {
+      return data.Items.filter(x => !x.nextProject)[0].id
+    } else {
+      return null
+    }
+  } catch (err) {
+    throw new Error(err);
   }
 }
 
