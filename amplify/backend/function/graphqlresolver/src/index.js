@@ -733,7 +733,7 @@ async function importData(ctx) {
     items: []
   }
   try {
-    const sortedProjects = parseLinkedList(data, "prevProject", "nextProject")
+    let sortedProjects = parseLinkedList(data, "prevProject", "nextProject")
     for (const project of sortedProjects) {
       const notes = project.notes
       const oldProjectID = project.id
@@ -759,7 +759,7 @@ async function importData(ctx) {
         }
         return x
       })
-      const sortedNotes = parseLinkedList(notes, "prevNote", "nextNote")
+      let sortedNotes = parseLinkedList(notes, "prevNote", "nextNote")
       for (const note of sortedNotes) {
         const oldNoteID = note.id
         const noteData = await createNote({
