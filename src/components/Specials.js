@@ -32,7 +32,7 @@ const DropdownContainer = styledComponents.div`
   display: flex;
   flex-direction: column;
   width: fit-content;
-  border: 0.5px solid #000000;
+  border: 0.5px solid #222222;
   background-color: #FFFFFF;
   z-index: 999;
   box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
