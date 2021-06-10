@@ -672,7 +672,7 @@ async function assignNote(ctx) {
         throw new Error(err);
       }
     } else {
-      return ALREADY_ASSIGNED
+      throw new Error(ALREADY_ASSIGNED)
     }
   } else {
     throw new Error(UNAUTHORIZED)
@@ -690,7 +690,7 @@ async function disallowNote(ctx) {
   }
   const noteData = await docClient.get(noteGetParams).promise()
   if (client === noteData.Item.owner) {
-    if (noteData.Item.assignee !== ctx.arguments.assignee) {
+    if (noteData.Item.assignee === ctx.arguments.assignee) {
       const noteUpdateParams = {
         TableName: NOTETABLE,
         Key: {
@@ -709,7 +709,7 @@ async function disallowNote(ctx) {
         throw new Error(err);
       }
     } else {
-      return USER_NOT_ASSIGNED
+      throw new Error(USER_NOT_ASSIGNED)
     }
   } else {
     throw new Error(UNAUTHORIZED)
