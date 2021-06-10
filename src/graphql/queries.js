@@ -5,6 +5,7 @@ export const getNote = /* GraphQL */ `
   query GetNote($id: ID!) {
     getNote(id: $id) {
       id
+      url
       note
       isDone
       task
@@ -44,6 +45,7 @@ export const listNotes = /* GraphQL */ `
     listNotes(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        url
         note
         isDone
         task
