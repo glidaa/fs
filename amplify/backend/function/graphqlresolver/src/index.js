@@ -319,7 +319,7 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
   }
 }
 
-async function createProject(ctx, isInternal = false) {
+async function createProject(ctx) {
   const client = ctx.identity.sub
   if (client) {
     const projectData = {
@@ -342,11 +342,10 @@ async function createProject(ctx, isInternal = false) {
     };
     try {
       await docClient.put(params).promise();
-      if (!isInternal) {
-        await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
-      }
-      if (isInternal && isCont) {
+      if (isCont) {
         await injectProjectOrder(projectData.id, projectData.prevProject, null)
+      } else {
+        await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
       }
       return projectData;
     } catch (err) {
@@ -442,7 +441,7 @@ async function injectNoteOrder(noteID, prevNote, nextNote) {
   }
 }
 
-async function createNote(ctx, isInternal = false) {
+async function createNote(ctx) {
   const projectID = ctx.arguments.input.projectID
   const client = ctx.identity.sub
   const projectParams = {
@@ -486,11 +485,10 @@ async function createNote(ctx, isInternal = false) {
     };
     try {
       await docClient.put(noteParams).promise();
-      if (!isInternal) {
-        await injectNoteOrder(noteData.id, noteData.prevNote, noteData.nextNote)
-      }
-      if (isInternal && isCont) {
+      if (isCont) {
         await injectNoteOrder(noteData.id, noteData.prevNote, null)
+      } else {
+        await injectNoteOrder(noteData.id, noteData.prevNote, noteData.nextNote)
       }
       await docClient.update(projectUpdateParams).promise()
       return noteData;
@@ -781,21 +779,10 @@ async function importData(ctx) {
         },
         arguments: {
           input: {
-            prevProject: project.prevProject,
-            nextProject: project.nextProject,
             permalink: project.permalink,
             title: project.title
           }
         }
-      }, isInternal = true)
-      sortedProjects = sortedProjects.map(x => {
-        if (x.prevProject === oldProjectID) {
-          x.prevProject = projectData.id
-        }
-        if (x.nextProject === oldProjectID) {
-          x.nextProject = projectData.id
-        }
-        return x
       })
       let sortedNotes = parseLinkedList(notes, "prevNote", "nextNote")
       const sortedNotesCount = sortedNotes.length
@@ -809,8 +796,6 @@ async function importData(ctx) {
           arguments: {
             input: {
               projectID: projectData.id,
-              prevNote: note.prevNote,
-              nextNote: note.nextNote,
               note: note.note,
               isDone: note.isDone,
               task: note.task,
@@ -823,15 +808,6 @@ async function importData(ctx) {
               status: note.status
             }
           }
-        }, isInternal = true)
-        sortedNotes = sortedNotes.map(x => {
-          if (x.prevNote === oldNoteID) {
-            x.prevNote = noteData.id
-          }
-          if (x.nextNote === oldNoteID) {
-            x.nextNote = noteData.id
-          }
-          return x
         })
       }
       importedProjects.items.push(projectData)
