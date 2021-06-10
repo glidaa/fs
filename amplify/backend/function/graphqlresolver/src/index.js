@@ -771,7 +771,7 @@ async function importData(ctx) {
   try {
     let sortedProjects = parseLinkedList(data, "prevProject", "nextProject")
     const projectsCount = sortedProjects.length
-    for (let i; i < projectsCount; i++) {
+    for (let i = 0; i < projectsCount; i++) {
       const project = sortedProjects[i]
       const notes = project.notes
       const oldProjectID = project.id
