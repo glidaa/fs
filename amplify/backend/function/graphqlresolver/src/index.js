@@ -464,7 +464,7 @@ async function createNote(ctx, isInternal = false) {
     }
     let isCont = false
     if (!noteData.prevNote) {
-      noteData.prevNote = await getLastNote(client)
+      noteData.prevNote = await getLastNote(projectID)
       isCont = true
     }
     noteData.nextNote = noteData.nextNote || null
@@ -739,15 +739,14 @@ async function getLastProject (client) {
   }
 }
 
-async function getLastNote (client) {
+async function getLastNote (projectID) {
   const params = {
     TableName: NOTETABLE,
-    IndexName: "byOwner",
+    IndexName: "byProject",
     ProjectionExpression: "id, nextNote",
-    KeyConditionExpression: "#owner = :owner",
-    ExpressionAttributeNames: { "#owner": "owner" },
+    KeyConditionExpression: "projectID = :projectID",
     ExpressionAttributeValues: {
-      ":owner": client
+      ":projectID": projectID
     },
   };
   try {
