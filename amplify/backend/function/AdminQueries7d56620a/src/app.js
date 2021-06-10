@@ -22,6 +22,7 @@ const {
   disableUser,
   enableUser,
   getUser,
+  searchForUser,
   listUsers,
   listGroups,
   listGroupsForUser,
@@ -47,7 +48,7 @@ app.use((req, res, next) => {
 const allowedGroup = process.env.GROUP;
 
 const checkGroup = function(req, res, next) {
-  if (req.path == '/signUserOut' || req.path == '/listUsers' || req.path == '/getUser') {
+  if (req.path == '/signUserOut' || req.path == '/searchForUser' || req.path == '/getUser') {
     return next();
   }
 
@@ -171,6 +172,22 @@ app.get('/listUsers', async (req, res, next) => {
       response = await listUsers((Limit = req.query.limit));
     } else {
       response = await listUsers();
+    }
+    res.status(200).json(response);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/searchForUser', async (req, res, next) => {
+  try {
+    let response;
+    if (req.query.token) {
+      response = await searchForUser(req.query.filter, req.query.limit || 25, req.query.token);
+    } else if (req.query.limit) {
+      response = await searchForUser((Filter = req.query.filter, Limit = req.query.limit));
+    } else {
+      response = await searchForUser((Filter = req.query.filter));
     }
     res.status(200).json(response);
   } catch (err) {

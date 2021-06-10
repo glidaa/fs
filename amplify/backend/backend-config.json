@@ -64,6 +64,11 @@
           ]
         }
       ]
+    },
+    "graphqlresolver": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "hosting": {
