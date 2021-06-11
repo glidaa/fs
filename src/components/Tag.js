@@ -2,6 +2,7 @@ import React from 'react';
 import styledComponents from "styled-components"
 
 export const Tag = (props) => {
+  const { readOnly } = props
   const handleTagClick = (e) => {
     const tag = e.target.innerText;
   }
@@ -22,7 +23,7 @@ export const Tag = (props) => {
           </span>
         </TagItem>
       ))}
-      <TagInput>
+      {!readOnly && <TagInput>
       <input
         placeholder="tag…"
         onKeyDown={(e) => {
@@ -36,7 +37,7 @@ export const Tag = (props) => {
             }})
           }
       }} />
-    </TagInput>
+    </TagInput>}
     </TagContainer>
   )
 }
