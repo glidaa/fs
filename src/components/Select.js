@@ -3,10 +3,13 @@ import { useOuterClick } from 'react-outer-click';
 import styledComponents from "styled-components"
 
 export const Select = (props) => {
+  const { readOnly } = props
   const selectRef = useRef(null)
   const [isDropdownOpened, setIsDropdownOpened] = useState(false)
   const toggleDropdown = (e) => {
-    setIsDropdownOpened(isDropdownOpened ? false : true)
+    if (!readOnly) {
+      setIsDropdownOpened(isDropdownOpened ? false : true)
+    }
   }
   useOuterClick(selectRef, () => {
     if (isDropdownOpened) {
@@ -53,7 +56,7 @@ const SelectContainer = styledComponents.div`
     padding: 4px 8px;
     width: 100%;
     color: transparent;
-    text-shadow: 0 0 0 #000000;
+    text-shadow: 0 0 0 #222222;
     font-size: 12px;
     cursor: pointer;
     transition: border 0.3s, box-shadow 0.3s;
