@@ -60,7 +60,6 @@ const TaskItem = (props) => {
               value={notes[app.selectedNote].note + app.command}
               onKeyUp={onKeyUp}
               onChange={onChange}
-              onFocus={() => setHideShowSidePanel()}
               autoFocus={true}
               contentEditable={false}
               readOnly={readOnly}
@@ -140,6 +139,23 @@ const TaskItem = (props) => {
             >
               ×
             </span>
+            <span
+              className="removeBtn"
+              onClick={() => {
+                dispatch(
+                  notesActions.handleUpdateNote({
+                    id: app.selectedNote,
+                    note:
+                      notes[app.selectedNote] && notes[app.selectedNote].note
+                        ? notes[app.selectedNote].note + app.command
+                        : "",
+                  })
+                );
+                setHideShowSidePanel();
+              }}
+            >
+              {">"}
+            </span>
           </>
         )}
       </div>
@@ -156,6 +172,13 @@ const TaskItemContainer = styledComponents.div`
   border-radius: 4px;
   padding: 4px 8px;
   transition: border 0.3s, box-shadow 0.3s, transform: 0.03s;
+  .drag-icon {
+    display: none;
+    cursor: pointer;
+  }
+  div:hover  .drag-icon{
+    display: block;
+  } 
   & > div:nth-child(1) {
     width: 100%;
     display: flex;
@@ -212,6 +235,24 @@ const TaskItemContainer = styledComponents.div`
       & > span.assigneeName,
       & > img {
         display: block;
+      }
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    .drag-icon {
+      display: block;
+      cursor: pointer;
+    }
+    & {
+      margin: 10px 0;
+      padding: 10px 7px;
+      border: 0.5px solid #9198a1;
+      & > div:nth-child(2) {
+        & > span.removeBtn,
+        & > span.assigneeName,
+        & > img {
+          display: block;
+        }
       }
     }
   }

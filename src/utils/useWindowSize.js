@@ -12,6 +12,7 @@ export default function useWindowSize() {
   }
 
   useEffect(() => {
+    window.addEventListener("load", changeWindowSize);
     changeWindowSize();
     window.addEventListener("resize", changeWindowSize);
     return () => {

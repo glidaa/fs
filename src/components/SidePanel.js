@@ -180,7 +180,7 @@ const Panel = styledComponents.div`
     top: 0;
     left: 0;
     transition: transform 0.3s ease-in-out;
-    transform: ${({ open }) => (open ? "translateX(0)" : "translateX(-100%)")};
+    transform: ${({ open }) => (open ? "translateX(0)" : "translateX(100%)")};
     z-index: 1;
     box-shadow: unset;
   }
@@ -283,8 +283,8 @@ const DetailsForm = styledComponents.form`
       & > input {
         border: 0.5px solid transparent;
         border-radius: 4px;
-        padding: 9px 10px;
-        font-size: 12px;
+        padding: 14px 10px;
+        font-size: 14px;
         transition: border 0.3s, box-shadow 0.3s;
         border: 0.5px solid #6F7782;
         margin-top: 5px;

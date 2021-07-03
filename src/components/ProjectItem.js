@@ -72,7 +72,7 @@ const ProjectItem = (props) => {
             )}
           </div>
         )}
-        {isEdit && editMode === "permalink" ? (
+        {/* {isEdit && editMode === "permalink" ? (
           <input
             ref={inputRef}
             value={project.permalink}
@@ -108,7 +108,7 @@ const ProjectItem = (props) => {
               </div>
             )}
           </div>
-        )}
+        )} */}
         <span>{parsePeriod(new Date(project.createdAt).getTime())}</span>
       </div>
     </ProjectItemContainer>
@@ -149,9 +149,8 @@ const ProjectItemContainer = styledComponents.div`
       flex-direction: row;
       justify-content: space-between;
       & > span {
-        color: #222222;
-        font-weight: 700;
-        font-size: 1.1em;
+        font-style: italic;
+        color: grey;
         max-width: 100%;
         text-overflow: ellipsis;
         white-space: nowrap;

@@ -14,11 +14,11 @@ import ProjectNotSelected from "./ProjectNotSelected";
 import * as notesActions from "../actions/notes";
 import PasteBtn from "./PasteBtn";
 import * as projectsActions from "../actions/projects";
-import { initProjectState, OK, PENDING } from "../constants";
+import { initProjectState, OK, PENDING, initNoteState } from "../constants";
 import useWindowSize from "../utils/useWindowSize";
 
 const DragHandle = sortableHandle(() => (
-  <img alt="item handler" src={handlerIcon} width="20" />
+  <img className="drag-icon" alt="item handler" src={handlerIcon} width="20" />
 ));
 
 const SortableItem = sortableElement(
@@ -69,7 +69,22 @@ const NotesPanel = (props) => {
     }
   };
   return (
-    <NotesPanelContainer>
+    <NotesPanelContainer
+      name="NotesPanelContainer"
+      onClick={(e) => {
+        e.target.getAttribute("name") === "NotesPanelContainer" &&
+          Object.keys(projects.owned).includes(app.selectedProject) &&
+          app.noteAddingStatus === OK &&
+          dispatch(
+            notesActions.handleCreateNote(
+              initNoteState(
+                app.selectedProject,
+                parseLinkedList(notes, "prevNote", "nextNote").reverse()[0]?.id
+              )
+            )
+          );
+      }}
+    >
       {app.selectedProject ? (
         <>
           <ShareBtn isNote={false} />
@@ -100,9 +115,6 @@ const NotesPanel = (props) => {
               )
             )}
           </SortableContainer>
-          {Object.keys(projects.owned).includes(app.selectedProject) && (
-            <NewTask />
-          )}
         </>
       ) : (
         <>
