@@ -180,7 +180,7 @@ const Panel = styledComponents.div`
     top: 0;
     left: 0;
     transition: transform 0.3s ease-in-out;
-    transform: ${({ open }) => (open ? "translateX(0)" : "translateX(100%)")};
+    transform: ${({ open }) => (open ? "translateX(0)" : "translateX(-100%)")};
     z-index: 1;
     box-shadow: unset;
   }

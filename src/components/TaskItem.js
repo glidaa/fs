@@ -139,23 +139,16 @@ const TaskItem = (props) => {
             >
               ×
             </span>
-            <span
-              className="removeBtn"
-              onClick={() => {
-                dispatch(
-                  notesActions.handleUpdateNote({
-                    id: app.selectedNote,
-                    note:
-                      notes[app.selectedNote] && notes[app.selectedNote].note
-                        ? notes[app.selectedNote].note + app.command
-                        : "",
-                  })
-                );
-                setHideShowSidePanel();
-              }}
-            >
-              {">"}
-            </span>
+            {app.selectedNote === item.id && (
+              <span
+                className="removeBtn"
+                onClick={() => {
+                  setHideShowSidePanel();
+                }}
+              >
+                {">"}
+              </span>
+            )}
           </>
         )}
       </div>
