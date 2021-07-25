@@ -563,9 +563,9 @@ async function updateTaskCount(taskID, nextStatus = null) {
       },
       UpdateExpression: "SET todoCount = todoCount + :isTodo, pendingCount = pendingCount + :isPending, doneCount = doneCount + :isDone, updatedAt = :updatedAt",
       ExpressionAttributeValues: {
-        ":isTodo": (-1 * prevStatus === TODO) || (1 * nextStatus === TODO),
-        ":isPending": (-1 * prevStatus === PENDING) || (1 * nextStatus === PENDING),
-        ":isDone": (-1 * prevStatus === DONE) || (1 * nextStatus === DONE),
+        ":isTodo": (prevStatus === TODO ? -1 : 0) || (nextStatus === TODO ? 1 : 0),
+        ":isPending": (prevStatus === PENDING ? -1 : 0) || (nextStatus === PENDING ? 1 : 0),
+        ":isDone": (prevStatus === DONE ? -1 : 0) || (nextStatus === DONE ? 1 : 0),
         ":updatedAt": new Date().toISOString()
       },
       ReturnValues: "NONE"
@@ -615,9 +615,9 @@ async function createTask(ctx) {
       UpdateExpression: "SET tasksCount = tasksCount + :increment, todoCount = todoCount + :isTodo, pendingCount = pendingCount + :isPending, doneCount = doneCount + :isDone, updatedAt = :updatedAt",
       ExpressionAttributeValues: {
         ":increment": 1,
-        ":isTodo": 1 * taskData.status === TODO,
-        ":isPending": 1 * taskData.status === PENDING,
-        ":isDone": 1 * taskData.status === DONE,
+        ":isTodo": taskData.status === TODO ? 1 : 0,
+        ":isPending": taskData.status === PENDING ? 1 : 0,
+        ":isDone": taskData.status === DONE ? 1 : 0,
         ":updatedAt": new Date().toISOString()
       },
       ReturnValues: "NONE"
