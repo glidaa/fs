@@ -73,14 +73,19 @@
                         "REGION":{
                             "Ref":"AWS::Region"
                         },
+                        "USERTABLE":{
+                            "Fn::ImportValue":{
+                                "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
+                            }
+                        },
                         "PROJECTTABLE":{
                             "Fn::ImportValue":{
                                 "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
                             }
                         },
-                        "NOTETABLE":{
+                        "TASKTABLE":{
                             "Fn::ImportValue":{
-                                "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:NoteTable:Name"
+                                "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:TaskTable:Name"
                             }
                         },
                         "COMMENTTABLE":{
@@ -176,7 +181,7 @@
                                         {
                                             "tablename":{
                                                 "Fn::ImportValue":{
-                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
+                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
                                                 }
                                             }
                                         }
@@ -188,19 +193,7 @@
                                         {
                                             "tablename":{
                                                 "Fn::ImportValue":{
-                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    "Fn::Sub":[
-                                        "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}",
-                                        {
-                                            "tablename":{
-                                                "Fn::ImportValue":{
-                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:NoteTable:Name"
+                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
                                                 }
                                             }
                                         }
@@ -212,7 +205,43 @@
                                         {
                                             "tablename":{
                                                 "Fn::ImportValue":{
-                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:NoteTable:Name"
+                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::Sub":[
+                                        "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}",
+                                        {
+                                            "tablename":{
+                                                "Fn::ImportValue":{
+                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::Sub":[
+                                        "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}",
+                                        {
+                                            "tablename":{
+                                                "Fn::ImportValue":{
+                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:TaskTable:Name"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::Sub":[
+                                        "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}/index/*",
+                                        {
+                                            "tablename":{
+                                                "Fn::ImportValue":{
+                                                    "Fn::Sub":"${apiGraphQLAPIIdOutput}:GetAtt:TaskTable:Name"
                                                 }
                                             }
                                         }

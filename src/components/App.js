@@ -9,20 +9,17 @@ import * as appActions from "../actions/app";
 import * as userActions from "../actions/user";
 import aws_exports from "../aws-exports";
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
-import ProjectsPanel from "./ProjectsPanel";
-import SidePanel from "./SidePanel";
+import DetailsPanel from "./DetailsPanel";
 import NotesPanel from "./NotesPanel";
+import ProjectsPanel from "./ProjectsPanel"
 import Loading from "./Loading";
 import Login from "./Login";
+import ActionSheet from "./ActionSheet"
 Amplify.configure(aws_exports);
 PubSub.configure(aws_exports);
 
 const App = (props) => {
   const { dispatch, user, projects, app } = props;
-  const [state, setState] = useState({
-    projectPanel: false,
-    sidePanel: false,
-  });
   const history = useHistory();
   const routeMatch = useRouteMatch({
     exact: true,
@@ -39,18 +36,6 @@ const App = (props) => {
     if (user.state !== AuthState.SignedIn) {
       dispatch(projectsActions.handleFetchOwnedProjects());
     }
-  };
-
-  const setHideShowProjectPanel = () => {
-    setState((state) => {
-      return { ...state, sidePanel: false, projectPanel: !state.projectPanel };
-    });
-  };
-
-  const setHideShowSidePanel = () => {
-    setState((state) => {
-      return { ...state, projectPanel: false, sidePanel: !state.sidePanel };
-    });
   };
 
   useEffect(() => {
@@ -93,7 +78,7 @@ const App = (props) => {
                       (notes) => {
                         const reqNote = Object.values(notes).filter(
                           (x) =>
-                            x.permalink === parseInt(params.notePermalink, 10)
+                            x.permalink === parseInt(notePermalink, 10)
                         )[0];
                         if (reqNote) {
                           dispatch(appActions.handleSetNote(reqNote.id, false));
@@ -148,17 +133,10 @@ const App = (props) => {
               <Loading route={routeProps} />
             ) : (
               <div className="mainPage">
-                <ProjectsPanel
-                  projectPanel={state.projectPanel}
-                  setHideShowProjectPanel={setHideShowProjectPanel}
-                />
-                <NotesPanel
-                  setHideShowSidePanel={setHideShowSidePanel}
-                  setHideShowProjectPanel={setHideShowProjectPanel}
-                />
-                <SidePanel
-                  sidePanel={state.sidePanel}
-                  setHideShowSidePanel={setHideShowSidePanel}
+                <ActionSheet />
+                <ProjectsPanel />
+                <NotesPanel />
+                <DetailsPanel
                   readOnly={
                     !Object.keys(projects.owned).includes(app.selectedProject)
                   }

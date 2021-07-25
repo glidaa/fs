@@ -1,226 +1,228 @@
-import styledComponents from "styled-components";
+import React from "react"
+import styledComponents from "styled-components"
 import { connect } from "react-redux";
-import { useState, useRef } from "react";
-import { useOuterClick } from "react-outer-click";
-import * as appActions from "../actions/app";
+import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects";
-import parsePeriod from "../utils/parsePeriod";
-import editIcon from "../assets/create-outline.svg";
-import removeIcon from "../assets/trash-outline.svg";
+import formatDate from "../utils/formatDate";
+import ProgressRing from "./ProgressRing";
+import AvatarArray from "./AvatarArray";
+import { ReactComponent as GlobeIcon } from "../assets/earth-outline.svg"
+import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
+import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 
 const ProjectItem = (props) => {
-  const { handler, app, project, readOnly, dispatch } = props;
-  const inputRef = useRef(null);
-  const [editMode, setEditMode] = useState(null);
-  const [isEdit, setIsEdit] = useState(false);
-  useOuterClick(inputRef, () => {
-    if (editMode) {
-      setEditMode(null);
-      setIsEdit(false);
-    }
-  });
+  const {
+    app: {
+      selectedProject
+    },
+    project,
+    dispatch,
+    listeners
+  } = props
+  const removeProject = () => {
+    dispatch(projectsActions.handleRemoveProject(project))
+  }
   return (
-    <ProjectItemContainer
-      isSelected={app.selectedProject === project.id}
+    <ProjectItemShell
+      isSelected={selectedProject === project.id}
       onClick={() => dispatch(appActions.handleSetProject(project.id))}
+      {...listeners}
     >
-      {handler && handler}
-      <div className="projectItemInfo">
-        {isEdit && editMode === "title" ? (
-          <input
-            ref={inputRef}
-            value={project.title}
-            onChange={(e) => {
-              if (e.target.value !== project.title) {
-                dispatch(
-                  projectsActions.handleUpdateProject({
-                    id: project.id,
-                    title: e.target.value,
-                  })
-                );
-              }
-            }}
-            onKeyUp={(e) =>
-              e.key === "Enter" && setEditMode(null) && setIsEdit(true)
-            }
+      <ProjectItemPermission>
+        <GlobeIcon
+          height="200"
+          width="200"
+          strokeWidth="24"
+          color="#000000"
+        />
+      </ProjectItemPermission>
+      <ProjectItemContainer>
+        <ProjectItemLeftPart>
+          <ProjectItemHeader>
+            <ProjectItemTitle>{project.title}</ProjectItemTitle>
+            <ProjectItemPermalink>{project.permalink}</ProjectItemPermalink>
+          </ProjectItemHeader>
+          <TasksCount>
+            <UnbegunTasksCount>12</UnbegunTasksCount>
+            <OngoingTasksCount>24</OngoingTasksCount>
+            <FinishedTasksCount>8</FinishedTasksCount>
+          </TasksCount>
+          <AvatarArray borderColor="#006EFF" size="38" />
+          <ProjectItemDate>
+            Created {formatDate(new Date(project.createdAt).getTime())}
+          </ProjectItemDate>
+        </ProjectItemLeftPart>
+        <ProjectItemRightPart>
+          <ProgressRing
+            radius={42}
+            stroke={5}
+            progress={75}
           />
-        ) : (
-          <div className="projectListTitle">
-            <span>{project.title}</span>
-            {!readOnly && (
-              <div>
-                <img
-                  alt="edit project title"
-                  src={editIcon}
-                  width="15"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditMode("title");
-                    setIsEdit(true);
-                  }}
-                />
-                <img
-                  alt="remove project"
-                  src={removeIcon}
-                  width="15"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(projectsActions.handleRemoveProject(project));
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        )}
-        {/* {isEdit && editMode === "permalink" ? (
-          <input
-            ref={inputRef}
-            value={project.permalink}
-            onChange={(e) => {
-              if (e.target.value !== project.permalink) {
-                dispatch(
-                  projectsActions.handleUpdateProject({
-                    id: project.id,
-                    permalink: e.target.value,
-                  })
-                );
-              }
-            }}
-            onKeyUp={(e) =>
-              e.key === "Enter" && setEditMode(null) && setIsEdit(false)
-            }
-          />
-        ) : (
-          <div className="projectListPermalink">
-            <span>{project.permalink}</span>
-            {!readOnly && (
-              <div>
-                <img
-                  alt="edit project permalink"
-                  src={editIcon}
-                  width="15"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditMode("permalink");
-                    setIsEdit(true);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        )} */}
-        <span>{parsePeriod(new Date(project.createdAt).getTime())}</span>
-      </div>
-    </ProjectItemContainer>
+          <ProjectItemActions>
+            <ProjectItemAction>
+              <ShareIcon
+                height="20"
+                width="20"
+                strokeWidth="42"
+                color="#FFFFFF"
+              />
+            </ProjectItemAction>
+            <ProjectItemAction>
+              <RemoveIcon
+                onClick={removeProject}
+                height="20"
+                width="20"
+                strokeWidth="42"
+                color="#FFFFFF"
+              />
+            </ProjectItemAction>
+          </ProjectItemActions>
+        </ProjectItemRightPart>
+      </ProjectItemContainer>
+    </ProjectItemShell>
   );
 };
+
+const ProjectItemShell = styledComponents.div`
+  position: relative;
+  background-color: #006EFF;
+  padding: 20px;
+  margin: 0 25px;
+  border-radius: 10px; 
+  overflow: hidden;
+  ${({ isSelected }) => isSelected ? `
+    border: 4px solid #F778BA;
+  ` : `
+    border: 4px solid transparent;
+  `}
+`
 
 const ProjectItemContainer = styledComponents.div`
   display: flex;
   flex-direction: row;
   transition: background-color 0.3s;
-  ${(props) =>
-    props.isSelected
-      ? `
-    background-color: #E6F7FF;
-    & > div {
-      border-top: 1px solid transparent;
-    }
-  `
-      : `
-    cursor: pointer;
-    &: hover {
-      background-color: #E4E4E2;
-      & > div {
-        border-top: 1px solid transparent;
-      }
-    }
-  `}
-  & > div.projectItemInfo {
-    position: relative;
-    width: calc(90% - 33px);
-    left: 10%;
-    padding: 15px 20px 15px 5px;
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid #E4E4E2;
-    & > div.projectListTitle {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      & > span {
-        font-style: italic;
-        color: grey;
-        max-width: 100%;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-      & > div {
-        display: none;
-      }
-      &:hover {
-        & > div {
-          display: flex;
-          flex-direction: row;
-          gap: 5px;
-          align-items: center;
-          & > img {
-            cursor: pointer;
-          }
-        }
-      }
-    }
-    & > div.projectListPermalink {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      & > span {
-        font-style: italic;
-        color: grey;
-        max-width: 100%;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-      & > div {
-        display: none;
-      }
-      &:hover {
-        & > div {
-          display: flex;
-          flex-direction: row;
-          gap: 5px;
-          align-items: center;
-          & > img {
-            cursor: pointer;
-          }
-        }
-      }
-    }
-    & > span {
-      color: #222222;
-      font-weight: 600;
-    }
+  & * {
+    z-index: 2;
   }
-
-  @media only screen and (max-width: 768px) {
-    width: 300px;
-    & > div.projectItemInfo > div.projectListTitle  {
-      display: flex !important;
-      & > div {
-        display: flex;
-        flex-direction: row;
-        gap: 5px;
-        align-items: center;
-        & > img {
-          cursor: pointer;
-        }
-      }
-    }
-	}
 `;
 
+const ProjectItemLeftPart = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex: 2;
+  gap: 10px;
+`
+
+const ProjectItemRightPart = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex: 1;
+`
+
+const ProjectItemHeader = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const ProjectItemTitle = styledComponents.span`
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 1.4em;
+  max-width: 197.08px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
+const ProjectItemPermalink = styledComponents.span`
+  font-size: 0.8em;
+  color: #FFFFFF;
+  font-weight: 500;
+  max-width: 197.08px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
+const TasksCount = styledComponents.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  color: #5D6969;
+  font-size: 0.9em;
+`
+
+const TasksCountItem = styledComponents.span`
+  padding: 1px 10px;
+  border-radius: 10px;
+  &::before {
+    content: "⬤ ";
+    white-space: pre;
+  }
+`
+
+const UnbegunTasksCount = styledComponents(TasksCountItem)`
+  background-color: #FFEBE5;
+  &::before {
+    color: #FF1744;
+  }
+`
+
+const OngoingTasksCount = styledComponents(TasksCountItem)`
+  background-color: #FDF1DB;
+  &::before {
+    color: #FF9100;
+  }
+`
+
+const FinishedTasksCount = styledComponents(TasksCountItem)`
+  background-color: #DAF6F4;
+  &::before {
+    color: #00E676;
+  }
+`
+
+const ProjectItemActions = styledComponents.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+`
+
+const ProjectItemAction = styledComponents.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 1px 6px;
+`
+
+const ProjectItemPermission = styledComponents.div`
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  right: 0;
+  bottom: 0;
+  opacity: 0.15;
+  z-index: 1;
+`
+
+const ProjectItemDate = styledComponents.span`
+  font-size: 0.8em;
+  color: #FFFFFF;
+  font-weight: 500;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
 export default connect((state) => ({
-  app: state.app,
+  app: state.app
 }))(ProjectItem);

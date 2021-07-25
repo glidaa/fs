@@ -1,7 +1,8 @@
+import React from 'react';
 import styledComponents from "styled-components"
 import { connect } from "react-redux"
 import * as notesActions from "../actions/notes"
-import pasteIcon from "../assets/clipboard-outline.svg"
+import { ReactComponent as pasteIcon } from "../assets/clipboard-outline.svg"
 import parseLinkedList from "../utils/parseLinkedList"
 import copyNote from "../utils/copyNote"
 
@@ -9,8 +10,10 @@ const PasteBtn = (props) => {
   const { app, notes, dispatch } = props
   return (
     <PasteBtnCore
-      alt="paste note"
-      src={pasteIcon}
+      width="20"
+      height="20"
+      strokeWidth="32"
+      color="#222222"
       onClick={() => {
         const notesClipboardData = window.localStorage.getItem("notesClipboard")
         if (notesClipboardData) {
@@ -34,13 +37,11 @@ const PasteBtn = (props) => {
           }
         }
       }}
-      width="20"
-      height="20"
     />
   )
 }
 
-const PasteBtnCore = styledComponents.img`
+const PasteBtnCore = styledComponents(pasteIcon)`
   float: right;
   border-radius: 100%;
   padding: 10px;

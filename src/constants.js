@@ -35,6 +35,31 @@ export const suggestionsDescription = [
   'Logout'
 ]
 
+export const commandIntents = {
+  ASSIGN: "ASSIGN",
+  STATUS: "STATUS",
+  DESCRIPTION: "DESCRIPTION",
+  DUE: "DUE",
+  TAGS: "TAGS",
+  COPY: "COPY",
+  DUPLICATE: "DUPLICATE",
+  REORDER: "REORDER",
+  DELETE: "DELETE",
+  UNKNOWN: "UNKNOWN"
+}
+
+export const supportedCommands = {
+  ASSIGN: "assign",
+  STATUS: "status",
+  DESCRIPTION: "description",
+  DUE: "due",
+  TAGS: "tags",
+  COPY: "copt",
+  DUPLICATE: "duplicate",
+  REORDER: "reorder",
+  DELETE: "delete"
+}
+
 export const initProjectState = (prevProject = null, nextProject = null) => {
   const randomWords = rword.generate(2, { capitalize: 'first' })
   return {

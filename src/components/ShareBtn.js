@@ -1,12 +1,15 @@
+import React from 'react';
 import styledComponents from "styled-components"
-import shareIcon from "../assets/share-outline.svg"
+import { ReactComponent as shareIcon } from "../assets/share-outline.svg"
 
 const ShareBtn = (props) => {
   const { isNote } = props
   return (
     <ShareBtnCore
-      alt="share button"
-      src={shareIcon}
+      width="20"
+      height="20"
+      strokeWidth="32"
+      color="#222222"
       onClick={() => {
         if (isNote) {
           const linkToBeCopied = window.location.href
@@ -16,13 +19,11 @@ const ShareBtn = (props) => {
           navigator.clipboard.writeText(linkToBeCopied)
         }
       }}
-      width="20"
-      height="20"
     />
   )
 }
 
-const ShareBtnCore = styledComponents.img`
+const ShareBtnCore = styledComponents(shareIcon)`
   float: right;
   border-radius: 100%;
   padding: 10px;

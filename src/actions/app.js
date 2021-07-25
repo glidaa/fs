@@ -12,19 +12,25 @@ import {
   MARKASUNDONE,
   DESCRIPTION,
   DUPLICATE,
-  COPY
+  COPY,
+  commandIntents,
+  supportedCommands
 } from "../constants";
 import copyNote from "../utils/copyNote";
 import parseLinkedList from "../utils/parseLinkedList";
 
 export const SET_PROJECT = "SET_PROJECT";
-export const SET_NOTE = "SELECT_NOTE";
+export const SET_NOTE = "SET_NOTE";
 export const SET_COMMAND = "SET_COMMAND";
-export const SET_DROPDOWN = "OPEN_DROPDOWN";
+export const SET_DROPDOWN = "SET_DROPDOWN";
 export const SET_PROJECT_ADDING_STATUS = "SET_PROJECT_ADDING_STATUS";
 export const SET_NOTE_ADDING_STATUS = "SET_NOTE_ADDING_STATUS";
 export const SET_HISTORY = "SET_HISTORY";
 export const SET_LOADING = "SET_LOADING";
+export const SET_PROJECT_PANEL = "SET_PROJECT_PANEL";
+export const SET_DETAILS_PANEL = "SET_DETAILS_PANEL";
+export const SET_ACTION_SHEET = "SET_ACTION_SHEET";
+export const SET_PROJECT_TITLE = "SET_PROJECT_TITLE";
 
 const setProject = (id, scope) => ({
   type: SET_PROJECT,
@@ -37,9 +43,26 @@ const setNote = (id) => ({
   id
 });
 
-const setCommand = (command) => ({
+const setCommand = (command, intent) => ({
   type: SET_COMMAND,
-  command
+  command,
+  intent
+});
+
+
+const setProjectTitle = (status) => ({
+  type: SET_PROJECT_TITLE,
+  status
+});
+
+const setProjectsPanel = (status) => ({
+  type: SET_PROJECT_PANEL,
+  status
+});
+
+const setDetailsPanel = (status) => ({
+  type: SET_DETAILS_PANEL,
+  status
 });
 
 export const setDropdown = (status) => ({
@@ -65,6 +88,11 @@ export const setHistory = (history) => ({
 export const setLoading = (isLoading) => ({
   type: SET_LOADING,
   isLoading
+});
+
+export const setActionSheet = (status) => ({
+  type: SET_ACTION_SHEET,
+  status
 });
 
 export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getState) => {
@@ -105,6 +133,7 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
 export const handleSetNote = (id, shouldChangeURL = true) => (dispatch, getState) => {
   const { user, projects, notes, app } = getState()
   dispatch(observersActions.handleClearCommentsObservers())
+  dispatch(setProjectTitle(false))
   if (!id && app.selectedNote) {
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
@@ -115,6 +144,9 @@ export const handleSetNote = (id, shouldChangeURL = true) => (dispatch, getState
     dispatch(setDropdown(false))
     dispatch(setNote(null))
   } else if (!id) {
+    if (app.isDetailsPanelOpened) {
+      dispatch(setDetailsPanel(false))
+    }
     dispatch(setNote(null))
   } else {
     if (shouldChangeURL) {
@@ -130,59 +162,97 @@ export const handleSetNote = (id, shouldChangeURL = true) => (dispatch, getState
   }
 }
 
-export const handleSetCommand = (command) => (dispatch, getState) => {
-  const { user, notes, app } = getState()
+export const handleSetProjectTitle = (status) => (dispatch) => {
+  if (status) {
+    dispatch(handleSetNote(null))
+  }
+  return dispatch(setProjectTitle(status))
+}
+
+export const handleSetDetailsPanel = (status) => (dispatch, getState) => {
+  const { app: { isProjectsPanelOpened } } = getState()
+  if (status && isProjectsPanelOpened) {
+    dispatch(setProjectsPanel(false))
+  }
+  return dispatch(setDetailsPanel(status))
+}
+
+export const handleSetProjectsPanel = (status) => (dispatch, getState) => {
+  const { app: { isDetailsPanelOpened } } = getState()
+  if (status && isDetailsPanelOpened) {
+    dispatch(setDetailsPanel(false))
+  }
+  return dispatch(setProjectsPanel(status))
+}
+
+export const handleSetCommand = (command) => (dispatch) => {
   if (command) {
-    const tokens = /^(\/\w?)(.*)$/m.exec(command)
+    const tokens = /^\/(\w*)\s*(.*)\s*$/m.exec(command)
     dispatch(setDropdown(false))
     switch (tokens[1]) {
-      case SIGNIN:
-        if (user.state !== AuthState.SignedIn) {
-          dispatch(setCommand(command))
-          dispatch(handleSetNote(null))
-          return app.history.push("/login")
-        }
-        return dispatch(setCommand(command.slice(0, -1)))
-      case SIGNUP:
-        if (user.state !== AuthState.SignedIn) {
-          dispatch(setCommand(command))
-          dispatch(handleSetNote(null))
-          return app.history.push("/login")
-        }
-        return dispatch(setCommand(command.slice(0, -1)))
-      case SIGNOUT:
-        if (user.state === AuthState.SignedIn) {
-          dispatch(setCommand(command))
-          dispatch(handleSetNote(null))
-          dispatch(observersActions.handleClearNotesObservers())
-          dispatch(userActions.setState(AuthState.signOut))
-          dispatch(userActions.handleSetData(null))
-          Auth.signOut()
-          return dispatch(notesActions.emptyNotes())
-        }
-        return dispatch(setCommand(command.slice(0, -1)))
-      case MARKASDONE:
-        dispatch(setCommand(command))
+      case supportedCommands.ASSIGN:
+        dispatch(setCommand(command, commandIntents.ASSIGN))
+        break
+      case supportedCommands.STATUS:
+        dispatch(setCommand(command, commandIntents.STATUS))
+        break
+      case supportedCommands.DESCRIPTION:
+        dispatch(setCommand(command, commandIntents.DESCRIPTION))
+        break
+      case supportedCommands.DUE:
+        dispatch(setCommand(command, commandIntents.DUE))
+        break
+      case supportedCommands.TAGS:
+        dispatch(setCommand(command, commandIntents.TAGS))
+        break
+      case supportedCommands.DUPLICATE:
+        dispatch(setCommand(command, commandIntents.DUPLICATE))
+        break
+      case supportedCommands.COPY:
+        dispatch(setCommand(command, commandIntents.COPY))
+        break
+      case supportedCommands.DELETE:
+        dispatch(setCommand(command, commandIntents.DELETE))
+        break
+      default:
+        dispatch(setDropdown(true))
+        return dispatch(setCommand(`/${tokens[1]}`, commandIntents.UNKNOWN))
+    }
+  }
+}
+
+export const handleApplyCommand = () => (dispatch, getState) => {
+  const { user, notes, app } = getState()
+  dispatch(setCommand("", null))
+  if (app.command) {
+    const tokens = /^\/(\w*)\s*(.*)\s*$/m.exec(app.command)
+    dispatch(setDropdown(false))
+    switch (tokens[1]) {
+      case supportedCommands.STATUS:
         dispatch(notesActions.handleUpdateNote({
           id: app.selectedNote,
-          isDone: true
+          status: tokens[2]
         }))
-        return dispatch(handleSetNote(null))
-      case MARKASUNDONE:
-        dispatch(setCommand(command))
-        dispatch(notesActions.handleUpdateNote({
-          id: app.selectedNote,
-          isDone: false
-        }))
-        return dispatch(handleSetNote(null))
-      case DESCRIPTION:
-        dispatch(setCommand(command))
+        break
+      case supportedCommands.DESCRIPTION:
         return dispatch(notesActions.handleUpdateNote({
           id: app.selectedNote,
           description: tokens[2].trim()
         }))
-      case DUPLICATE:
-        dispatch(setCommand(command))
+      case supportedCommands.DUE:
+        return dispatch(notesActions.handleUpdateNote({
+          id: app.selectedNote,
+          due: (new Date(tokens[2])).getTime()
+        }))
+      case supportedCommands.TAGS:
+        return dispatch(notesActions.handleUpdateNote({
+          id: app.selectedNote,
+          tag: [
+            ...notes[app.selectedNote].tag,
+            ...tokens[2].split(",").map(x => x.trim())
+          ]
+        }))
+      case supportedCommands.DUPLICATE:
         dispatch(notesActions.handleCreateNote(
           copyNote(
             notes[app.selectedNote],
@@ -195,8 +265,7 @@ export const handleSetCommand = (command) => (dispatch, getState) => {
           )
         ))
         return dispatch(handleSetNote(null))
-      case COPY:
-        dispatch(setCommand(command))
+      case supportedCommands.COPY:
         window.localStorage.setItem("notesClipboard",
           "COPIEDNOTESTART=>" +
           JSON.stringify(notes[app.selectedNote]) +
@@ -205,11 +274,10 @@ export const handleSetCommand = (command) => (dispatch, getState) => {
         return dispatch(handleSetNote(null))
       case "/":
         dispatch(setDropdown(true))
-        return dispatch(setCommand(command))
+        return dispatch(setCommand(app.command))
       default:
         dispatch(setDropdown(true))
         return dispatch(setCommand("/"))
     }
   }
-  return dispatch(setCommand(""))
 }

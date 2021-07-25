@@ -1,11 +1,31 @@
+import React from 'react';
 import styledComponents from "styled-components"
+import { connect } from "react-redux";
+import * as projectsActions from "../actions/projects"
+import { initProjectState, OK, PENDING } from "../constants"
+import parseLinkedList from "../utils/parseLinkedList"
 import notesIllustartions from "../assets/undraw_Add_notes_re_ln36.svg"
 
-const ProjectNotSelected = () => {
+const ProjectNotSelected = (props) => {
+  const { app: { projectAddingStatus }, projects, dispatch } = props
+  const createNewProject = () => {
+    projectAddingStatus === OK &&
+    dispatch(
+      projectsActions.handleCreateProject(
+        initProjectState(
+          parseLinkedList(
+            projects["owned"],
+            "prevProject",
+            "nextProject"
+          ).reverse()[0]?.id
+        )
+      )
+    )
+  }
   return (
     <ProjectNotSelectedContainer>
       <img alt="Notes Illustration" src={notesIllustartions} />
-      <span>Select A Project To Get Started</span>
+      <span onClick={createNewProject}>Select A Project To Get Started</span>
     </ProjectNotSelectedContainer>
   )
 }
@@ -28,4 +48,8 @@ const ProjectNotSelectedContainer = styledComponents.div`
   }
 `
 
-export default ProjectNotSelected
+export default connect((state) => ({
+	user: state.user,
+	app: state.app,
+	projects: state.projects
+}))(ProjectNotSelected);

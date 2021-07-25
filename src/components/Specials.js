@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components"
+import styledComponents, { keyframes } from "styled-components"
 import PropTypes from 'prop-types';
 
 export const Specials = (props) => {
@@ -27,16 +27,30 @@ export const Specials = (props) => {
   );
 };
 
+const openAnim = keyframes`
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 355px;
+  }
+`;
+
 const DropdownContainer = styledComponents.div`
-  position: absolute;
   display: flex;
   flex-direction: column;
-  width: fit-content;
-  border: 0.5px solid #222222;
+  justify-content: flex-start;
+  gap: 5px;
+  overflow: hidden;
   background-color: #FFFFFF;
   z-index: 999;
-  box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+  border-radius: 10px;
+  border: none;
+  padding: 15px;
+  box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
   height: fit-content;
+  animation: ${openAnim} 0.3s ease;
 `
 
 const Notifications = styledComponents.div`
@@ -52,7 +66,9 @@ const Notifications = styledComponents.div`
 const Suggestion = styledComponents.div`
   cursor: pointer;
   color: #505172;
-  padding: 2px 10px;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background-color 0.2s;
   &:hover {
     background-color: #F5F5F5;
   }

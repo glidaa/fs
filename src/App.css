@@ -15,9 +15,17 @@ input {
 .mainPage {
   display: flex;
   flex-direction: row;
+  background-color: #F8F8F8;
+  overflow: hidden;
 }
 
 input:read-only {
   color: transparent;
   text-shadow: 0 0 0 #222222;
+}
+
+@media only screen and (max-width: 768px) {
+  .mainPage {
+    background-color: #F4F7FF;
+  }
 }

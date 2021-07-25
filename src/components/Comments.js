@@ -1,3 +1,4 @@
+import React from 'react';
 import { useOuterClick } from 'react-outer-click';
 import { useState, useRef } from "react"
 import { connect } from "react-redux";

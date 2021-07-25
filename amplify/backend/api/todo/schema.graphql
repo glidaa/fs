@@ -1,3 +1,19 @@
+type User
+	@model(queries: null, mutations: null, subscriptions: null) {
+	id: ID!
+	firstName: String!
+	lastName: String!
+	username: String!
+	email: AWSEmail!
+	avatar: String
+	sharedProjects: [ID!]
+	watchedTasks: [ID!]
+	assignedTasks: [ID!]
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+}
+
 type Project
 	@model(queries: null, mutations: null, subscriptions: null)
 	@key(name: "byOwner", fields: ["owner"]) {
@@ -5,45 +21,45 @@ type Project
 	prevProject: ID
 	nextProject: ID
 	permalink: String!
-	title: String!
-	notesCount: Int!
+	title: String
+	tasksCount: Int!
+	todoCount: Int!
+	pendingCount: Int!
+	doneCount: Int!
+	privacy: ProjectPrivacy!
+	permissions: Permissions!
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
 	owner: String!
 }
 
-type Note
+type Task
 	@model(queries: null, mutations: null, subscriptions: null)
 	@key(name: "byOwner", fields: ["owner"])
-	@key(name: "byAssignee", fields: ["assignee"])
 	@key(name: "byProject", fields: ["projectID"]) {
 	id: ID!
 	projectID: ID!
-	prevNote: ID
-	nextNote: ID
+	prevTask: ID
+	nextTask: ID
 	permalink: Int!
-	note: String!
-	isDone: Boolean!
-	task: String
+	task: String!
 	description: String
-	steps: String
 	due: AWSTimestamp
-	watcher: String
-	tag: [String!]
-	sprint: String
-	status: String
+	tags: [String!]
+	status: TaskStatus!
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
 	owner: String!
-	assignee: String!
+	watchers: [String!]
+	assignees: [String!]
 }
 
 type Comment
 	@model(queries: null, mutations: null, subscriptions: null)
 	@key(name: "byOwner", fields: ["owner"])
-	@key(name: "byNote", fields: ["noteID"]) {
+	@key(name: "byTask", fields: ["taskID"]) {
 	id: ID!
-	noteID: ID!
+	taskID: ID!
 	content: AWSJSON!
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
@@ -55,7 +71,7 @@ type Mutation {
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	createNote(input: CreateNoteInput!): Note
+	createTask(input: CreateTaskInput!): Task
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -67,7 +83,7 @@ type Mutation {
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	updateNote(input: UpdateNoteInput!): Note
+	updateTask(input: UpdateTaskInput!): Task
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -75,11 +91,11 @@ type Mutation {
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	deleteProjectAndNotes(projectID: ID!): Project
+	deleteProjectAndTasks(projectID: ID!): Project
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	deleteNoteAndComments(noteId: ID!): Note
+	deleteTaskAndComments(taskId: ID!): Task
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -87,11 +103,11 @@ type Mutation {
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	assignNote(noteID: ID!, assignee: String!): Note
+	assignTask(taskID: ID!, assignee: String!): Task
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	disallowNote(noteID: ID!, assignee: String!): Note
+	disallowTask(taskID: ID!, assignee: String!): Task
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -102,6 +118,10 @@ type Mutation {
 }
 
 type Query {
+	getUserByID(userID: ID!): User
+		@function(name: "graphqlresolver-${env}")
+		@aws_iam
+		@aws_cognito_user_pools
 	getProjectByID(projectID: ID!): Project
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
@@ -118,11 +138,11 @@ type Query {
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	listNotesForProject(projectID: ID!): NotesList
+	listTasksForProject(projectID: ID!): TasksList
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	listCommentsForNote(noteID: ID!): CommentsList
+	listCommentsForTask(taskID: ID!): CommentsList
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -145,56 +165,56 @@ type Subscription {
 		@aws_iam
 		@aws_cognito_user_pools
 	onDeleteOwnedProject(owner: String!): Project
-		@aws_subscribe(mutations: ["deleteProjectAndNotes"])
+		@aws_subscribe(mutations: ["deleteProjectAndTasks"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onAssignNote(assignee: String!): Note
-		@aws_subscribe(mutations: ["assignNote"])
+	onAssignTask(assignee: String!): Task
+		@aws_subscribe(mutations: ["assignTask"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onDisallowNote(assignee: String!): Note
-		@aws_subscribe(mutations: ["disallowNote"])
+	onDisallowTask(assignee: String!): Task
+		@aws_subscribe(mutations: ["disallowTask"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onUpdateAssignedNoteByProjectID(projectID: ID!, assignee: String!): Note
-		@aws_subscribe(mutations: ["updateNote"])
+	onUpdateAssignedTaskByProjectID(projectID: ID!, assignee: String!): Task
+		@aws_subscribe(mutations: ["updateTask"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onDeleteAssignedNoteByProjectID(projectID: ID!, assignee: String!): Note
-		@aws_subscribe(mutations: ["deleteNoteAndComments"])
+	onDeleteAssignedTaskByProjectID(projectID: ID!, assignee: String!): Task
+		@aws_subscribe(mutations: ["deleteTaskAndComments"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onCreateOwnedNoteByProjectID(projectID: ID!): Note
-		@aws_subscribe(mutations: ["createNote"])
+	onCreateOwnedTaskByProjectID(projectID: ID!): Task
+		@aws_subscribe(mutations: ["createTask"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onUpdateOwnedNoteByProjectID(projectID: ID!): Note
-		@aws_subscribe(mutations: ["updateNote", "assignNote", "disallowNote"])
+	onUpdateOwnedTaskByProjectID(projectID: ID!): Task
+		@aws_subscribe(mutations: ["updateTask", "assignTask", "disallowTask"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onDeleteOwnedNoteByProjectID(projectID: ID!): Note
-		@aws_subscribe(mutations: ["deleteNoteAndComments"])
+	onDeleteOwnedTaskByProjectID(projectID: ID!): Task
+		@aws_subscribe(mutations: ["deleteTaskAndComments"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onCreateCommentByNoteID(noteID: ID!): Comment
+	onCreateCommentByTaskID(taskID: ID!): Comment
 		@aws_subscribe(mutations: ["createComment"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onUpdateCommentByNoteID(noteID: ID!): Comment
+	onUpdateCommentByTaskID(taskID: ID!): Comment
 		@aws_subscribe(mutations: ["updateComment"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-	onDeleteCommentByNoteID(noteID: ID!): Comment
+	onDeleteCommentByTaskID(taskID: ID!): Comment
 		@aws_subscribe(mutations: ["deleteComment"])
 		@function(name: "graphqlresolver-${env}")
 		@aws_iam
@@ -205,27 +225,25 @@ input CreateProjectInput {
 	prevProject: ID
 	nextProject: ID
 	permalink: String!
-	title: String!
+	privacy: ProjectPrivacy!
+	permissions: Permissions!
+	members: [String!]
+	title: String
 }
 
-input CreateNoteInput {
+input CreateTaskInput {
 	projectID: ID!
-	prevNote: ID
-	nextNote: ID
-	note: String!
-	isDone: Boolean!
-	task: String
+	prevTask: ID
+	nextTask: ID
+	task: String!
 	description: String
-	steps: String
 	due: AWSTimestamp
-	watcher: String
-	tag: [String!]
-	sprint: String
-	status: String
+	tags: [String!]
+	status: TaskStatus
 }
 
 input CreateCommentInput {
-	noteID: ID!
+	taskID: ID!
 	content: AWSJSON!
 }
 
@@ -234,23 +252,19 @@ input UpdateProjectInput {
 	prevProject: ID
 	nextProject: ID
 	permalink: String
+	privacy: ProjectPrivacy
 	title: String
 }
 
-input UpdateNoteInput {
+input UpdateTaskInput {
 	id: ID!
-	prevNote: ID
-	nextNote: ID
-	note: String
-	isDone: Boolean
+	prevTask: ID
+	nextTask: ID
 	task: String
 	description: String
-	steps: String
 	due: AWSTimestamp
-	watcher: String
-	tag: [String!]
-	sprint: String
-	status: String
+	tags: [String!]
+	status: TaskStatus
 }
 
 input UpdateCommentInput {
@@ -267,10 +281,26 @@ type ImportedProjectsList {
 	items: [Project!]
 }
 
-type NotesList {
-	items: [Note!]
+type TasksList {
+	items: [Task!]
 }
 
 type CommentsList {
 	items: [Comment!]
+}
+
+enum TaskStatus {
+	todo
+    pending
+    done
+}
+
+enum ProjectPrivacy {
+	public
+    private
+}
+
+enum Permissions {
+	r
+    rw
 }

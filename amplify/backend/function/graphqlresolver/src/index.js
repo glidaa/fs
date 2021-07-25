@@ -6,14 +6,20 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 
 const UNAUTHORIZED = "UNAUTHORIZED";
 const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
+const INVALID_ASSIGNEE = "INVALID_ASSIGNEE"
 const USER_NOT_ASSIGNED = "USER_NOT_ASSIGNED";
-const NOT_ASSIGNED = "NOT_ASSIGNED";
+const USER_NOT_FOUND = "USER_NOT_FOUND";
 const PROJECT_NOT_FOUND = "PROJECT_NOT_FOUND";
-const NOTE_NOT_FOUND = "NOTE_NOT_FOUND";
+const TASK_NOT_FOUND = "TASK_NOT_FOUND";
 const COMMENT_NOT_FOUND = "COMMENT_NOT_FOUND";
 
+const TODO = "todo"
+const PENDING = "pending"
+const DONE = "done"
+
+const USERTABLE = process.env.USERTABLE;
 const PROJECTTABLE = process.env.PROJECTTABLE;
-const NOTETABLE = process.env.NOTETABLE;
+const TASKTABLE = process.env.TASKTABLE;
 const COMMENTTABLE = process.env.COMMENTTABLE;
 
 const resolvers = {
@@ -21,8 +27,8 @@ const resolvers = {
     createProject: (ctx) => {
       return createProject(ctx);
     },
-    createNote: (ctx) => {
-      return createNote(ctx);
+    createTask: (ctx) => {
+      return createTask(ctx);
     },
     createComment: (ctx) => {
       return createComment(ctx);
@@ -30,32 +36,35 @@ const resolvers = {
     updateProject: (ctx) => {
       return updateProject(ctx);
     },
-    updateNote: (ctx) => {
-      return updateNote(ctx);
+    updateTask: (ctx) => {
+      return updateTask(ctx);
     },
     updateComment: (ctx) => {
       return updateComment(ctx);
     },
-    deleteProjectAndNotes: (ctx) => {
-      return deleteProjectAndNotes(ctx);
+    deleteProjectAndTasks: (ctx) => {
+      return deleteProjectAndTasks(ctx);
     },
-    deleteNoteAndComments: (ctx) => {
-      return deleteNoteAndComments(ctx);
+    deleteTaskAndComments: (ctx) => {
+      return deleteTaskAndComments(ctx);
     },
     deleteComment: (ctx) => {
       return deleteComment(ctx);
     },
-    assignNote: (ctx) => {
-      return assignNote(ctx);
+    assignTask: (ctx) => {
+      return assignTask(ctx);
     },
-    disallowNote: (ctx) => {
-      return disallowNote(ctx);
+    unassignTask: (ctx) => {
+      return unassignTask(ctx);
     },
     importData: (ctx) => {
       return importData(ctx);
     },
   },
   Query: {
+    getUserByID: (ctx) => {
+      return getUserByID(ctx);
+    },
     getProjectByID: (ctx) => {
       return getProjectByID(ctx);
     },
@@ -68,11 +77,11 @@ const resolvers = {
     listAssignedProjects: (ctx) => {
       return listAssignedProjects(ctx);
     },
-    listNotesForProject: (ctx) => {
-      return listNotesForProject(ctx);
+    listTasksForProject: (ctx) => {
+      return listTasksForProject(ctx);
     },
-    listCommentsForNote: (ctx) => {
-      return listCommentsForNote(ctx);
+    listCommentsForTask: (ctx) => {
+      return listCommentsForTask(ctx);
     }
   }, 
   Subscription: {
@@ -88,35 +97,35 @@ const resolvers = {
     onDeleteOwnedProject: (ctx) => {
       return onDeleteOwnedProject(ctx);
     },
-    onAssignNote: (ctx) => {
-      return onAssignNote(ctx);
+    onAssignTask: (ctx) => {
+      return onAssignTask(ctx);
     },
-    onDisallowNote: (ctx) => {
-      return onDisallowNote(ctx);
+    onunassignTask: (ctx) => {
+      return onunassignTask(ctx);
     },
-    onUpdateAssignedNoteByProjectID: (ctx) => {
-      return onUpdateAssignedNoteByProjectID(ctx);
+    onUpdateAssignedTaskByProjectID: (ctx) => {
+      return onUpdateAssignedTaskByProjectID(ctx);
     },
-    onDeleteAssignedNoteByProjectID: (ctx) => {
-      return onDeleteAssignedNoteByProjectID(ctx);
+    onDeleteAssignedTaskByProjectID: (ctx) => {
+      return onDeleteAssignedTaskByProjectID(ctx);
     },
-    onCreateOwnedNoteByProjectID: (ctx) => {
-      return onCreateOwnedNoteByProjectID(ctx);
+    onCreateOwnedTaskByProjectID: (ctx) => {
+      return onCreateOwnedTaskByProjectID(ctx);
     },
-    onUpdateOwnedNoteByProjectID: (ctx) => {
-      return onUpdateOwnedNoteByProjectID(ctx);
+    onUpdateOwnedTaskByProjectID: (ctx) => {
+      return onUpdateOwnedTaskByProjectID(ctx);
     },
-    onDeleteOwnedNoteByProjectID: (ctx) => {
-      return onDeleteOwnedNoteByProjectID(ctx);
+    onDeleteOwnedTaskByProjectID: (ctx) => {
+      return onDeleteOwnedTaskByProjectID(ctx);
     },
-    onCreateCommentByNoteID: (ctx) => {
-      return onCreateCommentByNoteID(ctx);
+    onCreateCommentByTaskID: (ctx) => {
+      return onCreateCommentByTaskID(ctx);
     },
-    onUpdateCommentByNoteID: (ctx) => {
-      return onUpdateCommentByNoteID(ctx);
+    onUpdateCommentByTaskID: (ctx) => {
+      return onUpdateCommentByTaskID(ctx);
     },
-    onDeleteCommentByNoteID: (ctx) => {
-      return onDeleteCommentByNoteID(ctx);
+    onDeleteCommentByTaskID: (ctx) => {
+      return onDeleteCommentByTaskID(ctx);
     }
   }
 };
@@ -138,9 +147,52 @@ exports.handler = async function (ctx) {
   throw new Error("Resolver not found.");
 }
 
+async function isProjectSharedWithClient(projectID, client) {
+  const params = {
+    TableName: PROJECTTABLE,
+    ProjectionExpression: "privacy, members, owner",
+    Key: {
+      "id": projectID
+    }
+  }
+  try {
+    const data = await docClient.get(params).promise()
+    if (data.Item) {
+      const { privacy, members, owner } = data.Item
+      return "public" === privacy || members.includes(client) || client === owner
+    } else {
+      throw new Error(PROJECT_NOT_FOUND)
+    }
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+async function isProjectEditableByClient(projectID, client) {
+  const params = {
+    TableName: PROJECTTABLE,
+    ProjectionExpression: "privacy, members, owner, permissions",
+    Key: {
+      "id": projectID
+    }
+  }
+  try {
+    const data = await docClient.get(params).promise()
+    if (data.Item) {
+      const { privacy, members, owner, permissions } = data.Item
+      return ("rw" === permissions && ("public" === privacy || members.includes(client))) || client === owner
+    } else {
+      throw new Error(PROJECT_NOT_FOUND)
+    }
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
 async function isProjectOwner(projectID, client) {
   const params = {
     TableName: PROJECTTABLE,
+    ProjectionExpression: "owner",
     Key: {
       "id": projectID
     }
@@ -157,11 +209,12 @@ async function isProjectOwner(projectID, client) {
   }
 }
 
-async function isNoteOwner(noteID, client) {
+async function isTaskOwner(taskID, client) {
   const params = {
-    TableName: NOTETABLE,
+    TableName: TASKTABLE,
+    ProjectionExpression: "owner",
     Key: {
-      "id": noteID
+      "id": taskID
     }
   }
   try {
@@ -179,6 +232,7 @@ async function isNoteOwner(noteID, client) {
 async function isCommentOwner(commentID, client) {
   const params = {
     TableName: COMMENTTABLE,
+    ProjectionExpression: "owner",
     Key: {
       "id": commentID
     }
@@ -195,19 +249,61 @@ async function isCommentOwner(commentID, client) {
   }
 }
 
-async function isNoteOwnerOrAssignee(noteID, client) {
+async function isTaskSharedWithClient(taskID, client) {
   const params = {
-    TableName: NOTETABLE,
+    TableName: TASKTABLE,
+    ProjectionExpression: "projectID",
     Key: {
-      "id": noteID
+      "id": taskID
     }
   }
   try {
     const data = await docClient.get(params).promise()
     if (data.Item) {
-      return client === data.Item.owner || client === data.Item.assignee
+      const { projectID } = data.Item
+      return await isProjectSharedWithClient(projectID, client)
     } else {
-      throw new Error(NOTE_NOT_FOUND)
+      throw new Error(TASK_NOT_FOUND)
+    }
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+async function isTaskEditableByClient(taskID, client) {
+  const params = {
+    TableName: TASKTABLE,
+    ProjectionExpression: "projectID",
+    Key: {
+      "id": taskID
+    }
+  }
+  try {
+    const data = await docClient.get(params).promise()
+    if (data.Item) {
+      const { projectID } = data.Item
+      return await isProjectEditableByClient(projectID, client)
+    } else {
+      throw new Error(TASK_NOT_FOUND)
+    }
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+async function getUserByID(ctx) {
+  const params = {
+    TableName: USERTABLE,
+    Key: {
+      "id": ctx.arguments.userID
+    }
+  }
+  try {
+    const data = await docClient.get(params).promise()
+    if(data.Item) {
+      return data.Item
+    } else {
+      throw new Error(USER_NOT_FOUND)
     }
   } catch (err) {
     throw new Error(err)
@@ -324,8 +420,12 @@ async function createProject(ctx) {
   if (client) {
     const projectData = {
       ...ctx.arguments.input,
-      notesCount: 0,
       id: uuidv4(),
+      tasksCount: 0,
+      todoCount: 0,
+      pendingCount: 0,
+      doneCount: 0,
+      permalink: `${client}/${ctx.arguments.input.permalink}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -356,47 +456,47 @@ async function createProject(ctx) {
   }
 }
 
-async function removeNoteOrder(noteID) {
-  const noteParams = {
-    TableName: NOTETABLE,
+async function removeTaskOrder(taskID) {
+  const taskParams = {
+    TableName: TASKTABLE,
     Key: {
-      "id": noteID
+      "id": taskID
     },
-    ProjectionExpression: "prevNote, nextNote"
+    ProjectionExpression: "prevTask, nextTask"
   }
-  const noteData = await docClient.get(noteParams).promise()
-  if (noteData.Item) {
-    const { prevNote, nextNote } = noteData.Item
-    const prevNoteUpdateParams = {
-      TableName: NOTETABLE,
+  const taskData = await docClient.get(taskParams).promise()
+  if (taskData.Item) {
+    const { prevTask, nextTask } = taskData.Item
+    const prevTaskUpdateParams = {
+      TableName: TASKTABLE,
       Key: {
-        "id": prevNote
+        "id": prevTask
       },
-      UpdateExpression: "SET nextNote = :nextNote, updatedAt = :updatedAt",
+      UpdateExpression: "SET nextTask = :nextTask, updatedAt = :updatedAt",
       ReturnValues: "NONE",
       ExpressionAttributeValues: {
-        ":nextNote": nextNote,
+        ":nextTask": nextTask,
         ":updatedAt": new Date().toISOString()
       }
     };
-    const nextNoteUpdateParams = {
-      TableName: NOTETABLE,
+    const nextTaskUpdateParams = {
+      TableName: TASKTABLE,
       Key: {
-        "id": nextNote
+        "id": nextTask
       },
-      UpdateExpression: "SET prevNote = :prevNote, updatedAt = :updatedAt",
+      UpdateExpression: "SET prevTask = :prevTask, updatedAt = :updatedAt",
       ReturnValues: "NONE",
       ExpressionAttributeValues: {
-        ":prevNote": prevNote,
+        ":prevTask": prevTask,
         ":updatedAt": new Date().toISOString()
       }
     };
     try {
-      if (prevNote) {
-        await docClient.update(prevNoteUpdateParams).promise()
+      if (prevTask) {
+        await docClient.update(prevTaskUpdateParams).promise()
       }
-      if (nextNote) {
-        await docClient.update(nextNoteUpdateParams).promise()
+      if (nextTask) {
+        await docClient.update(nextTaskUpdateParams).promise()
       }
     } catch (err) {
       throw new Error(err);
@@ -404,44 +504,78 @@ async function removeNoteOrder(noteID) {
   }
 }
 
-async function injectNoteOrder(noteID, prevNote, nextNote) {
-  const prevNoteUpdateParams = {
-    TableName: NOTETABLE,
+async function injectTaskOrder(taskID, prevTask, nextTask) {
+  const prevTaskUpdateParams = {
+    TableName: TASKTABLE,
     Key: {
-      "id": prevNote
+      "id": prevTask
     },
-    UpdateExpression: "SET nextNote = :nextNote, updatedAt = :updatedAt",
+    UpdateExpression: "SET nextTask = :nextTask, updatedAt = :updatedAt",
     ReturnValues: "NONE",
     ExpressionAttributeValues: {
-      ":nextNote": noteID,
+      ":nextTask": taskID,
       ":updatedAt": new Date().toISOString()
     }
   };
-  const nextNoteUpdateParams = {
-    TableName: NOTETABLE,
+  const nextTaskUpdateParams = {
+    TableName: TASKTABLE,
     Key: {
-      "id": nextNote
+      "id": nextTask
     },
-    UpdateExpression: "SET prevNote = :prevNote, updatedAt = :updatedAt",
+    UpdateExpression: "SET prevTask = :prevTask, updatedAt = :updatedAt",
     ReturnValues: "NONE",
     ExpressionAttributeValues: {
-      ":prevNote": noteID,
+      ":prevTask": taskID,
       ":updatedAt": new Date().toISOString()
     }
   };
   try {
-    if (prevNote) {
-      await docClient.update(prevNoteUpdateParams).promise()
+    if (prevTask) {
+      await docClient.update(prevTaskUpdateParams).promise()
     }
-    if (nextNote) {
-      await docClient.update(nextNoteUpdateParams).promise()
+    if (nextTask) {
+      await docClient.update(nextTaskUpdateParams).promise()
     }
   } catch (err) {
     throw new Error(err);
   }
 }
 
-async function createNote(ctx) {
+async function updateTaskCount(taskID, nextStatus = null) {
+  const taskGetParams = {
+    TableName: TASKTABLE,
+    Key: {
+      "id": taskID
+    }
+  }
+  const taskData = await docClient.get(taskGetParams).promise()
+  if (taskData.Item) {
+    const { projectID, status: prevStatus } = taskData.Item
+    const projectUpdateParams = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": projectID
+      },
+      UpdateExpression: "SET todoCount = todoCount + :isTodo, pendingCount = pendingCount + :isPending, doneCount = doneCount + :isDone, updatedAt = :updatedAt",
+      ExpressionAttributeValues: {
+        ":isTodo": (-1 * prevStatus === TODO) || (1 * nextStatus === TODO),
+        ":isPending": (-1 * prevStatus === PENDING) || (1 * nextStatus === PENDING),
+        ":isDone": (-1 * prevStatus === DONE) || (1 * nextStatus === DONE),
+        ":updatedAt": new Date().toISOString()
+      },
+      ReturnValues: "NONE"
+    };
+    try {
+      if (prevStatus !== nextStatus) await docClient.update(projectUpdateParams).promise();
+    } catch (err) {
+      throw new Error(err);
+    }
+  } else {
+    throw new Error(TASK_NOT_FOUND)
+  }
+}
+
+async function createTask(ctx) {
   const projectID = ctx.arguments.input.projectID
   const client = ctx.identity.sub
   const projectParams = {
@@ -451,47 +585,51 @@ async function createNote(ctx) {
     }
   }
   const projectData = await docClient.get(projectParams).promise()
-  if (client === projectData.Item.owner) {
-    const noteData = {
+  const isAuthorized = await isProjectEditableByClient(projectID, client)
+  if (isAuthorized) {
+    const taskData = {
       ...ctx.arguments.input,
       id: uuidv4(),
-      permalink: projectData.Item.notesCount + 1,
+      status: ctx.arguments.input.status || TODO,
+      permalink: projectData.Item.tasksCount + 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      owner: client,
-      assignee: NOT_ASSIGNED
+      owner: client
     }
     let isCont = false
-    if (!noteData.prevNote) {
-      noteData.prevNote = await getLastNote(projectID)
+    if (!taskData.prevTask) {
+      taskData.prevTask = await getLastTask(projectID)
       isCont = true
     }
-    noteData.nextNote = noteData.nextNote || null
+    taskData.nextTask = taskData.nextTask || null
     const projectUpdateParams = {
       TableName: PROJECTTABLE,
       Key: {
         "id": projectID
       },
-      UpdateExpression: "SET notesCount = notesCount + :increment, updatedAt = :updatedAt",
+      UpdateExpression: "SET tasksCount = tasksCount + :increment, todoCount = todoCount + :isTodo, pendingCount = pendingCount + :isPending, doneCount = doneCount + :isDone, updatedAt = :updatedAt",
       ExpressionAttributeValues: {
         ":increment": 1,
+        ":isTodo": 1 * taskData.status === TODO,
+        ":isPending": 1 * taskData.status === PENDING,
+        ":isDone": 1 * taskData.status === DONE,
         ":updatedAt": new Date().toISOString()
       },
       ReturnValues: "NONE"
     };
-    const noteParams = {
-      TableName: NOTETABLE,
-      Item: noteData
+    const taskParams = {
+      TableName: TASKTABLE,
+      Item: taskData
     };
     try {
-      await docClient.put(noteParams).promise();
+      await docClient.put(taskParams).promise();
       if (isCont) {
-        await injectNoteOrder(noteData.id, noteData.prevNote, null)
+        await injectTaskOrder(taskData.id, taskData.prevTask, null)
       } else {
-        await injectNoteOrder(noteData.id, noteData.prevNote, noteData.nextNote)
+        await injectTaskOrder(taskData.id, taskData.prevTask, taskData.nextTask)
       }
       await docClient.update(projectUpdateParams).promise()
-      return noteData;
+      return taskData;
     } catch (err) {
       throw new Error(err);
     }
@@ -501,9 +639,10 @@ async function createNote(ctx) {
 }
 
 async function createComment(ctx) {
-  const noteID = ctx.arguments.input.noteID
+  const taskID = ctx.arguments.input.taskID
   const client = ctx.identity.sub
-  if (await isNoteOwnerOrAssignee(noteID, client)) {
+  const isAuthorized = await isTaskSharedWithClient(taskID, client)
+  if (isAuthorized) {
     const commentData = {
       ...ctx.arguments.input,
       id: uuidv4(),
@@ -565,11 +704,12 @@ async function updateProject(ctx) {
   }
 }
 
-async function updateNote(ctx) {
+async function updateTask(ctx) {
   const updateData = ctx.arguments.input
-  const noteID = updateData.id
+  const taskID = updateData.id
   const client = ctx.identity.sub
-  if (isNoteOwner(noteID, client)) {
+  const isAuthorized = await isTaskEditableByClient(taskID, client)
+  if (isAuthorized) {
     delete updateData["id"]
     const expAttrVal = {}
     let updateExp = []
@@ -580,21 +720,22 @@ async function updateNote(ctx) {
     expAttrVal[":updatedAt"] = new Date().toISOString()
     updateExp.push("updatedAt=:updatedAt")
     updateExp = `set ${updateExp.join(", ")}`
-    const params = {
-      TableName: NOTETABLE,
+    const taskUpdateParams = {
+      TableName: TASKTABLE,
       Key: {
-        "id": noteID
+        "id": taskID
       },
       UpdateExpression: updateExp,
       ExpressionAttributeValues: expAttrVal,
       ReturnValues: "ALL_NEW"
     };
     try {
-      if (updateData.prevNote !== undefined && updateData.nextNote !== undefined) {
-        await removeNoteOrder(noteID)
-        await injectNoteOrder(noteID, updateData.prevNote, updateData.nextNote)
+      if (updateData.prevTask !== undefined && updateData.nextTask !== undefined) {
+        await removeTaskOrder(taskID)
+        await injectTaskOrder(taskID, updateData.prevTask, updateData.nextTask)
       }
-      const data = await docClient.update(params).promise();
+      const data = await docClient.update(taskUpdateParams).promise();
+      if (updateData.status) await updateTaskCount(taskID, updateData.status)
       return data.Attributes;
     } catch (err) {
       throw new Error(err);
@@ -639,78 +780,137 @@ async function updateComment(ctx) {
   }
 }
 
-async function assignNote(ctx) {
-  const noteID = ctx.arguments.noteID
+async function assignTask(ctx) {
+  const { assignee, taskID } = ctx.arguments
   const client = ctx.identity.sub
-  const noteGetParams = {
-    TableName: NOTETABLE,
-    Key: {
-      "id": noteID
+  const isValidAssignee = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(assignee)
+  if (isValidAssignee) {
+    const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
+    const isUser = assigneeType === "user"
+    const taskGetParams = {
+      TableName: TASKTABLE,
+      Key: {
+        "id": taskID
+      }
     }
-  }
-  const noteData = await docClient.get(noteGetParams).promise()
-  if (client === noteData.Item.owner) {
-    if (noteData.Item.assignee === NOT_ASSIGNED) {
-      const noteUpdateParams = {
-        TableName: NOTETABLE,
-        Key: {
-          "id": noteID
-        },
-        UpdateExpression: "set assignee=:assignee, updatedAt = :updatedAt",
-        ExpressionAttributeValues: {
-          ":assignee": ctx.arguments.assignee,
-          ":updatedAt": new Date().toISOString()
-        },
-        ReturnValues: "ALL_NEW"
-      };
-      try {
-        const updatedNote = await docClient.update(noteUpdateParams).promise();
-        return updatedNote.Attributes;
-      } catch (err) {
-        throw new Error(err);
+    const userGetParams = {
+      TableName: USERTABLE,
+      Key: {
+        "id": assigneeID
+      }
+    }
+    const taskData = await docClient.get(taskGetParams).promise()
+    const userData = isUser && await docClient.get(userGetParams).promise()
+    const { projectID, assignees } = taskData.Item
+    const taskPath = `${projectID}/${taskID}`
+    if (await isProjectEditableByClient(projectID, client)) {
+      if (!assignees.includes(assignee)) {
+        const taskUpdateParams = {
+          TableName: TASKTABLE,
+          Key: {
+            "id": taskID
+          },
+          UpdateExpression: "set assignees=:assignees, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":assignees": [...assignees, assignee],
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        const userUpdateParams = isUser && {
+          TableName: USERTABLE,
+          Key: {
+            "id": assigneeID
+          },
+          UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":assignedTasks": [...userData.Item.assignedTasks, taskPath],
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        try {
+          const updatedTask = await docClient.update(taskUpdateParams).promise();
+          if (isUser) await docClient.update(userUpdateParams).promise();
+          return updatedTask.Attributes;
+        } catch (err) {
+          throw new Error(err);
+        }
+      } else {
+        throw new Error(ALREADY_ASSIGNED)
       }
     } else {
-      throw new Error(ALREADY_ASSIGNED)
+      throw new Error(UNAUTHORIZED)
     }
   } else {
-    throw new Error(UNAUTHORIZED)
+    throw new Error(INVALID_ASSIGNEE)
   }
 }
 
-async function disallowNote(ctx) {
-  const noteID = ctx.arguments.noteID
+async function unassignTask(ctx) {
+  const { assignee, taskID } = ctx.arguments
   const client = ctx.identity.sub
-  const noteGetParams = {
-    TableName: NOTETABLE,
-    Key: {
-      "id": noteID
+  const isValidAssignee = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(assignee)
+  if (isValidAssignee) {
+    const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
+    const isUser = assigneeType === "user"
+    const taskGetParams = {
+      TableName: TASKTABLE,
+      Key: {
+        "id": taskID
+      }
     }
-  }
-  const noteData = await docClient.get(noteGetParams).promise()
-  if (client === noteData.Item.owner) {
-    if (noteData.Item.assignee === ctx.arguments.assignee) {
-      const noteUpdateParams = {
-        TableName: NOTETABLE,
-        Key: {
-          "id": noteID
-        },
-        UpdateExpression: "set assignee=:assignee",
-        ExpressionAttributeValues: {
-          ":assignee": NOT_ASSIGNED
-        },
-        ReturnValues: "ALL_NEW"
-      };
-      try {
-        const updatedNote = await docClient.update(noteUpdateParams).promise();
-        return updatedNote.Attributes;
-      } catch (err) {
-        throw new Error(err);
+    const userGetParams = {
+      TableName: USERTABLE,
+      Key: {
+        "id": assigneeID
+      }
+    }
+    const taskData = await docClient.get(taskGetParams).promise()
+    const userData = isUser && await docClient.get(userGetParams).promise()
+    const { projectID, assignees } = taskData.Item
+    const taskPath = `${projectID}/${taskID}`
+    if (await isProjectEditableByClient(projectID, client)) {
+      if (assignees.includes(assignee)) {
+        const taskUpdateParams = {
+          TableName: TASKTABLE,
+          Key: {
+            "id": taskID
+          },
+          UpdateExpression: "set assignees=:assignees, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":assignees": assignees.filter(x => x !== assignee),
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        const userUpdateParams = isUser && {
+          TableName: USERTABLE,
+          Key: {
+            "id": assigneeID
+          },
+          UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":assignedTasks": userData.Item.assignedTasks.filter(x => x !== taskPath),
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        try {
+          const updatedTask = await docClient.update(taskUpdateParams).promise();
+          if (isUser) await docClient.update(userUpdateParams).promise();
+          return updatedTask.Attributes;
+        } catch (err) {
+          throw new Error(err);
+        }
+      } else {
+        throw new Error(USER_NOT_ASSIGNED)
       }
     } else {
-      throw new Error(USER_NOT_ASSIGNED)
+      throw new Error(UNAUTHORIZED)
     }
   } else {
-    throw new Error(UNAUTHORIZED)
+    throw new Error(INVALID_ASSIGNEE)
   }
 }
 
@@ -737,11 +937,11 @@ async function getLastProject (client) {
   }
 }
 
-async function getLastNote (projectID) {
+async function getLastTask (projectID) {
   const params = {
-    TableName: NOTETABLE,
+    TableName: TASKTABLE,
     IndexName: "byProject",
-    ProjectionExpression: "id, nextNote",
+    ProjectionExpression: "id, nextTask",
     KeyConditionExpression: "projectID = :projectID",
     ExpressionAttributeValues: {
       ":projectID": projectID
@@ -750,7 +950,7 @@ async function getLastNote (projectID) {
   try {
     const data = await docClient.query(params).promise();
     if (data.Items.length > 0) {
-      return data.Items.filter(x => !x.nextNote)[0].id
+      return data.Items.filter(x => !x.nextTask)[0].id
     } else {
       return null
     }
@@ -771,8 +971,7 @@ async function importData(ctx) {
     const projectsCount = sortedProjects.length
     for (let i = 0; i < projectsCount; i++) {
       const project = sortedProjects[i]
-      const notes = project.notes
-      const oldProjectID = project.id
+      const tasks = project.tasks
       const projectData = await createProject({
         identity: {
           sub: client
@@ -784,28 +983,22 @@ async function importData(ctx) {
           }
         }
       })
-      let sortedNotes = parseLinkedList(notes, "prevNote", "nextNote")
-      const sortedNotesCount = sortedNotes.length
-      for (let k = 0; k < sortedNotesCount; k++) {
-        const note = sortedNotes[k]
-        const oldNoteID = note.id
-        const noteData = await createNote({
+      let sortedTasks = parseLinkedList(tasks, "prevTask", "nextTask")
+      const sortedTasksCount = sortedTasks.length
+      for (let k = 0; k < sortedTasksCount; k++) {
+        const task = sortedTasks[k]
+        await createTask({
           identity: {
             sub: client
           },
           arguments: {
             input: {
               projectID: projectData.id,
-              note: note.note,
-              isDone: note.isDone,
-              task: note.task,
-              description: note.description,
-              steps: note.steps,
-              due: note.due,
-              watcher: note.watcher,
-              tag: note.tag,
-              sprint: note.sprint,
-              status: note.status
+              task: task.task,
+              description: task.description,
+              due: task.due,
+              tags: task.tags,
+              status: task.status
             }
           }
         })
@@ -864,7 +1057,7 @@ async function listOwnedProjects(ctx) {
 async function listAssignedProjects(ctx) {
   const client = ctx.identity.sub
   const params = {
-    TableName: NOTETABLE,
+    TableName: TASKTABLE,
     IndexName: "byAssignee",
     ProjectionExpression: "projectID",
     KeyConditionExpression: "assignee = :assignee",
@@ -894,11 +1087,11 @@ async function listAssignedProjects(ctx) {
   }
 }
 
-async function listNotesForProject(ctx) {
+async function listTasksForProject(ctx) {
   const projectID = ctx.arguments.projectID
   const client = ctx.identity.sub
   const params = {
-    TableName: NOTETABLE,
+    TableName: TASKTABLE,
     IndexName: "byProject",
     KeyConditionExpression: "projectID = :projectID",
     ExpressionAttributeValues: {
@@ -917,12 +1110,12 @@ async function listNotesForProject(ctx) {
   }
 }
 
-async function listCommentsForNote(ctx) {
-  const noteID = ctx.arguments.noteID
+async function listCommentsForTask(ctx) {
+  const taskID = ctx.arguments.taskID
   const client = ctx.identity.sub
-  if (await isNoteOwnerOrAssignee(noteID, client)) {
+  if (await isTaskSharedWithClient(taskID, client)) {
     try {
-      const commentsList = await _listCommentsForNote(noteID)
+      const commentsList = await _listCommentsForTask(taskID)
       return {
         items: commentsList
       };
@@ -956,14 +1149,14 @@ async function deleteComment(ctx) {
   }
 }
 
-async function deleteProjectAndNotes(ctx) {
+async function deleteProjectAndTasks(ctx) {
   const projectID = ctx.arguments.projectID
   const client = ctx.identity.sub
   if (await isProjectOwner(projectID, client)) {
-    const removeNotesProm = removeNotesOfProject(projectID);
+    const removeTasksProm = removeTasksOfProject(projectID);
     const removeProjectProm = deleteProject(projectID);
     const [_, deletedProject] = await Promise.all([
-      removeNotesProm,
+      removeTasksProm,
       removeProjectProm,
     ]);
     await removeProjectOrder(projectID)
@@ -973,18 +1166,19 @@ async function deleteProjectAndNotes(ctx) {
   }
 }
 
-async function deleteNoteAndComments(ctx) {
-  const noteID = ctx.arguments.noteId
+async function deleteTaskAndComments(ctx) {
+  const taskID = ctx.arguments.taskId
   const client = ctx.identity.sub
-  if (await isNoteOwner(noteID, client)) {
-    const removeCommentsProm = removeCommentsOfNote(noteID);
-    const removeNoteProm = deleteNote(noteID);
-    const [_, deletedNote] = await Promise.all([
+  if (await isTaskOwner(taskID, client)) {
+    const removeCommentsProm = removeCommentsOfTask(taskID);
+    const removeTaskProm = deleteTask(taskID);
+    const [_, deletedTask] = await Promise.all([
       removeCommentsProm,
-      removeNoteProm,
+      removeTaskProm,
     ]);
-    await removeNoteOrder(noteID)
-    return deletedNote
+    await removeTaskOrder(taskID)
+    await updateTaskCount(taskID)
+    return deletedTask
   } else {
     throw new Error(UNAUTHORIZED)
   }
@@ -998,7 +1192,7 @@ async function onCreateOwnedProject(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dump-project",
       title: "Dump Project",
-      notesCount: 0,
+      tasksCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -1029,7 +1223,7 @@ async function onUpdateOwnedProject(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dump-project",
       title: "Dump Project",
-      notesCount: 0,
+      tasksCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -1047,7 +1241,7 @@ async function onDeleteOwnedProject(ctx) {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dump-project",
       title: "Dump Project",
-      notesCount: 0,
+      tasksCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -1057,14 +1251,14 @@ async function onDeleteOwnedProject(ctx) {
   }
 }
 
-async function onAssignNote(ctx) {
+async function onAssignTask(ctx) {
   const client = ctx.identity.sub
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      note: "Dump Note",
+      task: "Dump Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1077,14 +1271,14 @@ async function onAssignNote(ctx) {
   }
 }
 
-async function onDisallowNote(ctx) {
+async function onunassignTask(ctx) {
   const client = ctx.identity.sub
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      note: "Dump Note",
+      task: "Dump Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1097,14 +1291,14 @@ async function onDisallowNote(ctx) {
   }
 }
 
-async function onUpdateAssignedNoteByProjectID(ctx) {
+async function onUpdateAssignedTaskByProjectID(ctx) {
   const client = ctx.identity.sub
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      note: "Dump Note",
+      task: "Dump Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1117,14 +1311,14 @@ async function onUpdateAssignedNoteByProjectID(ctx) {
   }
 }
 
-async function onDeleteAssignedNoteByProjectID(ctx) {
+async function onDeleteAssignedTaskByProjectID(ctx) {
   const client = ctx.identity.sub
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      note: "Dump Note",
+      task: "Dump Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1137,14 +1331,14 @@ async function onDeleteAssignedNoteByProjectID(ctx) {
   }
 }
 
-async function onCreateOwnedNoteByProjectID(ctx) {
+async function onCreateOwnedTaskByProjectID(ctx) {
   const client = ctx.identity.sub
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      note: "Dump Note",
+      task: "Dump Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1157,14 +1351,14 @@ async function onCreateOwnedNoteByProjectID(ctx) {
   }
 }
 
-async function onUpdateOwnedNoteByProjectID(ctx) {
+async function onUpdateOwnedTaskByProjectID(ctx) {
   const client = ctx.identity.sub
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      note: "Dump Note",
+      task: "Dump Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1177,14 +1371,14 @@ async function onUpdateOwnedNoteByProjectID(ctx) {
   }
 }
 
-async function onDeleteOwnedNoteByProjectID(ctx) {
+async function onDeleteOwnedTaskByProjectID(ctx) {
   const client = ctx.identity.sub
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      note: "Dump Note",
+      task: "Dump Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1197,13 +1391,13 @@ async function onDeleteOwnedNoteByProjectID(ctx) {
   }
 }
 
-async function onCreateCommentByNoteID(ctx) {
+async function onCreateCommentByTaskID(ctx) {
   const client = ctx.identity.sub
-  const noteID = ctx.arguments.noteID
-  if (isNoteOwnerOrAssignee(noteID, client)) {
+  const taskID = ctx.arguments.taskID
+  if (isTaskSharedWithClient(taskID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
-      noteID: "00000000-0000-0000-0000-000000000000",
+      taskID: "00000000-0000-0000-0000-000000000000",
       content: {},
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -1214,13 +1408,13 @@ async function onCreateCommentByNoteID(ctx) {
   }
 }
 
-async function onUpdateCommentByNoteID(ctx) {
+async function onUpdateCommentByTaskID(ctx) {
   const client = ctx.identity.sub
-  const noteID = ctx.arguments.noteID
-  if (isNoteOwnerOrAssignee(noteID, client)) {
+  const taskID = ctx.arguments.taskID
+  if (isTaskSharedWithClient(taskID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
-      noteID: "00000000-0000-0000-0000-000000000000",
+      taskID: "00000000-0000-0000-0000-000000000000",
       content: {},
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -1231,13 +1425,13 @@ async function onUpdateCommentByNoteID(ctx) {
   }
 }
 
-async function onDeleteCommentByNoteID(ctx) {
+async function onDeleteCommentByTaskID(ctx) {
   const client = ctx.identity.sub
-  const noteID = ctx.arguments.noteID
-  if (isNoteOwnerOrAssignee(noteID, client)) {
+  const taskID = ctx.arguments.taskID
+  if (isTaskSharedWithClient(taskID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
-      noteID: "00000000-0000-0000-0000-000000000000",
+      taskID: "00000000-0000-0000-0000-000000000000",
       content: {},
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -1248,19 +1442,19 @@ async function onDeleteCommentByNoteID(ctx) {
   }
 }
 
-async function removeNotesOfProject(projectID) {
-  const notes = await _listNotesForProject(projectID);
-  await deleteNotes(notes);
+async function removeTasksOfProject(projectID) {
+  const tasks = await _listTasksForProject(projectID);
+  await deleteTasks(tasks);
 }
 
-async function removeCommentsOfNote(noteId) {
-  const comments = await _listCommentsForNote(noteId);
+async function removeCommentsOfTask(taskId) {
+  const comments = await _listCommentsForTask(taskId);
   await deleteComments(comments);
 }
 
-async function _listNotesForProject(projectID) {
+async function _listTasksForProject(projectID) {
   const params = {
-    TableName: NOTETABLE,
+    TableName: TASKTABLE,
     IndexName: "byProject",
     KeyConditionExpression: "projectID = :projectID",
     ExpressionAttributeValues: {
@@ -1275,13 +1469,13 @@ async function _listNotesForProject(projectID) {
   }
 }
 
-async function _listCommentsForNote(noteId) {
+async function _listCommentsForTask(taskId) {
   const params = {
     TableName: COMMENTTABLE,
-    IndexName: "byNote",
-    KeyConditionExpression: "noteID = :noteId",
+    IndexName: "byTask",
+    KeyConditionExpression: "taskID = :taskId",
     ExpressionAttributeValues: {
-      ":noteId": noteId
+      ":taskId": taskId
     },
   };
   try {
@@ -1292,13 +1486,13 @@ async function _listCommentsForNote(noteId) {
   }
 }
 
-async function deleteNotes(notes) {
-  for (const note of notes) {
-    const removeCommentsProm = removeCommentsOfNote(note.id);
-    const removeNoteProm = deleteNote(note.id)
+async function deleteTasks(tasks) {
+  for (const task of tasks) {
+    const removeCommentsProm = removeCommentsOfTask(task.id);
+    const removeTaskProm = deleteTask(task.id)
     await Promise.all([
       removeCommentsProm,
-      removeNoteProm,
+      removeTaskProm,
     ]);
   }
 }
@@ -1381,9 +1575,9 @@ async function deleteProject(id) {
   }
 }
 
-async function deleteNote(id) {
+async function deleteTask(id) {
   const params = {
-    TableName: NOTETABLE,
+    TableName: TASKTABLE,
     Key: {
       id
     },

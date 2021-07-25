@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import styledComponents from "styled-components"

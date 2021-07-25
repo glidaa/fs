@@ -3,6 +3,7 @@ import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import { useOuterClick } from 'react-outer-click';
 import styledComponents from "styled-components"
+import formatDate from '../utils/formatDate';
 
 export const DatePicker = (props) => {
   const { readOnly } = props
@@ -22,7 +23,7 @@ export const DatePicker = (props) => {
     <DatePickerContainer ref={selectRef}>
       <input
         name={props.name}
-        value={new Date(props.value).toLocaleDateString()}
+        value={formatDate(props.value)}
         placeholder={props.placeholder}
         contentEditable={false}
         onClick={togglePicker}
@@ -50,19 +51,15 @@ const DatePickerContainer = styledComponents.div`
   & > input {
     border: 0.5px solid transparent;
     border-radius: 4px;
-    padding: 4px 8px;
     width: 100%;
     color: transparent;
     text-shadow: 0 0 0 #222222;
-    font-size: 12px;
     cursor: pointer;
     transition: border 0.3s, box-shadow 0.3s;
-    &:hover {
-      border: 0.5px solid #9198a1;
-    }
-    &:focus {
-      border: 0.5px solid #6F7782;
-      box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
+    font-size: 0.9em;
+    font-weight: 500;
+    &::placeholder {
+      color: #C0C0C0;
     }
   }
 `
