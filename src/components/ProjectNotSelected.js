@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import * as projectsActions from "../actions/projects"
 import { initProjectState, OK, PENDING } from "../constants"
 import parseLinkedList from "../utils/parseLinkedList"
-import tasksIllustartions from "../assets/undraw_Add_tasks_re_ln36.svg"
+import tasksIllustartion from "../assets/undraw_Add_notes_re_ln36.svg"
 
 const ProjectNotSelected = (props) => {
   const { app: { projectAddingStatus }, projects, dispatch } = props
@@ -24,7 +24,7 @@ const ProjectNotSelected = (props) => {
   }
   return (
     <ProjectNotSelectedContainer>
-      <img alt="Tasks Illustration" src={tasksIllustartions} />
+      <img alt="Tasks Illustration" src={tasksIllustartion} />
       <span onClick={createNewProject}>Select A Project To Get Started</span>
     </ProjectNotSelectedContainer>
   )
