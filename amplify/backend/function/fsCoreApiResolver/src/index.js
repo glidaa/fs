@@ -17,10 +17,10 @@ const TODO = "todo"
 const PENDING = "pending"
 const DONE = "done"
 
-const USERTABLE = process.env.USERTABLE;
-const PROJECTTABLE = process.env.PROJECTTABLE;
-const TASKTABLE = process.env.TASKTABLE;
-const COMMENTTABLE = process.env.COMMENTTABLE;
+const USERTABLE = process.env.API_FSCOREAPI_USERTABLE_NAME;
+const PROJECTTABLE = process.env.API_FSCOREAPI_PROJECTTABLE_NAME;
+const TASKTABLE = process.env.API_FSCOREAPI_TASKTABLE_NAME;
+const COMMENTTABLE = process.env.API_FSCOREAPI_COMMENTTABLE_NAME;
 
 const resolvers = {
   Mutation: {

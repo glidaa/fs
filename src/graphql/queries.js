@@ -1,6 +1,24 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getUserById = /* GraphQL */ `
+  query GetUserById($userID: ID!) {
+    getUserByID(userID: $userID) {
+      id
+      firstName
+      lastName
+      username
+      email
+      avatar
+      sharedProjects
+      watchedTasks
+      assignedTasks
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
 export const getProjectById = /* GraphQL */ `
   query GetProjectById($projectID: ID!) {
     getProjectByID(projectID: $projectID) {
@@ -9,7 +27,12 @@ export const getProjectById = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
@@ -24,7 +47,12 @@ export const getProjectByPermalink = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
@@ -40,7 +68,12 @@ export const listOwnedProjects = /* GraphQL */ `
         nextProject
         permalink
         title
-        notesCount
+        tasksCount
+        todoCount
+        pendingCount
+        doneCount
+        privacy
+        permissions
         createdAt
         updatedAt
         owner
@@ -57,7 +90,12 @@ export const listAssignedProjects = /* GraphQL */ `
         nextProject
         permalink
         title
-        notesCount
+        tasksCount
+        todoCount
+        pendingCount
+        doneCount
+        privacy
+        permissions
         createdAt
         updatedAt
         owner
@@ -65,39 +103,35 @@ export const listAssignedProjects = /* GraphQL */ `
     }
   }
 `;
-export const listNotesForProject = /* GraphQL */ `
-  query ListNotesForProject($projectID: ID!) {
-    listNotesForProject(projectID: $projectID) {
+export const listTasksForProject = /* GraphQL */ `
+  query ListTasksForProject($projectID: ID!) {
+    listTasksForProject(projectID: $projectID) {
       items {
         id
         projectID
-        prevNote
-        nextNote
+        prevTask
+        nextTask
         permalink
-        note
-        isDone
         task
         description
-        steps
         due
-        watcher
-        tag
-        sprint
+        tags
         status
         createdAt
         updatedAt
         owner
-        assignee
+        watchers
+        assignees
       }
     }
   }
 `;
-export const listCommentsForNote = /* GraphQL */ `
-  query ListCommentsForNote($noteID: ID!) {
-    listCommentsForNote(noteID: $noteID) {
+export const listCommentsForTask = /* GraphQL */ `
+  query ListCommentsForTask($taskID: ID!) {
+    listCommentsForTask(taskID: $taskID) {
       items {
         id
-        noteID
+        taskID
         content
         createdAt
         updatedAt

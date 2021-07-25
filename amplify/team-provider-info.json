@@ -12,24 +12,32 @@
       "AmplifyAppId": "dq757k0acraow"
     },
     "categories": {
-      "auth": {
-        "forwardslashe21e583a": {}
-      },
-      "function": {
-        "AdminQueries7d56620a": {
-          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/AdminQueries7d56620a-4c2b676f3264354f4e33-build.zip"
-        },
-        "graphqlresolver": {
-          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/graphqlresolver-4356332f747a556c6b6c-build.zip"
-        }
-      },
       "hosting": {
         "amplifyhosting": {
           "appId": "dq757k0acraow",
           "type": "manual"
         }
+      },
+      "function": {
+        "fsCognitoPostConfirmation": {
+          "GROUP": "free",
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-4d6a463933464b4b3745-build.zip"
+        },
+        "fsCoreApiResolver": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCoreApiResolver-324c4234626c50504230-build.zip"
+        },
+        "fsCognitoPostConfirmationInvoker": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmationInvoker-7775596a755339655375-build.zip"
+        }
+      },
+      "auth": {
+        "fsCognito": {
+          "googleClientId": "0000"
+        },
+        "userPoolGroups": {}
       }
     }
   }

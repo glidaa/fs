@@ -15,6 +15,30 @@
         "name" : "Query",
         "description" : null,
         "fields" : [ {
+          "name" : "getUserByID",
+          "description" : null,
+          "args" : [ {
+            "name" : "userID",
+            "description" : null,
+            "type" : {
+              "kind" : "NON_NULL",
+              "name" : null,
+              "ofType" : {
+                "kind" : "SCALAR",
+                "name" : "ID",
+                "ofType" : null
+              }
+            },
+            "defaultValue" : null
+          } ],
+          "type" : {
+            "kind" : "OBJECT",
+            "name" : "User",
+            "ofType" : null
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
           "name" : "getProjectByID",
           "description" : null,
           "args" : [ {
@@ -85,7 +109,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "listNotesForProject",
+          "name" : "listTasksForProject",
           "description" : null,
           "args" : [ {
             "name" : "projectID",
@@ -103,16 +127,16 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "NotesList",
+            "name" : "TasksList",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "listCommentsForNote",
+          "name" : "listCommentsForTask",
           "description" : null,
           "args" : [ {
-            "name" : "noteID",
+            "name" : "taskID",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
@@ -139,7 +163,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "Project",
+        "name" : "User",
         "description" : null,
         "fields" : [ {
           "name" : "id",
@@ -157,29 +181,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "prevProject",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "ID",
-            "ofType" : null
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "nextProject",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "ID",
-            "ofType" : null
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "permalink",
+          "name" : "firstName",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -194,7 +196,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "title",
+          "name" : "lastName",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -209,7 +211,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "notesCount",
+          "name" : "username",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -217,8 +219,91 @@
             "name" : null,
             "ofType" : {
               "kind" : "SCALAR",
-              "name" : "Int",
+              "name" : "String",
               "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "email",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "AWSEmail",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "avatar",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "String",
+            "ofType" : null
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "sharedProjects",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "LIST",
+            "name" : null,
+            "ofType" : {
+              "kind" : "NON_NULL",
+              "name" : null,
+              "ofType" : {
+                "kind" : "SCALAR",
+                "name" : "ID",
+                "ofType" : null
+              }
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "watchedTasks",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "LIST",
+            "name" : null,
+            "ofType" : {
+              "kind" : "NON_NULL",
+              "name" : null,
+              "ofType" : {
+                "kind" : "SCALAR",
+                "name" : "ID",
+                "ofType" : null
+              }
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "assignedTasks",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "LIST",
+            "name" : null,
+            "ofType" : {
+              "kind" : "NON_NULL",
+              "name" : null,
+              "ofType" : {
+                "kind" : "SCALAR",
+                "name" : "ID",
+                "ofType" : null
+              }
             }
           },
           "isDeprecated" : false,
@@ -293,8 +378,8 @@
         "possibleTypes" : null
       }, {
         "kind" : "SCALAR",
-        "name" : "Int",
-        "description" : "Built-in Int",
+        "name" : "AWSEmail",
+        "description" : "The `AWSEmail` scalar type provided by AWS AppSync, represents an Email address string that complies with [RFC 822](https://www.ietf.org/rfc/rfc822.txt). For example, \"**username@example.com**\" is a valid Email address.",
         "fields" : null,
         "inputFields" : null,
         "interfaces" : null,
@@ -308,6 +393,260 @@
         "inputFields" : null,
         "interfaces" : null,
         "enumValues" : null,
+        "possibleTypes" : null
+      }, {
+        "kind" : "OBJECT",
+        "name" : "Project",
+        "description" : null,
+        "fields" : [ {
+          "name" : "id",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "ID",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "prevProject",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "ID",
+            "ofType" : null
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "nextProject",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "ID",
+            "ofType" : null
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "permalink",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "title",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "String",
+            "ofType" : null
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "tasksCount",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "Int",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "todoCount",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "Int",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "pendingCount",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "Int",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "doneCount",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "Int",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "privacy",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "ENUM",
+              "name" : "ProjectPrivacy",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "permissions",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "ENUM",
+              "name" : "Permissions",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "createdAt",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "AWSDateTime",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "updatedAt",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "AWSDateTime",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "owner",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        } ],
+        "inputFields" : null,
+        "interfaces" : [ ],
+        "enumValues" : null,
+        "possibleTypes" : null
+      }, {
+        "kind" : "SCALAR",
+        "name" : "Int",
+        "description" : "Built-in Int",
+        "fields" : null,
+        "inputFields" : null,
+        "interfaces" : null,
+        "enumValues" : null,
+        "possibleTypes" : null
+      }, {
+        "kind" : "ENUM",
+        "name" : "ProjectPrivacy",
+        "description" : null,
+        "fields" : null,
+        "inputFields" : null,
+        "interfaces" : null,
+        "enumValues" : [ {
+          "name" : "public",
+          "description" : null,
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "private",
+          "description" : null,
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        } ],
+        "possibleTypes" : null
+      }, {
+        "kind" : "ENUM",
+        "name" : "Permissions",
+        "description" : null,
+        "fields" : null,
+        "inputFields" : null,
+        "interfaces" : null,
+        "enumValues" : [ {
+          "name" : "r",
+          "description" : null,
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "rw",
+          "description" : null,
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        } ],
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
@@ -339,7 +678,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "NotesList",
+        "name" : "TasksList",
         "description" : null,
         "fields" : [ {
           "name" : "items",
@@ -353,7 +692,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "OBJECT",
-                "name" : "Note",
+                "name" : "Task",
                 "ofType" : null
               }
             }
@@ -367,7 +706,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "Note",
+        "name" : "Task",
         "description" : null,
         "fields" : [ {
           "name" : "id",
@@ -400,7 +739,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "prevNote",
+          "name" : "prevTask",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -411,7 +750,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "nextNote",
+          "name" : "nextTask",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -437,7 +776,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "note",
+          "name" : "task",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -452,44 +791,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "isDone",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "NON_NULL",
-            "name" : null,
-            "ofType" : {
-              "kind" : "SCALAR",
-              "name" : "Boolean",
-              "ofType" : null
-            }
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "task",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
           "name" : "description",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "steps",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -511,18 +813,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "watcher",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "tag",
+          "name" : "tags",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -541,24 +832,17 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "sprint",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
           "name" : "status",
           "description" : null,
           "args" : [ ],
           "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "ENUM",
+              "name" : "TaskStatus",
+              "ofType" : null
+            }
           },
           "isDeprecated" : false,
           "deprecationReason" : null
@@ -608,16 +892,39 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "assignee",
+          "name" : "watchers",
           "description" : null,
           "args" : [ ],
           "type" : {
-            "kind" : "NON_NULL",
+            "kind" : "LIST",
             "name" : null,
             "ofType" : {
-              "kind" : "SCALAR",
-              "name" : "String",
-              "ofType" : null
+              "kind" : "NON_NULL",
+              "name" : null,
+              "ofType" : {
+                "kind" : "SCALAR",
+                "name" : "String",
+                "ofType" : null
+              }
+            }
+          },
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "assignees",
+          "description" : null,
+          "args" : [ ],
+          "type" : {
+            "kind" : "LIST",
+            "name" : null,
+            "ofType" : {
+              "kind" : "NON_NULL",
+              "name" : null,
+              "ofType" : {
+                "kind" : "SCALAR",
+                "name" : "String",
+                "ofType" : null
+              }
             }
           },
           "isDeprecated" : false,
@@ -629,21 +936,36 @@
         "possibleTypes" : null
       }, {
         "kind" : "SCALAR",
-        "name" : "Boolean",
-        "description" : "Built-in Boolean",
-        "fields" : null,
-        "inputFields" : null,
-        "interfaces" : null,
-        "enumValues" : null,
-        "possibleTypes" : null
-      }, {
-        "kind" : "SCALAR",
         "name" : "AWSTimestamp",
         "description" : "The `AWSTimestamp` scalar type provided by AWS AppSync, represents the number of seconds that have elapsed since `1970-01-01T00:00Z`. Negative values are also accepted and these represent the number of seconds till `1970-01-01T00:00Z`.  Timestamps are serialized and deserialized as integers. The minimum supported timestamp value is **`-31557014167219200`** which corresponds to `-1000000000-01-01T00:00Z`. The maximum supported timestamp value is **`31556889864403199`** which corresponds to `1000000000-12-31T23:59:59.999999999Z`.",
         "fields" : null,
         "inputFields" : null,
         "interfaces" : null,
         "enumValues" : null,
+        "possibleTypes" : null
+      }, {
+        "kind" : "ENUM",
+        "name" : "TaskStatus",
+        "description" : null,
+        "fields" : null,
+        "inputFields" : null,
+        "interfaces" : null,
+        "enumValues" : [ {
+          "name" : "todo",
+          "description" : null,
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "pending",
+          "description" : null,
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        }, {
+          "name" : "done",
+          "description" : null,
+          "isDeprecated" : false,
+          "deprecationReason" : null
+        } ],
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
@@ -693,7 +1015,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "noteID",
+          "name" : "taskID",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -810,7 +1132,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "createNote",
+          "name" : "createTask",
           "description" : null,
           "args" : [ {
             "name" : "input",
@@ -820,7 +1142,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "INPUT_OBJECT",
-                "name" : "CreateNoteInput",
+                "name" : "CreateTaskInput",
                 "ofType" : null
               }
             },
@@ -828,7 +1150,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -882,7 +1204,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "updateNote",
+          "name" : "updateTask",
           "description" : null,
           "args" : [ {
             "name" : "input",
@@ -892,7 +1214,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "INPUT_OBJECT",
-                "name" : "UpdateNoteInput",
+                "name" : "UpdateTaskInput",
                 "ofType" : null
               }
             },
@@ -900,7 +1222,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -930,7 +1252,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "deleteProjectAndNotes",
+          "name" : "deleteProjectAndTasks",
           "description" : null,
           "args" : [ {
             "name" : "projectID",
@@ -954,10 +1276,10 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "deleteNoteAndComments",
+          "name" : "deleteTaskAndComments",
           "description" : null,
           "args" : [ {
-            "name" : "noteId",
+            "name" : "taskId",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
@@ -972,7 +1294,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -1002,10 +1324,10 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "assignNote",
+          "name" : "assignTask",
           "description" : null,
           "args" : [ {
-            "name" : "noteID",
+            "name" : "taskID",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
@@ -1033,16 +1355,16 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "disallowNote",
+          "name" : "disallowTask",
           "description" : null,
           "args" : [ {
-            "name" : "noteID",
+            "name" : "taskID",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
@@ -1070,7 +1392,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -1141,16 +1463,55 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "title",
+          "name" : "privacy",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
             "name" : null,
             "ofType" : {
-              "kind" : "SCALAR",
-              "name" : "String",
+              "kind" : "ENUM",
+              "name" : "ProjectPrivacy",
               "ofType" : null
             }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "permissions",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "ENUM",
+              "name" : "Permissions",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "members",
+          "description" : null,
+          "type" : {
+            "kind" : "LIST",
+            "name" : null,
+            "ofType" : {
+              "kind" : "NON_NULL",
+              "name" : null,
+              "ofType" : {
+                "kind" : "SCALAR",
+                "name" : "String",
+                "ofType" : null
+              }
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "title",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "String",
+            "ofType" : null
           },
           "defaultValue" : null
         } ],
@@ -1159,7 +1520,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "CreateNoteInput",
+        "name" : "CreateTaskInput",
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
@@ -1176,7 +1537,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "prevNote",
+          "name" : "prevTask",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -1185,7 +1546,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "nextNote",
+          "name" : "nextTask",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -1194,7 +1555,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "note",
+          "name" : "task",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -1207,38 +1568,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "isDone",
-          "description" : null,
-          "type" : {
-            "kind" : "NON_NULL",
-            "name" : null,
-            "ofType" : {
-              "kind" : "SCALAR",
-              "name" : "Boolean",
-              "ofType" : null
-            }
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "task",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
           "name" : "description",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "steps",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -1256,16 +1586,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "watcher",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "tag",
+          "name" : "tags",
           "description" : null,
           "type" : {
             "kind" : "LIST",
@@ -1282,20 +1603,11 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "sprint",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
           "name" : "status",
           "description" : null,
           "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
+            "kind" : "ENUM",
+            "name" : "TaskStatus",
             "ofType" : null
           },
           "defaultValue" : null
@@ -1309,7 +1621,7 @@
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
-          "name" : "noteID",
+          "name" : "taskID",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -1384,6 +1696,15 @@
           },
           "defaultValue" : null
         }, {
+          "name" : "privacy",
+          "description" : null,
+          "type" : {
+            "kind" : "ENUM",
+            "name" : "ProjectPrivacy",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        }, {
           "name" : "title",
           "description" : null,
           "type" : {
@@ -1398,7 +1719,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "UpdateNoteInput",
+        "name" : "UpdateTaskInput",
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
@@ -1415,7 +1736,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "prevNote",
+          "name" : "prevTask",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -1424,29 +1745,11 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "nextNote",
+          "name" : "nextTask",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
             "name" : "ID",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "note",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "isDone",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "Boolean",
             "ofType" : null
           },
           "defaultValue" : null
@@ -1469,15 +1772,6 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "steps",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
           "name" : "due",
           "description" : null,
           "type" : {
@@ -1487,16 +1781,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "watcher",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "tag",
+          "name" : "tags",
           "description" : null,
           "type" : {
             "kind" : "LIST",
@@ -1513,20 +1798,11 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "sprint",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
           "name" : "status",
           "description" : null,
           "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
+            "kind" : "ENUM",
+            "name" : "TaskStatus",
             "ofType" : null
           },
           "defaultValue" : null
@@ -1709,7 +1985,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onAssignNote",
+          "name" : "onAssignTask",
           "description" : null,
           "args" : [ {
             "name" : "assignee",
@@ -1727,13 +2003,13 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onDisallowNote",
+          "name" : "onDisallowTask",
           "description" : null,
           "args" : [ {
             "name" : "assignee",
@@ -1751,13 +2027,13 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onUpdateAssignedNoteByProjectID",
+          "name" : "onUpdateAssignedTaskByProjectID",
           "description" : null,
           "args" : [ {
             "name" : "projectID",
@@ -1788,13 +2064,13 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onDeleteAssignedNoteByProjectID",
+          "name" : "onDeleteAssignedTaskByProjectID",
           "description" : null,
           "args" : [ {
             "name" : "projectID",
@@ -1825,13 +2101,13 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onCreateOwnedNoteByProjectID",
+          "name" : "onCreateOwnedTaskByProjectID",
           "description" : null,
           "args" : [ {
             "name" : "projectID",
@@ -1849,13 +2125,13 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onUpdateOwnedNoteByProjectID",
+          "name" : "onUpdateOwnedTaskByProjectID",
           "description" : null,
           "args" : [ {
             "name" : "projectID",
@@ -1873,13 +2149,13 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onDeleteOwnedNoteByProjectID",
+          "name" : "onDeleteOwnedTaskByProjectID",
           "description" : null,
           "args" : [ {
             "name" : "projectID",
@@ -1897,16 +2173,16 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Note",
+            "name" : "Task",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onCreateCommentByNoteID",
+          "name" : "onCreateCommentByTaskID",
           "description" : null,
           "args" : [ {
-            "name" : "noteID",
+            "name" : "taskID",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
@@ -1927,10 +2203,10 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onUpdateCommentByNoteID",
+          "name" : "onUpdateCommentByTaskID",
           "description" : null,
           "args" : [ {
-            "name" : "noteID",
+            "name" : "taskID",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
@@ -1951,10 +2227,10 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onDeleteCommentByNoteID",
+          "name" : "onDeleteCommentByTaskID",
           "description" : null,
           "args" : [ {
-            "name" : "noteID",
+            "name" : "taskID",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
@@ -2451,6 +2727,15 @@
         "enumValues" : null,
         "possibleTypes" : null
       }, {
+        "kind" : "SCALAR",
+        "name" : "Boolean",
+        "description" : "Built-in Boolean",
+        "fields" : null,
+        "inputFields" : null,
+        "interfaces" : null,
+        "enumValues" : null,
+        "possibleTypes" : null
+      }, {
         "kind" : "OBJECT",
         "name" : "__EnumValue",
         "description" : null,
@@ -2763,33 +3048,20 @@
         "onFragment" : false,
         "onField" : true
       }, {
-        "name" : "aws_cognito_user_pools",
-        "description" : "Tells the service this field/object has access authorized by a Cognito User Pools token.",
+        "name" : "aws_oidc",
+        "description" : "Tells the service this field/object has access authorized by an OIDC token.",
         "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
-        "args" : [ {
-          "name" : "cognito_groups",
-          "description" : "List of cognito user pool groups which have access on this field",
-          "type" : {
-            "kind" : "LIST",
-            "name" : null,
-            "ofType" : {
-              "kind" : "SCALAR",
-              "name" : "String",
-              "ofType" : null
-            }
-          },
-          "defaultValue" : null
-        } ],
+        "args" : [ ],
         "onOperation" : false,
         "onFragment" : false,
         "onField" : false
       }, {
-        "name" : "aws_auth",
-        "description" : "Directs the schema to enforce authorization on a field",
+        "name" : "aws_subscribe",
+        "description" : "Tells the service which mutation triggers this subscription.",
         "locations" : [ "FIELD_DEFINITION" ],
         "args" : [ {
-          "name" : "cognito_groups",
-          "description" : "List of cognito user pool groups which have access on this field",
+          "name" : "mutations",
+          "description" : "List of mutations which will trigger this subscription when they are called.",
           "type" : {
             "kind" : "LIST",
             "name" : null,
@@ -2813,6 +3085,27 @@
         "onFragment" : false,
         "onField" : false
       }, {
+        "name" : "aws_cognito_user_pools",
+        "description" : "Tells the service this field/object has access authorized by a Cognito User Pools token.",
+        "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
+        "args" : [ {
+          "name" : "cognito_groups",
+          "description" : "List of cognito user pool groups which have access on this field",
+          "type" : {
+            "kind" : "LIST",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        } ],
+        "onOperation" : false,
+        "onFragment" : false,
+        "onField" : false
+      }, {
         "name" : "aws_lambda",
         "description" : "Tells the service this field/object has access authorized by a Lambda Authorizer.",
         "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
@@ -2821,8 +3114,8 @@
         "onFragment" : false,
         "onField" : false
       }, {
-        "name" : "aws_oidc",
-        "description" : "Tells the service this field/object has access authorized by an OIDC token.",
+        "name" : "aws_iam",
+        "description" : "Tells the service this field/object has access authorized by sigv4 signing.",
         "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
         "args" : [ ],
         "onOperation" : false,
@@ -2850,14 +3143,6 @@
         "onFragment" : false,
         "onField" : false
       }, {
-        "name" : "aws_iam",
-        "description" : "Tells the service this field/object has access authorized by sigv4 signing.",
-        "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
-        "args" : [ ],
-        "onOperation" : false,
-        "onFragment" : false,
-        "onField" : false
-      }, {
         "name" : "deprecated",
         "description" : null,
         "locations" : [ "FIELD_DEFINITION", "ENUM_VALUE" ],
@@ -2875,12 +3160,12 @@
         "onFragment" : false,
         "onField" : false
       }, {
-        "name" : "aws_subscribe",
-        "description" : "Tells the service which mutation triggers this subscription.",
+        "name" : "aws_auth",
+        "description" : "Directs the schema to enforce authorization on a field",
         "locations" : [ "FIELD_DEFINITION" ],
         "args" : [ {
-          "name" : "mutations",
-          "description" : "List of mutations which will trigger this subscription when they are called.",
+          "name" : "cognito_groups",
+          "description" : "List of cognito user pool groups which have access on this field",
           "type" : {
             "kind" : "LIST",
             "name" : null,

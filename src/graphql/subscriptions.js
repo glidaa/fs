@@ -9,7 +9,12 @@ export const onCreateOwnedProject = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
@@ -26,7 +31,12 @@ export const onImportOwnedProjects = /* GraphQL */ `
         nextProject
         permalink
         title
-        notesCount
+        tasksCount
+        todoCount
+        pendingCount
+        doneCount
+        privacy
+        permissions
         createdAt
         updatedAt
         owner
@@ -42,7 +52,12 @@ export const onUpdateOwnedProject = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
@@ -57,205 +72,182 @@ export const onDeleteOwnedProject = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
     }
   }
 `;
-export const onAssignNote = /* GraphQL */ `
-  subscription OnAssignNote($assignee: String!) {
-    onAssignNote(assignee: $assignee) {
+export const onAssignTask = /* GraphQL */ `
+  subscription OnAssignTask($assignee: String!) {
+    onAssignTask(assignee: $assignee) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
-export const onDisallowNote = /* GraphQL */ `
-  subscription OnDisallowNote($assignee: String!) {
-    onDisallowNote(assignee: $assignee) {
+export const onDisallowTask = /* GraphQL */ `
+  subscription OnDisallowTask($assignee: String!) {
+    onDisallowTask(assignee: $assignee) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
-export const onUpdateAssignedNoteByProjectId = /* GraphQL */ `
-  subscription OnUpdateAssignedNoteByProjectId(
+export const onUpdateAssignedTaskByProjectId = /* GraphQL */ `
+  subscription OnUpdateAssignedTaskByProjectId(
     $projectID: ID!
     $assignee: String!
   ) {
-    onUpdateAssignedNoteByProjectID(
+    onUpdateAssignedTaskByProjectID(
       projectID: $projectID
       assignee: $assignee
     ) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
-export const onDeleteAssignedNoteByProjectId = /* GraphQL */ `
-  subscription OnDeleteAssignedNoteByProjectId(
+export const onDeleteAssignedTaskByProjectId = /* GraphQL */ `
+  subscription OnDeleteAssignedTaskByProjectId(
     $projectID: ID!
     $assignee: String!
   ) {
-    onDeleteAssignedNoteByProjectID(
+    onDeleteAssignedTaskByProjectID(
       projectID: $projectID
       assignee: $assignee
     ) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
-export const onCreateOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnCreateOwnedNoteByProjectId($projectID: ID!) {
-    onCreateOwnedNoteByProjectID(projectID: $projectID) {
+export const onCreateOwnedTaskByProjectId = /* GraphQL */ `
+  subscription OnCreateOwnedTaskByProjectId($projectID: ID!) {
+    onCreateOwnedTaskByProjectID(projectID: $projectID) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
-export const onUpdateOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnUpdateOwnedNoteByProjectId($projectID: ID!) {
-    onUpdateOwnedNoteByProjectID(projectID: $projectID) {
+export const onUpdateOwnedTaskByProjectId = /* GraphQL */ `
+  subscription OnUpdateOwnedTaskByProjectId($projectID: ID!) {
+    onUpdateOwnedTaskByProjectID(projectID: $projectID) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
-export const onDeleteOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnDeleteOwnedNoteByProjectId($projectID: ID!) {
-    onDeleteOwnedNoteByProjectID(projectID: $projectID) {
+export const onDeleteOwnedTaskByProjectId = /* GraphQL */ `
+  subscription OnDeleteOwnedTaskByProjectId($projectID: ID!) {
+    onDeleteOwnedTaskByProjectID(projectID: $projectID) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
-export const onCreateCommentByNoteId = /* GraphQL */ `
-  subscription OnCreateCommentByNoteId($noteID: ID!) {
-    onCreateCommentByNoteID(noteID: $noteID) {
+export const onCreateCommentByTaskId = /* GraphQL */ `
+  subscription OnCreateCommentByTaskId($taskID: ID!) {
+    onCreateCommentByTaskID(taskID: $taskID) {
       id
-      noteID
+      taskID
       content
       createdAt
       updatedAt
@@ -263,11 +255,11 @@ export const onCreateCommentByNoteId = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateCommentByNoteId = /* GraphQL */ `
-  subscription OnUpdateCommentByNoteId($noteID: ID!) {
-    onUpdateCommentByNoteID(noteID: $noteID) {
+export const onUpdateCommentByTaskId = /* GraphQL */ `
+  subscription OnUpdateCommentByTaskId($taskID: ID!) {
+    onUpdateCommentByTaskID(taskID: $taskID) {
       id
-      noteID
+      taskID
       content
       createdAt
       updatedAt
@@ -275,11 +267,11 @@ export const onUpdateCommentByNoteId = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteCommentByNoteId = /* GraphQL */ `
-  subscription OnDeleteCommentByNoteId($noteID: ID!) {
-    onDeleteCommentByNoteID(noteID: $noteID) {
+export const onDeleteCommentByTaskId = /* GraphQL */ `
+  subscription OnDeleteCommentByTaskId($taskID: ID!) {
+    onDeleteCommentByTaskID(taskID: $taskID) {
       id
-      noteID
+      taskID
       content
       createdAt
       updatedAt

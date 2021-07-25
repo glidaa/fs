@@ -68,82 +68,82 @@ type Comment
 
 type Mutation {
 	createProject(input: CreateProjectInput!): Project
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	createTask(input: CreateTaskInput!): Task
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	createComment(input: CreateCommentInput!): Comment
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	updateProject(input: UpdateProjectInput!): Project
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	updateTask(input: UpdateTaskInput!): Task
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	updateComment(input: UpdateCommentInput!): Comment
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	deleteProjectAndTasks(projectID: ID!): Project
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	deleteTaskAndComments(taskId: ID!): Task
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	deleteComment(commentID: ID!): Comment
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	assignTask(taskID: ID!, assignee: String!): Task
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	disallowTask(taskID: ID!, assignee: String!): Task
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	importData(data: String!): ImportedProjectsList
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 }
 
 type Query {
 	getUserByID(userID: ID!): User
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	getProjectByID(projectID: ID!): Project
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	getProjectByPermalink(permalink: String!): Project
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	listOwnedProjects: ProjectsList
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	listAssignedProjects: ProjectsList
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	listTasksForProject(projectID: ID!): TasksList
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	listCommentsForTask(taskID: ID!): CommentsList
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 }
@@ -151,72 +151,72 @@ type Query {
 type Subscription {
 	onCreateOwnedProject(owner: String!): Project
 		@aws_subscribe(mutations: ["createProject"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onImportOwnedProjects(owner: String!): ImportedProjectsList
 		@aws_subscribe(mutations: ["importData"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onUpdateOwnedProject(owner: String!): Project
 		@aws_subscribe(mutations: ["updateProject"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onDeleteOwnedProject(owner: String!): Project
 		@aws_subscribe(mutations: ["deleteProjectAndTasks"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onAssignTask(assignee: String!): Task
 		@aws_subscribe(mutations: ["assignTask"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onDisallowTask(assignee: String!): Task
 		@aws_subscribe(mutations: ["disallowTask"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onUpdateAssignedTaskByProjectID(projectID: ID!, assignee: String!): Task
 		@aws_subscribe(mutations: ["updateTask"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onDeleteAssignedTaskByProjectID(projectID: ID!, assignee: String!): Task
 		@aws_subscribe(mutations: ["deleteTaskAndComments"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onCreateOwnedTaskByProjectID(projectID: ID!): Task
 		@aws_subscribe(mutations: ["createTask"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onUpdateOwnedTaskByProjectID(projectID: ID!): Task
 		@aws_subscribe(mutations: ["updateTask", "assignTask", "disallowTask"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onDeleteOwnedTaskByProjectID(projectID: ID!): Task
 		@aws_subscribe(mutations: ["deleteTaskAndComments"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onCreateCommentByTaskID(taskID: ID!): Comment
 		@aws_subscribe(mutations: ["createComment"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onUpdateCommentByTaskID(taskID: ID!): Comment
 		@aws_subscribe(mutations: ["updateComment"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 	onDeleteCommentByTaskID(taskID: ID!): Comment
 		@aws_subscribe(mutations: ["deleteComment"])
-		@function(name: "graphqlresolver-${env}")
+		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
 }
@@ -291,16 +291,16 @@ type CommentsList {
 
 enum TaskStatus {
 	todo
-    pending
-    done
+	pending
+	done
 }
 
 enum ProjectPrivacy {
 	public
-    private
+	private
 }
 
 enum Permissions {
 	r
-    rw
+	rw
 }
