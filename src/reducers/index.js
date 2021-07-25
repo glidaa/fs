@@ -1,6 +1,6 @@
 import user from "./user"
 import projects from "./projects"
-import notes from "./notes"
+import tasks from "./tasks"
 import comments from "./comments"
 import app from "./app"
 import observers from "./observers"
@@ -9,7 +9,7 @@ import users from "./users"
 export default {
   user,
   projects,
-  notes,
+  tasks,
   comments,
   app,
   observers,

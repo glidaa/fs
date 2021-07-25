@@ -3,8 +3,8 @@ import styledComponents from "styled-components";
 import { connect } from "react-redux";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
-import * as notesActions from "../actions/notes"
-import { initNoteState, OK } from '../constants';
+import * as tasksActions from "../actions/tasks"
+import { initTaskState, OK } from '../constants';
 import parseLinkedList from '../utils/parseLinkedList';
 
 const ProjectTitle = (props) => {
@@ -13,13 +13,13 @@ const ProjectTitle = (props) => {
 		app: {
 			isProjectTitleSelected,
 			selectedProject,
-			noteAddingStatus
+			taskAddingStatus
 		},
 		projects: {
 			owned,
 			assigned
 		},
-		notes,
+		tasks,
 		readOnly,
 		dispatch
 	} = props;
@@ -32,17 +32,17 @@ const ProjectTitle = (props) => {
 	};
 
 	const onKeyUp = (e) => {
-		const firstNote = parseLinkedList(notes, "prevNote", "nextNote")[0]?.id
+		const firstTask = parseLinkedList(tasks, "prevTask", "nextTask")[0]?.id
 		if (e.key === "Enter") {
 			if (Object.keys(owned).includes(selectedProject)) {
-				if (noteAddingStatus === OK) {
+				if (taskAddingStatus === OK) {
 					appActions.handleSetProjectTitle(false)
 					dispatch(
-						notesActions.handleCreateNote(
-							initNoteState(
+						tasksActions.handleCreateTask(
+							initTaskState(
 								selectedProject,
 								null,
-								firstNote
+								firstTask
 							)
 						)
 					)
@@ -50,8 +50,8 @@ const ProjectTitle = (props) => {
 			}
 		} else if (e.key === "ArrowDown") {
 			dispatch(appActions.handleSetProjectTitle(false))
-			if (firstNote) {
-				return dispatch(appActions.handleSetNote(firstNote))
+			if (firstTask) {
+				return dispatch(appActions.handleSetTask(firstTask))
 			}
 		} else if (e.key === "Escape") {
 			return dispatch(appActions.handleSetProjectTitle(false))
@@ -142,7 +142,7 @@ const ProjectTitleInput = styledComponents.div`
 `
 
 export default connect((state) => ({
-	notes: state.notes,
+	tasks: state.tasks,
 	app: state.app,
 	projects: state.projects,
 }))(ProjectTitle);

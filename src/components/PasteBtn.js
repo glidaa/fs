@@ -1,13 +1,13 @@
 import React from 'react';
 import styledComponents from "styled-components"
 import { connect } from "react-redux"
-import * as notesActions from "../actions/notes"
+import * as tasksActions from "../actions/tasks"
 import { ReactComponent as pasteIcon } from "../assets/clipboard-outline.svg"
 import parseLinkedList from "../utils/parseLinkedList"
-import copyNote from "../utils/copyNote"
+import copyTask from "../utils/copyTask"
 
 const PasteBtn = (props) => {
-  const { app, notes, dispatch } = props
+  const { app, tasks, dispatch } = props
   return (
     <PasteBtnCore
       width="20"
@@ -15,20 +15,20 @@ const PasteBtn = (props) => {
       strokeWidth="32"
       color="#222222"
       onClick={() => {
-        const notesClipboardData = window.localStorage.getItem("notesClipboard")
-        if (notesClipboardData) {
-          const stringifiedNoteState = /COPIEDNOTESTART=>({.+})<=COPIEDNOTEEND/.exec(notesClipboardData)[1]
-          if (stringifiedNoteState) {
-            const noteState = JSON.parse(stringifiedNoteState)
-            if (noteState) {
-              dispatch(notesActions.handleCreateNote(
-                  copyNote(
-                    noteState,
+        const tasksClipboardData = window.localStorage.getItem("tasksClipboard")
+        if (tasksClipboardData) {
+          const stringifiedTaskState = /COPIEDTASKSTART=>({.+})<=COPIEDTASKEND/.exec(tasksClipboardData)[1]
+          if (stringifiedTaskState) {
+            const taskState = JSON.parse(stringifiedTaskState)
+            if (taskState) {
+              dispatch(tasksActions.handleCreateTask(
+                  copyTask(
+                    taskState,
                     app.selectedProject,
                     parseLinkedList(
-                      notes,
-                      "prevNote",
-                      "nextNote"
+                      tasks,
+                      "prevTask",
+                      "nextTask"
                     ).reverse()[0]?.id
                   )
                 )
@@ -54,6 +54,6 @@ const PasteBtnCore = styledComponents(pasteIcon)`
 
 export default connect((state) => ({
   user: state.user,
-  notes: state.notes,
+  tasks: state.tasks,
   app: state.app
 }))(PasteBtn);

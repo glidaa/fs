@@ -1,15 +1,15 @@
 import {
   SET_PROJECTS_OBSERVERS,
   CLEAR_PROJECTS_OBSERVERS,
-  SET_NOTES_OBSERVERS,
-  CLEAR_NOTES_OBSERVERS,
+  SET_TASKS_OBSERVERS,
+  CLEAR_TASKS_OBSERVERS,
   SET_COMMENTS_OBSERVERS,
   CLEAR_COMMENTS_OBSERVERS,
 } from "../actions/observers"
 
 const initState = {
   projects: null,
-  notes: null,
+  tasks: null,
   comments: null
 }
 
@@ -19,10 +19,10 @@ export default function (state = initState, action) {
       return {...state, projects: action.observers}
     case CLEAR_PROJECTS_OBSERVERS:
       return {...state, projects: null}
-    case SET_NOTES_OBSERVERS:
-      return {...state, notes: action.observers}
-    case CLEAR_NOTES_OBSERVERS:
-      return {...state, notes: null}
+    case SET_TASKS_OBSERVERS:
+      return {...state, tasks: action.observers}
+    case CLEAR_TASKS_OBSERVERS:
+      return {...state, tasks: null}
     case SET_COMMENTS_OBSERVERS:
       return {...state, comments: action.observers}
     case CLEAR_COMMENTS_OBSERVERS:

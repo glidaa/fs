@@ -1,14 +1,14 @@
 import { API, graphqlOperation } from "aws-amplify";
 import * as projectsActions from "./projects"
-import * as notesActions from "./notes"
+import * as tasksActions from "./tasks"
 import * as commentsActions from "./comments"
 import * as appActions from "./app"
 import * as subscriptions from "../graphql/subscriptions"
 
 export const SET_PROJECTS_OBSERVERS = "SET_PROJECTS_OBSERVERS";
 export const CLEAR_PROJECTS_OBSERVERS = "CLEAR_PROJECTS_OBSERVERS";
-export const SET_NOTES_OBSERVERS = "SET_NOTES_OBSERVERS";
-export const CLEAR_NOTES_OBSERVERS = "CLEAR_NOTES_OBSERVERS";
+export const SET_TASKS_OBSERVERS = "SET_TASKS_OBSERVERS";
+export const CLEAR_TASKS_OBSERVERS = "CLEAR_TASKS_OBSERVERS";
 export const SET_COMMENTS_OBSERVERS = "SET_COMMENTS_OBSERVERS";
 export const CLEAR_COMMENTS_OBSERVERS = "CLEAR_COMMENTS_OBSERVERS";
 
@@ -21,13 +21,13 @@ const clearProjectsObservers = () => ({
   type: CLEAR_PROJECTS_OBSERVERS
 });
 
-const setNotesObservers = (observers) => ({
-  type: SET_NOTES_OBSERVERS,
+const setTasksObservers = (observers) => ({
+  type: SET_TASKS_OBSERVERS,
   observers
 });
 
-const clearNotesObservers = () => ({
-  type: CLEAR_NOTES_OBSERVERS
+const clearTasksObservers = () => ({
+  type: CLEAR_TASKS_OBSERVERS
 });
 
 const setCommentsObservers = (observers) => ({
@@ -48,12 +48,12 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
   const assigneeData = {
     assignee: user.data.username
   }
-  observers.push(API.graphql(graphqlOperation(subscriptions.onAssignNote, assigneeData)).subscribe({
+  observers.push(API.graphql(graphqlOperation(subscriptions.onAssignTask, assigneeData)).subscribe({
     next: e => {
       const { app, projects } = getState()
-      const incoming = e.value.data.onAssignNote
+      const incoming = e.value.data.onAssignTask
       if (app.selectedProject === incoming.projectID) {
-        dispatch(notesActions.createNote(incoming))
+        dispatch(tasksActions.createTask(incoming))
       }
       if (!projects.assigned[incoming.projectID]) {
         dispatch(projectsActions.handleFetchAssignedProjects())
@@ -61,13 +61,13 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
     },
     error: error => console.warn(error)
   }))
-  observers.push(API.graphql(graphqlOperation(subscriptions.onDisallowNote, assigneeData)).subscribe({
+  observers.push(API.graphql(graphqlOperation(subscriptions.onDisallowTask, assigneeData)).subscribe({
     next: e => {
       const { app } = getState()
-      const incoming = e.value.data.onAssignNote
+      const incoming = e.value.data.onAssignTask
       if (app.selectedProject === incoming.projectID) {
-        dispatch(notesActions.removeNote(incoming))
-        if (Object.keys(getState().notes).length === 0) {
+        dispatch(tasksActions.removeTask(incoming))
+        if (Object.keys(getState().tasks).length === 0) {
           dispatch(projectsActions.removeProject(incoming.projectID, "assigned"))
         }
       }
@@ -113,7 +113,7 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
       const removedItemID = e.value.data.onDeleteOwnedProject.id;
       if (Object.keys(projects.owned).includes(removedItemID)) {
         if (app.selectedProject === removedItemID) {
-          dispatch(appActions.handleSetNote(null))
+          dispatch(appActions.handleSetTask(null))
         }
         dispatch(projectsActions.removeProject(removedItemID))
       }
@@ -133,40 +133,40 @@ export const handleClearProjectsObservers = () => (dispatch, getState) => {
   return dispatch(clearProjectsObservers())
 }
 
-export const handleSetNotesObservers = (projectID) => (dispatch, getState) => {
+export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
   const { user, app, projects } = getState()
   if (app.selectedProject === projectID) {
     const observers = [];
     if (Object.keys(projects["owned"]).includes(projectID)) {
-      observers.push(API.graphql(graphqlOperation(subscriptions.onCreateOwnedNoteByProjectId, { projectID })).subscribe({
+      observers.push(API.graphql(graphqlOperation(subscriptions.onCreateOwnedTaskByProjectId, { projectID })).subscribe({
         next: e => {
-          const { notes } = getState()
-          const incoming = e.value.data.onCreateOwnedNoteByProjectID
-          if (!Object.keys(notes).includes(incoming.id)) {
-            dispatch(notesActions.createNote(incoming))
+          const { tasks } = getState()
+          const incoming = e.value.data.onCreateOwnedTaskByProjectID
+          if (!Object.keys(tasks).includes(incoming.id)) {
+            dispatch(tasksActions.createTask(incoming))
           }
         },
         error: error => console.warn(error)
       }))
-      observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateOwnedNoteByProjectId, { projectID })).subscribe({
+      observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateOwnedTaskByProjectId, { projectID })).subscribe({
         next: e => {
-          const { notes } = getState()
-          const incoming = e.value.data.onUpdateOwnedNoteByProjectID
-          if (Object.keys(notes).includes(incoming.id)) {
-            dispatch(notesActions.updateNote(incoming))
+          const { tasks } = getState()
+          const incoming = e.value.data.onUpdateOwnedTaskByProjectID
+          if (Object.keys(tasks).includes(incoming.id)) {
+            dispatch(tasksActions.updateTask(incoming))
           }
         },
         error: error => console.warn(error)
       }))
-      observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteOwnedNoteByProjectId, { projectID })).subscribe({
+      observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteOwnedTaskByProjectId, { projectID })).subscribe({
         next: e => {
-          const { notes, app } = getState()
-          const removedItemID = e.value.data.onDeleteOwnedNoteByProjectID.id;
-          if (Object.keys(notes).includes(removedItemID)) {
-            if (app.selectedNote === removedItemID) {
-              dispatch(appActions.handleSetNote(null))
+          const { tasks, app } = getState()
+          const removedItemID = e.value.data.onDeleteOwnedTaskByProjectID.id;
+          if (Object.keys(tasks).includes(removedItemID)) {
+            if (app.selectedTask === removedItemID) {
+              dispatch(appActions.handleSetTask(null))
             }
-            dispatch(notesActions.removeNote(removedItemID))
+            dispatch(tasksActions.removeTask(removedItemID))
           }
         },
         error: error => console.warn(error)
@@ -176,72 +176,72 @@ export const handleSetNotesObservers = (projectID) => (dispatch, getState) => {
         projectID,
         assignee: user.data.username
       }
-      observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateAssignedNoteByProjectId, data)).subscribe({
+      observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateAssignedTaskByProjectId, data)).subscribe({
         next: e => {
-          const { notes } = getState()
-          const incoming = e.value.data.onUpdateAssignedNoteByProjectID
-          if (Object.keys(notes).includes(incoming.id)) {
-            dispatch(notesActions.updateNote(incoming))
+          const { tasks } = getState()
+          const incoming = e.value.data.onUpdateAssignedTaskByProjectID
+          if (Object.keys(tasks).includes(incoming.id)) {
+            dispatch(tasksActions.updateTask(incoming))
           }
         },
         error: error => console.warn(error)
       }))
-      observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteAssignedNoteByProjectId, data)).subscribe({
+      observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteAssignedTaskByProjectId, data)).subscribe({
         next: e => {
-          const { notes, app } = getState()
-          const removedItemID = e.value.data.onDeleteAssignedNoteByProjectID.id;
-          if (Object.keys(notes).includes(removedItemID)) {
-            if (app.selectedNote === removedItemID) {
-              dispatch(appActions.handleSetNote(null))
+          const { tasks, app } = getState()
+          const removedItemID = e.value.data.onDeleteAssignedTaskByProjectID.id;
+          if (Object.keys(tasks).includes(removedItemID)) {
+            if (app.selectedTask === removedItemID) {
+              dispatch(appActions.handleSetTask(null))
             }
-            dispatch(notesActions.removeNote(removedItemID))
+            dispatch(tasksActions.removeTask(removedItemID))
           }
         },
         error: error => console.warn(error)
       }))
     }
-    return dispatch(setNotesObservers(observers))
+    return dispatch(setTasksObservers(observers))
   }
 }
 
-export const handleClearNotesObservers = () => (dispatch, getState) => {
+export const handleClearTasksObservers = () => (dispatch, getState) => {
   const { observers } = getState()
-  if (observers.notes) {
-    for (const observer of observers.notes) {
+  if (observers.tasks) {
+    for (const observer of observers.tasks) {
       observer.unsubscribe()
     }
   }
-  return dispatch(clearNotesObservers())
+  return dispatch(clearTasksObservers())
 }
 
-export const handleSetCommentsObservers = (noteID) => (dispatch, getState) => {
+export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
   const { app } = getState()
-    if (app.selectedNote === noteID) {
+    if (app.selectedTask === taskID) {
     const observers = [];
-    observers.push(API.graphql(graphqlOperation(subscriptions.onCreateCommentByNoteId, { noteID })).subscribe({
+    observers.push(API.graphql(graphqlOperation(subscriptions.onCreateCommentByTaskId, { taskID })).subscribe({
       next: e => {
         const { comments } = getState()
-        const incoming = e.value.data.onCreateCommentByNoteID
+        const incoming = e.value.data.onCreateCommentByTaskID
         if (!Object.keys(comments).includes(incoming.id)) {
           dispatch(commentsActions.createComment(incoming))
         }
       },
       error: error => console.warn(error)
     }))
-    observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateCommentByNoteId, { noteID })).subscribe({
+    observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateCommentByTaskId, { taskID })).subscribe({
       next: e => {
         const { comments } = getState()
-        const incoming = e.value.data.onUpdateCommentByNoteID
+        const incoming = e.value.data.onUpdateCommentByTaskID
         if (Object.keys(comments).includes(incoming.id)) {
           dispatch(commentsActions.updateComment(incoming))
         }
       },
       error: error => console.warn(error)
     }))
-    observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteCommentByNoteId, { noteID })).subscribe({
+    observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteCommentByTaskId, { taskID })).subscribe({
       next: e => {
         const { comments } = getState()
-        const removedItemID = e.value.data.onDeleteCommentByNoteID.id;
+        const removedItemID = e.value.data.onDeleteCommentByTaskID.id;
         if (Object.keys(comments).includes(removedItemID)) {
           dispatch(commentsActions.removeComment(removedItemID))
         }

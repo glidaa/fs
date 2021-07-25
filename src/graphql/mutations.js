@@ -181,9 +181,9 @@ export const assignTask = /* GraphQL */ `
     }
   }
 `;
-export const disallowTask = /* GraphQL */ `
-  mutation DisallowTask($taskID: ID!, $assignee: String!) {
-    disallowTask(taskID: $taskID, assignee: $assignee) {
+export const unassignTask = /* GraphQL */ `
+  mutation UnassignTask($taskID: ID!, $assignee: String!) {
+    unassignTask(taskID: $taskID, assignee: $assignee) {
       id
       projectID
       prevTask

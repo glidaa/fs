@@ -1,6 +1,6 @@
 import { API, graphqlOperation } from "aws-amplify";
 import { AuthState } from '@aws-amplify/ui-components';
-import { listCommentsForNote } from "../graphql/queries"
+import { listCommentsForTask } from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
 import * as usersActions from "./users"
 
@@ -37,12 +37,12 @@ const fetchComments = (comments) => ({
 export const handleCreateComment = (commentState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    if (commentState.noteID === getState().app.selectedNote) {
+    if (commentState.taskID === getState().app.selectedTask) {
       dispatch(createComment(commentState))
     }
     return API.graphql(graphqlOperation(mutations.createComment, { input: commentState }))
       .catch(() => {
-        if (commentState.noteID === getState().app.selectedNote) {
+        if (commentState.taskID === getState().app.selectedTask) {
           return dispatch(removeComment(commentState.id))
         }
       })
@@ -81,16 +81,16 @@ export const handleRemoveComment = (commentState) => (dispatch, getState) => {
   }
 }
 
-export const handleFetchComments = (noteID) => (dispatch, getState) => {
+export const handleFetchComments = (taskID) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    return API.graphql(graphqlOperation(listCommentsForNote, { noteID }))
+    return API.graphql(graphqlOperation(listCommentsForTask, { taskID }))
       .then(e => {
-        const result = e.data.listCommentsForNote.items;
+        const result = e.data.listCommentsForTask.items;
         for (const item of result) {
           dispatch(usersActions.handleAddUser(item.owner))
         }
-        dispatch(fetchComments(e.data.listCommentsForNote.items))
+        dispatch(fetchComments(e.data.listCommentsForTask.items))
       })
       .catch(e => console.error(e))
   }

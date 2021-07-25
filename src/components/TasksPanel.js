@@ -23,8 +23,8 @@ import { connect } from "react-redux";
 import parseLinkedList from "../utils/parseLinkedList";
 import TaskItem from "./TaskItem";
 import ProjectNotSelected from "./ProjectNotSelected";
-import * as notesActions from "../actions/notes";
-import { OK, initNoteState } from "../constants";
+import * as tasksActions from "../actions/tasks";
+import { OK, initTaskState } from "../constants";
 import useWindowSize from "../utils/useWindowSize";
 import Toolbar from "./Toolbar";
 import ProjectTitle from './ProjectTitle';
@@ -128,10 +128,10 @@ const SortableItem = (props) => {
   );
 }
 
-const NotesPanel = (props) => {
+const TasksPanel = (props) => {
   const {
     app,
-    notes,
+    tasks,
     projects,
     dispatch,
     setHideShowProjectsPanel,
@@ -140,52 +140,52 @@ const NotesPanel = (props) => {
   let { width } = useWindowSize();
   const onSortEnd = (oldIndex, newIndex) => {
     if (oldIndex > newIndex) {
-      const sortedNotes = parseLinkedList(notes, "prevNote", "nextNote");
+      const sortedTasks = parseLinkedList(tasks, "prevTask", "nextTask");
       dispatch(
-        notesActions.handleUpdateNote({
-          id: sortedNotes[oldIndex].id,
-          prevNote: sortedNotes[newIndex - 1]?.id || null,
-          nextNote: sortedNotes[newIndex]?.id || null,
+        tasksActions.handleUpdateTask({
+          id: sortedTasks[oldIndex].id,
+          prevTask: sortedTasks[newIndex - 1]?.id || null,
+          nextTask: sortedTasks[newIndex]?.id || null,
         })
       );
     } else if (oldIndex < newIndex) {
-      const sortedNotes = parseLinkedList(notes, "prevNote", "nextNote");
+      const sortedTasks = parseLinkedList(tasks, "prevTask", "nextTask");
       dispatch(
-        notesActions.handleUpdateNote({
-          id: sortedNotes[oldIndex].id,
-          prevNote: sortedNotes[newIndex]?.id || null,
-          nextNote: sortedNotes[newIndex + 1]?.id || null,
+        tasksActions.handleUpdateTask({
+          id: sortedTasks[oldIndex].id,
+          prevTask: sortedTasks[newIndex]?.id || null,
+          nextTask: sortedTasks[newIndex + 1]?.id || null,
         })
       );
     }
   };
-  const addNewNote = (e) => {
-    e.target.getAttribute("name") === "NotesPanelContainer" &&
+  const addNewTask = (e) => {
+    e.target.getAttribute("name") === "TasksPanelContainer" &&
     Object.keys(projects.owned).includes(app.selectedProject) &&
-    app.noteAddingStatus === OK &&
+    app.taskAddingStatus === OK &&
     dispatch(
-      notesActions.handleCreateNote(
-        initNoteState(
+      tasksActions.handleCreateTask(
+        initTaskState(
           app.selectedProject,
-          parseLinkedList(notes, "prevNote", "nextNote").reverse()[0]?.id
+          parseLinkedList(tasks, "prevTask", "nextTask").reverse()[0]?.id
         )
       )
     )
   }
   return (
-    <NotesPanelContainer
-      name="NotesPanelContainer"
-      onClick={addNewNote}
+    <TasksPanelContainer
+      name="TasksPanelContainer"
+      onClick={addNewTask}
     >
       {app.selectedProject ? (
         <>
           <Toolbar setHideShowProjectsPanel={setHideShowProjectsPanel} />
           <ProjectTitle />
           <Sortable
-            items={parseLinkedList(notes, "prevNote", "nextNote").map(({ id }) => id)}
+            items={parseLinkedList(tasks, "prevTask", "nextTask").map(({ id }) => id)}
             onDragEnd={onSortEnd}
           >
-            {parseLinkedList(notes, "prevNote", "nextNote").map(
+            {parseLinkedList(tasks, "prevTask", "nextTask").map(
               (value, index) => (
                 <SortableItem
                   key={value.id}
@@ -200,11 +200,11 @@ const NotesPanel = (props) => {
           </Sortable>
         </>
       ) : <ProjectNotSelected />}
-    </NotesPanelContainer>
+    </TasksPanelContainer>
   );
 };
 
-const NotesPanelContainer = styledComponents.div`
+const TasksPanelContainer = styledComponents.div`
   flex: 2;
   padding: 40px;
   overflow: auto;
@@ -218,7 +218,7 @@ const NotesPanelContainer = styledComponents.div`
 `;
 
 export default connect((state) => ({
-  notes: state.notes,
+  tasks: state.tasks,
   app: state.app,
   projects: state.projects,
-}))(NotesPanel);
+}))(TasksPanel);

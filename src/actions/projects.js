@@ -73,7 +73,7 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
     )
     localProjects[projectState.id] = {
       ...projectState,
-      notes: []
+      tasks: []
     }
     window.localStorage.setItem("projects", JSON.stringify(localProjects))
     dispatch(appActions.handleSetProject(null))
@@ -128,7 +128,7 @@ export const handleRemoveProject = (projectState) => (dispatch, getState) => {
   }
   if (user.state === AuthState.SignedIn) {
     dispatch(removeProject(projectState.id, OWNED))
-    return API.graphql(graphqlOperation(mutations.deleteProjectAndNotes, { projectID: projectState.id }))
+    return API.graphql(graphqlOperation(mutations.deleteProjectAndTasks, { projectID: projectState.id }))
       .catch((err) => {
         console.log(err)
         dispatch(createProject(projectState, OWNED))
@@ -163,7 +163,7 @@ export const handleFetchOwnedProjects = () => async (dispatch, getState) => {
     if (localProjects) {
       localProjects = Object.values(localProjects)
       localProjects = localProjects.map(project => {
-        delete project.notes
+        delete project.tasks
         return project
       })
       dispatch(fetchProjects(localProjects, OWNED))

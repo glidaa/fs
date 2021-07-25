@@ -7,7 +7,7 @@ import PasteBtn from "./PasteBtn";
 import useWindowSize from "../utils/useWindowSize";
 import { ReactComponent as MenuIcon } from "../assets/menu-outline.svg";
 
-const NotesPanel = (props) => {
+const TasksPanel = (props) => {
   const {
     app,
     projects,
@@ -30,7 +30,7 @@ const NotesPanel = (props) => {
         </ToolbarAction>
       </LeftControls>
       <RightControls>
-        <ShareBtn isNote={false} />
+        <ShareBtn isTask={false} />
         {Object.keys(projects.owned).includes(app.selectedProject) && (
           <PasteBtn />
         )}
@@ -74,7 +74,7 @@ const ToolbarAction = styledComponents.button`
 `
 
 export default connect((state) => ({
-  notes: state.notes,
+  tasks: state.tasks,
   app: state.app,
   projects: state.projects,
-}))(NotesPanel);
+}))(TasksPanel);

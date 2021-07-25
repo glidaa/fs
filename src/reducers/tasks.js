@@ -1,36 +1,36 @@
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
-import { CREATE_NOTE, UPDATE_NOTE, REMOVE_NOTE, EMPTY_NOTES, FETCH_NOTES } from "../actions/notes"
+import { CREATE_TASK, UPDATE_TASK, REMOVE_TASK, EMPTY_TASKS, FETCH_TASKS } from "../actions/tasks"
 
 export default function (state = {}, action) {
   let stateClone = {...state}
   switch(action.type) {
-    case CREATE_NOTE:
+    case CREATE_TASK:
       stateClone = injectItemOrder(
         stateClone,
-        action.noteState,
-        action.noteState.prevNote,
-        action.noteState.nextNote,
-        "prevNote",
-        "nextNote"
+        action.taskState,
+        action.taskState.prevTask,
+        action.taskState.nextTask,
+        "prevTask",
+        "nextTask"
       )
-      return {...stateClone, [action.noteState.id]: action.noteState}
-    case UPDATE_NOTE:
+      return {...stateClone, [action.taskState.id]: action.taskState}
+    case UPDATE_TASK:
       const { update } = action
-      if (update.prevNote !== undefined && update.nextNote !== undefined) {
+      if (update.prevTask !== undefined && update.nextTask !== undefined) {
         stateClone = removeItemOrder(
           stateClone,
           stateClone[update.id],
-          "prevNote",
-          "nextNote"
+          "prevTask",
+          "nextTask"
         )
         stateClone = injectItemOrder(
           stateClone,
           stateClone[update.id],
-          update.prevNote,
-          update.nextNote,
-          "prevNote",
-          "nextNote"
+          update.prevTask,
+          update.nextTask,
+          "prevTask",
+          "nextTask"
         )
       }
       return {
@@ -39,21 +39,21 @@ export default function (state = {}, action) {
           ...stateClone[update.id],
           ...update
         }}
-    case REMOVE_NOTE:
+    case REMOVE_TASK:
       stateClone = removeItemOrder(
         stateClone,
         stateClone[action.id],
-        "prevNote",
-        "nextNote"
+        "prevTask",
+        "nextTask"
       )
       delete stateClone[action.id]
       return stateClone
-    case EMPTY_NOTES:
+    case EMPTY_TASKS:
       return {}
-    case FETCH_NOTES:
+    case FETCH_TASKS:
       const newState = {}
-      for (const note of action.notes) {
-        newState[note.id] = note
+      for (const task of action.tasks) {
+        newState[task.id] = task
       }
       return newState
     default:

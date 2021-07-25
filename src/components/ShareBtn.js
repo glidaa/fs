@@ -3,7 +3,7 @@ import styledComponents from "styled-components"
 import { ReactComponent as shareIcon } from "../assets/share-outline.svg"
 
 const ShareBtn = (props) => {
-  const { isNote } = props
+  const { isTask } = props
   return (
     <ShareBtnCore
       width="20"
@@ -11,7 +11,7 @@ const ShareBtn = (props) => {
       strokeWidth="32"
       color="#222222"
       onClick={() => {
-        if (isNote) {
+        if (isTask) {
           const linkToBeCopied = window.location.href
           navigator.clipboard.writeText(linkToBeCopied)
         } else {

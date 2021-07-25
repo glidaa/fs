@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import { DatePicker } from "./DatePicker";
 import * as appActions from "../actions/app";
-import * as notesActions from "../actions/notes";
+import * as tasksActions from "../actions/tasks";
 import { AuthState } from "@aws-amplify/ui-components";
 import styledComponents from "styled-components";
 import StatusField from "./StatusField";
@@ -17,9 +17,9 @@ import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 const DetailsPanel = (props) => {
   const {
     user,
-    notes,
+    tasks,
     app: {
-      selectedNote,
+      selectedTask,
       isDetailsPanelOpened
     },
     readOnly,
@@ -28,8 +28,8 @@ const DetailsPanel = (props) => {
   
   const handleChange = (e) => {
     dispatch(
-      notesActions.handleUpdateNote({
-        id: selectedNote,
+      tasksActions.handleUpdateTask({
+        id: selectedTask,
         [e.target.name]: e.target.value,
       })
     );
@@ -37,7 +37,7 @@ const DetailsPanel = (props) => {
   const closePanel = () => {
     return dispatch(appActions.handleSetDetailsPanel(false))
   }
-	const shareNote = () => {
+	const shareTask = () => {
 		const linkToBeCopied = window.location.href
 		navigator.clipboard.writeText(linkToBeCopied)
 	}
@@ -52,8 +52,8 @@ const DetailsPanel = (props) => {
               color="#006EFF"
           />
         </DetailsPanelToolbarAction>
-        <DetailsPanelTitle>Note Details</DetailsPanelTitle>
-        <DetailsPanelToolbarAction onClick={shareNote}>
+        <DetailsPanelTitle>Task Details</DetailsPanelTitle>
+        <DetailsPanelToolbarAction onClick={shareTask}>
           <ShareIcon
               width="24"
               height="24"
@@ -62,14 +62,14 @@ const DetailsPanel = (props) => {
           />
         </DetailsPanelToolbarAction>
       </DetailsPanelToolbar>
-      {selectedNote && (
+      {selectedTask && (
         <>
           <DetailsForm onSubmit={(e) => e.preventDefault()}>
             <Detail>
               <label htmlFor="assignee">Assignee</label>
               <AssigneeField
                 name="assignee"
-                value={notes[selectedNote].assignee}
+                value={tasks[selectedTask].assignee}
                 readOnly={readOnly}
               />
             </Detail>
@@ -77,10 +77,10 @@ const DetailsPanel = (props) => {
               <label htmlFor="task">Task</label>
               <input
                 type="text"
-                name="note"
-                placeholder="note…"
+                name="task"
+                placeholder="task…"
                 onChange={handleChange}
-                value={notes[selectedNote].task || ""}
+                value={tasks[selectedTask].task || ""}
                 contentEditable={false}
                 readOnly={readOnly}
               ></input>
@@ -92,7 +92,7 @@ const DetailsPanel = (props) => {
                 name="description"
                 placeholder="description…"
                 onChange={handleChange}
-                value={notes[selectedNote].description || ""}
+                value={tasks[selectedTask].description || ""}
                 contentEditable={false}
                 readOnly={readOnly}
               ></input>
@@ -104,7 +104,7 @@ const DetailsPanel = (props) => {
                 name="steps"
                 placeholder="steps…"
                 onChange={handleChange}
-                value={notes[selectedNote].steps || ""}
+                value={tasks[selectedTask].steps || ""}
                 contentEditable={false}
                 readOnly={readOnly}
               ></input>
@@ -115,7 +115,7 @@ const DetailsPanel = (props) => {
                 name="due"
                 onChange={handleChange}
                 placeholder="No date choosen"
-                value={notes[selectedNote].due}
+                value={tasks[selectedTask].due}
                 readOnly={readOnly}
               />
             </Detail>
@@ -123,7 +123,7 @@ const DetailsPanel = (props) => {
               <label htmlFor="tag">Tags</label>
               <TagField
                 onChange={handleChange}
-                value={notes[selectedNote].tags || []}
+                value={tasks[selectedTask].tags || []}
                 readOnly={readOnly}
               />
             </Detail>
@@ -131,7 +131,7 @@ const DetailsPanel = (props) => {
               <label htmlFor="status">Status</label>
               <StatusField
                 onChange={handleChange}
-                value={notes[selectedNote].status}
+                value={tasks[selectedTask].status}
                 readOnly={readOnly}
               />
             </Detail>
@@ -257,7 +257,7 @@ const Button = styledComponents.button`
 
 export default connect((state) => ({
   user: state.user,
-  notes: state.notes,
+  tasks: state.tasks,
   app: state.app,
   comments: state.comments,
   users: state.users,

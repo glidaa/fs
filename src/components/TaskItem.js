@@ -3,9 +3,9 @@ import styledComponents from "styled-components";
 import { connect } from "react-redux";
 import useWindowSize from "../utils/useWindowSize";
 import formatDate from "../utils/formatDate"
-import copyNoteCore from "../utils/copyNote"
+import copyTaskCore from "../utils/copyTask"
 import * as appActions from "../actions/app";
-import * as notesActions from "../actions/notes";
+import * as tasksActions from "../actions/tasks";
 import { AuthState } from "@aws-amplify/ui-components";
 import { ReactComponent as CheckmarkIcon } from "../assets/checkmark-circle-outline.svg";
 import { ReactComponent as OptionsIcon } from "../assets/ellipsis-vertical.svg";
@@ -20,7 +20,7 @@ import {
 	suggestionsDescription,
 	NOT_ASSIGNED,
 	OK,
-	initNoteState,
+	initTaskState,
 } from "../constants";
 import AvatarArray from "./AvatarArray";
 
@@ -30,12 +30,12 @@ const TaskItem = (props) => {
 		users,
 		item,
 		user,
-		notes,
+		tasks,
 		projects,
 		app: {
-			selectedNote,
+			selectedTask,
 			selectedProject,
-			noteAddingStatus,
+			taskAddingStatus,
 			isDropdownOpened,
 			isDetailsPanelOpened,
 			command
@@ -51,16 +51,16 @@ const TaskItem = (props) => {
 
 	const onChange = (e) => {
 		dispatch(
-			notesActions.handleUpdateNote({
-				id: selectedNote,
-				note: e.target.value,
+			tasksActions.handleUpdateTask({
+				id: selectedTask,
+				task: e.target.value,
 			})
 		);
 	};
 
 	const toggleStatus = (item) => {
 		dispatch(
-			notesActions.handleUpdateNote({
+			tasksActions.handleUpdateTask({
 				id: item.id,
 				isDone: !item.isDone,
 			})
@@ -70,48 +70,48 @@ const TaskItem = (props) => {
 	const onKeyUp = (e) => {
 		if (e.key === "Enter" && e.shiftKey) {
 			if (Object.keys(projects.owned).includes(selectedProject)) {
-				if (noteAddingStatus === OK) {
+				if (taskAddingStatus === OK) {
 					dispatch(
-						notesActions.handleCreateNote(
-							initNoteState(
+						tasksActions.handleCreateTask(
+							initTaskState(
 								selectedProject,
-								selectedNote,
-								notes[selectedNote].nextNote
+								selectedTask,
+								tasks[selectedTask].nextTask
 							)
 						)
 					);
 				}
 			}
 		} else if (e.key === "ArrowUp") {
-			const prevNote = notes[selectedNote].prevNote
-			if (!prevNote) {
+			const prevTask = tasks[selectedTask].prevTask
+			if (!prevTask) {
 				return dispatch(appActions.handleSetProjectTitle(true))
 			} else {
-				dispatch(appActions.handleSetNote(prevNote))
+				dispatch(appActions.handleSetTask(prevTask))
 			}
 		} else if (e.key === "ArrowDown") {
-			const nextNote = notes[selectedNote].nextNote
-			if (nextNote) {
-				return dispatch(appActions.handleSetNote(nextNote))
+			const nextTask = tasks[selectedTask].nextTask
+			if (nextTask) {
+				return dispatch(appActions.handleSetTask(nextTask))
 			}
 		} else if (e.key === "Enter" && command) {
 			return dispatch(appActions.handleApplyCommand())
 		} else if (e.key === "Escape" || e.key === "Enter") {
-			return dispatch(appActions.handleSetNote(null))
+			return dispatch(appActions.handleSetTask(null))
 		}
 	};
 
 	const onChooseSuggestion = (suggestion) =>
 		dispatch(
-			notesActions.handleUpdateNote({
-				id: selectedNote,
-				note: notes[selectedNote] + suggestion,
+			tasksActions.handleUpdateTask({
+				id: selectedTask,
+				task: tasks[selectedTask] + suggestion,
 			})
 		);
 
 	const openActionSheet = (item) => {
 		dispatch(
-			appActions.handleSetNote(item.id)
+			appActions.handleSetTask(item.id)
 		)
 		dispatch(
 			appActions.setActionSheet(true)
@@ -120,48 +120,48 @@ const TaskItem = (props) => {
 
 	const selectItem = (item) => {
 		if (!readOnly) {
-			return dispatch(appActions.handleSetNote(item.id))
+			return dispatch(appActions.handleSetTask(item.id))
 		}
 	}
 
 	const openDetailsPanel = (item) => {
 		if (!isDetailsPanelOpened) {
-			if (item.id !== selectedNote) {
-				dispatch(appActions.handleSetNote(item.id))
+			if (item.id !== selectedTask) {
+				dispatch(appActions.handleSetTask(item.id))
 			}
 			return dispatch(appActions.handleSetDetailsPanel(true))
 		}
 	}
 
-	const copyNote = (item) => {
+	const copyTask = (item) => {
 		window.localStorage.setItem(
-			"notesClipboard",
-			"COPIEDNOTESTART=>" +
+			"tasksClipboard",
+			"COPIEDTASKSTART=>" +
 			JSON.stringify(item) +
-			"<=COPIEDNOTEEND"
+			"<=COPIEDTASKEND"
 		);
 	}
 
-	const duplicateNote = (item) => {
+	const duplicateTask = (item) => {
 		dispatch(
-			notesActions.handleCreateNote(
-				copyNoteCore(
+			tasksActions.handleCreateTask(
+				copyTaskCore(
 					item,
 					selectedProject,
 					item.id,
-					item.nextNote
+					item.nextTask
 				)
 			)
 		);
 	}
 
-	const shareNote = () => {
+	const shareTask = () => {
 		const linkToBeCopied = window.location.href
 		navigator.clipboard.writeText(linkToBeCopied)
 	}
 
-	const removeNote = (item) => {
-		dispatch(notesActions.handleRemoveNote(item))
+	const removeTask = (item) => {
+		dispatch(tasksActions.handleRemoveTask(item))
 	}
 
 	return (
@@ -173,7 +173,7 @@ const TaskItem = (props) => {
 			<TaskItemCore
 				isSorting={isSorting}
 				isDragging={isDragging}
-				isFocused={item.id === selectedNote}
+				isFocused={item.id === selectedTask}
 			>
 				<TaskItemLeftPart>
 					<TaskItemLeftLeftPart>
@@ -190,14 +190,14 @@ const TaskItem = (props) => {
 							/>
 							</TaskItemStatusToggle>
 						}
-						{selectedNote === item.id ? (
+						{selectedTask === item.id ? (
 							<TaskItemInput>
 								<input
 									type="text"
 									data-testid="updateTaskField"
 									className="task"
-									placeholder="Note…"
-									value={notes[selectedNote].task + command}
+									placeholder="Task…"
+									value={tasks[selectedTask].task + command}
 									onKeyUp={onKeyUp}
 									onChange={onChange}
 									autoFocus={true}
@@ -210,35 +210,35 @@ const TaskItem = (props) => {
 								className={item.task ? null : "placeholder"}
 								onClick={() => selectItem(item)}
 							>
-								{item.isDone ? <strike>{item.task}</strike> : item.task || "Note…"}
+								{item.isDone ? <strike>{item.task}</strike> : item.task || "Task…"}
 							</TaskItemHeader>
 						)}
 					</TaskItemLeftLeftPart>
 					<TaskItemLeftRightPart>
 						{width > 768 ?
 						<TaskItemActions>
-							<TaskItemAction onClick={() => copyNote(item)}>
+							<TaskItemAction onClick={() => copyTask(item)}>
 								<CopyIcon
 									height="18"
 									strokeWidth="34"
 									color="#006EFF"
 								/>
 							</TaskItemAction>
-							<TaskItemAction onClick={() => duplicateNote(item)}>
+							<TaskItemAction onClick={() => duplicateTask(item)}>
 								<DuplicateIcon
 									height="18"
 									strokeWidth="34"
 									color="#006EFF"
 								/>
 							</TaskItemAction>
-							<TaskItemAction onClick={() => shareNote(item)}>
+							<TaskItemAction onClick={() => shareTask(item)}>
 								<ShareIcon
 									height="18"
 									strokeWidth="34"
 									color="#006EFF"
 								/>
 							</TaskItemAction>
-							<TaskItemAction onClick={() => removeNote(item)}>
+							<TaskItemAction onClick={() => removeTask(item)}>
 								<RemoveIcon
 									height="18"
 									strokeWidth="34"
@@ -262,14 +262,14 @@ const TaskItem = (props) => {
 						</TaskItemOptsBtn>}
 					</TaskItemLeftRightPart>
 				</TaskItemLeftPart>
-				<TaskItemRightPart isFocused={item.id === selectedNote}>
+				<TaskItemRightPart isFocused={item.id === selectedTask}>
 					<TaskItemDueDate>
 						{formatDate(item.due)}
 					</TaskItemDueDate>
 					<AvatarArray borderColor="#F8F8F8" size={ width > 768 ? "24" : "18" } />
 				</TaskItemRightPart>
 			</TaskItemCore>
-			{(isDropdownOpened && selectedNote === item.id) && (
+			{(isDropdownOpened && selectedTask === item.id) && (
 				<Specials
 					onChooseSuggestion={onChooseSuggestion}
 					suggestionsList={suggestionsList}
@@ -502,7 +502,7 @@ const TaskItemStatusToggle = styledComponents.button`
 
 export default connect((state) => ({
 	user: state.user,
-	notes: state.notes,
+	tasks: state.tasks,
 	projects: state.projects,
 	app: state.app,
 	users: state.users,

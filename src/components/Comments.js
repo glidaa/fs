@@ -25,7 +25,7 @@ const Comments = (props) => {
     e.stopPropagation()
     const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
     dispatch(commentsActions.handleCreateComment({
-      noteID: app.selectedNote,
+      taskID: app.selectedTask,
       content: content
     }))
     setEditorState(EditorState.push(editorState, ContentState.createFromText('')))

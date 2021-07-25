@@ -27,11 +27,11 @@ export const suggestionsList =  [
 export const suggestionsDescription = [
   'Login to save your tasks',
   'Create a new account',
-  'Mark this note as done',
-  'Mark this note as undone',
-  'Copy this note',
-  'Duplicate this note',
-  'Add a description to this note',
+  'Mark this task as done',
+  'Mark this task as undone',
+  'Copy this task',
+  'Duplicate this task',
+  'Add a description to this task',
   'Logout'
 ]
 
@@ -75,12 +75,12 @@ export const initProjectState = (prevProject = null, nextProject = null) => {
   }
 }
 
-export const initNoteState = (projectID, prevNote = null, nextNote = null) => ({
+export const initTaskState = (projectID, prevTask = null, nextTask = null) => ({
   id: uuidv4(),
   projectID: projectID,
   task: "",
-  prevNote: prevNote,
-  nextNote: nextNote,
+  prevTask: prevTask,
+  nextTask: nextTask,
   description: null,
   due: Date.now(),
   tags: [],

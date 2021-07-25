@@ -27,7 +27,7 @@ Primary.args = {
   suggestionsDescription: [
     "Login to save your tasks",
     "Create a new account",
-    "Mark this note as done",
+    "Mark this task as done",
     "Logout"
   ]
 };

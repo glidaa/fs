@@ -20,7 +20,7 @@ const Login = (props) => {
       if (nextAuthState === AuthState.SignedIn) {
         //window.removeEventListener("storage", fetchLocalProjects)
         dispatch(observersActions.handleSetProjectsObservers())
-        //migrateLocalNotes();
+        //migrateLocalTasks();
         dispatch(appActions.setLoading(true))
         setShouldRedirect(true)
       }

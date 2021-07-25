@@ -4,13 +4,13 @@ import { connect } from "react-redux";
 import Amplify, { PubSub } from "aws-amplify";
 import { AuthState, onAuthUIStateChange } from "@aws-amplify/ui-components";
 import * as projectsActions from "../actions/projects";
-import * as notesActions from "../actions/notes";
+import * as tasksActions from "../actions/tasks";
 import * as appActions from "../actions/app";
 import * as userActions from "../actions/user";
 import aws_exports from "../aws-exports";
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
 import DetailsPanel from "./DetailsPanel";
-import NotesPanel from "./NotesPanel";
+import TasksPanel from "./TasksPanel";
 import ProjectsPanel from "./ProjectsPanel"
 import Loading from "./Loading";
 import Login from "./Login";
@@ -26,7 +26,7 @@ const App = (props) => {
     sensitive: true,
     path: [
       "/local/:projectPermalink",
-      "/:username/:projectPermalink/:notePermalink",
+      "/:username/:projectPermalink/:taskPermalink",
       "/:username/:projectPermalink",
       "/",
     ],
@@ -54,7 +54,7 @@ const App = (props) => {
   useEffect(() => {
     if (routeMatch) {
       const {
-        params: { username, projectPermalink, notePermalink },
+        params: { username, projectPermalink, taskPermalink },
       } = routeMatch;
       if (history.action === "POP") {
         if (!app.isLoading) {
@@ -73,15 +73,15 @@ const App = (props) => {
                 )[0];
                 if (reqProject) {
                   dispatch(appActions.handleSetProject(reqProject.id, false));
-                  if (notePermalink) {
-                    dispatch(notesActions.handleFetchNotes(reqProject.id)).then(
-                      (notes) => {
-                        const reqNote = Object.values(notes).filter(
+                  if (taskPermalink) {
+                    dispatch(tasksActions.handleFetchTasks(reqProject.id)).then(
+                      (tasks) => {
+                        const reqTask = Object.values(tasks).filter(
                           (x) =>
-                            x.permalink === parseInt(notePermalink, 10)
+                            x.permalink === parseInt(taskPermalink, 10)
                         )[0];
-                        if (reqNote) {
-                          dispatch(appActions.handleSetNote(reqNote.id, false));
+                        if (reqTask) {
+                          dispatch(appActions.handleSetTask(reqTask.id, false));
                         }
                       }
                     );
@@ -123,7 +123,7 @@ const App = (props) => {
         sensitive
         path={[
           "/local/:projectPermalink",
-          "/:username/:projectPermalink/:notePermalink",
+          "/:username/:projectPermalink/:taskPermalink",
           "/:username/:projectPermalink",
           "/",
         ]}
@@ -135,7 +135,7 @@ const App = (props) => {
               <div className="mainPage">
                 <ActionSheet />
                 <ProjectsPanel />
-                <NotesPanel />
+                <TasksPanel />
                 <DetailsPanel
                   readOnly={
                     !Object.keys(projects.owned).includes(app.selectedProject)
@@ -153,6 +153,6 @@ const App = (props) => {
 export default connect((state) => ({
   user: state.user,
   projects: state.projects,
-  notes: state.notes,
+  tasks: state.tasks,
   app: state.app,
 }))(App);

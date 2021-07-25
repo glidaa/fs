@@ -5,7 +5,7 @@ import styledComponents from "styled-components"
 import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
-import * as notesActions from "../actions/notes"
+import * as tasksActions from "../actions/tasks"
 import * as observersActions from "../actions/observers"
 import * as mutations from "../graphql/mutations"
 import { AuthState } from '@aws-amplify/ui-components';
@@ -45,8 +45,8 @@ const Loading = (props) => {
         .filter(x => x.permalink === params.projectPermalink)[0]
       if (reqProject) {
         dispatch(appActions.handleSetProject(reqProject.id, false))
-        setLoadingMsg("We Are Getting The Requested Notes")
-        await dispatch(notesActions.handleFetchNotes(reqProject.id))
+        setLoadingMsg("We Are Getting The Requested Tasks")
+        await dispatch(tasksActions.handleFetchTasks(reqProject.id))
         dispatch(appActions.setLoading(false))
       } else {
         history.replace("/")
@@ -70,12 +70,12 @@ const Loading = (props) => {
           const reqProject = reqUserProjects.filter(x => x.permalink === params.projectPermalink)[0]
           if (reqProject) {
             dispatch(appActions.handleSetProject(reqProject.id, false))
-            setLoadingMsg("We Are Getting The Requested Notes")
-            const notes = await dispatch(notesActions.handleFetchNotes(reqProject.id))
-            if (params.notePermalink) {
-              const reqNote = Object.values(notes).filter(x => x.permalink === parseInt(params.notePermalink, 10))[0]
-              if (reqNote) {
-                dispatch(appActions.handleSetNote(reqNote.id, false))
+            setLoadingMsg("We Are Getting The Requested Tasks")
+            const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id))
+            if (params.taskPermalink) {
+              const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(params.taskPermalink, 10))[0]
+              if (reqTask) {
+                dispatch(appActions.handleSetTask(reqTask.id, false))
                 dispatch(appActions.setLoading(false))
               } else {
                 dispatch(appActions.setLoading(false))
@@ -183,6 +183,6 @@ const Logo = styledComponents.div`
 export default connect((state) => ({
   user: state.user,
   projects: state.projects,
-  notes: state.notes,
+  tasks: state.tasks,
   comments: state.comments
 }))(Loading);

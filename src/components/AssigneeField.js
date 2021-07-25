@@ -5,11 +5,11 @@ import { API, graphqlOperation } from "aws-amplify";
 import styledComponents from "styled-components";
 import { useOuterClick } from 'react-outer-click';
 import searchForUser from "../utils/searchForUser";
-import * as notesActions from "../actions/notes"
+import * as tasksActions from "../actions/tasks"
 import * as usersActions from "../actions/users"
 import userIcon from "../assets/person-outline.svg"
 import Avatar from "./Avatar";
-import { assignNote, disallowNote } from "../graphql/mutations";
+import { assignTask, unassignTask } from "../graphql/mutations";
 import { NOT_ASSIGNED } from "../constants";
 
 const AssigneeField = (props) => {
@@ -44,34 +44,34 @@ const AssigneeField = (props) => {
       setIsEdit(false);
     }
   })
-  const handleAssignNote = (userInfo) => {
+  const handleAssignTask = (userInfo) => {
     setIsEdit(false)
-    dispatch(notesActions.updateNote({
-      id: app.selectedNote,
+    dispatch(tasksActions.updateTask({
+      id: app.selectedTask,
       assignee: userInfo.sub
     }))
-    API.graphql(graphqlOperation(assignNote, {
-      noteID: app.selectedNote,
+    API.graphql(graphqlOperation(assignTask, {
+      taskID: app.selectedTask,
       assignee: userInfo.sub
     })).catch(() => {
-      dispatch(notesActions.updateNote({
-        id: app.selectedNote,
+      dispatch(tasksActions.updateTask({
+        id: app.selectedTask,
         assignee: NOT_ASSIGNED
       }))
     })
   }
-  const handleDisallowNote = () => {
+  const handleDisallowTask = () => {
     const AssigneeToBeRemoved = value
-    dispatch(notesActions.updateNote({
-      id: app.selectedNote,
+    dispatch(tasksActions.updateTask({
+      id: app.selectedTask,
       assignee: NOT_ASSIGNED
     }))
-    API.graphql(graphqlOperation(disallowNote, {
-      noteID: app.selectedNote,
+    API.graphql(graphqlOperation(unassignTask, {
+      taskID: app.selectedTask,
       assignee: AssigneeToBeRemoved
     })).catch(() => {
-      dispatch(notesActions.updateNote({
-        id: app.selectedNote,
+      dispatch(tasksActions.updateTask({
+        id: app.selectedTask,
         assignee: AssigneeToBeRemoved
       }))
     })
@@ -103,7 +103,7 @@ const AssigneeField = (props) => {
         (value !== NOT_ASSIGNED && users[value] ? (
           <>
             <span>{users[value]}</span>
-            {!readOnly && <span onClick={() => handleDisallowNote()}>×</span>}
+            {!readOnly && <span onClick={() => handleDisallowTask()}>×</span>}
           </>
         ) : (
           <span>No Assignee</span>
@@ -112,7 +112,7 @@ const AssigneeField = (props) => {
       </AssigneeFieldBtn>
       {isEdit && <SearchResults>
         {results.map(x => (
-          <SearchResultsItem key={x.sub} onClick={() => handleAssignNote(x)}>
+          <SearchResultsItem key={x.sub} onClick={() => handleAssignTask(x)}>
           <Avatar fullName={`${x.given_name} ${x.family_name}`} />
           <div>
             <span>{`${x.given_name} ${x.family_name}`}</span>

@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { useDrag } from '@use-gesture/react'
 import { animated, useSpring, config } from '@react-spring/web'
 import * as appActions from "../actions/app"
-import * as notesActions from "../actions/notes"
-import copyNoteCore from "../utils/copyNote"
+import * as tasksActions from "../actions/tasks"
+import copyTaskCore from "../utils/copyTask"
 import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
 import { ReactComponent as CopyIcon } from "../assets/copy-outline.svg"
 import { ReactComponent as DuplicateIcon } from "../assets/duplicate-outline.svg"
@@ -17,12 +17,12 @@ const ActionSheet = (props) => {
 	
 	const {
 		app: {
-			selectedNote,
+			selectedTask,
 			selectedProject,
 			isActionSheetOpened,
 			isDetailsPanelOpened
 		},
-		notes,
+		tasks,
 		dispatch
 	} = props
 
@@ -68,41 +68,41 @@ const ActionSheet = (props) => {
 		}
 	}, [isActionSheetOpened])
 
-	const copyNote = () => {
+	const copyTask = () => {
 		closeActionSheet()
 		window.localStorage.setItem(
-			"notesClipboard",
-			"COPIEDNOTESTART=>" +
-			JSON.stringify(notes[selectedNote]) +
-			"<=COPIEDNOTEEND"
+			"tasksClipboard",
+			"COPIEDTASKSTART=>" +
+			JSON.stringify(tasks[selectedTask]) +
+			"<=COPIEDTASKEND"
 		);
 	}
 
-	const duplicateNote = () => {
+	const duplicateTask = () => {
 		closeActionSheet()
 		dispatch(
-			notesActions.handleCreateNote(
-				copyNoteCore(
-					notes[selectedNote],
+			tasksActions.handleCreateTask(
+				copyTaskCore(
+					tasks[selectedTask],
 					selectedProject,
-					selectedNote,
-					notes[selectedNote].nextNote
+					selectedTask,
+					tasks[selectedTask].nextTask
 				)
 			)
 		);
 	}
 
-	const shareNote = () => {
+	const shareTask = () => {
 		closeActionSheet()
 		const linkToBeCopied = window.location.href
 		navigator.clipboard.writeText(linkToBeCopied)
 	}
 
-	const removeNote = () => {
+	const removeTask = () => {
 		closeActionSheet()
 		dispatch(
-			notesActions.handleRemoveNote(
-				notes[selectedNote]
+			tasksActions.handleRemoveTask(
+				tasks[selectedTask]
 			)
 		)
 	}
@@ -117,9 +117,9 @@ const ActionSheet = (props) => {
 	return (
 		<ActionSheetShell style={{ display }} onClick={closeActionSheet}>
 				<ActionSheetContainer {...bind()} style={{ display, y }}>
-				<ActionSheetHeader>Note Actions</ActionSheetHeader>
+				<ActionSheetHeader>Task Actions</ActionSheetHeader>
 				<Actions>
-					<Action onClick={copyNote}>
+					<Action onClick={copyTask}>
 						<CopyIcon
 							width="24"
 							height="24"
@@ -128,7 +128,7 @@ const ActionSheet = (props) => {
 						/>
 						<span>Copy</span>
 					</Action>
-					<Action onClick={duplicateNote}>
+					<Action onClick={duplicateTask}>
 						<DuplicateIcon
 							width="24"
 							height="24"
@@ -137,7 +137,7 @@ const ActionSheet = (props) => {
 						/>
 						<span>Duplicate</span>
 					</Action>
-					<Action onClick={shareNote}>
+					<Action onClick={shareTask}>
 						<ShareIcon
 							width="24"
 							height="24"
@@ -146,7 +146,7 @@ const ActionSheet = (props) => {
 						/>
 						<span>Share</span>
 					</Action>
-					<Action onClick={removeNote}>
+					<Action onClick={removeTask}>
 						<RemoveIcon
 							width="24"
 							height="24"
@@ -155,7 +155,7 @@ const ActionSheet = (props) => {
 						/>
 						<span>Remove</span>
 					</Action>
-					<Action onClick={removeNote}>
+					<Action onClick={removeTask}>
 						<CheckmarkIcon
 							width="24"
 							height="24"
@@ -250,7 +250,7 @@ const CloseBtn = styledComponents.button`
 
 export default connect((state) => ({
   user: state.user,
-  notes: state.notes,
+  tasks: state.tasks,
   app: state.app,
   users: state.users,
 }))(ActionSheet);
