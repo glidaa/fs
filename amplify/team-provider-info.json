@@ -18,7 +18,11 @@
       "function": {
         "AdminQueries7d56620a": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/AdminQueries7d56620a-574a6c7a4b6f30663855-build.zip"
+          "s3Key": "amplify-builds/AdminQueries7d56620a-4c2b676f3264354f4e33-build.zip"
+        },
+        "graphqlresolver": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/graphqlresolver-4356332f747a556c6b6c-build.zip"
         }
       },
       "hosting": {
