@@ -175,7 +175,7 @@ type Subscription {
 		@aws_iam
 		@aws_cognito_user_pools
 	onDisallowTask(assignee: String!): Task
-		@aws_subscribe(mutations: ["disallowTask"])
+		@aws_subscribe(mutations: ["unassignTask"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -195,7 +195,7 @@ type Subscription {
 		@aws_iam
 		@aws_cognito_user_pools
 	onUpdateOwnedTaskByProjectID(projectID: ID!): Task
-		@aws_subscribe(mutations: ["updateTask", "assignTask", "disallowTask"])
+		@aws_subscribe(mutations: ["updateTask", "assignTask", "unassignTask"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
