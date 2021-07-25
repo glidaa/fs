@@ -150,7 +150,8 @@ exports.handler = async function (ctx) {
 async function isProjectSharedWithClient(projectID, client) {
   const params = {
     TableName: PROJECTTABLE,
-    ProjectionExpression: "privacy, members, owner",
+    ProjectionExpression: "privacy, members, #owner",
+    ExpressionAttributeNames: { "#owner": "owner" },
     Key: {
       "id": projectID
     }
@@ -171,7 +172,8 @@ async function isProjectSharedWithClient(projectID, client) {
 async function isProjectEditableByClient(projectID, client) {
   const params = {
     TableName: PROJECTTABLE,
-    ProjectionExpression: "privacy, members, owner, permissions",
+    ProjectionExpression: "privacy, members, #owner, #permissions",
+    ExpressionAttributeNames: { "#owner": "owner", "#permissions": "permissions" },
     Key: {
       "id": projectID
     }
@@ -192,7 +194,8 @@ async function isProjectEditableByClient(projectID, client) {
 async function isProjectOwner(projectID, client) {
   const params = {
     TableName: PROJECTTABLE,
-    ProjectionExpression: "owner",
+    ProjectionExpression: "#owner",
+    ExpressionAttributeNames: { "#owner": "owner" },
     Key: {
       "id": projectID
     }
@@ -212,7 +215,8 @@ async function isProjectOwner(projectID, client) {
 async function isTaskOwner(taskID, client) {
   const params = {
     TableName: TASKTABLE,
-    ProjectionExpression: "owner",
+    ProjectionExpression: "#owner",
+    ExpressionAttributeNames: { "#owner": "owner" },
     Key: {
       "id": taskID
     }
@@ -232,7 +236,8 @@ async function isTaskOwner(taskID, client) {
 async function isCommentOwner(commentID, client) {
   const params = {
     TableName: COMMENTTABLE,
-    ProjectionExpression: "owner",
+    ProjectionExpression: "#owner",
+    ExpressionAttributeNames: { "#owner": "owner" },
     Key: {
       "id": commentID
     }
@@ -918,9 +923,9 @@ async function getLastProject (client) {
   const params = {
     TableName: PROJECTTABLE,
     IndexName: "byOwner",
-    ProjectionExpression: "id, nextProject",
+    ProjectionExpression: "#id, nextProject",
     KeyConditionExpression: "#owner = :owner",
-    ExpressionAttributeNames: { "#owner": "owner" },
+    ExpressionAttributeNames: { "#id": "id", "#owner": "owner" },
     ExpressionAttributeValues: {
       ":owner": client
     },
@@ -941,8 +946,9 @@ async function getLastTask (projectID) {
   const params = {
     TableName: TASKTABLE,
     IndexName: "byProject",
-    ProjectionExpression: "id, nextTask",
+    ProjectionExpression: "#id, nextTask",
     KeyConditionExpression: "projectID = :projectID",
+    ExpressionAttributeNames: { "#id": "id" },
     ExpressionAttributeValues: {
       ":projectID": projectID
     },
