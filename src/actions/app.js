@@ -248,7 +248,7 @@ export const handleApplyCommand = () => (dispatch, getState) => {
         return dispatch(notesActions.handleUpdateNote({
           id: app.selectedNote,
           tag: [
-            ...notes[app.selectedNote].tag,
+            ...notes[app.selectedNote].tags,
             ...tokens[2].split(",").map(x => x.trim())
           ]
         }))

@@ -6,14 +6,14 @@ export default (noteState, projectID, prevNote = null, nextNote = null) => {
     projectID: projectID,
     prevNote: prevNote,
     nextNote: nextNote,
-    note: noteState.note,
+    note: noteState.task,
     isDone: noteState.isDone,
     task: noteState.task,
     description: noteState.description,
     steps: noteState.steps,
     due: noteState.due,
     watcher: noteState.watcher,
-    tag: noteState.tag,
+    tag: noteState.tags,
     sprint: noteState.sprint,
     status: noteState.status
   }

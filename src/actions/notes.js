@@ -91,9 +91,9 @@ export const handleUpdateNote = (update) => (dispatch, getState) => {
   const { user, notes, app } = getState()
   const prevNoteState = {...notes[update.id]}
   const prevCommands = app.commands
-  if (update.note) {
-    const tokens = /^(.*?)(\/.*||)$/m.exec(update.note)
-    update.note = tokens[1];
+  if (update.task) {
+    const tokens = /^(.*?)(\/.*||)$/m.exec(update.task)
+    update.task = tokens[1];
     dispatch(appActions.handleSetCommand(tokens[2]))
   }
   const updateWithID = {id: prevNoteState.id, ...update };

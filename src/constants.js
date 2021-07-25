@@ -68,6 +68,9 @@ export const initProjectState = (prevProject = null, nextProject = null) => {
     permalink: randomWords.join("-").toLowerCase(),
     prevProject: prevProject,
     nextProject: nextProject,
+    privacy: "public",
+    permissions: "rw",
+    members: [],
     createdAt: new Date().toISOString()
   }
 }
@@ -75,16 +78,11 @@ export const initProjectState = (prevProject = null, nextProject = null) => {
 export const initNoteState = (projectID, prevNote = null, nextNote = null) => ({
   id: uuidv4(),
   projectID: projectID,
-  note: "",
+  task: "",
   prevNote: prevNote,
   nextNote: nextNote,
-  isDone: false,
-  task: null,
   description: null,
-  steps: null,
   due: Date.now(),
-  watcher: null,
-  tag: null,
-  sprint: null,
-  status: null
+  tags: [],
+  status: "todo"
 })

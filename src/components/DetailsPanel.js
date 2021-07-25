@@ -80,7 +80,7 @@ const DetailsPanel = (props) => {
                 name="note"
                 placeholder="note…"
                 onChange={handleChange}
-                value={notes[selectedNote].note || ""}
+                value={notes[selectedNote].task || ""}
                 contentEditable={false}
                 readOnly={readOnly}
               ></input>
@@ -123,7 +123,7 @@ const DetailsPanel = (props) => {
               <label htmlFor="tag">Tags</label>
               <TagField
                 onChange={handleChange}
-                value={notes[selectedNote].tag || []}
+                value={notes[selectedNote].tags || []}
                 readOnly={readOnly}
               />
             </Detail>

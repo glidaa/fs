@@ -197,7 +197,7 @@ const TaskItem = (props) => {
 									data-testid="updateTaskField"
 									className="task"
 									placeholder="Note…"
-									value={notes[selectedNote].note + command}
+									value={notes[selectedNote].task + command}
 									onKeyUp={onKeyUp}
 									onChange={onChange}
 									autoFocus={true}
@@ -207,10 +207,10 @@ const TaskItem = (props) => {
 							</TaskItemInput>
 						) : (
 							<TaskItemHeader
-								className={item.note ? null : "placeholder"}
+								className={item.task ? null : "placeholder"}
 								onClick={() => selectItem(item)}
 							>
-								{item.isDone ? <strike>{item.note}</strike> : item.note || "Note…"}
+								{item.isDone ? <strike>{item.task}</strike> : item.task || "Note…"}
 							</TaskItemHeader>
 						)}
 					</TaskItemLeftLeftPart>
