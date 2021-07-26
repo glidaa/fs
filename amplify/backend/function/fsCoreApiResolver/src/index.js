@@ -595,8 +595,10 @@ async function createTask(ctx) {
     const taskData = {
       ...ctx.arguments.input,
       id: uuidv4(),
-      assignees: ctx.arguments.input.assignees || [],
       status: ctx.arguments.input.status || TODO,
+      assignees: ctx.arguments.input.assignees || [],
+      watchers: ctx.arguments.input.watchers || [],
+      tags: ctx.arguments.input.tags || [],
       permalink: projectData.Item.tasksCount + 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -718,10 +720,16 @@ async function updateTask(ctx) {
   if (isAuthorized) {
     delete updateData["id"]
     const expAttrVal = {}
+    const expAttrNames = {}
     let updateExp = []
     for (const item in updateData) {
       expAttrVal[`:${item}`] = updateData[item]
-      updateExp.push(`${item}=:${item}`)
+      if (item === "status") {
+        updateExp.push(`#${item}=:${item}`)
+        expAttrNames[`#${item}`] = item
+      } else {
+        updateExp.push(`${item}=:${item}`)
+      }
     }
     expAttrVal[":updatedAt"] = new Date().toISOString()
     updateExp.push("updatedAt=:updatedAt")
@@ -733,6 +741,7 @@ async function updateTask(ctx) {
       },
       UpdateExpression: updateExp,
       ExpressionAttributeValues: expAttrVal,
+      ExpressionAttributeNames: { "#id": "id", "#owner": "owner" },
       ReturnValues: "ALL_NEW"
     };
     try {
@@ -1178,13 +1187,13 @@ async function deleteTaskAndComments(ctx) {
   const client = ctx.identity.sub
   if (await isTaskOwner(taskID, client)) {
     const removeCommentsProm = removeCommentsOfTask(taskID);
+    await removeTaskOrder(taskID)
+    await updateTaskCount(taskID)
     const removeTaskProm = deleteTask(taskID);
     const [_, deletedTask] = await Promise.all([
       removeCommentsProm,
       removeTaskProm,
     ]);
-    await removeTaskOrder(taskID)
-    await updateTaskCount(taskID)
     return deletedTask
   } else {
     throw new Error(UNAUTHORIZED)
