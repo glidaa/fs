@@ -741,7 +741,7 @@ async function updateTask(ctx) {
       },
       UpdateExpression: updateExp,
       ExpressionAttributeValues: expAttrVal,
-      ExpressionAttributeNames: { "#id": "id", "#owner": "owner" },
+      ExpressionAttributeNames: expAttrNames,
       ReturnValues: "ALL_NEW"
     };
     try {
