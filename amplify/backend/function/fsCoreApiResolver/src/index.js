@@ -595,6 +595,7 @@ async function createTask(ctx) {
     const taskData = {
       ...ctx.arguments.input,
       id: uuidv4(),
+      assignees: ctx.arguments.input.assignees || [],
       status: ctx.arguments.input.status || TODO,
       permalink: projectData.Item.tasksCount + 1,
       createdAt: new Date().toISOString(),
