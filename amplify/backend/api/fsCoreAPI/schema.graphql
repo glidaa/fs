@@ -1,6 +1,8 @@
 type User
 	@model(queries: null, mutations: null, subscriptions: null)
-	@auth(rules: [{ allow: public }])  {
+	@aws_iam
+	@aws_cognito_user_pools  {
+	id: ID!
 	username: String!
 	firstName: String!
 	lastName: String!
@@ -15,7 +17,8 @@ type User
 
 type Project
 	@model(queries: null, mutations: null, subscriptions: null)
-	@auth(rules: [{ allow: public }])
+	@aws_iam
+	@aws_cognito_user_pools
 	@key(name: "byOwner", fields: ["owner"]) {
 	id: ID!
 	prevProject: ID
@@ -35,7 +38,8 @@ type Project
 
 type Task
 	@model(queries: null, mutations: null, subscriptions: null)
-	@auth(rules: [{ allow: public }])
+	@aws_iam
+	@aws_cognito_user_pools
 	@key(name: "byOwner", fields: ["owner"])
 	@key(name: "byProject", fields: ["projectID"]) {
 	id: ID!
@@ -57,7 +61,8 @@ type Task
 
 type Comment
 	@model(queries: null, mutations: null, subscriptions: null)
-	@auth(rules: [{ allow: public }])
+	@aws_iam
+	@aws_cognito_user_pools
 	@key(name: "byOwner", fields: ["owner"])
 	@key(name: "byTask", fields: ["taskID"]) {
 	id: ID!
