@@ -65,8 +65,8 @@ const resolvers = {
     },
   },
   Query: {
-    getUserByID: (ctx) => {
-      return getUserByID(ctx);
+    getUserByUsername: (ctx) => {
+      return getUserByUsername(ctx);
     },
     getProjectByID: (ctx) => {
       return getProjectByID(ctx);
@@ -299,11 +299,11 @@ async function isTaskEditableByClient(taskID, client) {
   }
 }
 
-async function getUserByID(ctx) {
+async function getUserByUsername(ctx) {
   const params = {
     TableName: USERTABLE,
     Key: {
-      "id": ctx.arguments.userID
+      "username": ctx.arguments.username
     }
   }
   try {

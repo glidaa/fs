@@ -1,9 +1,9 @@
 type User
-	@model(queries: null, mutations: null, subscriptions: null) {
-	id: ID!
+	@model(queries: null, mutations: null, subscriptions: null)
+	@auth(rules: [{ allow: public }])  {
+	username: String!
 	firstName: String!
 	lastName: String!
-	username: String!
 	email: AWSEmail!
 	avatar: String
 	sharedProjects: [ID!]
@@ -11,11 +11,11 @@ type User
 	assignedTasks: [ID!]
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
-	owner: String!
 }
 
 type Project
 	@model(queries: null, mutations: null, subscriptions: null)
+	@auth(rules: [{ allow: public }])
 	@key(name: "byOwner", fields: ["owner"]) {
 	id: ID!
 	prevProject: ID
@@ -35,6 +35,7 @@ type Project
 
 type Task
 	@model(queries: null, mutations: null, subscriptions: null)
+	@auth(rules: [{ allow: public }])
 	@key(name: "byOwner", fields: ["owner"])
 	@key(name: "byProject", fields: ["projectID"]) {
 	id: ID!
@@ -56,6 +57,7 @@ type Task
 
 type Comment
 	@model(queries: null, mutations: null, subscriptions: null)
+	@auth(rules: [{ allow: public }])
 	@key(name: "byOwner", fields: ["owner"])
 	@key(name: "byTask", fields: ["taskID"]) {
 	id: ID!
