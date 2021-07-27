@@ -3,6 +3,7 @@ const AWSXRay = require("aws-xray-sdk-core");
 const AWS = AWSXRay.captureAWS(require("aws-sdk"));
 
 const docClient = new AWS.DynamoDB.DocumentClient();
+const cognitoClient = new AWS.CognitoIdentityServiceProvider();
 
 const UNAUTHORIZED = "UNAUTHORIZED";
 const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
@@ -21,6 +22,8 @@ const USERTABLE = process.env.API_FSCOREAPI_USERTABLE_NAME;
 const PROJECTTABLE = process.env.API_FSCOREAPI_PROJECTTABLE_NAME;
 const TASKTABLE = process.env.API_FSCOREAPI_TASKTABLE_NAME;
 const COMMENTTABLE = process.env.API_FSCOREAPI_COMMENTTABLE_NAME;
+
+const USERPOOL = process.env.AUTH_FSCOGNITO_USERPOOLID
 
 const resolvers = {
   Mutation: {
@@ -421,7 +424,7 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
 }
 
 async function createProject(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   if (client) {
     const projectData = {
       ...ctx.arguments.input,
@@ -582,7 +585,7 @@ async function updateTaskCount(taskID, nextStatus = null) {
 
 async function createTask(ctx) {
   const projectID = ctx.arguments.input.projectID
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const projectParams = {
     TableName: PROJECTTABLE,
     Key: {
@@ -648,7 +651,7 @@ async function createTask(ctx) {
 
 async function createComment(ctx) {
   const taskID = ctx.arguments.input.taskID
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const isAuthorized = await isTaskSharedWithClient(taskID, client)
   if (isAuthorized) {
     const commentData = {
@@ -676,7 +679,7 @@ async function createComment(ctx) {
 async function updateProject(ctx) {
   const updateData = ctx.arguments.input
   const projectID = updateData.id
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   if (isProjectOwner(projectID, client)) {
     delete updateData["id"]
     const expAttrVal = {}
@@ -715,7 +718,7 @@ async function updateProject(ctx) {
 async function updateTask(ctx) {
   const updateData = ctx.arguments.input
   const taskID = updateData.id
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const isAuthorized = await isTaskEditableByClient(taskID, client)
   if (isAuthorized) {
     delete updateData["id"]
@@ -763,7 +766,7 @@ async function updateTask(ctx) {
 async function updateComment(ctx) {
   const updateData = ctx.arguments.input
   const commentID = updateData.id
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   if (isCommentOwner(commentID, client)) {
     delete updateData["id"]
     const expAttrVal = {}
@@ -797,7 +800,7 @@ async function updateComment(ctx) {
 
 async function assignTask(ctx) {
   const { assignee, taskID } = ctx.arguments
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const isValidAssignee = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(assignee)
   if (isValidAssignee) {
     const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
@@ -864,7 +867,7 @@ async function assignTask(ctx) {
 
 async function unassignTask(ctx) {
   const { assignee, taskID } = ctx.arguments
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const isValidAssignee = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(assignee)
   if (isValidAssignee) {
     const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
@@ -977,7 +980,7 @@ async function getLastTask (projectID) {
 
 async function importData(ctx) {
   const data = JSON.parse(ctx.arguments.data)
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const importedProjects = {
     owner: client,
     items: []
@@ -1050,7 +1053,7 @@ async function getProjectByPermalink(ctx) {
 }
 
 async function listOwnedProjects(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const params = {
     TableName: PROJECTTABLE,
     IndexName: "byOwner",
@@ -1071,7 +1074,7 @@ async function listOwnedProjects(ctx) {
 }
 
 async function listAssignedProjects(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const params = {
     TableName: TASKTABLE,
     IndexName: "byAssignee",
@@ -1105,7 +1108,7 @@ async function listAssignedProjects(ctx) {
 
 async function listTasksForProject(ctx) {
   const projectID = ctx.arguments.projectID
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const params = {
     TableName: TASKTABLE,
     IndexName: "byProject",
@@ -1128,7 +1131,7 @@ async function listTasksForProject(ctx) {
 
 async function listCommentsForTask(ctx) {
   const taskID = ctx.arguments.taskID
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   if (await isTaskSharedWithClient(taskID, client)) {
     try {
       const commentsList = await _listCommentsForTask(taskID)
@@ -1145,7 +1148,7 @@ async function listCommentsForTask(ctx) {
 
 async function deleteComment(ctx) {
   const commentID = ctx.arguments.commentID
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   if (await isCommentOwner(commentID, client)) {
     const params = {
       TableName: COMMENTTABLE,
@@ -1167,7 +1170,7 @@ async function deleteComment(ctx) {
 
 async function deleteProjectAndTasks(ctx) {
   const projectID = ctx.arguments.projectID
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   if (await isProjectOwner(projectID, client)) {
     const removeTasksProm = removeTasksOfProject(projectID);
     const removeProjectProm = deleteProject(projectID);
@@ -1184,7 +1187,7 @@ async function deleteProjectAndTasks(ctx) {
 
 async function deleteTaskAndComments(ctx) {
   const taskID = ctx.arguments.taskId
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   if (await isTaskOwner(taskID, client)) {
     const removeCommentsProm = removeCommentsOfTask(taskID);
     await removeTaskOrder(taskID)
@@ -1201,7 +1204,7 @@ async function deleteTaskAndComments(ctx) {
 }
 
 async function onCreateOwnedProject(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const owner = ctx.arguments.owner
   if (client === owner) {
     return {
@@ -1219,7 +1222,7 @@ async function onCreateOwnedProject(ctx) {
 }
 
 async function onImportOwnedProjects(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const owner = ctx.arguments.owner
   if (client === owner) {
     return {
@@ -1232,7 +1235,7 @@ async function onImportOwnedProjects(ctx) {
 }
 
 async function onUpdateOwnedProject(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const owner = ctx.arguments.owner
   if (client === owner) {
     return {
@@ -1250,7 +1253,7 @@ async function onUpdateOwnedProject(ctx) {
 }
 
 async function onDeleteOwnedProject(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const owner = ctx.arguments.owner
   if (client === owner) {
     return {
@@ -1268,7 +1271,7 @@ async function onDeleteOwnedProject(ctx) {
 }
 
 async function onAssignTask(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
@@ -1288,7 +1291,7 @@ async function onAssignTask(ctx) {
 }
 
 async function onunassignTask(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
@@ -1308,7 +1311,7 @@ async function onunassignTask(ctx) {
 }
 
 async function onUpdateAssignedTaskByProjectID(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
@@ -1328,7 +1331,7 @@ async function onUpdateAssignedTaskByProjectID(ctx) {
 }
 
 async function onDeleteAssignedTaskByProjectID(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const assignee = ctx.arguments.assignee
   if (client === assignee) {
     return {
@@ -1348,7 +1351,7 @@ async function onDeleteAssignedTaskByProjectID(ctx) {
 }
 
 async function onCreateOwnedTaskByProjectID(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
@@ -1368,7 +1371,7 @@ async function onCreateOwnedTaskByProjectID(ctx) {
 }
 
 async function onUpdateOwnedTaskByProjectID(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
@@ -1388,7 +1391,7 @@ async function onUpdateOwnedTaskByProjectID(ctx) {
 }
 
 async function onDeleteOwnedTaskByProjectID(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const projectID = ctx.arguments.projectID
   if (isProjectOwner(projectID, client)) {
     return {
@@ -1408,7 +1411,7 @@ async function onDeleteOwnedTaskByProjectID(ctx) {
 }
 
 async function onCreateCommentByTaskID(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const taskID = ctx.arguments.taskID
   if (isTaskSharedWithClient(taskID, client)) {
     return {
@@ -1425,7 +1428,7 @@ async function onCreateCommentByTaskID(ctx) {
 }
 
 async function onUpdateCommentByTaskID(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const taskID = ctx.arguments.taskID
   if (isTaskSharedWithClient(taskID, client)) {
     return {
@@ -1442,7 +1445,7 @@ async function onUpdateCommentByTaskID(ctx) {
 }
 
 async function onDeleteCommentByTaskID(ctx) {
-  const client = ctx.identity.sub
+  const client = ctx.identity.username
   const taskID = ctx.arguments.taskID
   if (isTaskSharedWithClient(taskID, client)) {
     return {
