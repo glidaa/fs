@@ -7,6 +7,7 @@ type User
 	firstName: String!
 	lastName: String!
 	email: AWSEmail!
+	plan: String!
 	avatar: String
 	sharedProjects: [ID!]
 	watchedTasks: [ID!]
