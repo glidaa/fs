@@ -14,10 +14,14 @@ const setData = (userData) => ({
 });
 
 export const handleSetData = (userData) => (dispatch) => {
-  const firstName = userData.attributes.given_name
-  const lastName = userData.attributes.family_name
-  const username = userData.username
-  const name = `${firstName} ${lastName}`
-  dispatch(usersActions.addUser(username, name))
-  dispatch(setData(userData))
+  if (userData) {
+    const firstName = userData.attributes.given_name
+    const lastName = userData.attributes.family_name
+    const username = userData.username
+    const name = `${firstName} ${lastName}`
+    dispatch(usersActions.addUser(username, name))
+    dispatch(setData(userData))
+  } else {
+    dispatch(setData(null))
+  }
 }

@@ -14,6 +14,7 @@ import TasksPanel from "./TasksPanel";
 import ProjectsPanel from "./ProjectsPanel"
 import Loading from "./Loading";
 import Login from "./Login";
+import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
 Amplify.configure(aws_exports);
 PubSub.configure(aws_exports);
@@ -132,8 +133,10 @@ const App = (props) => {
             {app.isLoading ? (
               <Loading route={routeProps} />
             ) : (
+              <>
+              <ActionSheet />
+              <Toolbar />
               <div className="mainPage">
-                <ActionSheet />
                 <ProjectsPanel />
                 <TasksPanel />
                 <DetailsPanel
@@ -142,6 +145,7 @@ const App = (props) => {
                   }
                 />
               </div>
+              </>
             )}
           </>
         )}

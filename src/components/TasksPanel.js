@@ -26,7 +26,6 @@ import ProjectNotSelected from "./ProjectNotSelected";
 import * as tasksActions from "../actions/tasks";
 import { OK, initTaskState } from "../constants";
 import useWindowSize from "../utils/useWindowSize";
-import Toolbar from "./Toolbar";
 import ProjectTitle from './ProjectTitle';
 
 const Sortable = (props) => {
@@ -134,8 +133,6 @@ const TasksPanel = (props) => {
     tasks,
     projects,
     dispatch,
-    setHideShowProjectsPanel,
-    setHideShow,
   } = props;
   let { width } = useWindowSize();
   const onSortEnd = (oldIndex, newIndex) => {
@@ -179,7 +176,6 @@ const TasksPanel = (props) => {
     >
       {app.selectedProject ? (
         <>
-          <Toolbar setHideShowProjectsPanel={setHideShowProjectsPanel} />
           <ProjectTitle />
           <Sortable
             items={parseLinkedList(tasks, "prevTask", "nextTask").map(({ id }) => id)}

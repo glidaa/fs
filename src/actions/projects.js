@@ -190,3 +190,32 @@ export const handleFetchAssignedProjects = () => async (dispatch, getState) => {
     return getState().projects
   }
 }
+
+export const handleUpdateTaskCount = (projectID, prevStatus, nextStatus) => (dispatch, getState) => {
+  const { projects } = getState()
+  const prevProjectState = {...projects[OWNED][projectID]}
+  const prevTodoCount = prevProjectState.todoCount
+  const prevPendingCount = prevProjectState.pendingCount
+  const prevDoneCount = prevProjectState.doneCount
+  const todoCountInc = (prevStatus === "todo" ? -1 : 0) || (nextStatus === "todo" ? 1 : 0)
+  const pendingCountInc = (prevStatus === "pending" ? -1 : 0) || (nextStatus === "pending" ? 1 : 0)
+  const doneCountInc = (prevStatus === "done" ? -1 : 0) || (nextStatus === "done" ? 1 : 0)
+  const update = {
+    id: projectID,
+    todoCount: prevTodoCount + todoCountInc,
+    pendingCount: prevPendingCount + pendingCountInc,
+    doneCount: prevDoneCount + doneCountInc
+  }
+  dispatch(updateProject(update, OWNED));
+  let localProjects = JSON.parse(window.localStorage.getItem("projects"))
+  localProjects = {
+    ...localProjects,
+    [projectID]: {
+      ...localProjects[projectID],
+      todoCount: prevTodoCount + todoCountInc,
+      pendingCount: prevPendingCount + pendingCountInc,
+      doneCount: prevDoneCount + doneCountInc
+    }
+  }
+  return window.localStorage.setItem("projects", JSON.stringify(localProjects))
+}

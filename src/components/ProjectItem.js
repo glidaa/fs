@@ -43,11 +43,47 @@ const ProjectItem = (props) => {
             <ProjectItemPermalink>{project.permalink}</ProjectItemPermalink>
           </ProjectItemHeader>
           <TasksCount>
-            <UnbegunTasksCount>12</UnbegunTasksCount>
-            <OngoingTasksCount>24</OngoingTasksCount>
-            <FinishedTasksCount>8</FinishedTasksCount>
+            <TodoTasksCount>{project.todoCount}</TodoTasksCount>
+            <PendingTasksCount>{project.pendingCount}</PendingTasksCount>
+            <DoneTasksCount>{project.doneCount}</DoneTasksCount>
           </TasksCount>
-          <AvatarArray borderColor="#006EFF" size="38" />
+          <AvatarArray
+            max={4}
+						users={[
+							{
+								avatar: "https://i.pravatar.cc/38?img=2",
+								firstName: "Bugs",
+								lastName: "Bunney"
+							},
+							{
+								avatar: "",
+								firstName: "Ahmed",
+								lastName: "Hassan"
+							},
+							{
+								avatar: "https://i.pravatar.cc/38?img=3",
+								firstName: "Loyed",
+								lastName: "Garamdon"
+							},
+							{
+								avatar: "https://i.pravatar.cc/38?img=4",
+								firstName: "Kissy",
+								lastName: "Johns"
+							},
+							{
+								avatar: "https://i.pravatar.cc/38?img=5",
+								firstName: "Sponge",
+								lastName: "Pop"
+							},
+							{
+								avatar: "https://i.pravatar.cc/38?img=6",
+								firstName: "Kogoro",
+								lastName: "Mori"
+							}
+						]}
+            borderColor="#006EFF"
+            size="38" 
+          />
           <ProjectItemDate>
             Created {formatDate(new Date(project.createdAt).getTime())}
           </ProjectItemDate>
@@ -56,7 +92,7 @@ const ProjectItem = (props) => {
           <ProgressRing
             radius={42}
             stroke={5}
-            progress={75}
+            progress={project.doneCount / (project.todoCount + project.pendingCount + project.doneCount) * 100}
           />
           <ProjectItemActions>
             <ProjectItemAction>
@@ -165,21 +201,21 @@ const TasksCountItem = styledComponents.span`
   }
 `
 
-const UnbegunTasksCount = styledComponents(TasksCountItem)`
+const TodoTasksCount = styledComponents(TasksCountItem)`
   background-color: #FFEBE5;
   &::before {
     color: #FF1744;
   }
 `
 
-const OngoingTasksCount = styledComponents(TasksCountItem)`
+const PendingTasksCount = styledComponents(TasksCountItem)`
   background-color: #FDF1DB;
   &::before {
     color: #FF9100;
   }
 `
 
-const FinishedTasksCount = styledComponents(TasksCountItem)`
+const DoneTasksCount = styledComponents(TasksCountItem)`
   background-color: #DAF6F4;
   &::before {
     color: #00E676;

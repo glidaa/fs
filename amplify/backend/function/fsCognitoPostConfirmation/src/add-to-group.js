@@ -7,6 +7,8 @@ const cognitoidentityserviceprovider = new aws.CognitoIdentityServiceProvider({
 });
 
 exports.handler = async event => {
+  
+  console.log(event)
   const groupParams = {
     GroupName: process.env.GROUP,
     UserPoolId: event.userPoolId,

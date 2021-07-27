@@ -266,7 +266,43 @@ const TaskItem = (props) => {
 					<TaskItemDueDate>
 						{formatDate(item.due)}
 					</TaskItemDueDate>
-					<AvatarArray borderColor="#F8F8F8" size={ width > 768 ? "24" : "18" } />
+					<AvatarArray
+						max={3}
+						users={[
+							{
+								avatar: "https://i.pravatar.cc/38?img=2",
+								firstName: "Bugs",
+								lastName: "Bunney"
+							},
+							{
+								avatar: "",
+								firstName: "Ahmed",
+								lastName: "Hassan"
+							},
+							{
+								avatar: "https://i.pravatar.cc/38?img=3",
+								firstName: "Loyed",
+								lastName: "Garamdon"
+							},
+							{
+								avatar: "https://i.pravatar.cc/38?img=4",
+								firstName: "Kissy",
+								lastName: "Johns"
+							},
+							{
+								avatar: "https://i.pravatar.cc/38?img=5",
+								firstName: "Sponge",
+								lastName: "Pop"
+							},
+							{
+								avatar: "https://i.pravatar.cc/38?img=6",
+								firstName: "Kogoro",
+								lastName: "Mori"
+							}
+						]}
+						borderColor="#F8F8F8"
+						size={ width > 768 ? "24" : "18" }
+					/>
 				</TaskItemRightPart>
 			</TaskItemCore>
 			{(isDropdownOpened && selectedTask === item.id) && (

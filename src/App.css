@@ -13,6 +13,9 @@ input {
 }
 
 .mainPage {
+  position: fixed;
+  right: 0;
+  width: calc(100vw - 70px);
   display: flex;
   flex-direction: row;
   background-color: #F8F8F8;

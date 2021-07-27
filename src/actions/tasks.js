@@ -4,6 +4,7 @@ import { listTasksForProject } from "../graphql/queries"
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
 import * as appActions from "./app"
+import * as projectsActions from "./projects"
 import * as usersActions from "./users"
 import * as mutations from "../graphql/mutations"
 import { DONE, ERROR, NOT_ASSIGNED, NOT_STARTED, OK, PENDING } from "../constants";
@@ -62,6 +63,7 @@ export const handleCreateTask = (taskState) => (dispatch, getState) => {
   } else {
     if (taskState.projectID === getState().app.selectedProject) {
       dispatch(createTask(taskState))
+      dispatch(projectsActions.handleUpdateTaskCount(taskState.projectID, null, taskState.status))
       if (taskState.projectID === getState().app.selectedProject) {
         dispatch(appActions.handleSetTask(null))
       }
@@ -111,6 +113,9 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
   } else {
     if (tasks[prevTaskState.id]) {
       dispatch(updateTask(updateWithID));
+      if (update.status && prevTaskState.status !== update.status) {
+        dispatch(projectsActions.handleUpdateTaskCount(prevTaskState.projectID, prevTaskState.status, update.status))
+      }
     }
     const localProjects = JSON.parse(window.localStorage.getItem("projects"))
     const tasksArray = localProjects[prevTaskState.projectID].tasks
@@ -163,6 +168,7 @@ export const handleRemoveTask = (taskState) => (dispatch, getState) => {
   } else {
     if (tasks[taskState.id]) {
       dispatch(removeTask(taskState.id))
+      dispatch(projectsActions.handleUpdateTaskCount(taskState.projectID, taskState.status, null))
     }
     const localProjects = JSON.parse(window.localStorage.getItem("projects"))
     const tasksArray = localProjects[taskState.projectID].tasks

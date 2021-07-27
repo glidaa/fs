@@ -27,14 +27,14 @@ const StatusField = (props) => {
         Todo
       </TodoStatusSelection>
 			<StartedStatusSelection
-        isSelected={value === "started"}
-        onClick={() => onSelect("started")}
+        isSelected={value === "pending"}
+        onClick={() => onSelect("pending")}
       >
         Started
       </StartedStatusSelection>
 			<FinishedStatusSelection
-        isSelected={value === "finished"}
-        onClick={() => onSelect("finished")}
+        isSelected={value === "done"}
+        onClick={() => onSelect("done")}
       >
         Finished
       </FinishedStatusSelection>

@@ -5,14 +5,16 @@ const lambda = new aws.Lambda({
 });
 
 exports.handler = async (event, context) => {
+  console.log(event)
   lambda.invoke(
     {
       FunctionName: "fsCognitoPostConfirmation",
       Payload: JSON.stringify(event, null, 2),
     },
     function (error, data) {
+      console.log(data)
       if (error) {
-        context.done("error", error);
+        context.fail("error", error);
       }
       if (data.Payload) {
         context.succeed(data.Payload);
