@@ -13,6 +13,7 @@ type User
 	assignedTasks: [ID!]
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
+	owner: String!
 }
 
 type Project
