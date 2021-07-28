@@ -15,7 +15,7 @@ exports.handler = async (event) => {
         InvocationType: "Event",
         Payload: JSON.stringify(event, null, 2)
       }).promise();
-    return data;
+    return event;
   } catch (err) {
     throw new Error(err)
   }
