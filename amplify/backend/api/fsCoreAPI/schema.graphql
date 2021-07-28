@@ -1,7 +1,8 @@
 type User
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
-	@aws_cognito_user_pools  {
+	@aws_cognito_user_pools
+	@key(name: "byUsername", fields: ["username"])  {
 	id: ID!
 	username: String!
 	firstName: String!
@@ -129,7 +130,7 @@ type Mutation {
 }
 
 type Query {
-	getUserByID(userID: ID!): User
+	getUserByUsername(userID: ID!): User
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
