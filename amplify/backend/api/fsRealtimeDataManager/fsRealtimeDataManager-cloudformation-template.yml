@@ -1,0 +1,403 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  simple-websockets-chat-app
+
+  SAM Template for simple-websockets-chat-app that has the DynamoDB table and Lambda
+  functions needed to demonstrate the Websocket protocol on API Gateway.
+
+Parameters:
+  env:
+    Type: String
+  TableName:
+    Type: String
+    Default: 'simplechat_connections'
+
+Conditions:
+  ShouldNotCreateEnvResources: !Equals [!Ref env, NONE]
+
+Resources:
+  SimpleChatWebSocket:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: SimpleChatWebSocket
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: $connect
+      AuthorizationType: NONE
+      OperationName: ConnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ConnectInteg
+  ConnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Connect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnConnectFunction.Arn}/invocations
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: DisconnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DisconnectInteg
+  DisconnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Disconnect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnDisconnectFunction.Arn}/invocations
+  SendRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: sendmessage
+      AuthorizationType: NONE
+      OperationName: SendRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref SendInteg
+  SendInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Send Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SendMessageFunction.Arn}/invocations
+  Deployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+    - ConnectRoute
+    - SendRoute
+    - DisconnectRoute
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: Prod
+      Description: Prod Stage
+      DeploymentId: !Ref Deployment
+      ApiId: !Ref SimpleChatWebSocket
+  ConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: "connectionId"
+        AttributeType: "S"
+      KeySchema:
+      - AttributeName: "connectionId"
+        KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      TableName: !Ref TableName
+  OnConnectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: !Join
+          - |+
+          - - "const AWS = require('aws-sdk');"
+            - "const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });"
+            - "exports.handler = async event => {"
+            - "  const putParams = {"
+            - "    TableName: process.env.TABLE_NAME,"
+            - "    Item: {"
+            - "      connectionId: event.requestContext.connectionId"
+            - "    }"
+            - "  };"
+            - "  try {"
+            - "    await ddb.put(putParams).promise();"
+            - "  } catch (err) {"
+            - "    return { statusCode: 500, body: 'Failed to connect: ' + JSON.stringify(err) };"
+            - "  }"
+            - "  return { statusCode: 200, body: 'Connected.' };"
+            - "};"
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Role: !GetAtt
+        - OnConnectLambdaRole
+        - Arn
+    DependsOn: OnConnectLambdaRole
+    
+  OnConnectLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName:
+        !If [
+          ShouldNotCreateEnvResources,
+          "fstest9ae96471_onconnect_lambda_role",
+          !Join ["", ["fstest9ae96471_onconnect_lambda_role", "-", !Ref env]],
+        ]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: fstest9ae96471-onconnect-dynamodb-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                - 'dynamodb:GetItem'
+                - 'dynamodb:DeleteItem'
+                - 'dynamodb:PutItem'
+                - 'dynamodb:Scan'
+                - 'dynamodb:Query'
+                - 'dynamodb:UpdateItem'
+                - 'dynamodb:BatchWriteItem'
+                - 'dynamodb:BatchGetItem'
+                - 'dynamodb:DescribeTable'
+                - 'dynamodb:ConditionCheckItem'
+                Resource:
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}'
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}/index/*'
+
+  OnConnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnConnectFunction
+      Principal: apigateway.amazonaws.com
+  OnDisconnectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: !Join
+          - |+
+          - - "const AWS = require('aws-sdk');"
+            - "const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });"
+            - "exports.handler = async event => {"
+            - "  const deleteParams = {"
+            - "    TableName: process.env.TABLE_NAME,"
+            - "    Key: {"
+            - "      connectionId: event.requestContext.connectionId"
+            - "    }"
+            - "  };"
+            - "  try {"
+            - "    await ddb.delete(deleteParams).promise();"
+            - "  } catch (err) {"
+            - "    return { statusCode: 500, body: 'Failed to disconnect: ' + JSON.stringify(err) };"
+            - "  }"
+            - "  return { statusCode: 200, body: 'Disconnected.' };"
+            - "};"
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Role: !GetAtt
+        - OnDisconnectLambdaRole
+        - Arn
+    DependsOn: OnDisconnectLambdaRole
+    
+  OnDisconnectLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName:
+        !If [
+          ShouldNotCreateEnvResources,
+          "fstest9ae96471_ondisconnect_lambda_role",
+          !Join ["", ["fstest9ae96471_ondisconnect_lambda_role", "-", !Ref env]],
+        ]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: fstest9ae96471-ondisconnect-dynamodb-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                - 'dynamodb:GetItem'
+                - 'dynamodb:DeleteItem'
+                - 'dynamodb:PutItem'
+                - 'dynamodb:Scan'
+                - 'dynamodb:Query'
+                - 'dynamodb:UpdateItem'
+                - 'dynamodb:BatchWriteItem'
+                - 'dynamodb:BatchGetItem'
+                - 'dynamodb:DescribeTable'
+                - 'dynamodb:ConditionCheckItem'
+                Resource:
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}'
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}/index/*'
+
+  OnDisconnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnDisconnectFunction
+      Principal: apigateway.amazonaws.com
+  SendMessageFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: !Join
+          - |+
+          - - "const AWS = require('aws-sdk');"
+            - "const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });"
+            - "const { TABLE_NAME } = process.env;"
+            - "exports.handler = async event => {"
+            - "  let connectionData;"
+            - "  try {"
+            - "    connectionData = await ddb.scan({ TableName: TABLE_NAME, ProjectionExpression: 'connectionId' }).promise();"
+            - "  } catch (e) {"
+            - "    return { statusCode: 500, body: e.stack };"
+            - "  }"
+            - "  const apigwManagementApi = new AWS.ApiGatewayManagementApi({"
+            - "    apiVersion: '2018-11-29',"
+            - "    endpoint: event.requestContext.domainName + '/' + event.requestContext.stage"
+            - "  });"
+            - "  const postData = JSON.parse(event.body).data;"
+            - "  const postCalls = connectionData.Items.map(async ({ connectionId }) => {"
+            - "    try {"
+            - "      await apigwManagementApi.postToConnection({ ConnectionId: connectionId, Data: postData }).promise();"
+            - "    } catch (e) {"
+            - "      if (e.statusCode === 410) {"
+            - "        console.log(`Found stale connection, deleting ${connectionId}`);"
+            - "        await ddb.delete({ TableName: TABLE_NAME, Key: { connectionId } }).promise();"
+            - "      } else {"
+            - "        throw e;"
+            - "      }"
+            - "    }"
+            - "  });"
+            - "  try {"
+            - "    await Promise.all(postCalls);"
+            - "  } catch (e) {"
+            - "    return { statusCode: 500, body: e.stack };"
+            - "  }"
+            - "  return { statusCode: 200, body: 'Data sent.' };"
+            - "};"
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Role: !GetAtt
+        - SendMsgLambdaRole
+        - Arn
+    DependsOn: SendMsgLambdaRole
+    
+  SendMsgLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName:
+        !If [
+          ShouldNotCreateEnvResources,
+          "fstest9ae96471_sendmsg_lambda_role",
+          !Join ["", ["fstest9ae96471_sendmsg_lambda_role", "-", !Ref env]],
+        ]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: fstest9ae96471-sendmsg-dynamodb-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                - 'dynamodb:GetItem'
+                - 'dynamodb:DeleteItem'
+                - 'dynamodb:PutItem'
+                - 'dynamodb:Scan'
+                - 'dynamodb:Query'
+                - 'dynamodb:UpdateItem'
+                - 'dynamodb:BatchWriteItem'
+                - 'dynamodb:BatchGetItem'
+                - 'dynamodb:DescribeTable'
+                - 'dynamodb:ConditionCheckItem'
+                Resource:
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}'
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}/index/*'
+        - PolicyName: fstest9ae96471-sendmsg-executeapi-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                - 'execute-api:ManageConnections'
+                Resource:
+                - !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${SimpleChatWebSocket}/*'
+
+  SendMessagePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref SendMessageFunction
+      Principal: apigateway.amazonaws.com
+
+Outputs:
+  ConnectionsTableArn:
+    Description: "Connections table ARN"
+    Value: !GetAtt ConnectionsTable.Arn
+
+  OnConnectFunctionArn:
+    Description: "OnConnect function ARN"
+    Value: !GetAtt OnConnectFunction.Arn
+
+  OnDisconnectFunctionArn:
+    Description: "OnDisconnect function ARN"
+    Value: !GetAtt OnDisconnectFunction.Arn
+
+  SendMessageFunctionArn:
+    Description: "SendMessage function ARN"
+    Value: !GetAtt SendMessageFunction.Arn
+
+  WebSocketURI:
+    Description: "The WSS Protocol URI to connect to"
+    Value: !Join [ '', [ 'wss://', !Ref SimpleChatWebSocket, '.execute-api.',!Ref 'AWS::Region','.amazonaws.com/',!Ref 'Stage'] ]
