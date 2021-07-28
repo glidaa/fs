@@ -6,8 +6,10 @@ type User
 	username: String!
 	firstName: String!
 	lastName: String!
+	gender: String!
+	birthdate: String!
 	email: AWSEmail!
-	plan: String!
+	plan: Plan!
 	avatar: String
 	sharedProjects: [ID!]
 	watchedTasks: [ID!]
@@ -312,4 +314,9 @@ enum ProjectPrivacy {
 enum Permissions {
 	r
 	rw
+}
+
+enum Plan {
+	free
+	pro
 }

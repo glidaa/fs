@@ -62,7 +62,7 @@
   "authProviders": ["accounts.google.com"],
   "userPoolGroups": true,
   "adminQueries": true,
-  "triggers": "{\n  \"PostConfirmation\": [\n    \"add-to-group\"\n  ]\n}",
+  "triggers": "{\n  \"PostConfirmation\": [\n    \"save-user-data\"\n  ]\n}",
   "hostedUI": true,
   "hostedUIDomainName": "fs",
   "authProvidersUserPool": ["Google"],
