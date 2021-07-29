@@ -137,7 +137,7 @@ Resources:
             - "};"
       Handler: index.handler
       MemorySize: 256
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Environment:
         Variables:
           TABLE_NAME: !Ref TableName
@@ -217,7 +217,7 @@ Resources:
             - "};"
       Handler: index.handler
       MemorySize: 256
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Environment:
         Variables:
           TABLE_NAME: !Ref TableName
@@ -315,7 +315,7 @@ Resources:
             - "};"
       Handler: index.handler
       MemorySize: 256
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Environment:
         Variables:
           TABLE_NAME: !Ref TableName

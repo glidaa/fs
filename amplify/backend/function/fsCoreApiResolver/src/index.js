@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const AWSXRay = require("aws-xray-sdk-core");
-const AWS = AWSXRay.captureAWS(require("aws-sdk"));
+const AWS = require("aws-sdk");
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
@@ -1249,6 +1248,30 @@ async function listAssignedProjects(ctx) {
   }
 }
 
+async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = false) {
+  users = [...new Set(users)]
+          .filter(user => !cachedUsers.includes(user))
+  if (isAnonymousAllowed) {
+    users = users
+            .filter(user => user.match(/(user|anonymous):(.*)/)[0] === "user")
+            .map(user => ({ username: user.match(/(user|anonymous):(.*)/)[1] }))
+  } else {
+    users = users.map(user => ({ username: user }))
+  }
+  const params = {
+    RequestItems: {
+      [USERTABLE]: {
+        keys: users
+      }
+    }
+  }
+  try {
+    return (await docClient.batchGet(params).promise()).Responses[USERTABLE]
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
 async function listTasksForProject(ctx) {
   const projectID = ctx.arguments.projectID
   const client = ctx.identity.username
@@ -1262,6 +1285,7 @@ async function listTasksForProject(ctx) {
   };
   try {
     const data = await docClient.query(params).promise();
+    console.log(await postProcessUsers(data.Items.map(({ assignees }) => assignees).flat()))
     return {
       items: data.Items.filter(item => (
         client === item.owner || client === item.assignee
