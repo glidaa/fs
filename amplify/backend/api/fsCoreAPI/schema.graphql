@@ -275,7 +275,7 @@ input UpdateCommentInput {
 	content: AWSJSON
 }
 
-input UserUpdate {
+type UserUpdate {
 	username: String!
 	firstName: String
 	lastName: String
