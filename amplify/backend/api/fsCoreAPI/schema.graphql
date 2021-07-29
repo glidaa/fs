@@ -77,6 +77,10 @@ type Comment
 }
 
 type Mutation {
+	pushUserUpdate(input: PushUserUpdateInput!): UserUpdate
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_iam
+		@aws_cognito_user_pools
 	createProject(input: CreateProjectInput!): Project
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
@@ -167,8 +171,8 @@ type Query {
 }
 
 type Subscription {
-	onUpdateUser(owner: String!): UserUpdate
-		@aws_subscribe(mutations: ["updateUser"])
+	onPushUserUpdate(owner: String!): UserUpdate
+		@aws_subscribe(mutations: ["pushUserUpdate"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -222,6 +226,22 @@ type Subscription {
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
+}
+
+input PushUserUpdateInput {
+	username: String!
+	firstName: String
+	lastName: String
+	gender: String
+	birthdate: String
+	email: AWSEmail
+	plan: Plan
+	avatar: String
+	sharedProjects: [ID!]
+	watchedTasks: [ID!]
+	assignedTasks: [ID!]
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
 }
 
 input CreateProjectInput {
