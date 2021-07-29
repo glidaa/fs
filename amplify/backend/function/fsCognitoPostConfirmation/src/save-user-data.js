@@ -13,7 +13,6 @@ exports.handler = async (event) => {
   console.log(event)
   try {
     const userData = {
-      id: event.request.userAttributes.sub,
       username: event.userName,
       firstName: event.request.userAttributes.given_name,
       lastName: event.request.userAttributes.family_name,
@@ -21,13 +20,12 @@ exports.handler = async (event) => {
       birthdate: event.request.userAttributes.birthdate,
       email: event.request.userAttributes.email,
       plan: "free",
-      avatar: null,
+      avatar: event.request.userAttributes.picture,
       sharedProjects: [],
       watchedTasks: [],
       assignedTasks: [],
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      owner: event.userName
+      updatedAt: new Date().toISOString()
     }
     const userParams = {
       TableName: USERTABLE,

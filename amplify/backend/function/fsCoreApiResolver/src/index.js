@@ -9,6 +9,9 @@ const UNAUTHORIZED = "UNAUTHORIZED";
 const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
 const INVALID_ASSIGNEE = "INVALID_ASSIGNEE"
 const USER_NOT_ASSIGNED = "USER_NOT_ASSIGNED";
+const ALREADY_WATCHING = "ALREADY_WATCHING";
+const INVALID_WATCHER = "INVALID_WATCHER"
+const USER_NOT_WATCHING = "USER_NOT_WATCHING";
 const USER_NOT_FOUND = "USER_NOT_FOUND";
 const PROJECT_NOT_FOUND = "PROJECT_NOT_FOUND";
 const TASK_NOT_FOUND = "TASK_NOT_FOUND";
@@ -59,6 +62,12 @@ const resolvers = {
     },
     unassignTask: (ctx) => {
       return unassignTask(ctx);
+    },
+    addWatcher: (ctx) => {
+      return addWatcher(ctx);
+    },
+    removeWatcher: (ctx) => {
+      return removeWatcher(ctx);
     },
     importData: (ctx) => {
       return importData(ctx);
@@ -929,6 +938,140 @@ async function unassignTask(ctx) {
     }
   } else {
     throw new Error(INVALID_ASSIGNEE)
+  }
+}
+
+async function addWatcher(ctx) {
+  const { watcher, taskID } = ctx.arguments
+  const client = ctx.identity.username
+  const isValidWatcher = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(watcher)
+  if (isValidWatcher) {
+    const [, watcherType, watcherID] = watcher.match(/(user|anonymous):(.*)/)
+    const isUser = watcherType === "user"
+    const taskGetParams = {
+      TableName: TASKTABLE,
+      Key: {
+        "id": taskID
+      }
+    }
+    const userGetParams = {
+      TableName: USERTABLE,
+      Key: {
+        "id": watcherID
+      }
+    }
+    const taskData = await docClient.get(taskGetParams).promise()
+    const userData = isUser && await docClient.get(userGetParams).promise()
+    const { projectID, watchers } = taskData.Item
+    const taskPath = `${projectID}/${taskID}`
+    if (await isProjectEditableByClient(projectID, client)) {
+      if (!watchers.includes(watcher)) {
+        const taskUpdateParams = {
+          TableName: TASKTABLE,
+          Key: {
+            "id": taskID
+          },
+          UpdateExpression: "set watchers=:watchers, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":watchers": [...watchers, watcher],
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        const userUpdateParams = isUser && {
+          TableName: USERTABLE,
+          Key: {
+            "id": watcherID
+          },
+          UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":assignedTasks": [...userData.Item.assignedTasks, taskPath],
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        try {
+          const updatedTask = await docClient.update(taskUpdateParams).promise();
+          if (isUser) await docClient.update(userUpdateParams).promise();
+          return updatedTask.Attributes;
+        } catch (err) {
+          throw new Error(err);
+        }
+      } else {
+        throw new Error(ALREADY_WATCHING)
+      }
+    } else {
+      throw new Error(UNAUTHORIZED)
+    }
+  } else {
+    throw new Error(INVALID_WATCHER)
+  }
+}
+
+async function removeWatcher(ctx) {
+  const { watcher, taskID } = ctx.arguments
+  const client = ctx.identity.username
+  const isValidWatcher = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(watcher)
+  if (isValidWatcher) {
+    const [, watcherType, watcherID] = watcher.match(/(user|anonymous):(.*)/)
+    const isUser = watcherType === "user"
+    const taskGetParams = {
+      TableName: TASKTABLE,
+      Key: {
+        "id": taskID
+      }
+    }
+    const userGetParams = {
+      TableName: USERTABLE,
+      Key: {
+        "id": watcherID
+      }
+    }
+    const taskData = await docClient.get(taskGetParams).promise()
+    const userData = isUser && await docClient.get(userGetParams).promise()
+    const { projectID, watchers } = taskData.Item
+    const taskPath = `${projectID}/${taskID}`
+    if (await isProjectEditableByClient(projectID, client)) {
+      if (watchers.includes(watcher)) {
+        const taskUpdateParams = {
+          TableName: TASKTABLE,
+          Key: {
+            "id": taskID
+          },
+          UpdateExpression: "set watchers=:watchers, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":watchers": watchers.filter(x => x !== watcher),
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        const userUpdateParams = isUser && {
+          TableName: USERTABLE,
+          Key: {
+            "id": watcherID
+          },
+          UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":assignedTasks": userData.Item.assignedTasks.filter(x => x !== taskPath),
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        try {
+          const updatedTask = await docClient.update(taskUpdateParams).promise();
+          if (isUser) await docClient.update(userUpdateParams).promise();
+          return updatedTask.Attributes;
+        } catch (err) {
+          throw new Error(err);
+        }
+      } else {
+        throw new Error(USER_NOT_WATCHING)
+      }
+    } else {
+      throw new Error(UNAUTHORIZED)
+    }
+  } else {
+    throw new Error(INVALID_WATCHER)
   }
 }
 
