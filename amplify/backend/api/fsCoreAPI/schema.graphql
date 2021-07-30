@@ -22,7 +22,8 @@ type Project
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
 	@aws_cognito_user_pools
-	@key(name: "byOwner", fields: ["owner"]) {
+	@key(name: "byOwner", fields: ["owner"])
+        @key(name: "byPermalink", fields: ["permalink"]) {
 	id: ID!
 	prevProject: ID
 	nextProject: ID
