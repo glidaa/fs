@@ -1,8 +1,9 @@
-type UserTemp
+type User
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
-	@aws_cognito_user_pools  {
-	id: String!
+	@aws_cognito_user_pools
+	@key(fields: ["username"])  {
+	username: String!
 	firstName: String!
 	lastName: String!
 	gender: String!
@@ -21,7 +22,8 @@ type Project
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
 	@aws_cognito_user_pools
-	@key(name: "byOwner", fields: ["owner"]) {
+	@key(name: "byOwner", fields: ["owner"])
+    @key(name: "byPermalink", fields: ["permalink"]) {
 	id: ID!
 	prevProject: ID
 	nextProject: ID
@@ -139,7 +141,7 @@ type Mutation {
 }
 
 type Query {
-	getUserByUsername(userID: ID!): UserTemp
+	getUserByUsername(userID: ID!): User
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
