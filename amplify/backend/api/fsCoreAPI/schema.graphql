@@ -2,7 +2,7 @@ type User
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
 	@aws_cognito_user_pools
-	@key(name: "byUsername", fields: ["username"])  {
+	@key(fields: ["username"])  {
 	username: String!
 	firstName: String!
 	lastName: String!
