@@ -1261,7 +1261,7 @@ async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = f
   const params = {
     RequestItems: {
       [USERTABLE]: {
-        keys: users
+        Keys: users
       }
     }
   }
@@ -1285,7 +1285,8 @@ async function listTasksForProject(ctx) {
   };
   try {
     const data = await docClient.query(params).promise();
-    console.log(await postProcessUsers(data.Items.map(({ assignees }) => assignees).flat()))
+    const postProcessedAssignees = await postProcessUsers(data.Items.map(({ assignees }) => assignees).flat())
+    console.log(postProcessedAssignees)
     return {
       items: data.Items.filter(item => (
         client === item.owner || client === item.assignee
