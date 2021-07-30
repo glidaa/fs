@@ -1248,17 +1248,15 @@ async function listAssignedProjects(ctx) {
   }
 }
 
-async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = false) {
-  console.log(users)
+async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = true) {
   users = [...new Set(users)]
           .filter(user => !cachedUsers.includes(user))
-  console.log(users)
   if (isAnonymousAllowed) {
     users = users
             .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "user")
-            .map(user => ({ username: user.match(/(user|anonymous):(.*)/)[2] }))
+            .map(user => ({ username: { "S": user.match(/(user|anonymous):(.*)/)[2] } }))
   } else {
-    users = users.map(user => ({ username: user }))
+    users = users.map(user => ({ username: { "S": user } }))
   }
   console.log(users)
   const params = {
