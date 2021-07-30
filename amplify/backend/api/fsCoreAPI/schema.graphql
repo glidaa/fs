@@ -1,8 +1,7 @@
-type User
+type UserTemp
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
-	@aws_cognito_user_pools
-	@key(fields: ["username"])  {
+	@aws_cognito_user_pools  {
 	username: String!
 	firstName: String!
 	lastName: String!
@@ -22,8 +21,7 @@ type Project
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
 	@aws_cognito_user_pools
-	@key(name: "byOwner", fields: ["owner"])
-        @key(name: "byPermalink", fields: ["permalink"]) {
+	@key(name: "byOwner", fields: ["owner"]) {
 	id: ID!
 	prevProject: ID
 	nextProject: ID
