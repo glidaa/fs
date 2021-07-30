@@ -809,7 +809,7 @@ async function updateComment(ctx) {
 async function assignTask(ctx) {
   const { assignee, taskID } = ctx.arguments
   const client = ctx.identity.username
-  const isValidAssignee = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(assignee)
+  const isValidAssignee = /^(user|anonymous):(.*)$/.test(assignee)
   if (isValidAssignee) {
     const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
     const isUser = assigneeType === "user"
@@ -876,7 +876,7 @@ async function assignTask(ctx) {
 async function unassignTask(ctx) {
   const { assignee, taskID } = ctx.arguments
   const client = ctx.identity.username
-  const isValidAssignee = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(assignee)
+  const isValidAssignee = /^(user|anonymous):(.*)$/.test(assignee)
   if (isValidAssignee) {
     const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
     const isUser = assigneeType === "user"
@@ -943,7 +943,7 @@ async function unassignTask(ctx) {
 async function addWatcher(ctx) {
   const { watcher, taskID } = ctx.arguments
   const client = ctx.identity.username
-  const isValidWatcher = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(watcher)
+  const isValidWatcher = /^(user|anonymous):(.*)$/.test(watcher)
   if (isValidWatcher) {
     const [, watcherType, watcherID] = watcher.match(/(user|anonymous):(.*)/)
     const isUser = watcherType === "user"
@@ -1010,7 +1010,7 @@ async function addWatcher(ctx) {
 async function removeWatcher(ctx) {
   const { watcher, taskID } = ctx.arguments
   const client = ctx.identity.username
-  const isValidWatcher = /^(user:[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})|(anonymous:(\w+\s)*\w+)$/.test(watcher)
+  const isValidWatcher = /^(user|anonymous):(.*)$/.test(watcher)
   if (isValidWatcher) {
     const [, watcherType, watcherID] = watcher.match(/(user|anonymous):(.*)/)
     const isUser = watcherType === "user"
@@ -1249,15 +1249,18 @@ async function listAssignedProjects(ctx) {
 }
 
 async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = false) {
+  console.log(users)
   users = [...new Set(users)]
           .filter(user => !cachedUsers.includes(user))
+  console.log(users)
   if (isAnonymousAllowed) {
     users = users
-            .filter(user => user.match(/(user|anonymous):(.*)/)[0] === "user")
-            .map(user => ({ username: user.match(/(user|anonymous):(.*)/)[1] }))
+            .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "user")
+            .map(user => ({ username: user.match(/(user|anonymous):(.*)/)[2] }))
   } else {
     users = users.map(user => ({ username: user }))
   }
+  console.log(users)
   const params = {
     RequestItems: {
       [USERTABLE]: {
@@ -1265,6 +1268,7 @@ async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = f
       }
     }
   }
+  console.log(users)
   try {
     return (await docClient.batchGet(params).promise()).Responses[USERTABLE]
   } catch (err) {
