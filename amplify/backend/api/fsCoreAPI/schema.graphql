@@ -2,7 +2,7 @@ type UserTemp
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
 	@aws_cognito_user_pools  {
-	username: String!
+	id: String!
 	firstName: String!
 	lastName: String!
 	gender: String!
@@ -139,7 +139,7 @@ type Mutation {
 }
 
 type Query {
-	getUserByUsername(userID: ID!): User
+	getUserByUsername(userID: ID!): UserTemp
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
