@@ -822,7 +822,7 @@ async function assignTask(ctx) {
     const userGetParams = {
       TableName: USERTABLE,
       Key: {
-        "id": assigneeID
+        "username": assigneeID
       }
     }
     const taskData = await docClient.get(taskGetParams).promise()
@@ -889,7 +889,7 @@ async function unassignTask(ctx) {
     const userGetParams = {
       TableName: USERTABLE,
       Key: {
-        "id": assigneeID
+        "username": assigneeID
       }
     }
     const taskData = await docClient.get(taskGetParams).promise()
@@ -956,7 +956,7 @@ async function addWatcher(ctx) {
     const userGetParams = {
       TableName: USERTABLE,
       Key: {
-        "id": watcherID
+        "username": watcherID
       }
     }
     const taskData = await docClient.get(taskGetParams).promise()
@@ -1023,7 +1023,7 @@ async function removeWatcher(ctx) {
     const userGetParams = {
       TableName: USERTABLE,
       Key: {
-        "id": watcherID
+        "username": watcherID
       }
     }
     const taskData = await docClient.get(taskGetParams).promise()
