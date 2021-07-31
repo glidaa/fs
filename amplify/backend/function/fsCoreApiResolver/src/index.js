@@ -1888,10 +1888,7 @@ async function _pushUserUpdate(userUpdate) {
       data: {
         query: print(pushUserUpdate),
         variables: {
-          input: {
-            ...userUpdate,
-            owner: userUpdate.username
-          }
+          input: userUpdate
         }
       }
     })
