@@ -1285,7 +1285,7 @@ async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = t
     }
   }
   try {
-    const usersList = (await docClient.batchGet(params).promise()).Responses[USERTABLE]
+    const usersList = preUsersList.length ? (await docClient.batchGet(params).promise()).Responses[USERTABLE] : []
     return [...usersList, anonymousList]
   } catch (err) {
     throw new Error(err)

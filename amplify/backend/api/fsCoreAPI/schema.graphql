@@ -312,6 +312,24 @@ type UserUpdate {
 	updatedAt: AWSDateTime!
 }
 
+type GetTaskOutput {
+	id: ID!
+	projectID: ID!
+	prevTask: ID
+	nextTask: ID
+	permalink: Int!
+	task: String!
+	description: String
+	due: AWSTimestamp
+	tags: [String!]
+	status: TaskStatus!
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	watchers: [AWSJSON!]
+	assignees: [AWSJSON!]
+}
+
 type ProjectsList {
 	items: [Project!]
 }
@@ -322,7 +340,7 @@ type ImportedProjectsList {
 }
 
 type TasksList {
-	items: [Task!]
+	items: [GetTaskOutput!]
 }
 
 type CommentsList {
