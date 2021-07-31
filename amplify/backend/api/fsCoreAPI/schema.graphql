@@ -178,6 +178,7 @@ type Subscription {
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
+		@aws_api_key
 	onCreateOwnedProject(owner: String!): Project
 		@aws_subscribe(mutations: ["createProject"])
 		@function(name: "fsCoreApiResolver-${env}")

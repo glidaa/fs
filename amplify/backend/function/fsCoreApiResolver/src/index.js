@@ -341,15 +341,10 @@ async function getUserByUsername(ctx) {
 }
 
 async function pushUserUpdate(ctx) {
-  console.log(ctx)
-  if (ctx) {
-    try {
-      return ctx.arguments.input;
-    } catch (err) {
-      throw new Error(err);
-    }
-  } else {
-    throw new Error(UNAUTHORIZED)
+  try {
+    return ctx.arguments.input;
+  } catch (err) {
+    throw new Error(err);
   }
 }
 
@@ -1431,8 +1426,12 @@ async function onCreateOwnedProject(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dummy-project",
-      title: "Dummy Project",
       tasksCount: 0,
+      todoCount: 0,
+      pendingCount: 0,
+      doneCount: 0,
+      privacy: "public",
+      permissions: "rw",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -1460,7 +1459,7 @@ async function onPushUserUpdate(ctx) {
   const username = ctx.arguments.username
   if (client === username) {
     return {
-      username: "dummy",
+      username: username,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
@@ -1476,8 +1475,12 @@ async function onUpdateOwnedProject(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dummy-project",
-      title: "Dummy Project",
       tasksCount: 0,
+      todoCount: 0,
+      pendingCount: 0,
+      doneCount: 0,
+      privacy: "public",
+      permissions: "rw",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -1494,8 +1497,12 @@ async function onDeleteOwnedProject(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       permalink: "dummy-project",
-      title: "Dummy Project",
       tasksCount: 0,
+      todoCount: 0,
+      pendingCount: 0,
+      doneCount: 0,
+      privacy: "public",
+      permissions: "rw",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
