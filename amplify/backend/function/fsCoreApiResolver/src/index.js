@@ -342,10 +342,7 @@ async function getUserByUsername(ctx) {
 
 async function pushUserUpdate(ctx) {
   try {
-    return {
-      ...ctx.arguments.input,
-      owner: ctx.arguments.input.username
-    }
+    return ctx.arguments.input
   } catch (err) {
     throw new Error(err);
   }
@@ -1879,7 +1876,7 @@ async function _pushUserUpdate(userUpdate) {
     }
   `
   try {
-    await axios({
+    const data = await axios({
       url: APIURL,
       method: 'post',
       headers: {
@@ -1892,6 +1889,7 @@ async function _pushUserUpdate(userUpdate) {
         }
       }
     })
+    console.log(data)
   } catch (err) {
     throw new Error(err)
   }
