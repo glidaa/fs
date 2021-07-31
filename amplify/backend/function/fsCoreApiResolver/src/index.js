@@ -1254,9 +1254,9 @@ async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = t
   if (isAnonymousAllowed) {
     users = users
             .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "user")
-            .map(user => ({ username: { "S": user.match(/(user|anonymous):(.*)/)[2] } }))
+            .map(user => ({ username: user.match(/(user|anonymous):(.*)/)[2] }))
   } else {
-    users = users.map(user => ({ username: { "S": user } }))
+    users = users.map(user => ({ username: user }))
   }
   console.log(users)
   const params = {
