@@ -1184,14 +1184,30 @@ async function getProjectByID(ctx) {
 }
 
 async function getProjectByPermalink(ctx) {
+  const client = ctx.identity.username
   const params = {
     TableName: PROJECTTABLE,
-    Key: {
-      "permalink": ctx.arguments.permalink
+    IndexName: "byPermalink",
+    ExpressionAttributeNames: { "permalink": "permalink" },
+    ExpressionAttributeValues: {
+      ":permalink": ctx.arguments.permalink
+    },
+  };
+  try {
+    const data = await docClient.query(params).promise();
+    if (data.Items[0]) {
+      const { privacy, members, owner } = data.Items[0]
+      if ("public" === privacy || members.includes(client) || client === owner) {
+        return data.Items[0]
+      } else {
+        throw new Error(UNAUTHORIZED)
+      }
+    } else {
+      throw new Error(PROJECT_NOT_FOUND)
     }
+  } catch (err) {
+    throw new Error(err);
   }
-  const data = await docClient.get(params).promise()
-  return data.Item
 }
 
 async function listOwnedProjects(ctx) {
@@ -1249,26 +1265,28 @@ async function listAssignedProjects(ctx) {
 }
 
 async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = true) {
-  users = [...new Set(users)]
-          .filter(user => !cachedUsers.includes(user))
-  if (isAnonymousAllowed) {
-    users = users
-            .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "user")
-            .map(user => ({ username: user.match(/(user|anonymous):(.*)/)[2] }))
-  } else {
-    users = users.map(user => ({ username: user }))
-  }
-  console.log(users)
+  const nonCachedUsers = [...new Set(users)]
+    .filter(user => !cachedUsers.includes(user))
+  const anonymousList = isAnonymousAllowed ? 
+    nonCachedUsers
+    .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "anonymous")
+    .map(user => ({ anonymousName: user.match(/anonymous:(.*)/)[1] })) : []
+  const preUsersList = isAnonymousAllowed ? 
+    nonCachedUsers
+    .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "user")
+    .map(user => ({ username: user.match(/user:(.*)/)[1] })) :
+    nonCachedUsers.map(user => ({ username: user }))
+
   const params = {
     RequestItems: {
       [USERTABLE]: {
-        Keys: users
+        Keys: preUsersList
       }
     }
   }
-  console.log(users)
   try {
-    return (await docClient.batchGet(params).promise()).Responses[USERTABLE]
+    const usersList = (await docClient.batchGet(params).promise()).Responses[USERTABLE]
+    return [...usersList, anonymousList]
   } catch (err) {
     throw new Error(err)
   }
@@ -1277,25 +1295,31 @@ async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = t
 async function listTasksForProject(ctx) {
   const projectID = ctx.arguments.projectID
   const client = ctx.identity.username
-  const params = {
-    TableName: TASKTABLE,
-    IndexName: "byProject",
-    KeyConditionExpression: "projectID = :projectID",
-    ExpressionAttributeValues: {
-      ":projectID": projectID
-    },
-  };
-  try {
-    const data = await docClient.query(params).promise();
-    const postProcessedAssignees = await postProcessUsers(data.Items.map(({ assignees }) => assignees).flat())
-    console.log(postProcessedAssignees)
-    return {
-      items: data.Items.filter(item => (
-        client === item.owner || client === item.assignee
-      ))
+  if (await isProjectSharedWithClient(projectID, client)) {
+    const params = {
+      TableName: TASKTABLE,
+      IndexName: "byProject",
+      KeyConditionExpression: "projectID = :projectID",
+      ExpressionAttributeValues: {
+        ":projectID": projectID
+      },
+    };
+    try {
+      const data = await docClient.query(params).promise();
+      const postProcessedAssignees = await postProcessUsers(data.Items.map(({ assignees }) => assignees).flat())
+      const postProcessedWatchers = await postProcessUsers(data.Items.map(({ watchers }) => watchers).flat())
+      return {
+        items: data.Items.map(item => ({
+          ...item,
+          assignees: postProcessedAssignees,
+          watchers: postProcessedWatchers
+        }))
+      }
+    } catch (err) {
+      throw new Error(err);
     }
-  } catch (err) {
-    throw new Error(err);
+  } else {
+    throw new Error(UNAUTHORIZED)
   }
 }
 
