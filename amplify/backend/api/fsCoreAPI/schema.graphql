@@ -82,7 +82,6 @@ type Mutation {
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-		@aws_api_key
 	createProject(input: CreateProjectInput!): Project
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
@@ -178,7 +177,6 @@ type Subscription {
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
-		@aws_api_key
 	onCreateOwnedProject(owner: String!): Project
 		@aws_subscribe(mutations: ["createProject"])
 		@function(name: "fsCoreApiResolver-${env}")
@@ -298,7 +296,9 @@ input UpdateCommentInput {
 	content: AWSJSON
 }
 
-type UserUpdate {
+type UserUpdate
+	@aws_iam
+	@aws_cognito_user_pools {
 	username: String!
 	firstName: String
 	lastName: String
@@ -314,7 +314,9 @@ type UserUpdate {
 	updatedAt: AWSDateTime!
 }
 
-type GetTaskOutput {
+type GetTaskOutput
+	@aws_iam
+	@aws_cognito_user_pools {
 	id: ID!
 	projectID: ID!
 	prevTask: ID
@@ -332,20 +334,28 @@ type GetTaskOutput {
 	assignees: [AWSJSON!]
 }
 
-type ProjectsList {
+type ProjectsList
+	@aws_iam
+	@aws_cognito_user_pools {
 	items: [Project!]
 }
 
-type ImportedProjectsList {
+type ImportedProjectsList
+	@aws_iam
+	@aws_cognito_user_pools {
 	owner: String!
 	items: [Project!]
 }
 
-type TasksList {
+type TasksList
+	@aws_iam
+	@aws_cognito_user_pools {
 	items: [GetTaskOutput!]
 }
 
-type CommentsList {
+type CommentsList
+	@aws_iam
+	@aws_cognito_user_pools {
 	items: [Comment!]
 }
 
