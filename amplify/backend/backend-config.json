@@ -11,7 +11,15 @@
               "userPoolId": "authfsCognito"
             }
           },
-          "additionalAuthenticationProviders": []
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "API_KEY",
+              "apiKeyConfig": {
+                "apiKeyExpirationDays": 365,
+                "description": "fsCoreApiKey"
+              }
+            }
+          ]
         }
       }
     },
@@ -46,7 +54,10 @@
           "category": "function",
           "resourceName": "fsCognitoPostConfirmationInvoker",
           "triggerProvider": "Cognito",
-          "attributes": ["Arn", "Name"]
+          "attributes": [
+            "Arn",
+            "Name"
+          ]
         }
       ],
       "customAuth": false
@@ -61,12 +72,16 @@
         {
           "category": "auth",
           "resourceName": "fsCognito",
-          "attributes": ["UserPoolId"]
+          "attributes": [
+            "UserPoolId"
+          ]
         },
         {
           "category": "api",
           "resourceName": "fsCoreAPI",
-          "attributes": ["GraphQLAPIIdOutput"]
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
         }
       ]
     },
@@ -78,12 +93,18 @@
         {
           "category": "api",
           "resourceName": "fsCoreAPI",
-          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput"]
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ]
         },
         {
           "category": "auth",
           "resourceName": "fsCognito",
-          "attributes": ["UserPoolId"]
+          "attributes": [
+            "UserPoolId"
+          ]
         }
       ]
     },

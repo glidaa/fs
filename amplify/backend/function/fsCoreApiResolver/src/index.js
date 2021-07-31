@@ -1,5 +1,9 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
+const axios = require('axios');
+const gql = require('graphql-tag');
+const graphql = require('graphql');
+const { print } = graphql;
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
@@ -25,10 +29,16 @@ const PROJECTTABLE = process.env.API_FSCOREAPI_PROJECTTABLE_NAME;
 const TASKTABLE = process.env.API_FSCOREAPI_TASKTABLE_NAME;
 const COMMENTTABLE = process.env.API_FSCOREAPI_COMMENTTABLE_NAME;
 
+const APIKEY = process.env.API_FSCOREAPI_GRAPHQLAPIKEYOUTPUT
+const APIURL = process.env.API_FSCOREAPI_GRAPHQLAPIENDPOINTOUTPUT
+
 const USERPOOL = process.env.AUTH_FSCOGNITO_USERPOOLID
 
 const resolvers = {
   Mutation: {
+    pushUserUpdate: (ctx) => {
+      return pushUserUpdate(ctx);
+    },
     createProject: (ctx) => {
       return createProject(ctx);
     },
@@ -96,6 +106,9 @@ const resolvers = {
     }
   }, 
   Subscription: {
+    onPushUserUpdate: (ctx) => {
+      return onPushUserUpdate(ctx);
+    },
     onCreateOwnedProject: (ctx) => {
       return onCreateOwnedProject(ctx);
     },
@@ -317,12 +330,26 @@ async function getUserByUsername(ctx) {
   try {
     const data = await docClient.get(params).promise()
     if(data.Item) {
+      await _pushUserUpdate(data.Item)
       return data.Item
     } else {
       throw new Error(USER_NOT_FOUND)
     }
   } catch (err) {
     throw new Error(err)
+  }
+}
+
+async function pushUserUpdate(ctx) {
+  console.log(ctx)
+  if (ctx) {
+    try {
+      return ctx.arguments.input;
+    } catch (err) {
+      throw new Error(err);
+    }
+  } else {
+    throw new Error(UNAUTHORIZED)
   }
 }
 
@@ -1286,7 +1313,7 @@ async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = t
   }
   try {
     const usersList = preUsersList.length ? (await docClient.batchGet(params).promise()).Responses[USERTABLE] : []
-    return [...usersList, anonymousList]
+    return [...usersList, ...anonymousList]
   } catch (err) {
     throw new Error(err)
   }
@@ -1403,8 +1430,8 @@ async function onCreateOwnedProject(ctx) {
   if (client === owner) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
-      permalink: "dump-project",
-      title: "Dump Project",
+      permalink: "dummy-project",
+      title: "Dummy Project",
       tasksCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -1428,14 +1455,28 @@ async function onImportOwnedProjects(ctx) {
   }
 }
 
+async function onPushUserUpdate(ctx) {
+  const client = ctx.identity.username
+  const username = ctx.arguments.username
+  if (client === username) {
+    return {
+      username: "dummy",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  } else {
+    throw new Error(UNAUTHORIZED)
+  }
+}
+
 async function onUpdateOwnedProject(ctx) {
   const client = ctx.identity.username
   const owner = ctx.arguments.owner
   if (client === owner) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
-      permalink: "dump-project",
-      title: "Dump Project",
+      permalink: "dummy-project",
+      title: "Dummy Project",
       tasksCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -1452,8 +1493,8 @@ async function onDeleteOwnedProject(ctx) {
   if (client === owner) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
-      permalink: "dump-project",
-      title: "Dump Project",
+      permalink: "dummy-project",
+      title: "Dummy Project",
       tasksCount: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -1471,7 +1512,7 @@ async function onAssignTask(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dump Task",
+      task: "Dummy Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1491,7 +1532,7 @@ async function onunassignTask(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dump Task",
+      task: "Dummy Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1511,7 +1552,7 @@ async function onUpdateAssignedTaskByProjectID(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dump Task",
+      task: "Dummy Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1531,7 +1572,7 @@ async function onDeleteAssignedTaskByProjectID(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dump Task",
+      task: "Dummy Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1551,7 +1592,7 @@ async function onCreateOwnedTaskByProjectID(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dump Task",
+      task: "Dummy Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1571,7 +1612,7 @@ async function onUpdateOwnedTaskByProjectID(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dump Task",
+      task: "Dummy Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1591,7 +1632,7 @@ async function onDeleteOwnedTaskByProjectID(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dump Task",
+      task: "Dummy Task",
       permalink: 1,
       isDone: false,
       createdAt: new Date().toISOString(),
@@ -1802,5 +1843,44 @@ async function deleteTask(id) {
     return response;
   } catch (err) {
     throw new Error(err);
+  }
+}
+
+async function _pushUserUpdate(userUpdate) {
+  const pushUserUpdate = gql`
+    mutation pushUserUpdate($input: PushUserUpdateInput!) {
+      pushUserUpdate(input: $input) {
+        username
+        firstName
+        lastName
+        gender
+        birthdate
+        email
+        plan
+        avatar
+        sharedProjects
+        watchedTasks
+        assignedTasks
+        createdAt
+        updatedAt
+      }
+    }
+  `
+  try {
+    await axios({
+      url: APIURL,
+      method: 'post',
+      headers: {
+        'x-api-key': APIKEY
+      },
+      data: {
+        query: print(pushUserUpdate),
+        variables: {
+          input: userUpdate
+        }
+      }
+    })
+  } catch (err) {
+    throw new Error(err)
   }
 }

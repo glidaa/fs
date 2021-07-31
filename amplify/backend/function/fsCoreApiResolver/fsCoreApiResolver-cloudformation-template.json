@@ -27,6 +27,10 @@
     "authfsCognitoUserPoolId": {
       "Type": "String",
       "Default": "authfsCognitoUserPoolId"
+    },
+    "apifsCoreAPIGraphQLAPIKeyOutput": {
+      "Type": "String",
+      "Default": "apifsCoreAPIGraphQLAPIKeyOutput"
     }
   },
   "Conditions": {
@@ -194,6 +198,9 @@
                   }
                 ]
               ]
+            },
+            "API_FSCOREAPI_GRAPHQLAPIKEYOUTPUT": {
+              "Ref": "apifsCoreAPIGraphQLAPIKeyOutput"
             }
           }
         },

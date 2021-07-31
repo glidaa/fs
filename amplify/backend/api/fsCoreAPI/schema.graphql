@@ -80,8 +80,7 @@ type Comment
 type Mutation {
 	pushUserUpdate(input: PushUserUpdateInput!): UserUpdate
 		@function(name: "fsCoreApiResolver-${env}")
-		@aws_iam
-		@aws_cognito_user_pools
+		@aws_api_key
 	createProject(input: CreateProjectInput!): Project
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
@@ -172,7 +171,7 @@ type Query {
 }
 
 type Subscription {
-	onPushUserUpdate(owner: String!): UserUpdate
+	onPushUserUpdate(username: String!): UserUpdate
 		@aws_subscribe(mutations: ["pushUserUpdate"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
