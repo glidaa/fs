@@ -13,11 +13,14 @@
         },
         "categories": {
             "auth": {
-                "userPoolGroups": {},
-                "fsCognito": {}
+                "fsCognito": {
+                  "googleClientId": "0000"
+                },
+                "userPoolGroups": {}
             },
             "function": {
                 "fsCognitoPostConfirmation": {
+                    "GROUP": "free",
                     "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
                     "s3Key": "amplify-builds/fsCognitoPostConfirmation-33564562596850563571-build.zip"
                 },
