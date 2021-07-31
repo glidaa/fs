@@ -33,15 +33,11 @@ const USERPOOL = process.env.AUTH_FSCOGNITO_USERPOOLID
 const REGION = process.env.REGION
 
 Amplify.configure({
-  Auth: {
-    userPoolId: USERPOOL,
-    region: REGION,
-  },
   API: {
     'aws_appsync_graphqlEndpoint': APIURL,
     'aws_appsync_region': REGION,
     'aws_appsync_authenticationType': 'AWS_IAM',
-  },
+  }
 });
 
 const resolvers = {
