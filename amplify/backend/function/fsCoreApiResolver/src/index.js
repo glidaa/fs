@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
-import Amplify, { API, graphqlOperation } from "aws-amplify";
+const Amplify = require("aws-amplify");
+const { API, graphqlOperation } = Amplify
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
@@ -26,7 +27,6 @@ const PROJECTTABLE = process.env.API_FSCOREAPI_PROJECTTABLE_NAME;
 const TASKTABLE = process.env.API_FSCOREAPI_TASKTABLE_NAME;
 const COMMENTTABLE = process.env.API_FSCOREAPI_COMMENTTABLE_NAME;
 
-const APIKEY = process.env.API_FSCOREAPI_GRAPHQLAPIKEYOUTPUT
 const APIURL = process.env.API_FSCOREAPI_GRAPHQLAPIENDPOINTOUTPUT
 
 const USERPOOL = process.env.AUTH_FSCOGNITO_USERPOOLID
