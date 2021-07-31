@@ -1,9 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
-const axios = require('axios');
-const gql = require('graphql-tag');
-const graphql = require('graphql');
-const { print } = graphql;
+import Amplify, { API, graphqlOperation } from "aws-amplify";
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
@@ -33,6 +30,20 @@ const APIKEY = process.env.API_FSCOREAPI_GRAPHQLAPIKEYOUTPUT
 const APIURL = process.env.API_FSCOREAPI_GRAPHQLAPIENDPOINTOUTPUT
 
 const USERPOOL = process.env.AUTH_FSCOGNITO_USERPOOLID
+
+const REGION = process.env.REGION
+
+Amplify.configure({
+  Auth: {
+    userPoolId: USERPOOL,
+    region: REGION,
+  },
+  API: {
+    'aws_appsync_graphqlEndpoint': APIURL,
+    'aws_appsync_region': REGION,
+    'aws_appsync_authenticationType': 'AWS_IAM',
+  },
+});
 
 const resolvers = {
   Mutation: {
@@ -1855,7 +1866,7 @@ async function deleteTask(id) {
 }
 
 async function _pushUserUpdate(userUpdate) {
-  const pushUserUpdate = gql`
+  const pushUserUpdate = /* GraphQL */ `
     mutation pushUserUpdate($input: PushUserUpdateInput!) {
       pushUserUpdate(input: $input) {
         username
@@ -1876,19 +1887,7 @@ async function _pushUserUpdate(userUpdate) {
     }
   `
   try {
-    const data = await axios({
-      url: APIURL,
-      method: 'post',
-      headers: {
-        'x-api-key': APIKEY
-      },
-      data: {
-        query: print(pushUserUpdate),
-        variables: {
-          input: userUpdate
-        }
-      }
-    })
+    const data = await API.graphql(graphqlOperation(pushUserUpdate, { input: userUpdate }))
     console.log(data)
   } catch (err) {
     throw new Error(err)
