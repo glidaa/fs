@@ -1188,7 +1188,7 @@ async function getProjectByPermalink(ctx) {
   const params = {
     TableName: PROJECTTABLE,
     IndexName: "byPermalink",
-    ExpressionAttributeNames: { "permalink": "permalink" },
+    KeyConditionExpression: "permalink = :permalink",
     ExpressionAttributeValues: {
       ":permalink": ctx.arguments.permalink
     },
