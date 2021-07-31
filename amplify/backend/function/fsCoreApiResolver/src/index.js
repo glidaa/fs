@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
-const { Amplify, API, graphqlOperation } = require("aws-amplify")
+const https = require('https');
+const urlParse = require("url").URL;
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
@@ -31,14 +32,6 @@ const APIURL = process.env.API_FSCOREAPI_GRAPHQLAPIENDPOINTOUTPUT
 const USERPOOL = process.env.AUTH_FSCOGNITO_USERPOOLID
 
 const REGION = process.env.REGION
-
-Amplify.configure({
-  API: {
-    'aws_appsync_graphqlEndpoint': APIURL,
-    'aws_appsync_region': REGION,
-    'aws_appsync_authenticationType': 'AWS_IAM',
-  }
-});
 
 const resolvers = {
   Mutation: {
@@ -1861,7 +1854,7 @@ async function deleteTask(id) {
 }
 
 async function _pushUserUpdate(userUpdate) {
-  const pushUserUpdate = /* GraphQL */ `
+  const graphqlQuery = /* GraphQL */ `
     mutation pushUserUpdate($input: PushUserUpdateInput!) {
       pushUserUpdate(input: $input) {
         username
@@ -1877,12 +1870,38 @@ async function _pushUserUpdate(userUpdate) {
         assignedTasks
         createdAt
         updatedAt
-        owner
       }
     }
   `
   try {
-    const data = await API.graphql(graphqlOperation(pushUserUpdate, { input: userUpdate }))
+    const req = new AWS.HttpRequest(APIURL, REGION);
+    const endpoint = new urlParse(APIURL).hostname.toString()
+    req.method = "POST";
+    req.path = "/graphql";
+    req.headers.host = endpoint;
+    req.headers["Content-Type"] = "application/json";
+    req.body = JSON.stringify({
+      query: graphqlQuery,
+      operationName: "createTodo",
+      variables: {
+        input: userUpdate
+      }
+    });
+    const signer = new AWS.Signers.V4(req, "appsync", true);
+    signer.addAuthorization(AWS.config.credentials, AWS.util.date.getDate());
+    const data = await new Promise((resolve, reject) => {
+      const httpRequest = https.request({ ...req, host: endpoint }, (result) => {
+        let data = "";
+        result.on("data", (chunk) => {
+          data += chunk;
+        });
+        result.on("end", () => {
+          resolve(JSON.parse(data.toString()));
+        });
+      });
+      httpRequest.write(req.body);
+      httpRequest.end();
+    });
     console.log(data)
   } catch (err) {
     throw new Error(err)

@@ -1,44 +1,44 @@
 {
-    "mainn": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-forwardslashtesting-mainn-131231-authRole",
-            "UnauthRoleArn": "arn:aws:iam::026152918307:role/amplify-forwardslashtesting-mainn-131231-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::026152918307:role/amplify-forwardslashtesting-mainn-131231-authRole",
-            "Region": "us-east-1",
-            "DeploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-            "UnauthRoleName": "amplify-forwardslashtesting-mainn-131231-unauthRole",
-            "StackName": "amplify-forwardslashtesting-mainn-131231",
-            "StackId": "arn:aws:cloudformation:us-east-1:026152918307:stack/amplify-forwardslashtesting-mainn-131231/89cd9210-b711-11eb-b064-1214c28caebf",
-            "AmplifyAppId": "dq757k0acraow"
+  "mainn": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-forwardslashtesting-mainn-131231-authRole",
+      "UnauthRoleArn": "arn:aws:iam::026152918307:role/amplify-forwardslashtesting-mainn-131231-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::026152918307:role/amplify-forwardslashtesting-mainn-131231-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+      "UnauthRoleName": "amplify-forwardslashtesting-mainn-131231-unauthRole",
+      "StackName": "amplify-forwardslashtesting-mainn-131231",
+      "StackId": "arn:aws:cloudformation:us-east-1:026152918307:stack/amplify-forwardslashtesting-mainn-131231/89cd9210-b711-11eb-b064-1214c28caebf",
+      "AmplifyAppId": "dq757k0acraow"
+    },
+    "categories": {
+      "auth": {
+        "fsCognito": {
+          "googleClientId": "0000"
         },
-        "categories": {
-            "auth": {
-                "fsCognito": {
-                  "googleClientId": "0000"
-                },
-                "userPoolGroups": {}
-            },
-            "function": {
-                "fsCognitoPostConfirmation": {
-                    "GROUP": "free",
-                    "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-                    "s3Key": "amplify-builds/fsCognitoPostConfirmation-33564562596850563571-build.zip"
-                },
-                "fsCoreApiResolver": {
-                    "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-                    "s3Key": "amplify-builds/fsCoreApiResolver-754f7630504d756d5268-build.zip"
-                },
-                "fsCognitoPostConfirmationInvoker": {
-                    "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-                    "s3Key": "amplify-builds/fsCognitoPostConfirmationInvoker-2b6e7742464651426843-build.zip"
-                }
-            },
-            "hosting": {
-                "amplifyhosting": {
-                    "appId": "dq757k0acraow",
-                    "type": "manual"
-                }
-            }
+        "userPoolGroups": {}
+      },
+      "function": {
+        "fsCognitoPostConfirmation": {
+          "GROUP": "free",
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-33564562596850563571-build.zip"
+        },
+        "fsCoreApiResolver": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCoreApiResolver-352b44787132724a5639-build.zip"
+        },
+        "fsCognitoPostConfirmationInvoker": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmationInvoker-2b6e7742464651426843-build.zip"
         }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "dq757k0acraow",
+          "type": "manual"
+        }
+      }
     }
+  }
 }
