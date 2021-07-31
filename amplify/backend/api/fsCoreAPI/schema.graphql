@@ -80,6 +80,8 @@ type Comment
 type Mutation {
 	pushUserUpdate(input: PushUserUpdateInput!): UserUpdate
 		@function(name: "fsCoreApiResolver-${env}")
+		@aws_iam
+		@aws_cognito_user_pools
 		@aws_api_key
 	createProject(input: CreateProjectInput!): Project
 		@function(name: "fsCoreApiResolver-${env}")
@@ -140,7 +142,7 @@ type Mutation {
 }
 
 type Query {
-	getUserByUsername(userID: ID!): User
+	getUserByUsername(username: String!): User
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
