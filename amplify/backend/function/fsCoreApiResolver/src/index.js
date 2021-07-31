@@ -846,7 +846,7 @@ async function assignTask(ctx) {
         const userUpdateParams = isUser && {
           TableName: USERTABLE,
           Key: {
-            "id": assigneeID
+            "username": assigneeID
           },
           UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
           ExpressionAttributeValues: {
@@ -913,7 +913,7 @@ async function unassignTask(ctx) {
         const userUpdateParams = isUser && {
           TableName: USERTABLE,
           Key: {
-            "id": assigneeID
+            "username": assigneeID
           },
           UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
           ExpressionAttributeValues: {
@@ -980,7 +980,7 @@ async function addWatcher(ctx) {
         const userUpdateParams = isUser && {
           TableName: USERTABLE,
           Key: {
-            "id": watcherID
+            "username": watcherID
           },
           UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
           ExpressionAttributeValues: {
@@ -1047,7 +1047,7 @@ async function removeWatcher(ctx) {
         const userUpdateParams = isUser && {
           TableName: USERTABLE,
           Key: {
-            "id": watcherID
+            "username": watcherID
           },
           UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
           ExpressionAttributeValues: {
