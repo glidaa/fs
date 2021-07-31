@@ -1,7 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
-const Amplify = require("aws-amplify");
-const { API, graphqlOperation } = Amplify
+const { Amplify, API, graphqlOperation } = require("aws-amplify")
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
