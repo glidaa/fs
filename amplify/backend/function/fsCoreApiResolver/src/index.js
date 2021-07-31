@@ -1882,7 +1882,7 @@ async function _pushUserUpdate(userUpdate) {
     req.headers["Content-Type"] = "application/json";
     req.body = JSON.stringify({
       query: graphqlQuery,
-      operationName: "createTodo",
+      operationName: "pushUserUpdate",
       variables: {
         input: userUpdate
       }
