@@ -1874,6 +1874,7 @@ async function _pushUserUpdate(userUpdate) {
         assignedTasks
         createdAt
         updatedAt
+        owner
       }
     }
   `
