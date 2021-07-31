@@ -342,7 +342,10 @@ async function getUserByUsername(ctx) {
 
 async function pushUserUpdate(ctx) {
   try {
-    return ctx.arguments.input;
+    return {
+      ...ctx.arguments.input,
+      owner: ctx.arguments.input.username
+    }
   } catch (err) {
     throw new Error(err);
   }
@@ -1461,7 +1464,8 @@ async function onPushUserUpdate(ctx) {
     return {
       username: username,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      owner: username
     }
   } else {
     throw new Error(UNAUTHORIZED)
@@ -1883,7 +1887,10 @@ async function _pushUserUpdate(userUpdate) {
       data: {
         query: print(pushUserUpdate),
         variables: {
-          input: userUpdate
+          input: {
+            ...userUpdate,
+            owner: userUpdate.username
+          }
         }
       }
     })
