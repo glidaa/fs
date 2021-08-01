@@ -108,16 +108,16 @@ type Mutation {
 	deleteComment(commentID: ID!): Comment
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	assignTask(taskID: ID!, assignee: String!): Task
+	assignTask(taskID: ID!, assignee: String!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	unassignTask(taskID: ID!, assignee: String!): Task
+	unassignTask(taskID: ID!, assignee: String!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	addWatcher(taskID: ID!, watcher: String!): Task
+	addWatcher(taskID: ID!, watcher: String!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	removeWatcher(taskID: ID!, watcher: String!): Task
+	removeWatcher(taskID: ID!, watcher: String!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	importData(data: String!): ImportedProjectsList
