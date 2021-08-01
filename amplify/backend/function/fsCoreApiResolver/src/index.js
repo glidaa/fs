@@ -1531,11 +1531,10 @@ async function onCreateTaskByProjectID(ctx) {
       projectID: "00000000-0000-0000-0000-000000000000",
       task: "Dummy Task",
       permalink: 1,
-      isDone: false,
+      status: "todo",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      owner: client,
-      assignee: client
+      owner: client
     }
   } else {
     throw new Error(UNAUTHORIZED)
@@ -1549,13 +1548,7 @@ async function onUpdateTaskByProjectID(ctx) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dummy Task",
-      permalink: 1,
-      isDone: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      owner: client,
-      assignee: client
+      updatedAt: new Date().toISOString()
     }
   } else {
     throw new Error(UNAUTHORIZED)
@@ -1571,11 +1564,10 @@ async function onDeleteTaskByProjectID(ctx) {
       projectID: "00000000-0000-0000-0000-000000000000",
       task: "Dummy Task",
       permalink: 1,
-      isDone: false,
+      status: "todo",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      owner: client,
-      assignee: client
+      owner: client
     }
   } else {
     throw new Error(UNAUTHORIZED)

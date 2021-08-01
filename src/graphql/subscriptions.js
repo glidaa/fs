@@ -1,6 +1,25 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onPushUserUpdate = /* GraphQL */ `
+  subscription OnPushUserUpdate($username: String!) {
+    onPushUserUpdate(username: $username) {
+      username
+      firstName
+      lastName
+      gender
+      birthdate
+      email
+      plan
+      avatar
+      sharedProjects
+      watchedTasks
+      assignedTasks
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const onCreateOwnedProject = /* GraphQL */ `
   subscription OnCreateOwnedProject($owner: String!) {
     onCreateOwnedProject(owner: $owner) {
@@ -58,7 +77,6 @@ export const onUpdateOwnedProject = /* GraphQL */ `
       doneCount
       privacy
       permissions
-      createdAt
       updatedAt
       owner
     }
@@ -84,9 +102,9 @@ export const onDeleteOwnedProject = /* GraphQL */ `
     }
   }
 `;
-export const onAssignTask = /* GraphQL */ `
-  subscription OnAssignTask($assignee: String!) {
-    onAssignTask(assignee: $assignee) {
+export const onCreateTaskByProjectId = /* GraphQL */ `
+  subscription OnCreateTaskByProjectId($projectID: ID!) {
+    onCreateTaskByProjectID(projectID: $projectID) {
       id
       projectID
       prevTask
@@ -105,9 +123,9 @@ export const onAssignTask = /* GraphQL */ `
     }
   }
 `;
-export const onDisallowTask = /* GraphQL */ `
-  subscription OnDisallowTask($assignee: String!) {
-    onDisallowTask(assignee: $assignee) {
+export const onUpdateTaskByProjectId = /* GraphQL */ `
+  subscription OnUpdateTaskByProjectId($projectID: ID!) {
+    onUpdateTaskByProjectID(projectID: $projectID) {
       id
       projectID
       prevTask
@@ -118,113 +136,15 @@ export const onDisallowTask = /* GraphQL */ `
       due
       tags
       status
-      createdAt
-      updatedAt
-      owner
       watchers
       assignees
+      updatedAt
     }
   }
 `;
-export const onUpdateAssignedTaskByProjectId = /* GraphQL */ `
-  subscription OnUpdateAssignedTaskByProjectId(
-    $projectID: ID!
-    $assignee: String!
-  ) {
-    onUpdateAssignedTaskByProjectID(
-      projectID: $projectID
-      assignee: $assignee
-    ) {
-      id
-      projectID
-      prevTask
-      nextTask
-      permalink
-      task
-      description
-      due
-      tags
-      status
-      createdAt
-      updatedAt
-      owner
-      watchers
-      assignees
-    }
-  }
-`;
-export const onDeleteAssignedTaskByProjectId = /* GraphQL */ `
-  subscription OnDeleteAssignedTaskByProjectId(
-    $projectID: ID!
-    $assignee: String!
-  ) {
-    onDeleteAssignedTaskByProjectID(
-      projectID: $projectID
-      assignee: $assignee
-    ) {
-      id
-      projectID
-      prevTask
-      nextTask
-      permalink
-      task
-      description
-      due
-      tags
-      status
-      createdAt
-      updatedAt
-      owner
-      watchers
-      assignees
-    }
-  }
-`;
-export const onCreateOwnedTaskByProjectId = /* GraphQL */ `
-  subscription OnCreateOwnedTaskByProjectId($projectID: ID!) {
-    onCreateOwnedTaskByProjectID(projectID: $projectID) {
-      id
-      projectID
-      prevTask
-      nextTask
-      permalink
-      task
-      description
-      due
-      tags
-      status
-      createdAt
-      updatedAt
-      owner
-      watchers
-      assignees
-    }
-  }
-`;
-export const onUpdateOwnedTaskByProjectId = /* GraphQL */ `
-  subscription OnUpdateOwnedTaskByProjectId($projectID: ID!) {
-    onUpdateOwnedTaskByProjectID(projectID: $projectID) {
-      id
-      projectID
-      prevTask
-      nextTask
-      permalink
-      task
-      description
-      due
-      tags
-      status
-      createdAt
-      updatedAt
-      owner
-      watchers
-      assignees
-    }
-  }
-`;
-export const onDeleteOwnedTaskByProjectId = /* GraphQL */ `
-  subscription OnDeleteOwnedTaskByProjectId($projectID: ID!) {
-    onDeleteOwnedTaskByProjectID(projectID: $projectID) {
+export const onDeleteTaskByProjectId = /* GraphQL */ `
+  subscription OnDeleteTaskByProjectId($projectID: ID!) {
+    onDeleteTaskByProjectID(projectID: $projectID) {
       id
       projectID
       prevTask
@@ -261,9 +181,7 @@ export const onUpdateCommentByTaskId = /* GraphQL */ `
       id
       taskID
       content
-      createdAt
       updatedAt
-      owner
     }
   }
 `;

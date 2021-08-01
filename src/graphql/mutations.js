@@ -1,6 +1,25 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const pushUserUpdate = /* GraphQL */ `
+  mutation PushUserUpdate($input: PushUserUpdateInput!) {
+    pushUserUpdate(input: $input) {
+      username
+      firstName
+      lastName
+      gender
+      birthdate
+      email
+      plan
+      avatar
+      sharedProjects
+      watchedTasks
+      assignedTasks
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const createProject = /* GraphQL */ `
   mutation CreateProject($input: CreateProjectInput!) {
     createProject(input: $input) {
@@ -68,7 +87,6 @@ export const updateProject = /* GraphQL */ `
       doneCount
       privacy
       permissions
-      createdAt
       updatedAt
       owner
     }
@@ -87,11 +105,9 @@ export const updateTask = /* GraphQL */ `
       due
       tags
       status
-      createdAt
-      updatedAt
-      owner
       watchers
       assignees
+      updatedAt
     }
   }
 `;
@@ -101,9 +117,7 @@ export const updateComment = /* GraphQL */ `
       id
       taskID
       content
-      createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -173,11 +187,9 @@ export const assignTask = /* GraphQL */ `
       due
       tags
       status
-      createdAt
-      updatedAt
-      owner
       watchers
       assignees
+      updatedAt
     }
   }
 `;
@@ -194,11 +206,47 @@ export const unassignTask = /* GraphQL */ `
       due
       tags
       status
-      createdAt
-      updatedAt
-      owner
       watchers
       assignees
+      updatedAt
+    }
+  }
+`;
+export const addWatcher = /* GraphQL */ `
+  mutation AddWatcher($taskID: ID!, $watcher: String!) {
+    addWatcher(taskID: $taskID, watcher: $watcher) {
+      id
+      projectID
+      prevTask
+      nextTask
+      permalink
+      task
+      description
+      due
+      tags
+      status
+      watchers
+      assignees
+      updatedAt
+    }
+  }
+`;
+export const removeWatcher = /* GraphQL */ `
+  mutation RemoveWatcher($taskID: ID!, $watcher: String!) {
+    removeWatcher(taskID: $taskID, watcher: $watcher) {
+      id
+      projectID
+      prevTask
+      nextTask
+      permalink
+      task
+      description
+      due
+      tags
+      status
+      watchers
+      assignees
+      updatedAt
     }
   }
 `;

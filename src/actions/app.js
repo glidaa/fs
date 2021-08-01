@@ -106,7 +106,7 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
         dispatch(setProject(id, "owned"))
         if (shouldChangeURL) {
           if (user.state === AuthState.SignedIn) {
-            app.history.push(`/${projects["owned"][id].owner}/${projects["owned"][id].permalink}`)
+            app.history.push(`/${projects["owned"][id].permalink}`)
           } else {
             app.history.push(`/local/${projects["owned"][id].permalink}`)
           }
@@ -114,7 +114,7 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
       } else if (projects["assigned"][id]) {
         dispatch(setProject(id, "assigned"))
         if (shouldChangeURL) {
-          app.history.push(`/${projects["assigned"][id].owner}/${projects["assigned"][id].permalink}`)
+          app.history.push(`/${projects["assigned"][id].permalink}`)
         }
       }
       dispatch(tasksActions.handleFetchTasks(id))

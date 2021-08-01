@@ -32,7 +32,7 @@ const Login = (props) => {
         <Redirect to={referrer || "/"} />
       ) : (
         <AmplifyContainer>
-          <AmplifyAuthenticator usernameAlias="email">
+          <AmplifyAuthenticator>
             <AmplifySignUp headerText="Create a new account" formFields={[
               {
                 label: "First Name",

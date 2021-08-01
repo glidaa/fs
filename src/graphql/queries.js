@@ -1,21 +1,43 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getUserById = /* GraphQL */ `
-  query GetUserById($userID: ID!) {
-    getUserByID(userID: $userID) {
-      id
+export const getUserByUsername = /* GraphQL */ `
+  query GetUserByUsername($username: String!) {
+    getUserByUsername(username: $username) {
+      username
       firstName
       lastName
-      username
+      gender
+      birthdate
       email
+      plan
       avatar
       sharedProjects
       watchedTasks
       assignedTasks
       createdAt
       updatedAt
-      owner
+    }
+  }
+`;
+export const listUsersByUsernames = /* GraphQL */ `
+  query ListUsersByUsernames($usernames: [String!]!) {
+    listUsersByUsernames(usernames: $usernames) {
+      items {
+        username
+        firstName
+        lastName
+        gender
+        birthdate
+        email
+        plan
+        avatar
+        sharedProjects
+        watchedTasks
+        assignedTasks
+        createdAt
+        updatedAt
+      }
     }
   }
 `;
@@ -84,6 +106,28 @@ export const listOwnedProjects = /* GraphQL */ `
 export const listAssignedProjects = /* GraphQL */ `
   query ListAssignedProjects {
     listAssignedProjects {
+      items {
+        id
+        prevProject
+        nextProject
+        permalink
+        title
+        tasksCount
+        todoCount
+        pendingCount
+        doneCount
+        privacy
+        permissions
+        createdAt
+        updatedAt
+        owner
+      }
+    }
+  }
+`;
+export const listWatchedProjects = /* GraphQL */ `
+  query ListWatchedProjects {
+    listWatchedProjects {
       items {
         id
         prevProject
