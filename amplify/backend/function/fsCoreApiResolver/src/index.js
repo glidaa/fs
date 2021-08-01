@@ -120,26 +120,14 @@ const resolvers = {
     onDeleteOwnedProject: (ctx) => {
       return onDeleteOwnedProject(ctx);
     },
-    onAssignTask: (ctx) => {
-      return onAssignTask(ctx);
+    onCreateTaskByProjectID: (ctx) => {
+      return onCreateTaskByProjectID(ctx);
     },
-    onunassignTask: (ctx) => {
-      return onunassignTask(ctx);
+    onUpdateTaskByProjectID: (ctx) => {
+      return onUpdateTaskByProjectID(ctx);
     },
-    onUpdateAssignedTaskByProjectID: (ctx) => {
-      return onUpdateAssignedTaskByProjectID(ctx);
-    },
-    onDeleteAssignedTaskByProjectID: (ctx) => {
-      return onDeleteAssignedTaskByProjectID(ctx);
-    },
-    onCreateOwnedTaskByProjectID: (ctx) => {
-      return onCreateOwnedTaskByProjectID(ctx);
-    },
-    onUpdateOwnedTaskByProjectID: (ctx) => {
-      return onUpdateOwnedTaskByProjectID(ctx);
-    },
-    onDeleteOwnedTaskByProjectID: (ctx) => {
-      return onDeleteOwnedTaskByProjectID(ctx);
+    onDeleteTaskByProjectID: (ctx) => {
+      return onDeleteTaskByProjectID(ctx);
     },
     onCreateCommentByTaskID: (ctx) => {
       return onCreateCommentByTaskID(ctx);
@@ -329,7 +317,6 @@ async function getUserByUsername(ctx) {
   try {
     const data = await docClient.get(params).promise()
     if(data.Item) {
-      await _pushUserUpdate(data.Item)
       return data.Item
     } else {
       throw new Error(USER_NOT_FOUND)
@@ -709,7 +696,7 @@ async function updateProject(ctx) {
   const updateData = ctx.arguments.input
   const projectID = updateData.id
   const client = ctx.identity.username
-  if (isProjectOwner(projectID, client)) {
+  if (await isProjectOwner(projectID, client)) {
     delete updateData["id"]
     const expAttrVal = {}
     let updateExp = []
@@ -727,7 +714,7 @@ async function updateProject(ctx) {
       },
       UpdateExpression: updateExp,
       ExpressionAttributeValues: expAttrVal,
-      ReturnValues: "ALL_NEW"
+      ReturnValues: "UPDATED_NEW"
     };
     try {
       if (updateData.prevProject !== undefined && updateData.nextProject !== undefined) {
@@ -735,6 +722,7 @@ async function updateProject(ctx) {
         await injectProjectOrder(projectID, updateData.prevProject, updateData.nextProject)
       }
       const data = await docClient.update(params).promise();
+      console.log(data)
       return data.Attributes;
     } catch (err) {
       throw new Error(err);
@@ -774,7 +762,7 @@ async function updateTask(ctx) {
       UpdateExpression: updateExp,
       ExpressionAttributeValues: expAttrVal,
       ExpressionAttributeNames: expAttrNames,
-      ReturnValues: "ALL_NEW"
+      ReturnValues: "UPDATED_NEW"
     };
     try {
       if (updateData.prevTask !== undefined && updateData.nextTask !== undefined) {
@@ -796,7 +784,7 @@ async function updateComment(ctx) {
   const updateData = ctx.arguments.input
   const commentID = updateData.id
   const client = ctx.identity.username
-  if (isCommentOwner(commentID, client)) {
+  if (await isCommentOwner(commentID, client)) {
     delete updateData["id"]
     const expAttrVal = {}
     let updateExp = []
@@ -814,7 +802,7 @@ async function updateComment(ctx) {
       },
       UpdateExpression: updateExp,
       ExpressionAttributeValues: expAttrVal,
-      ReturnValues: "ALL_NEW"
+      ReturnValues: "UPDATED_NEW"
     };
     try {
       const data = await docClient.update(params).promise();
@@ -862,7 +850,7 @@ async function assignTask(ctx) {
             ":assignees": [...assignees, assignee],
             ":updatedAt": new Date().toISOString()
           },
-          ReturnValues: "ALL_NEW"
+          ReturnValues: "UPDATED_NEW"
         };
         const userUpdateParams = isUser && {
           TableName: USERTABLE,
@@ -878,7 +866,10 @@ async function assignTask(ctx) {
         };
         try {
           const updatedTask = await docClient.update(taskUpdateParams).promise();
-          if (isUser) await docClient.update(userUpdateParams).promise();
+          if (isUser) {
+            const userUpdate = await docClient.update(userUpdateParams).promise();
+            await _pushUserUpdate(userUpdate.Attributes)
+          }
           return updatedTask.Attributes;
         } catch (err) {
           throw new Error(err);
@@ -929,7 +920,7 @@ async function unassignTask(ctx) {
             ":assignees": assignees.filter(x => x !== assignee),
             ":updatedAt": new Date().toISOString()
           },
-          ReturnValues: "ALL_NEW"
+          ReturnValues: "UPDATED_NEW"
         };
         const userUpdateParams = isUser && {
           TableName: USERTABLE,
@@ -945,7 +936,10 @@ async function unassignTask(ctx) {
         };
         try {
           const updatedTask = await docClient.update(taskUpdateParams).promise();
-          if (isUser) await docClient.update(userUpdateParams).promise();
+          if (isUser) {
+            const userUpdate = await docClient.update(userUpdateParams).promise();
+            await _pushUserUpdate(userUpdate.Attributes)
+          }
           return updatedTask.Attributes;
         } catch (err) {
           throw new Error(err);
@@ -996,7 +990,7 @@ async function addWatcher(ctx) {
             ":watchers": [...watchers, watcher],
             ":updatedAt": new Date().toISOString()
           },
-          ReturnValues: "ALL_NEW"
+          ReturnValues: "UPDATED_NEW"
         };
         const userUpdateParams = isUser && {
           TableName: USERTABLE,
@@ -1012,7 +1006,10 @@ async function addWatcher(ctx) {
         };
         try {
           const updatedTask = await docClient.update(taskUpdateParams).promise();
-          if (isUser) await docClient.update(userUpdateParams).promise();
+          if (isUser) {
+            const userUpdate = await docClient.update(userUpdateParams).promise();
+            await _pushUserUpdate(userUpdate.Attributes)
+          }
           return updatedTask.Attributes;
         } catch (err) {
           throw new Error(err);
@@ -1063,7 +1060,7 @@ async function removeWatcher(ctx) {
             ":watchers": watchers.filter(x => x !== watcher),
             ":updatedAt": new Date().toISOString()
           },
-          ReturnValues: "ALL_NEW"
+          ReturnValues: "UPDATED_NEW"
         };
         const userUpdateParams = isUser && {
           TableName: USERTABLE,
@@ -1079,7 +1076,10 @@ async function removeWatcher(ctx) {
         };
         try {
           const updatedTask = await docClient.update(taskUpdateParams).promise();
-          if (isUser) await docClient.update(userUpdateParams).promise();
+          if (isUser) {
+            const userUpdate = await docClient.update(userUpdateParams).promise();
+            await _pushUserUpdate(userUpdate.Attributes)
+          }
           return updatedTask.Attributes;
         } catch (err) {
           throw new Error(err);
@@ -1285,29 +1285,37 @@ async function listAssignedProjects(ctx) {
   }
 }
 
-async function postProcessUsers (users, cachedUsers = [], isAnonymousAllowed = true) {
+async function getUsersData (users, cachedUsers = [], isAnonymousAllowed = true) {
   const nonCachedUsers = [...new Set(users)]
     .filter(user => !cachedUsers.includes(user))
-  const anonymousList = isAnonymousAllowed ? 
-    nonCachedUsers
-    .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "anonymous")
-    .map(user => ({ anonymousName: user.match(/anonymous:(.*)/)[1] })) : []
-  const preUsersList = isAnonymousAllowed ? 
+  const anonymousList = isAnonymousAllowed ?
+    Object.fromEntries(
+      nonCachedUsers
+      .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "anonymous")
+      .map(user => {
+        const anonymousID = user.match(/anonymous:(.*)/)[1]
+        return [`anonymous:${anonymousID}`, { anonymousName: anonymousID }]
+      })
+    ) : {}
+  const preUsersArray = isAnonymousAllowed ? 
     nonCachedUsers
     .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "user")
     .map(user => ({ username: user.match(/user:(.*)/)[1] })) :
     nonCachedUsers.map(user => ({ username: user }))
-
+    
   const params = {
     RequestItems: {
       [USERTABLE]: {
-        Keys: preUsersList
+        Keys: preUsersArray
       }
     }
   }
   try {
-    const usersList = preUsersList.length ? (await docClient.batchGet(params).promise()).Responses[USERTABLE] : []
-    return [...usersList, ...anonymousList]
+    const usersArray = preUsersArray.length ? (await docClient.batchGet(params).promise()).Responses[USERTABLE] : []
+    const usersList = isAnonymousAllowed ? 
+      Object.fromEntries(usersArray.map(user => [`user:${user.username}`, user])) :
+      Object.fromEntries(usersArray.map(user => [`${user.username}`, user]))
+    return {...usersList, ...anonymousList}
   } catch (err) {
     throw new Error(err)
   }
@@ -1327,14 +1335,10 @@ async function listTasksForProject(ctx) {
     };
     try {
       const data = await docClient.query(params).promise();
-      const postProcessedAssignees = await postProcessUsers(data.Items.map(({ assignees }) => assignees).flat())
-      const postProcessedWatchers = await postProcessUsers(data.Items.map(({ watchers }) => watchers).flat())
+      const usersData = await getUsersData(data.Items.map(({ assignees, watchers }) => [...assignees, ...watchers]).flat("2"))
       return {
-        items: data.Items.map(item => ({
-          ...item,
-          assignees: postProcessedAssignees,
-          watchers: postProcessedWatchers
-        }))
+        items: data.Items,
+        usersData
       }
     } catch (err) {
       throw new Error(err);
@@ -1350,9 +1354,11 @@ async function listCommentsForTask(ctx) {
   if (await isTaskSharedWithClient(taskID, client)) {
     try {
       const commentsList = await _listCommentsForTask(taskID)
+      const usersData = await getUsersData(commentsList.map(({ owner }) => owner), [], false)
       return {
-        items: commentsList
-      };
+        items: commentsList,
+        usersData
+      }
     } catch (err) {
       throw new Error(err);
     }
@@ -1512,90 +1518,10 @@ async function onDeleteOwnedProject(ctx) {
   }
 }
 
-async function onAssignTask(ctx) {
-  const client = ctx.identity.username
-  const assignee = ctx.arguments.assignee
-  if (client === assignee) {
-    return {
-      id: "00000000-0000-0000-0000-000000000000",
-      projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dummy Task",
-      permalink: 1,
-      isDone: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      owner: client,
-      assignee: client
-    }
-  } else {
-    throw new Error(UNAUTHORIZED)
-  }
-}
-
-async function onunassignTask(ctx) {
-  const client = ctx.identity.username
-  const assignee = ctx.arguments.assignee
-  if (client === assignee) {
-    return {
-      id: "00000000-0000-0000-0000-000000000000",
-      projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dummy Task",
-      permalink: 1,
-      isDone: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      owner: client,
-      assignee: client
-    }
-  } else {
-    throw new Error(UNAUTHORIZED)
-  }
-}
-
-async function onUpdateAssignedTaskByProjectID(ctx) {
-  const client = ctx.identity.username
-  const assignee = ctx.arguments.assignee
-  if (client === assignee) {
-    return {
-      id: "00000000-0000-0000-0000-000000000000",
-      projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dummy Task",
-      permalink: 1,
-      isDone: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      owner: client,
-      assignee: client
-    }
-  } else {
-    throw new Error(UNAUTHORIZED)
-  }
-}
-
-async function onDeleteAssignedTaskByProjectID(ctx) {
-  const client = ctx.identity.username
-  const assignee = ctx.arguments.assignee
-  if (client === assignee) {
-    return {
-      id: "00000000-0000-0000-0000-000000000000",
-      projectID: "00000000-0000-0000-0000-000000000000",
-      task: "Dummy Task",
-      permalink: 1,
-      isDone: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      owner: client,
-      assignee: client
-    }
-  } else {
-    throw new Error(UNAUTHORIZED)
-  }
-}
-
-async function onCreateOwnedTaskByProjectID(ctx) {
+async function onCreateTaskByProjectID(ctx) {
   const client = ctx.identity.username
   const projectID = ctx.arguments.projectID
-  if (isProjectOwner(projectID, client)) {
+  if (await isProjectSharedWithClient(projectID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
@@ -1612,10 +1538,10 @@ async function onCreateOwnedTaskByProjectID(ctx) {
   }
 }
 
-async function onUpdateOwnedTaskByProjectID(ctx) {
+async function onUpdateTaskByProjectID(ctx) {
   const client = ctx.identity.username
   const projectID = ctx.arguments.projectID
-  if (isProjectOwner(projectID, client)) {
+  if (await isProjectSharedWithClient(projectID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
@@ -1632,10 +1558,10 @@ async function onUpdateOwnedTaskByProjectID(ctx) {
   }
 }
 
-async function onDeleteOwnedTaskByProjectID(ctx) {
+async function onDeleteTaskByProjectID(ctx) {
   const client = ctx.identity.username
   const projectID = ctx.arguments.projectID
-  if (isProjectOwner(projectID, client)) {
+  if (await isProjectSharedWithClient(projectID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       projectID: "00000000-0000-0000-0000-000000000000",
@@ -1655,7 +1581,7 @@ async function onDeleteOwnedTaskByProjectID(ctx) {
 async function onCreateCommentByTaskID(ctx) {
   const client = ctx.identity.username
   const taskID = ctx.arguments.taskID
-  if (isTaskSharedWithClient(taskID, client)) {
+  if (await isTaskSharedWithClient(taskID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       taskID: "00000000-0000-0000-0000-000000000000",
@@ -1672,7 +1598,7 @@ async function onCreateCommentByTaskID(ctx) {
 async function onUpdateCommentByTaskID(ctx) {
   const client = ctx.identity.username
   const taskID = ctx.arguments.taskID
-  if (isTaskSharedWithClient(taskID, client)) {
+  if (await isTaskSharedWithClient(taskID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       taskID: "00000000-0000-0000-0000-000000000000",
@@ -1689,7 +1615,7 @@ async function onUpdateCommentByTaskID(ctx) {
 async function onDeleteCommentByTaskID(ctx) {
   const client = ctx.identity.username
   const taskID = ctx.arguments.taskID
-  if (isTaskSharedWithClient(taskID, client)) {
+  if (await isTaskSharedWithClient(taskID, client)) {
     return {
       id: "00000000-0000-0000-0000-000000000000",
       taskID: "00000000-0000-0000-0000-000000000000",
