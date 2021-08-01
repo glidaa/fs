@@ -2,6 +2,12 @@ const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
 const https = require('https');
 const urlParse = require("url").URL;
+const { DataExchange } = require('aws-sdk');
+
+const cachedUsers = []
+const cachedProjects = {}
+const cachedTasks = {}
+const cachedComments = {}
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
@@ -85,6 +91,9 @@ const resolvers = {
     getUserByUsername: (ctx) => {
       return getUserByUsername(ctx);
     },
+    listUsersByUsernames: (ctx) => {
+      return listUsersByUsernames(ctx);
+    },
     getProjectByID: (ctx) => {
       return getProjectByID(ctx);
     },
@@ -96,6 +105,9 @@ const resolvers = {
     },
     listAssignedProjects: (ctx) => {
       return listAssignedProjects(ctx);
+    },
+    listWatchedProjects: (ctx) => {
+      return listWatchedProjects(ctx);
     },
     listTasksForProject: (ctx) => {
       return listTasksForProject(ctx);
@@ -158,150 +170,136 @@ exports.handler = async function (ctx) {
   throw new Error("Resolver not found.");
 }
 
-async function isProjectSharedWithClient(projectID, client) {
-  const params = {
-    TableName: PROJECTTABLE,
-    ProjectionExpression: "privacy, members, #owner",
-    ExpressionAttributeNames: { "#owner": "owner" },
-    Key: {
-      "id": projectID
+async function getProject(projectID) {
+  if (cachedProjects[projectID]) {
+    cachedProjects[projectID]
+  } else {
+    const params = {
+      TableName: PROJECTTABLE,
+      Key: {
+        "id": projectID
+      }
+    }
+    try {
+      const data = await docClient.get(params).promise()
+      if (data.Item) {
+        cachedProjects[projectID] = data.Item
+        return data.Item
+      } else {
+        throw new Error(PROJECT_NOT_FOUND)
+      }
+    } catch (err) {
+      throw new Error(err)
     }
   }
-  try {
-    const data = await docClient.get(params).promise()
-    if (data.Item) {
-      const { privacy, members, owner } = data.Item
-      return "public" === privacy || members.includes(client) || client === owner
-    } else {
-      throw new Error(PROJECT_NOT_FOUND)
+}
+
+async function getTask(taskID) {
+  if (cachedTasks[taskID]) {
+    cachedTasks[taskID]
+  } else {
+    const params = {
+      TableName: TASKTABLE,
+      Key: {
+        "id": taskID
+      }
     }
+    try {
+      const data = await docClient.get(params).promise()
+      if (data.Item) {
+        cachedTasks[taskID] = data.Item
+        return data.Item
+      } else {
+        throw new Error(TASK_NOT_FOUND)
+      }
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+}
+
+async function getComment(commentID) {
+  if (cachedComments[commentID]) {
+    cachedComments[commentID]
+  } else {
+    const params = {
+      TableName: COMMENTTABLE,
+      Key: {
+        "id": commentID
+      }
+    }
+    try {
+      const data = await docClient.get(params).promise()
+      if (data.Item) {
+        cachedComments[commentID] = data.Item
+        return data.Item
+      } else {
+        throw new Error(COMMENT_NOT_FOUND)
+      }
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+}
+
+async function isProjectSharedWithClient(projectID, client) {
+  try {
+    const { privacy, members, owner } = cachedProjects[projectID] || await getProject(projectID)
+    return "public" === privacy || members.includes(client) || client === owner
   } catch (err) {
     throw new Error(err)
   }
 }
 
 async function isProjectEditableByClient(projectID, client) {
-  const params = {
-    TableName: PROJECTTABLE,
-    ProjectionExpression: "privacy, members, #owner, #permissions",
-    ExpressionAttributeNames: { "#owner": "owner", "#permissions": "permissions" },
-    Key: {
-      "id": projectID
-    }
-  }
   try {
-    const data = await docClient.get(params).promise()
-    if (data.Item) {
-      const { privacy, members, owner, permissions } = data.Item
-      return ("rw" === permissions && ("public" === privacy || members.includes(client))) || client === owner
-    } else {
-      throw new Error(PROJECT_NOT_FOUND)
-    }
+    const { privacy, members, owner, permissions } = cachedProjects[projectID] || await getProject(projectID)
+    return ("rw" === permissions && ("public" === privacy || members.includes(client))) || client === owner
   } catch (err) {
     throw new Error(err)
   }
 }
 
 async function isProjectOwner(projectID, client) {
-  const params = {
-    TableName: PROJECTTABLE,
-    ProjectionExpression: "#owner",
-    ExpressionAttributeNames: { "#owner": "owner" },
-    Key: {
-      "id": projectID
-    }
-  }
   try {
-    const data = await docClient.get(params).promise()
-    if (data.Item) {
-      return client === data.Item.owner
-    } else {
-      throw new Error(PROJECT_NOT_FOUND)
-    }
+    const { owner } = cachedProjects[projectID] || await getProject(projectID)
+    return client === owner
   } catch (err) {
     throw new Error(err)
   }
 }
 
 async function isTaskOwner(taskID, client) {
-  const params = {
-    TableName: TASKTABLE,
-    ProjectionExpression: "#owner",
-    ExpressionAttributeNames: { "#owner": "owner" },
-    Key: {
-      "id": taskID
-    }
-  }
   try {
-    const data = await docClient.get(params).promise()
-    if (data.Item) {
-      return client === data.Item.owner
-    } else {
-      throw new Error(PROJECT_NOT_FOUND)
-    }
+    const { owner } = cachedTasks[taskID] || await getTask(taskID)
+    return client === owner
   } catch (err) {
     throw new Error(err)
   }
 }
 
 async function isCommentOwner(commentID, client) {
-  const params = {
-    TableName: COMMENTTABLE,
-    ProjectionExpression: "#owner",
-    ExpressionAttributeNames: { "#owner": "owner" },
-    Key: {
-      "id": commentID
-    }
-  }
   try {
-    const data = await docClient.get(params).promise()
-    if (data.Item) {
-      return client === data.Item.owner
-    } else {
-      throw new Error(COMMENT_NOT_FOUND)
-    }
+    const { owner } = cachedComments[commentID] || await getComment(commentID)
+    return client === owner
   } catch (err) {
     throw new Error(err)
   }
 }
 
 async function isTaskSharedWithClient(taskID, client) {
-  const params = {
-    TableName: TASKTABLE,
-    ProjectionExpression: "projectID",
-    Key: {
-      "id": taskID
-    }
-  }
   try {
-    const data = await docClient.get(params).promise()
-    if (data.Item) {
-      const { projectID } = data.Item
-      return await isProjectSharedWithClient(projectID, client)
-    } else {
-      throw new Error(TASK_NOT_FOUND)
-    }
+    const { projectID } = cachedTasks[taskID] || await getTask(taskID)
+    return await isProjectSharedWithClient(projectID, client)
   } catch (err) {
     throw new Error(err)
   }
 }
 
 async function isTaskEditableByClient(taskID, client) {
-  const params = {
-    TableName: TASKTABLE,
-    ProjectionExpression: "projectID",
-    Key: {
-      "id": taskID
-    }
-  }
   try {
-    const data = await docClient.get(params).promise()
-    if (data.Item) {
-      const { projectID } = data.Item
-      return await isProjectEditableByClient(projectID, client)
-    } else {
-      throw new Error(TASK_NOT_FOUND)
-    }
+    const { projectID } = cachedTasks[taskID] || await getTask(taskID)
+    return await isProjectEditableByClient(projectID, client)
   } catch (err) {
     throw new Error(err)
   }
@@ -335,50 +333,48 @@ async function pushUserUpdate(ctx) {
 }
 
 async function removeProjectOrder(projectID) {
-  const projectParams = {
+  const { prevProject, nextProject } = cachedProjects[projectID] || await getProject(projectID)
+  const prevProjectUpdateParams = {
     TableName: PROJECTTABLE,
     Key: {
-      "id": projectID
+      "id": prevProject
     },
-    ProjectionExpression: "prevProject, nextProject"
-  }
-  const projectData = await docClient.get(projectParams).promise()
-  if (projectData.Item) {
-    const { prevProject, nextProject } = projectData.Item
-    const prevProjectUpdateParams = {
-      TableName: PROJECTTABLE,
-      Key: {
-        "id": prevProject
-      },
-      UpdateExpression: "SET nextProject = :nextProject, updatedAt = :updatedAt",
-      ReturnValues: "NONE",
-      ExpressionAttributeValues: {
-        ":nextProject": nextProject,
-        ":updatedAt": new Date().toISOString()
-      }
-    };
-    const nextProjectUpdateParams = {
-      TableName: PROJECTTABLE,
-      Key: {
-        "id": nextProject
-      },
-      UpdateExpression: "SET prevProject = :prevProject, updatedAt = :updatedAt",
-      ReturnValues: "NONE",
-      ExpressionAttributeValues: {
-        ":prevProject": prevProject,
-        ":updatedAt": new Date().toISOString()
-      }
-    };
-    try {
-      if (prevProject) {
-        await docClient.update(prevProjectUpdateParams).promise()
-      }
-      if (nextProject) {
-        await docClient.update(nextProjectUpdateParams).promise()
-      }
-    } catch (err) {
-      throw new Error(err);
+    UpdateExpression: "SET nextProject = :nextProject, updatedAt = :updatedAt",
+    ReturnValues: "UPDATED_NEW",
+    ExpressionAttributeValues: {
+      ":nextProject": nextProject,
+      ":updatedAt": new Date().toISOString()
     }
+  };
+  const nextProjectUpdateParams = {
+    TableName: PROJECTTABLE,
+    Key: {
+      "id": nextProject
+    },
+    UpdateExpression: "SET prevProject = :prevProject, updatedAt = :updatedAt",
+    ReturnValues: "UPDATED_NEW",
+    ExpressionAttributeValues: {
+      ":prevProject": prevProject,
+      ":updatedAt": new Date().toISOString()
+    }
+  };
+  try {
+    if (prevProject) {
+      const updatedPrevProject = await docClient.update(prevProjectUpdateParams).promise()
+      cachedProjects[prevProject] = {
+        ...cachedProjects[prevProject],
+        ...updatedPrevProject.Attributes
+      }
+    }
+    if (nextProject) {
+      const updatedNextProject = await docClient.update(nextProjectUpdateParams).promise()
+      cachedProjects[nextProject] = {
+        ...cachedProjects[nextProject],
+        ...updatedNextProject.Attributes
+      }
+    }
+  } catch (err) {
+    throw new Error(err);
   }
 }
 
@@ -409,7 +405,7 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
       "id": prevProject
     },
     UpdateExpression: "SET nextProject = :nextProject, updatedAt = :updatedAt",
-    ReturnValues: "NONE",
+    ReturnValues: "UPDATED_NEW",
     ExpressionAttributeValues: {
       ":nextProject": projectID,
       ":updatedAt": new Date().toISOString()
@@ -421,7 +417,7 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
       "id": nextProject
     },
     UpdateExpression: "SET prevProject = :prevProject, updatedAt = :updatedAt",
-    ReturnValues: "NONE",
+    ReturnValues: "UPDATED_NEW",
     ExpressionAttributeValues: {
       ":prevProject": projectID,
       ":updatedAt": new Date().toISOString()
@@ -429,10 +425,18 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
   };
   try {
     if (prevProject) {
-      await docClient.update(prevProjectUpdateParams).promise()
+      const updatedPrevProject = await docClient.update(prevProjectUpdateParams).promise()
+      cachedProjects[prevProject] = {
+        ...cachedProjects[prevProject],
+        ...updatedPrevProject.Attributes
+      }
     }
     if (nextProject) {
-      await docClient.update(nextProjectUpdateParams).promise()
+      const updatedNextProject = await docClient.update(nextProjectUpdateParams).promise()
+      cachedProjects[nextProject] = {
+        ...cachedProjects[nextProject],
+        ...updatedNextProject.Attributes
+      }
     }
   } catch (err) {
     throw new Error(err);
@@ -466,6 +470,7 @@ async function createProject(ctx) {
     };
     try {
       await docClient.put(params).promise();
+      cachedProjects[projectData.id] = projectData
       if (isCont) {
         await injectProjectOrder(projectData.id, projectData.prevProject, null)
       } else {
@@ -481,50 +486,48 @@ async function createProject(ctx) {
 }
 
 async function removeTaskOrder(taskID) {
-  const taskParams = {
+  const { prevTask, nextTask } = cachedTasks[taskID] || await getTask(taskID)
+  const prevTaskUpdateParams = {
     TableName: TASKTABLE,
     Key: {
-      "id": taskID
+      "id": prevTask
     },
-    ProjectionExpression: "prevTask, nextTask"
-  }
-  const taskData = await docClient.get(taskParams).promise()
-  if (taskData.Item) {
-    const { prevTask, nextTask } = taskData.Item
-    const prevTaskUpdateParams = {
-      TableName: TASKTABLE,
-      Key: {
-        "id": prevTask
-      },
-      UpdateExpression: "SET nextTask = :nextTask, updatedAt = :updatedAt",
-      ReturnValues: "NONE",
-      ExpressionAttributeValues: {
-        ":nextTask": nextTask,
-        ":updatedAt": new Date().toISOString()
-      }
-    };
-    const nextTaskUpdateParams = {
-      TableName: TASKTABLE,
-      Key: {
-        "id": nextTask
-      },
-      UpdateExpression: "SET prevTask = :prevTask, updatedAt = :updatedAt",
-      ReturnValues: "NONE",
-      ExpressionAttributeValues: {
-        ":prevTask": prevTask,
-        ":updatedAt": new Date().toISOString()
-      }
-    };
-    try {
-      if (prevTask) {
-        await docClient.update(prevTaskUpdateParams).promise()
-      }
-      if (nextTask) {
-        await docClient.update(nextTaskUpdateParams).promise()
-      }
-    } catch (err) {
-      throw new Error(err);
+    UpdateExpression: "SET nextTask = :nextTask, updatedAt = :updatedAt",
+    ReturnValues: "UPDATED_NEW",
+    ExpressionAttributeValues: {
+      ":nextTask": nextTask,
+      ":updatedAt": new Date().toISOString()
     }
+  };
+  const nextTaskUpdateParams = {
+    TableName: TASKTABLE,
+    Key: {
+      "id": nextTask
+    },
+    UpdateExpression: "SET prevTask = :prevTask, updatedAt = :updatedAt",
+    ReturnValues: "UPDATED_NEW",
+    ExpressionAttributeValues: {
+      ":prevTask": prevTask,
+      ":updatedAt": new Date().toISOString()
+    }
+  };
+  try {
+    if (prevTask) {
+      const updatedPrevTask = await docClient.update(prevTaskUpdateParams).promise()
+      cachedTasks[prevTask] = {
+        ...cachedTasks[prevTask],
+        ...updatedPrevTask.Attributes
+      }
+    }
+    if (nextTask) {
+      const updatedNextTask = await docClient.update(nextTaskUpdateParams).promise()
+      cachedTasks[nextTask] = {
+        ...cachedTasks[nextTask],
+        ...updatedNextTask.Attributes
+      }
+    }
+  } catch (err) {
+    throw new Error(err);
   }
 }
 
@@ -535,7 +538,7 @@ async function injectTaskOrder(taskID, prevTask, nextTask) {
       "id": prevTask
     },
     UpdateExpression: "SET nextTask = :nextTask, updatedAt = :updatedAt",
-    ReturnValues: "NONE",
+    ReturnValues: "UPDATED_NEW",
     ExpressionAttributeValues: {
       ":nextTask": taskID,
       ":updatedAt": new Date().toISOString()
@@ -547,7 +550,7 @@ async function injectTaskOrder(taskID, prevTask, nextTask) {
       "id": nextTask
     },
     UpdateExpression: "SET prevTask = :prevTask, updatedAt = :updatedAt",
-    ReturnValues: "NONE",
+    ReturnValues: "UPDATED_NEW",
     ExpressionAttributeValues: {
       ":prevTask": taskID,
       ":updatedAt": new Date().toISOString()
@@ -555,10 +558,18 @@ async function injectTaskOrder(taskID, prevTask, nextTask) {
   };
   try {
     if (prevTask) {
-      await docClient.update(prevTaskUpdateParams).promise()
+      const updatedPrevTask = await docClient.update(prevTaskUpdateParams).promise()
+      cachedTasks[prevTask] = {
+        ...cachedTasks[prevTask],
+        ...updatedPrevTask.Attributes
+      }
     }
     if (nextTask) {
-      await docClient.update(nextTaskUpdateParams).promise()
+      const updatedNextTask = await docClient.update(nextTaskUpdateParams).promise()
+      cachedTasks[nextTask] = {
+        ...cachedTasks[nextTask],
+        ...updatedNextTask.Attributes
+      }
     }
   } catch (err) {
     throw new Error(err);
@@ -566,51 +577,39 @@ async function injectTaskOrder(taskID, prevTask, nextTask) {
 }
 
 async function updateTaskCount(taskID, nextStatus = null) {
-  const taskGetParams = {
-    TableName: TASKTABLE,
+  const { projectID, status: prevStatus } = cachedTasks[taskID] || await getTask(taskID)
+  const projectUpdateParams = {
+    TableName: PROJECTTABLE,
     Key: {
-      "id": taskID
+      "id": projectID
+    },
+    UpdateExpression: "SET todoCount = todoCount + :isTodo, pendingCount = pendingCount + :isPending, doneCount = doneCount + :isDone, updatedAt = :updatedAt",
+    ExpressionAttributeValues: {
+      ":isTodo": (prevStatus === TODO ? -1 : 0) || (nextStatus === TODO ? 1 : 0),
+      ":isPending": (prevStatus === PENDING ? -1 : 0) || (nextStatus === PENDING ? 1 : 0),
+      ":isDone": (prevStatus === DONE ? -1 : 0) || (nextStatus === DONE ? 1 : 0),
+      ":updatedAt": new Date().toISOString()
+    },
+    ReturnValues: "UPDATED_NEW"
+  };
+  try {
+    if (prevStatus !== nextStatus) {
+      const updatedProject = await docClient.update(projectUpdateParams).promise();
+      cachedProjects[projectID] = {
+        ...cachedProjects[projectID],
+        ...updatedProject.Attributes
+      }
     }
-  }
-  const taskData = await docClient.get(taskGetParams).promise()
-  if (taskData.Item) {
-    const { projectID, status: prevStatus } = taskData.Item
-    const projectUpdateParams = {
-      TableName: PROJECTTABLE,
-      Key: {
-        "id": projectID
-      },
-      UpdateExpression: "SET todoCount = todoCount + :isTodo, pendingCount = pendingCount + :isPending, doneCount = doneCount + :isDone, updatedAt = :updatedAt",
-      ExpressionAttributeValues: {
-        ":isTodo": (prevStatus === TODO ? -1 : 0) || (nextStatus === TODO ? 1 : 0),
-        ":isPending": (prevStatus === PENDING ? -1 : 0) || (nextStatus === PENDING ? 1 : 0),
-        ":isDone": (prevStatus === DONE ? -1 : 0) || (nextStatus === DONE ? 1 : 0),
-        ":updatedAt": new Date().toISOString()
-      },
-      ReturnValues: "NONE"
-    };
-    try {
-      if (prevStatus !== nextStatus) await docClient.update(projectUpdateParams).promise();
-    } catch (err) {
-      throw new Error(err);
-    }
-  } else {
-    throw new Error(TASK_NOT_FOUND)
+  } catch (err) {
+    throw new Error(err);
   }
 }
 
 async function createTask(ctx) {
   const projectID = ctx.arguments.input.projectID
   const client = ctx.identity.username
-  const projectParams = {
-    TableName: PROJECTTABLE,
-    Key: {
-      "id": projectID
-    }
-  }
-  const projectData = await docClient.get(projectParams).promise()
-  const isAuthorized = await isProjectEditableByClient(projectID, client)
-  if (isAuthorized) {
+  if (await isProjectEditableByClient(projectID, client)) {
+    const projectData = cachedProjects[projectID] || await getProject(projectID)
     const taskData = {
       ...ctx.arguments.input,
       id: uuidv4(),
@@ -618,7 +617,7 @@ async function createTask(ctx) {
       assignees: ctx.arguments.input.assignees || [],
       watchers: ctx.arguments.input.watchers || [],
       tags: ctx.arguments.input.tags || [],
-      permalink: projectData.Item.tasksCount + 1,
+      permalink: projectData.tasksCount + 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       owner: client
@@ -642,7 +641,7 @@ async function createTask(ctx) {
         ":isDone": taskData.status === DONE ? 1 : 0,
         ":updatedAt": new Date().toISOString()
       },
-      ReturnValues: "NONE"
+      ReturnValues: "UPDATED_NEW"
     };
     const taskParams = {
       TableName: TASKTABLE,
@@ -650,12 +649,17 @@ async function createTask(ctx) {
     };
     try {
       await docClient.put(taskParams).promise();
+      cachedTasks[taskData.id] = taskData
       if (isCont) {
         await injectTaskOrder(taskData.id, taskData.prevTask, null)
       } else {
         await injectTaskOrder(taskData.id, taskData.prevTask, taskData.nextTask)
       }
-      await docClient.update(projectUpdateParams).promise()
+      const updatedProject = await docClient.update(projectUpdateParams).promise()
+      cachedProjects[projectID] = {
+        ...cachedProjects[projectID],
+        ...updatedProject.Attributes
+      }
       return taskData;
     } catch (err) {
       throw new Error(err);
@@ -668,8 +672,7 @@ async function createTask(ctx) {
 async function createComment(ctx) {
   const taskID = ctx.arguments.input.taskID
   const client = ctx.identity.username
-  const isAuthorized = await isTaskSharedWithClient(taskID, client)
-  if (isAuthorized) {
+  if (await isTaskSharedWithClient(taskID, client)) {
     const commentData = {
       ...ctx.arguments.input,
       id: uuidv4(),
@@ -683,6 +686,7 @@ async function createComment(ctx) {
     };
     try {
       await docClient.put(params).promise();
+      cachedComments[commentData.id] = commentData
       return commentData;
     } catch (err) {
       throw new Error(err);
@@ -722,8 +726,11 @@ async function updateProject(ctx) {
         await injectProjectOrder(projectID, updateData.prevProject, updateData.nextProject)
       }
       const data = await docClient.update(params).promise();
-      console.log(data)
-      return data.Attributes;
+      return {
+        id: projectID,
+        owner: client,
+        ...data.Attributes
+      }
     } catch (err) {
       throw new Error(err);
     }
@@ -736,8 +743,7 @@ async function updateTask(ctx) {
   const updateData = ctx.arguments.input
   const taskID = updateData.id
   const client = ctx.identity.username
-  const isAuthorized = await isTaskEditableByClient(taskID, client)
-  if (isAuthorized) {
+  if (await isTaskEditableByClient(taskID, client)) {
     delete updateData["id"]
     const expAttrVal = {}
     const expAttrNames = {}
@@ -770,8 +776,18 @@ async function updateTask(ctx) {
         await injectTaskOrder(taskID, updateData.prevTask, updateData.nextTask)
       }
       const data = await docClient.update(taskUpdateParams).promise();
-      if (updateData.status) await updateTaskCount(taskID, updateData.status)
-      return data.Attributes;
+      cachedTasks[taskID] = {
+        ...cachedTasks[taskID],
+        ...data.Attributes
+      }
+      if (updateData.status) {
+        await updateTaskCount(taskID, updateData.status)
+      }
+      return {
+        id: taskID,
+        projectID: cachedTasks[taskID].projectID,
+        ...data.Attributes
+      }
     } catch (err) {
       throw new Error(err);
     }
@@ -806,7 +822,11 @@ async function updateComment(ctx) {
     };
     try {
       const data = await docClient.update(params).promise();
-      return data.Attributes;
+      return {
+        id: commentID,
+        taskID: cachedComments[commentID].taskID,
+        ...data.Attributes
+      }
     } catch (err) {
       throw new Error(err);
     }
@@ -822,21 +842,14 @@ async function assignTask(ctx) {
   if (isValidAssignee) {
     const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
     const isUser = assigneeType === "user"
-    const taskGetParams = {
-      TableName: TASKTABLE,
-      Key: {
-        "id": taskID
-      }
-    }
     const userGetParams = {
       TableName: USERTABLE,
       Key: {
         "username": assigneeID
       }
     }
-    const taskData = await docClient.get(taskGetParams).promise()
     const userData = isUser && await docClient.get(userGetParams).promise()
-    const { projectID, assignees } = taskData.Item
+    const { projectID, assignees } = cachedTasks[taskID] || await getTask(taskID)
     const taskPath = `${projectID}/${taskID}`
     if (await isProjectEditableByClient(projectID, client)) {
       if (!assignees.includes(assignee)) {
@@ -870,7 +883,11 @@ async function assignTask(ctx) {
             const userUpdate = await docClient.update(userUpdateParams).promise();
             await _pushUserUpdate(userUpdate.Attributes)
           }
-          return updatedTask.Attributes;
+          return {
+            id: taskID,
+            projectID: cachedTasks[taskID].projectID,
+            ...updatedTask.Attributes
+          }
         } catch (err) {
           throw new Error(err);
         }
@@ -892,21 +909,14 @@ async function unassignTask(ctx) {
   if (isValidAssignee) {
     const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
     const isUser = assigneeType === "user"
-    const taskGetParams = {
-      TableName: TASKTABLE,
-      Key: {
-        "id": taskID
-      }
-    }
     const userGetParams = {
       TableName: USERTABLE,
       Key: {
         "username": assigneeID
       }
     }
-    const taskData = await docClient.get(taskGetParams).promise()
     const userData = isUser && await docClient.get(userGetParams).promise()
-    const { projectID, assignees } = taskData.Item
+    const { projectID, assignees } = cachedTasks[taskID] || await getTask(taskID)
     const taskPath = `${projectID}/${taskID}`
     if (await isProjectEditableByClient(projectID, client)) {
       if (assignees.includes(assignee)) {
@@ -940,7 +950,11 @@ async function unassignTask(ctx) {
             const userUpdate = await docClient.update(userUpdateParams).promise();
             await _pushUserUpdate(userUpdate.Attributes)
           }
-          return updatedTask.Attributes;
+          return {
+            id: taskID,
+            projectID: cachedTasks[taskID].projectID,
+            ...updatedTask.Attributes
+          }
         } catch (err) {
           throw new Error(err);
         }
@@ -962,21 +976,14 @@ async function addWatcher(ctx) {
   if (isValidWatcher) {
     const [, watcherType, watcherID] = watcher.match(/(user|anonymous):(.*)/)
     const isUser = watcherType === "user"
-    const taskGetParams = {
-      TableName: TASKTABLE,
-      Key: {
-        "id": taskID
-      }
-    }
     const userGetParams = {
       TableName: USERTABLE,
       Key: {
         "username": watcherID
       }
     }
-    const taskData = await docClient.get(taskGetParams).promise()
     const userData = isUser && await docClient.get(userGetParams).promise()
-    const { projectID, watchers } = taskData.Item
+    const { projectID, watchers } = cachedTasks[taskID] || await getTask(taskID)
     const taskPath = `${projectID}/${taskID}`
     if (await isProjectEditableByClient(projectID, client)) {
       if (!watchers.includes(watcher)) {
@@ -1010,7 +1017,11 @@ async function addWatcher(ctx) {
             const userUpdate = await docClient.update(userUpdateParams).promise();
             await _pushUserUpdate(userUpdate.Attributes)
           }
-          return updatedTask.Attributes;
+          return {
+            id: taskID,
+            projectID: cachedTasks[taskID].projectID,
+            ...updatedTask.Attributes
+          }
         } catch (err) {
           throw new Error(err);
         }
@@ -1032,21 +1043,14 @@ async function removeWatcher(ctx) {
   if (isValidWatcher) {
     const [, watcherType, watcherID] = watcher.match(/(user|anonymous):(.*)/)
     const isUser = watcherType === "user"
-    const taskGetParams = {
-      TableName: TASKTABLE,
-      Key: {
-        "id": taskID
-      }
-    }
     const userGetParams = {
       TableName: USERTABLE,
       Key: {
         "username": watcherID
       }
     }
-    const taskData = await docClient.get(taskGetParams).promise()
     const userData = isUser && await docClient.get(userGetParams).promise()
-    const { projectID, watchers } = taskData.Item
+    const { projectID, watchers } = cachedTasks[taskID] || await getTask(taskID)
     const taskPath = `${projectID}/${taskID}`
     if (await isProjectEditableByClient(projectID, client)) {
       if (watchers.includes(watcher)) {
@@ -1080,7 +1084,11 @@ async function removeWatcher(ctx) {
             const userUpdate = await docClient.update(userUpdateParams).promise();
             await _pushUserUpdate(userUpdate.Attributes)
           }
-          return updatedTask.Attributes;
+          return {
+            id: taskID,
+            projectID: cachedTasks[taskID].projectID,
+            ...updatedTask.Attributes
+          }
         } catch (err) {
           throw new Error(err);
         }
@@ -1254,68 +1262,68 @@ async function listOwnedProjects(ctx) {
 
 async function listAssignedProjects(ctx) {
   const client = ctx.identity.username
-  const params = {
-    TableName: TASKTABLE,
-    IndexName: "byAssignee",
-    ProjectionExpression: "projectID",
-    KeyConditionExpression: "assignee = :assignee",
-    ExpressionAttributeValues: {
-      ":assignee": client
-    },
-  };
   try {
-    const data = await docClient.query(params).promise();
-    let projects = new Set()
-    for (const item of data.Items) {
-      projects.add(item.projectID)
-    }
-    projects = Array.from(projects)
-    for (const [i, projectID] of projects.entries()) {
-      projects[i] = await getProjectByID({
-        arguments: {
-          projectID
+    const { assignedTasks } = await getUserByUsername({
+      arguments: {
+        username: client
+      }
+    })
+    const assignedProjects = [...new Set(assignedTasks.map(taskPath => taskPath.match(/(.*)\/.*/)[1]))]
+    const params = {
+      RequestItems: {
+        [PROJECTTABLE]: {
+          Keys: assignedProjects.map(project => ({ id: project }))
         }
-      })
+      }
     }
+    const data = assignedProjects.length ? (await docClient.batchGet(params).promise()).Responses[PROJECTTABLE] : []
     return {
-      items: projects
+      items: data
     }
   } catch (err) {
     throw new Error(err);
   }
 }
 
-async function getUsersData (users, cachedUsers = [], isAnonymousAllowed = true) {
-  const nonCachedUsers = [...new Set(users)]
-    .filter(user => !cachedUsers.includes(user))
-  const anonymousList = isAnonymousAllowed ?
-    Object.fromEntries(
-      nonCachedUsers
-      .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "anonymous")
-      .map(user => {
-        const anonymousID = user.match(/anonymous:(.*)/)[1]
-        return [`anonymous:${anonymousID}`, { anonymousName: anonymousID }]
-      })
-    ) : {}
-  const preUsersArray = isAnonymousAllowed ? 
-    nonCachedUsers
-    .filter(user => user.match(/(user|anonymous):(.*)/)[1] === "user")
-    .map(user => ({ username: user.match(/user:(.*)/)[1] })) :
-    nonCachedUsers.map(user => ({ username: user }))
-    
+async function listWatchedProjects(ctx) {
+  const client = ctx.identity.username
+  try {
+    const { watchedTasks } = await getUserByUsername({
+      arguments: {
+        username: client
+      }
+    })
+    const watchedProjects = [...new Set(watchedTasks.map(taskPath => taskPath.match(/(.*)\/.*/)[1]))]
+    const params = {
+      RequestItems: {
+        [PROJECTTABLE]: {
+          Keys: watchedProjects.map(project => ({ id: project }))
+        }
+      }
+    }
+    const data = watchedProjects.length ? (await docClient.batchGet(params).promise()).Responses[PROJECTTABLE] : []
+    return {
+      items: data
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+async function listUsersByUsernames (ctx) {
+  const usernames = ctx.arguments.usernames
   const params = {
     RequestItems: {
       [USERTABLE]: {
-        Keys: preUsersArray
+        Keys: usernames.map(user => ({ username: user }))
       }
     }
   }
   try {
-    const usersArray = preUsersArray.length ? (await docClient.batchGet(params).promise()).Responses[USERTABLE] : []
-    const usersList = isAnonymousAllowed ? 
-      Object.fromEntries(usersArray.map(user => [`user:${user.username}`, user])) :
-      Object.fromEntries(usersArray.map(user => [`${user.username}`, user]))
-    return {...usersList, ...anonymousList}
+    const data = usernames.length ? (await docClient.batchGet(params).promise()).Responses[USERTABLE] : []
+    return {
+      items: data
+    }
   } catch (err) {
     throw new Error(err)
   }
@@ -1335,10 +1343,8 @@ async function listTasksForProject(ctx) {
     };
     try {
       const data = await docClient.query(params).promise();
-      const usersData = await getUsersData(data.Items.map(({ assignees, watchers }) => [...assignees, ...watchers]).flat("2"))
       return {
-        items: data.Items,
-        usersData
+        items: data.Items
       }
     } catch (err) {
       throw new Error(err);
@@ -1354,10 +1360,8 @@ async function listCommentsForTask(ctx) {
   if (await isTaskSharedWithClient(taskID, client)) {
     try {
       const commentsList = await _listCommentsForTask(taskID)
-      const usersData = await getUsersData(commentsList.map(({ owner }) => owner), [], false)
       return {
-        items: commentsList,
-        usersData
+        items: commentsList
       }
     } catch (err) {
       throw new Error(err);

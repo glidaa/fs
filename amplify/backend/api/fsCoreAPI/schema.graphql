@@ -93,10 +93,10 @@ type Mutation {
 	updateProject(input: UpdateProjectInput!): ProjectUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	updateTask(input: UpdateTaskInput!): Task
+	updateTask(input: UpdateTaskInput!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	updateComment(input: UpdateCommentInput!): Comment
+	updateComment(input: UpdateCommentInput!): CommentUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	deleteProjectAndTasks(projectID: ID!): Project
@@ -129,6 +129,9 @@ type Query {
 	getUserByUsername(username: String!): User
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
+	listUsersByUsernames(usernames: [String!]!): UsersList
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_cognito_user_pools
 	getProjectByID(projectID: ID!): Project
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -139,6 +142,10 @@ type Query {
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	listAssignedProjects: ProjectsList
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_iam
+		@aws_cognito_user_pools
+	listWatchedProjects: ProjectsList
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -175,7 +182,7 @@ type Subscription {
 		@aws_subscribe(mutations: ["createTask"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateTaskByProjectID(projectID: ID!): Task
+	onUpdateTaskByProjectID(projectID: ID!): TaskUpdate
 		@aws_subscribe(mutations: ["updateTask", "assignTask", "unassignTask", "addWatcher", "removeWatcher"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -187,7 +194,7 @@ type Subscription {
 		@aws_subscribe(mutations: ["createComment"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateCommentByTaskID(taskID: ID!): Comment
+	onUpdateCommentByTaskID(taskID: ID!): CommentUpdate
 		@aws_subscribe(mutations: ["updateComment"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -296,9 +303,41 @@ type ProjectUpdate
 	doneCount: Int
 	privacy: ProjectPrivacy
 	permissions: Permissions
-	createdAt: AWSDateTime
-	updatedAt: AWSDateTime
-	owner: String
+	updatedAt: AWSDateTime!
+	owner: String!
+}
+
+type TaskUpdate
+	@aws_iam
+	@aws_cognito_user_pools {
+	id: ID!
+	projectID: ID!
+	prevTask: ID
+	nextTask: ID
+	permalink: Int
+	task: String
+	description: String
+	due: AWSTimestamp
+	tags: [String!]
+	status: TaskStatus
+	watchers: [String!]
+	assignees: [String!]
+	updatedAt: AWSDateTime!
+}
+
+type CommentUpdate
+	@aws_iam
+	@aws_cognito_user_pools {
+	id: ID!
+	taskID: ID!
+	content: AWSJSON
+	updatedAt: AWSDateTime!
+}
+
+type UsersList
+	@aws_iam
+	@aws_cognito_user_pools {
+	items: [User!]
 }
 
 type ProjectsList
