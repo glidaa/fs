@@ -767,9 +767,11 @@ async function updateTask(ctx) {
       },
       UpdateExpression: updateExp,
       ExpressionAttributeValues: expAttrVal,
-      ExpressionAttributeNames: expAttrNames,
       ReturnValues: "UPDATED_NEW"
     };
+    if (Object.keys(expAttrNames).length) {
+      taskUpdateParams.ExpressionAttributeNames = expAttrNames
+    }
     try {
       if (updateData.prevTask !== undefined && updateData.nextTask !== undefined) {
         await removeTaskOrder(taskID)
