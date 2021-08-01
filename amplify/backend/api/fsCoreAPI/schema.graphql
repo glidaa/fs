@@ -317,7 +317,7 @@ type ImportedProjectsList
 type TasksList
 	@aws_iam
 	@aws_cognito_user_pools {
-	items: [GetTaskOutput!]
+	items: [Task!]
 }
 
 type CommentsList
