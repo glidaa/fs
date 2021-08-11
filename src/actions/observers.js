@@ -45,9 +45,6 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
   const data = {
     owner: user.data.username
   }
-  const assigneeData = {
-    assignee: user.data.username
-  }
   observers.push(API.graphql(graphqlOperation(subscriptions.onCreateOwnedProject, data)).subscribe({
     next: e => {
       const { projects } = getState()
@@ -107,7 +104,7 @@ export const handleClearProjectsObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
-  const { user, app, projects } = getState()
+  const { app } = getState()
   if (app.selectedProject === projectID) {
     const observers = [];
     observers.push(API.graphql(graphqlOperation(subscriptions.onCreateTaskByProjectId, { projectID })).subscribe({
@@ -123,8 +120,9 @@ export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
     observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateTaskByProjectId, { projectID })).subscribe({
       next: e => {
         const { tasks } = getState()
-        const incoming = e.value.data.onUpdateOwnedTaskByProjectID
+        const incoming = e.value.data.onUpdateTaskByProjectID
         if (Object.keys(tasks).includes(incoming.id)) {
+          delete incoming[getState().app.lockedTaskField]
           dispatch(tasksActions.updateTask(incoming))
         }
       },

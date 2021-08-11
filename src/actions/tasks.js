@@ -196,9 +196,7 @@ export const handleFetchTasks = (projectID) => async (dispatch, getState) => {
       const res = await API.graphql(graphqlOperation(listTasksForProject, { projectID }))
       const items = res.data.listTasksForProject.items
       for (const item of items) {
-        if (item.assignee !== NOT_ASSIGNED) {
-          dispatch(usersActions.handleAddUser(item.assignee))
-        }
+        dispatch(usersActions.handleAddUsers(item.assignees))
       }
       dispatch(fetchTasks(items))
       return getState().tasks

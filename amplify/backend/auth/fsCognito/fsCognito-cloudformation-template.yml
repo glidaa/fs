@@ -103,9 +103,6 @@ Parameters:
   userPoolGroups:
     Type: String
 
-  adminQueries:
-    Type: String
-
   triggers:
     Type: String
 

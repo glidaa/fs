@@ -5,11 +5,12 @@ export default function (state = {}, action) {
     case CREATE_COMMENT:
       return {...state, [action.commentState.id]: action.commentState}
     case UPDATE_COMMENT:
+      const update = Object.fromEntries(Object.entries(action.update).filter(item => item[1]))
       return {
         ...state,
-        [action.update.id]: {
-          ...state[action.update.id],
-          ...action.update
+        [update.id]: {
+          ...state[update.id],
+          ...update
         }}
     case REMOVE_COMMENT:
       const stateClone = {...state}

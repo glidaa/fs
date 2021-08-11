@@ -26,8 +26,9 @@ export default function (state = initProjectsState, action) {
         }
       }
     case UPDATE_PROJECT:
-      const { scope, update } = action
-      if (update.prevProject !== undefined && update.nextProject !== undefined) {
+      const { scope } = action
+      const update = Object.fromEntries(Object.entries(action.update).filter(item => item[1] != null))
+      if (update.prevProject && update.nextProject) {
         stateClone[scope] = removeItemOrder(
           stateClone[scope],
           stateClone[scope][update.id],

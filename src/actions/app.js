@@ -1,18 +1,8 @@
-import { Auth } from "aws-amplify";
 import { AuthState } from '@aws-amplify/ui-components';
 import * as tasksActions from "./tasks"
 import * as observersActions from "./observers"
 import * as commentsActions from "./comments"
-import * as userActions from "./user"
 import {
-  SIGNIN,
-  SIGNUP,
-  MARKASDONE,
-  SIGNOUT,
-  MARKASUNDONE,
-  DESCRIPTION,
-  DUPLICATE,
-  COPY,
   commandIntents,
   supportedCommands
 } from "../constants";
@@ -31,6 +21,7 @@ export const SET_PROJECT_PANEL = "SET_PROJECT_PANEL";
 export const SET_DETAILS_PANEL = "SET_DETAILS_PANEL";
 export const SET_ACTION_SHEET = "SET_ACTION_SHEET";
 export const SET_PROJECT_TITLE = "SET_PROJECT_TITLE";
+export const SET_LOCKED_TASK_FIELD = "SET_LOCKED_TASK_FIELD";
 
 const setProject = (id, scope) => ({
   type: SET_PROJECT,
@@ -63,6 +54,11 @@ const setProjectsPanel = (status) => ({
 const setDetailsPanel = (status) => ({
   type: SET_DETAILS_PANEL,
   status
+});
+
+export const setLockedTaskField = (fieldName) => ({
+  type: SET_LOCKED_TASK_FIELD,
+  fieldName
 });
 
 export const setDropdown = (status) => ({
@@ -137,7 +133,7 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
   if (!id && app.selectedTask) {
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].owner}/${projects[app.selectedProjectScope][app.selectedProject].permalink}`)
+        app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].permalink}`)
       }
     }
     dispatch(setCommand(""))
@@ -151,10 +147,11 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
   } else {
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].owner}/${projects[app.selectedProjectScope][app.selectedProject].permalink}/${tasks[id].permalink}`)
+        app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].permalink}/${tasks[id].permalink}`)
       }
     }
     dispatch(setTask(id))
+    dispatch(setLockedTaskField("task"))
     dispatch(commentsActions.handleFetchComments(id))
     if (user.state === AuthState.SignedIn) {
       dispatch(observersActions.handleSetCommentsObservers(id))

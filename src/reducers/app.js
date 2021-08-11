@@ -1,4 +1,4 @@
-import { SET_PROJECT, SET_TASK, SET_DROPDOWN, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_HISTORY, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE } from "../actions/app"
+import { SET_PROJECT, SET_TASK, SET_DROPDOWN, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_HISTORY, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD } from "../actions/app"
 import { OK } from "../constants"
 
 const initState = {
@@ -16,7 +16,8 @@ const initState = {
   isProjectsPanelOpened: false,
   isDetailsPanelOpened: false,
   isActionSheetOpened: false,
-  isProjectTitleSelected: false
+  isProjectTitleSelected: false,
+  lockedTaskField: null
 }
 
 export default function (state = initState, action) {
@@ -43,6 +44,8 @@ export default function (state = initState, action) {
       return {...state, taskAddingStatus: action.status}
     case SET_HISTORY:
       return {...state, history: action.history}
+      case SET_LOCKED_TASK_FIELD:
+        return {...state, lockedTaskField: action.fieldName}
     case SET_LOADING:
       return {...state, isLoading: action.isLoading}
     default:
