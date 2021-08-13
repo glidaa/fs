@@ -88,7 +88,7 @@ export const handleFetchComments = (taskID) => (dispatch, getState) => {
       .then(e => {
         const result = e.data.listCommentsForTask.items;
         for (const item of result) {
-          dispatch(usersActions.handleAddUser(item.owner))
+          // dispatch(usersActions.handleAddUser(item.owner))
         }
         dispatch(fetchComments(e.data.listCommentsForTask.items))
       })

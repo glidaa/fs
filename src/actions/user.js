@@ -19,7 +19,7 @@ export const handleSetData = (userData) => (dispatch) => {
     const lastName = userData.attributes.family_name
     const username = userData.username
     const name = `${firstName} ${lastName}`
-    dispatch(usersActions.addUser(username, name))
+    // dispatch(usersActions.addUser(username, name))
     dispatch(setData(userData))
   } else {
     dispatch(setData(null))

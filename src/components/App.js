@@ -16,6 +16,7 @@ import Loading from "./Loading";
 import Login from "./Login";
 import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
+import UserSearch from "./UserSearch";
 Amplify.configure(aws_exports);
 PubSub.configure(aws_exports);
 
@@ -139,7 +140,7 @@ const App = (props) => {
               <div className="mainPage">
                 <ProjectsPanel />
                 <TasksPanel />
-                <DetailsPanel
+                <UserSearch
                   readOnly={
                     !Object.keys(projects.owned).includes(app.selectedProject)
                   }

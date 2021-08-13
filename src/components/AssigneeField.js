@@ -28,10 +28,10 @@ const AssigneeField = (props) => {
       }
       for (const item of resultArr) {
         if (!users[item.sub]) {
-          dispatch(usersActions.addUser(
-            item.sub,
-            `${item.given_name} ${item.family_name}`
-          ))
+          // dispatch(usersActions.addUser(
+          //   item.sub,
+          //   `${item.given_name} ${item.family_name}`
+          // ))
         }
       }
       setResult(resultArr)
