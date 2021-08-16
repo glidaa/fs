@@ -88,6 +88,7 @@ const NewTagBtn = styledComponents.button`
   width: 33px;
   height: 33px;
   font-weight: 500;
+  line-height: 0;
   padding: 0;
   cursor: pointer;
   border: 1px solid #006EFF;
@@ -102,7 +103,7 @@ const NoTags = styledComponents.span`
   padding: 5px 10px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.9em;
+  font-size: 14px;
   background-color: #006EFF;
   outline: none;
   width: fit-content;
@@ -116,7 +117,7 @@ const TagItem = styledComponents.span`
   padding: 5px 10px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.9em;
+  font-size: 14px;
   width: fit-content;
   height: fit-content;
   color: #5D6969;
@@ -155,7 +156,7 @@ const TagInput = styledComponents.span`
     border: none;
     width: 60px;
     color: #5D6969;
-    font-size: 0.9em;
+    font-size: 14px;
     font-weight: 600;
     padding: 0;
     background-color: #FFFFFF;

@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react"
+import React, { useRef } from "react"
 import styledComponents from "styled-components";
 import { connect } from "react-redux";
 import useWindowSize from "../utils/useWindowSize";
@@ -7,7 +7,7 @@ import copyTaskCore from "../utils/copyTask"
 import * as appActions from "../actions/app";
 import * as tasksActions from "../actions/tasks";
 import { AuthState } from "@aws-amplify/ui-components";
-import { ReactComponent as CheckmarkIcon } from "../assets/checkmark-circle-outline.svg";
+import { ReactComponent as CheckmarkIcon } from "../assets/checkmark-outline.svg";
 import { ReactComponent as OptionsIcon } from "../assets/ellipsis-vertical.svg";
 import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
 import { ReactComponent as CopyIcon } from "../assets/copy-outline.svg"
@@ -18,7 +18,6 @@ import { Specials } from "./Specials";
 import {
 	suggestionsList,
 	suggestionsDescription,
-	NOT_ASSIGNED,
 	OK,
 	initTaskState,
 } from "../constants";
@@ -37,7 +36,8 @@ const TaskItem = (props) => {
 			selectedProject,
 			taskAddingStatus,
 			isDropdownOpened,
-			isDetailsPanelOpened,
+			isRightPanelOpened,
+			lockedTaskField,
 			command
 		},
 		readOnly,
@@ -49,7 +49,25 @@ const TaskItem = (props) => {
 
 	const { width } = useWindowSize();
 
+	const idleTrigger = useRef(null)
+	
+	const forceIdle = () => {
+		if (lockedTaskField === "task") {
+			dispatch(appActions.setLockedTaskField(null))
+		}
+		clearTimeout(idleTrigger.current)
+	}
+
 	const onChange = (e) => {
+		if (lockedTaskField !== "task") {
+			dispatch(appActions.setLockedTaskField("task"))
+		}
+		clearTimeout(idleTrigger.current)
+		idleTrigger.current = setTimeout(() => {
+			if (lockedTaskField === "task") {
+				dispatch(appActions.setLockedTaskField(null))
+			}
+		}, 5000);
 		dispatch(
 			tasksActions.handleUpdateTask({
 				id: selectedTask,
@@ -62,7 +80,7 @@ const TaskItem = (props) => {
 		dispatch(
 			tasksActions.handleUpdateTask({
 				id: item.id,
-				isDone: !item.isDone,
+				status: item.status === "done" ? "todo" : "done",
 			})
 		);
 	};
@@ -71,6 +89,7 @@ const TaskItem = (props) => {
 		if (e.key === "Enter" && e.shiftKey) {
 			if (Object.keys(projects.owned).includes(selectedProject)) {
 				if (taskAddingStatus === OK) {
+					forceIdle()
 					dispatch(
 						tasksActions.handleCreateTask(
 							initTaskState(
@@ -84,19 +103,22 @@ const TaskItem = (props) => {
 			}
 		} else if (e.key === "ArrowUp") {
 			const prevTask = tasks[selectedTask].prevTask
+			forceIdle()
 			if (!prevTask) {
 				return dispatch(appActions.handleSetProjectTitle(true))
 			} else {
-				dispatch(appActions.handleSetTask(prevTask))
+				return dispatch(appActions.handleSetTask(prevTask))
 			}
 		} else if (e.key === "ArrowDown") {
 			const nextTask = tasks[selectedTask].nextTask
 			if (nextTask) {
+				forceIdle()
 				return dispatch(appActions.handleSetTask(nextTask))
 			}
 		} else if (e.key === "Enter" && command) {
 			return dispatch(appActions.handleApplyCommand())
 		} else if (e.key === "Escape" || e.key === "Enter") {
+			forceIdle()
 			return dispatch(appActions.handleSetTask(null))
 		}
 	};
@@ -124,12 +146,12 @@ const TaskItem = (props) => {
 		}
 	}
 
-	const openDetailsPanel = (item) => {
-		if (!isDetailsPanelOpened) {
+	const openRightPanel = (item) => {
+		if (!isRightPanelOpened) {
 			if (item.id !== selectedTask) {
 				dispatch(appActions.handleSetTask(item.id))
 			}
-			return dispatch(appActions.handleSetDetailsPanel(true))
+			return dispatch(appActions.handleSetRightPanel(true))
 		}
 	}
 
@@ -177,19 +199,19 @@ const TaskItem = (props) => {
 			>
 				<TaskItemLeftPart>
 					<TaskItemLeftLeftPart>
-						{width < 768 ?
-							<TaskItemStatus isDone={item.isDone}>
-								⬤
-							</TaskItemStatus> :
-							<TaskItemStatusToggle onClick={() => toggleStatus(item)}>
+						<TaskItemStatusToggle
+							isDone={item.status === "done"}
+							onClick={() => toggleStatus(item)}
+						>
+							{item.status === "done" && (
 								<CheckmarkIcon
-									stroke={item.isDone ? "#00E676" : "#FF3D00"}
+									stroke="#FFFFFF"
 									strokeWidth="32"
 									width="24"
 									height="24"
-							/>
-							</TaskItemStatusToggle>
-						}
+								/>
+							)}
+						</TaskItemStatusToggle>
 						{selectedTask === item.id ? (
 							<TaskItemInput>
 								<input
@@ -200,6 +222,7 @@ const TaskItem = (props) => {
 									value={tasks[selectedTask].task + command}
 									onKeyUp={onKeyUp}
 									onChange={onChange}
+									onBlur={forceIdle}
 									autoFocus={true}
 									contentEditable={false}
 									readOnly={readOnly}
@@ -210,7 +233,7 @@ const TaskItem = (props) => {
 								className={item.task ? null : "placeholder"}
 								onClick={() => selectItem(item)}
 							>
-								{item.isDone ? <strike>{item.task}</strike> : item.task || "Task…"}
+								{item.status === "done" ? <strike>{item.task}</strike> : item.task || "Task…"}
 							</TaskItemHeader>
 						)}
 					</TaskItemLeftLeftPart>
@@ -245,7 +268,7 @@ const TaskItem = (props) => {
 									color="#006EFF"
 								/>
 							</TaskItemAction>
-							<TaskItemAction onClick={() => openDetailsPanel(item)}>
+							<TaskItemAction onClick={() => openRightPanel(item)}>
 								<DetailsIcon
 									height="18"
 									strokeWidth="34"
@@ -471,10 +494,6 @@ const TaskItemInput = styledComponents.div`
 	}
 `
 
-const TaskItemStatus = styledComponents.span`
-	color: ${({ isDone }) => isDone ? "#00E676" : "#FF3D00"};
-`
-
 const TaskItemDueDate = styledComponents.span`
 	display: flex;
 	justify-content: center;
@@ -530,9 +549,12 @@ const TaskItemStatusToggle = styledComponents.button`
 	align-items: center;
 	justify-content: center;
 	outline: none;
-	border:none;
-	background-color: transparent;
-	padding: 0;
+	border: 1px solid ${({ isDone }) => isDone ? "#006EFF" : "#222222"};
+	background-color: ${({ isDone }) => isDone ? "#006EFF" : "transparent"};
+	border-radius: 100%;
+	width: 20px;
+	height: 20px;
+	padding: 2.5px;
 	cursor: pointer;
 `
 

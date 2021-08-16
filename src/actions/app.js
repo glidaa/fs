@@ -1,4 +1,5 @@
 import { AuthState } from '@aws-amplify/ui-components';
+import { panelPages } from "../constants"
 import * as tasksActions from "./tasks"
 import * as observersActions from "./observers"
 import * as commentsActions from "./comments"
@@ -22,6 +23,8 @@ export const SET_DETAILS_PANEL = "SET_DETAILS_PANEL";
 export const SET_ACTION_SHEET = "SET_ACTION_SHEET";
 export const SET_PROJECT_TITLE = "SET_PROJECT_TITLE";
 export const SET_LOCKED_TASK_FIELD = "SET_LOCKED_TASK_FIELD";
+export const SET_RIGHT_PANEL_PAGE = "SET_RIGHT_PANEL_PAGE";
+export const SET_LEFT_PANEL_PAGE = "SET_LEFT_PANEL_PAGE";
 
 const setProject = (id, scope) => ({
   type: SET_PROJECT,
@@ -46,14 +49,24 @@ const setProjectTitle = (status) => ({
   status
 });
 
-const setProjectsPanel = (status) => ({
+const setLeftPanel = (status) => ({
   type: SET_PROJECT_PANEL,
   status
 });
 
-const setDetailsPanel = (status) => ({
+const setRightPanel = (status) => ({
   type: SET_DETAILS_PANEL,
   status
+});
+
+export const setRightPanelPage = (page) => ({
+  type: SET_RIGHT_PANEL_PAGE,
+  page
+});
+
+export const setLeftPanelPage = (page) => ({
+  type: SET_LEFT_PANEL_PAGE,
+  page
 });
 
 export const setLockedTaskField = (fieldName) => ({
@@ -131,6 +144,9 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
   dispatch(observersActions.handleClearCommentsObservers())
   dispatch(setProjectTitle(false))
   if (!id && app.selectedTask) {
+    if (app.isRightPanelOpened) {
+      dispatch(setRightPanel(false))
+    }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
         app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].permalink}`)
@@ -140,18 +156,21 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
     dispatch(setDropdown(false))
     dispatch(setTask(null))
   } else if (!id) {
-    if (app.isDetailsPanelOpened) {
-      dispatch(setDetailsPanel(false))
+    if (app.isRightPanelOpened) {
+      dispatch(setRightPanel(false))
     }
     dispatch(setTask(null))
   } else {
+    if (app.selectedTask && app.isRightPanelOpened && app.rightPanelPage !== panelPages.DETAILS) {
+      dispatch(setRightPanelPage(panelPages.DETAILS))
+    }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
         app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].permalink}/${tasks[id].permalink}`)
       }
     }
     dispatch(setTask(id))
-    dispatch(setLockedTaskField("task"))
+    dispatch(setLockedTaskField(null))
     dispatch(commentsActions.handleFetchComments(id))
     if (user.state === AuthState.SignedIn) {
       dispatch(observersActions.handleSetCommentsObservers(id))
@@ -166,20 +185,20 @@ export const handleSetProjectTitle = (status) => (dispatch) => {
   return dispatch(setProjectTitle(status))
 }
 
-export const handleSetDetailsPanel = (status) => (dispatch, getState) => {
-  const { app: { isProjectsPanelOpened } } = getState()
-  if (status && isProjectsPanelOpened) {
-    dispatch(setProjectsPanel(false))
+export const handleSetRightPanel = (status) => (dispatch, getState) => {
+  const { app: { isLeftPanelOpened } } = getState()
+  if (status && isLeftPanelOpened) {
+    dispatch(setLeftPanel(false))
   }
-  return dispatch(setDetailsPanel(status))
+  return dispatch(setRightPanel(status))
 }
 
-export const handleSetProjectsPanel = (status) => (dispatch, getState) => {
-  const { app: { isDetailsPanelOpened } } = getState()
-  if (status && isDetailsPanelOpened) {
-    dispatch(setDetailsPanel(false))
+export const handleSetLeftPanel = (status) => (dispatch, getState) => {
+  const { app: { isRightPanelOpened } } = getState()
+  if (status && isRightPanelOpened) {
+    dispatch(setRightPanel(false))
   }
-  return dispatch(setProjectsPanel(status))
+  return dispatch(setLeftPanel(status))
 }
 
 export const handleSetCommand = (command) => (dispatch) => {
@@ -219,7 +238,7 @@ export const handleSetCommand = (command) => (dispatch) => {
 }
 
 export const handleApplyCommand = () => (dispatch, getState) => {
-  const { user, tasks, app } = getState()
+  const { tasks, app } = getState()
   dispatch(setCommand("", null))
   if (app.command) {
     const tokens = /^\/(\w*)\s*(.*)\s*$/m.exec(app.command)

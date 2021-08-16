@@ -1,9 +1,9 @@
 import React from 'react';
 import styledComponents from "styled-components";
 import * as appActions from "../actions/app"
+import { AuthState } from "@aws-amplify/ui-components";
 import { connect } from "react-redux";
-import PasteBtn from "./PasteBtn";
-import useWindowSize from "../utils/useWindowSize";
+import { panelPages } from "../constants"
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as ProjectsIcon } from "../assets/albums-outline.svg"
 import { ReactComponent as NotificationIcon } from "../assets/notifications-outline.svg"
@@ -13,16 +13,20 @@ import { ReactComponent as LoginIcon } from "../assets/log-in-outline.svg"
 const TasksPanel = (props) => {
   const {
     app: {
-      selectedProject,
-      isProjectsPanelOpened,
+      isLeftPanelOpened,
+      leftPanelPage,
       history
     },
-    projects,
+    user,
     dispatch
   } = props;
-  let { width } = useWindowSize();
-  const openProjectsPanel = () => {
-    dispatch(appActions.handleSetProjectsPanel(true))
+  const openLeftPanel = (page) => {
+    if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== page)) {
+      dispatch(appActions.setLeftPanelPage(page))
+      dispatch(appActions.handleSetLeftPanel(true))
+    } else {
+      dispatch(appActions.handleSetLeftPanel(false))
+    }
   }
   const goToLoginPage = () => {
     dispatch(appActions.handleSetTask(null))
@@ -33,7 +37,7 @@ const TasksPanel = (props) => {
       <TopControls>
         <Logo>/.</Logo>
         <Spacer color="transparent" />
-        <ToolbarAction onClick={openProjectsPanel}>
+        <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
           <NotificationIcon
               width="24"
               height="24"
@@ -41,15 +45,15 @@ const TasksPanel = (props) => {
               color="#222222"
           />
         </ToolbarAction>
-        <ToolbarAction onClick={openProjectsPanel}>
+        <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
           <ProjectsIcon
               width="24"
               height="24"
               strokeWidth="32"
-              color={isProjectsPanelOpened ? "#006EFF" : "#222222"}
+              color={isLeftPanelOpened ? "#006EFF" : "#222222"}
           />
         </ToolbarAction>
-        <ToolbarAction onClick={openProjectsPanel}>
+        <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
           <SettingsIcon
               width="24"
               height="24"
@@ -96,7 +100,15 @@ const ToolbarContainer = styledComponents.div`
   width: 40px;
   height: calc(100vh - 60px);
 	@media only screen and (max-width: 768px) {
-		padding: 15px 20px 0 20px;
+    padding: 15px 20px;
+    flex-direction: row;
+    bottom: 10px;
+    top: auto;
+    margin: 0 10px;
+    width: calc(100vw - 40px - 20px);
+    height: 40px;
+    border-radius: 16px;
+    z-index: 999;
 	}
 `;
 
@@ -106,6 +118,9 @@ const TopControls = styledComponents.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+	@media only screen and (max-width: 768px) {
+    flex-direction: row;
+  }
 `;
 
 const BottomControls = styledComponents.div`
@@ -114,6 +129,12 @@ const BottomControls = styledComponents.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+	@media only screen and (max-width: 768px) {
+    flex-direction: row;
+    & > *:not(:last-child) {
+      display: none;
+    }
+  }
 `;
 
 const ToolbarAction = styledComponents.button`
@@ -154,7 +175,6 @@ const UserIndicator = styledComponents(ToolbarAction)`
 `
 
 export default connect((state) => ({
-  tasks: state.tasks,
   app: state.app,
-  projects: state.projects,
+  user: state.user
 }))(TasksPanel);

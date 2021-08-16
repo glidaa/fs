@@ -60,6 +60,14 @@ export const supportedCommands = {
   DELETE: "delete"
 }
 
+export const panelPages = {
+  DETAILS: "DETAILS",
+  PROJECTS: "PROJECTS",
+  NOTIFICATIONS: "NOTIFICATIONS",
+  ASSIGNEE_CHOOSER: "ASSIGNEE_CHOOSER",
+  WATCHER_CHOOSER: "WATCHER_CHOOSER"
+}
+
 export const initProjectState = (prevProject = null, nextProject = null) => {
   const randomWords = rword.generate(2, { capitalize: 'first' })
   return {
@@ -87,5 +95,6 @@ export const initTaskState = (projectID, prevTask = null, nextTask = null) => ({
   description: null,
   due: Date.now(),
   tags: [],
+  assignees: [],
   status: "todo"
 })

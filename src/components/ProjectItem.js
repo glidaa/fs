@@ -167,7 +167,7 @@ const ProjectItemHeader = styledComponents.div`
 const ProjectItemTitle = styledComponents.span`
   color: #FFFFFF;
   font-weight: 600;
-  font-size: 1.4em;
+  font-size: 20px;
   max-width: 197.08px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -175,7 +175,7 @@ const ProjectItemTitle = styledComponents.span`
 `
 
 const ProjectItemPermalink = styledComponents.span`
-  font-size: 0.8em;
+  font-size: 12px;
   color: #FFFFFF;
   font-weight: 500;
   max-width: 197.08px;
@@ -189,7 +189,7 @@ const TasksCount = styledComponents.div`
   flex-direction: row;
   gap: 5px;
   color: #5D6969;
-  font-size: 0.9em;
+  font-size: 14px;
 `
 
 const TasksCountItem = styledComponents.span`
@@ -250,7 +250,7 @@ const ProjectItemPermission = styledComponents.div`
 `
 
 const ProjectItemDate = styledComponents.span`
-  font-size: 0.8em;
+  font-size: 12px;
   color: #FFFFFF;
   font-weight: 500;
   max-width: 100%;

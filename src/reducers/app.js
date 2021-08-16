@@ -1,5 +1,5 @@
-import { SET_PROJECT, SET_TASK, SET_DROPDOWN, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_HISTORY, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD } from "../actions/app"
-import { OK } from "../constants"
+import { SET_PROJECT, SET_TASK, SET_DROPDOWN, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_HISTORY, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE } from "../actions/app"
+import { panelPages, OK } from "../constants"
 
 const initState = {
   selectedProject: null,
@@ -13,11 +13,13 @@ const initState = {
   taskAddingStatus: OK,
   history: null,
   isLoading: true,
-  isProjectsPanelOpened: false,
-  isDetailsPanelOpened: false,
+  isLeftPanelOpened: false,
+  isRightPanelOpened: false,
   isActionSheetOpened: false,
   isProjectTitleSelected: false,
-  lockedTaskField: null
+  lockedTaskField: null,
+  rightPanelPage: panelPages.DETAILS,
+  leftPanelPage: panelPages.PROJECTS
 }
 
 export default function (state = initState, action) {
@@ -31,9 +33,9 @@ export default function (state = initState, action) {
     case SET_DROPDOWN:
       return {...state, isDropdownOpened: action.status}
     case SET_PROJECT_PANEL:
-      return {...state, isProjectsPanelOpened: action.status}
+      return {...state, isLeftPanelOpened: action.status}
     case SET_DETAILS_PANEL:
-      return {...state, isDetailsPanelOpened: action.status}
+      return {...state, isRightPanelOpened: action.status}
     case SET_ACTION_SHEET:
       return {...state, isActionSheetOpened: action.status}
     case SET_PROJECT_TITLE:
@@ -44,8 +46,12 @@ export default function (state = initState, action) {
       return {...state, taskAddingStatus: action.status}
     case SET_HISTORY:
       return {...state, history: action.history}
-      case SET_LOCKED_TASK_FIELD:
-        return {...state, lockedTaskField: action.fieldName}
+    case SET_LOCKED_TASK_FIELD:
+      return {...state, lockedTaskField: action.fieldName}
+    case SET_RIGHT_PANEL_PAGE:
+      return {...state, rightPanelPage: action.page}
+    case SET_LEFT_PANEL_PAGE:
+      return {...state, leftPanelPage: action.page}
     case SET_LOADING:
       return {...state, isLoading: action.isLoading}
     default:

@@ -109,8 +109,8 @@ const ProjectTitleHeader = styledComponents.span`
 		color: #D3D3D3;
 	}
 	@media only screen and (max-width: 768px) {
-		padding: 8px 20px;
-		font-size: 1.4em;
+		padding: 15px 20px 15px 20px;
+		font-size: 22px;
 	}
 `
 
@@ -133,10 +133,10 @@ const ProjectTitleInput = styledComponents.div`
 		}
 	}
 	@media only screen and (max-width: 768px) {
-		padding: 8px 20px;
+		padding: 15px 20px 15px 20px;
 		width: calc(100% - 40px);
 		& > input {
-			font-size: 1.4em;
+			font-size: 22px;
 		}
 	}
 `

@@ -9,14 +9,12 @@ import * as appActions from "../actions/app";
 import * as userActions from "../actions/user";
 import aws_exports from "../aws-exports";
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
-import DetailsPanel from "./DetailsPanel";
 import TasksPanel from "./TasksPanel";
-import ProjectsPanel from "./ProjectsPanel"
 import Loading from "./Loading";
 import Login from "./Login";
 import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
-import UserSearch from "./UserSearch";
+import SidePanel from "./SidePanel";
 Amplify.configure(aws_exports);
 PubSub.configure(aws_exports);
 
@@ -138,13 +136,9 @@ const App = (props) => {
               <ActionSheet />
               <Toolbar />
               <div className="mainPage">
-                <ProjectsPanel />
+                <SidePanel isRight={false} />
                 <TasksPanel />
-                <UserSearch
-                  readOnly={
-                    !Object.keys(projects.owned).includes(app.selectedProject)
-                  }
-                />
+                <SidePanel isRight={true} />
               </div>
               </>
             )}

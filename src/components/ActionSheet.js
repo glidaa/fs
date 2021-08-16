@@ -20,7 +20,7 @@ const ActionSheet = (props) => {
 			selectedTask,
 			selectedProject,
 			isActionSheetOpened,
-			isDetailsPanelOpened
+			isRightPanelOpened
 		},
 		tasks,
 		dispatch
@@ -107,10 +107,10 @@ const ActionSheet = (props) => {
 		)
 	}
 
-	const openDetailsPanel = () => {
+	const openRightPanel = () => {
 		closeActionSheet()
-		if (!isDetailsPanelOpened) {
-			return dispatch(appActions.handleSetDetailsPanel(true))
+		if (!isRightPanelOpened) {
+			return dispatch(appActions.handleSetRightPanel(true))
 		}
 	}
 
@@ -121,8 +121,8 @@ const ActionSheet = (props) => {
 				<Actions>
 					<Action onClick={copyTask}>
 						<CopyIcon
-							width="24"
-							height="24"
+							width={24}
+							height={24}
 							color="#222222"
 							strokeWidth="32"
 						/>
@@ -130,8 +130,8 @@ const ActionSheet = (props) => {
 					</Action>
 					<Action onClick={duplicateTask}>
 						<DuplicateIcon
-							width="24"
-							height="24"
+							width={24}
+							height={24}
 							color="#222222"
 							strokeWidth="32"
 						/>
@@ -139,8 +139,8 @@ const ActionSheet = (props) => {
 					</Action>
 					<Action onClick={shareTask}>
 						<ShareIcon
-							width="24"
-							height="24"
+							width={24}
+							height={24}
 							color="#222222"
 							strokeWidth="32"
 						/>
@@ -148,8 +148,8 @@ const ActionSheet = (props) => {
 					</Action>
 					<Action onClick={removeTask}>
 						<RemoveIcon
-							width="24"
-							height="24"
+							width={24}
+							height={24}
 							color="#222222"
 							strokeWidth="32"
 						/>
@@ -157,14 +157,14 @@ const ActionSheet = (props) => {
 					</Action>
 					<Action onClick={removeTask}>
 						<CheckmarkIcon
-							width="24"
-							height="24"
+							width={24}
+							height={24}
 							stroke="#222222"
 							strokeWidth="32"
 						/>
 						<span>Mark As Done</span>
 					</Action>
-					<Action onClick={openDetailsPanel}>
+					<Action onClick={openRightPanel}>
 						<DetailsIcon
 							width="24"
 							height="24"
@@ -188,7 +188,7 @@ const ActionSheetShell = styledComponents(animated.div)`
 	width: 100vw;
 	height: 100vh;
 	background-color: #000000AA;
-	z-index: 999;
+	z-index: 99999;
 `
 
 const ActionSheetContainer = styledComponents(animated.div)`
@@ -226,7 +226,7 @@ const Action = styledComponents.button`
 	align-items: center;
 	border-radius: 10px;
 	gap: 5px;
-	font-size: 15px;
+	font-size: 14px;
 	color: #222222;
 	font-weight: bold;
 	padding: 15px;

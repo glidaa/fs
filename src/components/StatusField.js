@@ -53,7 +53,7 @@ const StatusSelection = styledComponents.button`
     border: 2px solid transparent;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 0.9em;
+    font-size: 14px;
     outline: none;
     cursor: pointer;
 		transition: color 0.2s, border-color 0.2s;

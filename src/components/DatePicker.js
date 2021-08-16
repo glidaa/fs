@@ -46,18 +46,19 @@ export const DatePicker = (props) => {
 };
 
 const DatePickerContainer = styledComponents.div`
-  width: 120px;
+  width: calc(100% - 20px);
   height: 28px;
   & > input {
-    border: 0.5px solid transparent;
-    border-radius: 4px;
+    padding: 5px 10px;
+    border: 1px solid #C0C0C0;
+    border-radius: 8px;
     width: 100%;
     color: transparent;
     text-shadow: 0 0 0 #222222;
     cursor: pointer;
     transition: border 0.3s, box-shadow 0.3s;
-    font-size: 0.9em;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 400;
     &::placeholder {
       color: #C0C0C0;
     }

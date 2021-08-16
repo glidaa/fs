@@ -20,14 +20,14 @@ import {
 } from '@dnd-kit/modifiers';
 import {CSS} from '@dnd-kit/utilities';
 import { connect } from "react-redux";
-import * as projectsActions from "../actions/projects"
-import * as appActions from "../actions/app"
-import ProjectItem from "./ProjectItem"
+import * as projectsActions from "../../actions/projects"
+import * as appActions from "../../actions/app"
+import ProjectItem from "../ProjectItem"
 import { AuthState } from '@aws-amplify/ui-components';
-import { initProjectState, OK, PENDING } from "../constants"
-import parseLinkedList from "../utils/parseLinkedList"
-import { ReactComponent as BackArrowIcon } from "../assets/chevron-back-outline.svg";
-import { ReactComponent as AddIcon } from "../assets/add-outline.svg";
+import { initProjectState, OK, PENDING } from "../../constants"
+import parseLinkedList from "../../utils/parseLinkedList"
+import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
+import { ReactComponent as AddIcon } from "../../assets/add-outline.svg";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 
@@ -128,12 +128,11 @@ const SortableItem = (props) => {
   );
 }
 
-const ProjectsPanel = (props) => {
+const Projects = (props) => {
 	const {
     user,
     app: {
-      projectAddingStatus,
-      isProjectsPanelOpened
+      projectAddingStatus
     },
     projects,
     dispatch
@@ -171,33 +170,33 @@ const ProjectsPanel = (props) => {
     )
   }
   const closePanel = () => {
-    dispatch(appActions.handleSetProjectsPanel(false))
+    dispatch(appActions.handleSetLeftPanel(false))
   }
 	return (
-    <ProjectsPanelShell open={isProjectsPanelOpened}>
-      <ProjectsPanelContainer>
-        <ProjectsPanelToolbar>
-          <ProjectsPanelToolbarAction onClick={closePanel}>
+    <>
+      <PanelPageContainer>
+        <PanelPageToolbar>
+          <PanelPageToolbarAction onClick={closePanel}>
             <BackArrowIcon
-                width="24"
-                height="24"
-                strokeWidth="32"
+                width={24}
+                height={24}
+                strokeWidth={32}
                 color="#006EFF"
             />
-          </ProjectsPanelToolbarAction>
-          <ProjectsPanelTitle>Projects</ProjectsPanelTitle>
-          <ProjectsPanelToolbarAction
+          </PanelPageToolbarAction>
+          <PanelPageTitle>Projects</PanelPageTitle>
+          <PanelPageToolbarAction
             onClick={createNewProject}
             isInactive={projectAddingStatus === PENDING}
           >
             <AddIcon
-                width="24"
-                height="24"
-                strokeWidth="32"
+                width={24}
+                height={24}
+                strokeWidth={32}
                 color="#006EFF"
             />
-          </ProjectsPanelToolbarAction>
-        </ProjectsPanelToolbar>
+          </PanelPageToolbarAction>
+        </PanelPageToolbar>
         {user.state === AuthState.SignedIn && <PanelTabs>
           <div>
             <span
@@ -240,41 +239,19 @@ const ProjectsPanel = (props) => {
             </Sortable>
           )}
         </ProjectItems>
-      </ProjectsPanelContainer>
-    </ProjectsPanelShell>
+      </PanelPageContainer>
+    </>
 	);  
 }
 
-const ProjectsPanelShell = styledComponents.div`
-	background-color: #FFFFFF;
-  border-radius: 0 35px 35px 0;
-  flex: 1;
-	height: 100vh;
-  transition: all 0.2s ease;
-  transform: ${({ open }) => (open ? "translateX(0)" : "translateX(-100%)")};
-  max-width: ${({ open }) => (open ? "100vw" : "0px")};
-  overflow: ${({ open }) => (open ? "auto" : "hidden")};
-  @media only screen and (max-width: 768px) {
-    position: fixed;
-    width: 100vw;
-    max-width: 100vw;
-  }
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-   -khtml-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none; 
-          user-select: none;
-`;
-
-const ProjectsPanelContainer = styledComponents.div`
+const PanelPageContainer = styledComponents.div`
   display: flex;
   flex-direction: column;
   gap: 25px;
   height: 100vh;
 `;
 
-const ProjectsPanelToolbar = styledComponents.div`
+const PanelPageToolbar = styledComponents.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -283,9 +260,9 @@ const ProjectsPanelToolbar = styledComponents.div`
   padding-top: 25px;
 `
 
-const ProjectsPanelTitle = styledComponents.span`
+const PanelPageTitle = styledComponents.span`
   color: #000000;
-  font-size: 1.5em;
+  font-size: 18px;
   font-weight: 600;
 `
 
@@ -335,7 +312,7 @@ const ProjectItems = styledComponents(SimpleBar)`
   }
 `;
 
-const ProjectsPanelToolbarAction = styledComponents.button`
+const PanelPageToolbarAction = styledComponents.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -351,4 +328,4 @@ export default connect((state) => ({
 	user: state.user,
 	app: state.app,
 	projects: state.projects
-}))(ProjectsPanel);
+}))(Projects);
