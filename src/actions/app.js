@@ -205,35 +205,38 @@ export const handleSetCommand = (command) => (dispatch) => {
   if (command) {
     const tokens = /^\/(\w*)\s*(.*)\s*$/m.exec(command)
     dispatch(setDropdown(false))
-    switch (tokens[1]) {
-      case supportedCommands.ASSIGN:
-        dispatch(setCommand(command, commandIntents.ASSIGN))
+    switch (tokens[1].toUpperCase()) {
+      case "ASSIGN":
+        dispatch(setCommand(command, "ASSIGN"))
         break
-      case supportedCommands.STATUS:
-        dispatch(setCommand(command, commandIntents.STATUS))
+      case "STATUS":
+        dispatch(setCommand(command, "STATUS"))
         break
-      case supportedCommands.DESCRIPTION:
-        dispatch(setCommand(command, commandIntents.DESCRIPTION))
+      case "DESCRIPTION":
+        dispatch(setCommand(command, "DESCRIPTION"))
         break
-      case supportedCommands.DUE:
-        dispatch(setCommand(command, commandIntents.DUE))
+      case "DUE":
+        dispatch(setCommand(command, "DUE"))
         break
-      case supportedCommands.TAGS:
-        dispatch(setCommand(command, commandIntents.TAGS))
+      case "TAGS":
+        dispatch(setCommand(command, "TAGS"))
         break
-      case supportedCommands.DUPLICATE:
-        dispatch(setCommand(command, commandIntents.DUPLICATE))
+      case "DUPLICATE":
+        dispatch(setCommand(command, "DUPLICATE"))
         break
-      case supportedCommands.COPY:
-        dispatch(setCommand(command, commandIntents.COPY))
+      case "COPY":
+        dispatch(setCommand(command, "COPY"))
         break
-      case supportedCommands.DELETE:
-        dispatch(setCommand(command, commandIntents.DELETE))
+      case "DELETE":
+        dispatch(setCommand(command, "DELETE"))
         break
       default:
         dispatch(setDropdown(true))
-        return dispatch(setCommand(`/${tokens[1]}`, commandIntents.UNKNOWN))
+        return dispatch(setCommand(`/${tokens[1]}`, "UNKNOWN"))
     }
+  } else {
+    dispatch(setDropdown(false))
+    dispatch(setCommand("", null))
   }
 }
 
@@ -244,23 +247,23 @@ export const handleApplyCommand = () => (dispatch, getState) => {
     const tokens = /^\/(\w*)\s*(.*)\s*$/m.exec(app.command)
     dispatch(setDropdown(false))
     switch (tokens[1]) {
-      case supportedCommands.STATUS:
+      case "STATUS":
         dispatch(tasksActions.handleUpdateTask({
           id: app.selectedTask,
           status: tokens[2]
         }))
         break
-      case supportedCommands.DESCRIPTION:
+      case "DESCRIPTION":
         return dispatch(tasksActions.handleUpdateTask({
           id: app.selectedTask,
           description: tokens[2].trim()
         }))
-      case supportedCommands.DUE:
+      case "DUE":
         return dispatch(tasksActions.handleUpdateTask({
           id: app.selectedTask,
           due: (new Date(tokens[2])).getTime()
         }))
-      case supportedCommands.TAGS:
+      case "TAGS":
         return dispatch(tasksActions.handleUpdateTask({
           id: app.selectedTask,
           tag: [
@@ -268,7 +271,7 @@ export const handleApplyCommand = () => (dispatch, getState) => {
             ...tokens[2].split(",").map(x => x.trim())
           ]
         }))
-      case supportedCommands.DUPLICATE:
+      case "DUPLICATE":
         dispatch(tasksActions.handleCreateTask(
           copyTask(
             tasks[app.selectedTask],
@@ -281,7 +284,7 @@ export const handleApplyCommand = () => (dispatch, getState) => {
           )
         ))
         return dispatch(handleSetTask(null))
-      case supportedCommands.COPY:
+      case "COPY":
         window.localStorage.setItem("tasksClipboard",
           "COPIEDTASKSTART=>" +
           JSON.stringify(tasks[app.selectedTask]) +

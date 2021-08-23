@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useRef, useMemo } from "react"
 import styledComponents from "styled-components";
 import { connect } from "react-redux";
 import useWindowSize from "../utils/useWindowSize";
@@ -6,7 +6,6 @@ import formatDate from "../utils/formatDate"
 import copyTaskCore from "../utils/copyTask"
 import * as appActions from "../actions/app";
 import * as tasksActions from "../actions/tasks";
-import { AuthState } from "@aws-amplify/ui-components";
 import { ReactComponent as CheckmarkIcon } from "../assets/checkmark-outline.svg";
 import { ReactComponent as OptionsIcon } from "../assets/ellipsis-vertical.svg";
 import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
@@ -14,10 +13,8 @@ import { ReactComponent as CopyIcon } from "../assets/copy-outline.svg"
 import { ReactComponent as DuplicateIcon } from "../assets/duplicate-outline.svg"
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
-import { Specials } from "./Specials";
+import Specials from "./Specials";
 import {
-	suggestionsList,
-	suggestionsDescription,
 	OK,
 	initTaskState,
 } from "../constants";
@@ -49,7 +46,29 @@ const TaskItem = (props) => {
 
 	const { width } = useWindowSize();
 
+	const inputRef = useRef(null)
 	const idleTrigger = useRef(null)
+
+	const getSpecialsPos = (inputRef) => {
+		if (inputRef.current) {
+			const inputPos = inputRef.current.getBoundingClientRect()
+			const cursorPos = 
+				inputRef.current.selectionStart * 9.6 < inputPos.left - 40 ?
+				inputPos.left - 40 :
+				inputRef.current.selectionStart * 9.6
+			return {
+				top: inputPos.top + 40,
+				left: inputPos.left - 160 + cursorPos
+			}
+		} else {
+			return {
+				top: 0,
+				left: 0
+			}
+		}
+	}
+
+	const specialsPos = useMemo(() => getSpecialsPos(inputRef), [tasks])
 	
 	const forceIdle = () => {
 		if (lockedTaskField === "task") {
@@ -216,7 +235,7 @@ const TaskItem = (props) => {
 							<TaskItemInput>
 								<input
 									type="text"
-									data-testid="updateTaskField"
+									ref={inputRef}
 									className="task"
 									placeholder="Task…"
 									value={tasks[selectedTask].task + command}
@@ -328,20 +347,10 @@ const TaskItem = (props) => {
 					/>
 				</TaskItemRightPart>
 			</TaskItemCore>
-			{(isDropdownOpened && selectedTask === item.id) && (
+			{(command && selectedTask === item.id) && (
 				<Specials
 					onChooseSuggestion={onChooseSuggestion}
-					suggestionsList={suggestionsList}
-					suggestionsCondition={[
-						user.state !== AuthState.SignedIn,
-						user.state !== AuthState.SignedIn,
-						true,
-						true,
-						true,
-						true,
-						user.state === AuthState.SignedIn,
-					]}
-					suggestionsDescription={suggestionsDescription}
+					posInfo={specialsPos}
 				/>
 			)}
 		</TaskItemShell>

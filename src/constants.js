@@ -5,36 +5,6 @@ export const PENDING = "PENDING"
 export const OK = "OK"
 export const NOT_ASSIGNED = "NOT_ASSIGNED"
 
-export const SIGNIN = '/s';
-export const SIGNUP = '/l';
-export const MARKASDONE = '/x';
-export const MARKASUNDONE = '/u';
-export const COPY = '/c';
-export const DUPLICATE = '/b';
-export const DESCRIPTION = '/d';
-export const SIGNOUT = '/q';
-export const suggestionsList =  [
-  's',
-  'l',
-  'x',
-  'u',
-  'c',
-  'b',
-  'd',
-  'q'
-]
-
-export const suggestionsDescription = [
-  'Login to save your tasks',
-  'Create a new account',
-  'Mark this task as done',
-  'Mark this task as undone',
-  'Copy this task',
-  'Duplicate this task',
-  'Add a description to this task',
-  'Logout'
-]
-
 export const commandIntents = {
   ASSIGN: "ASSIGN",
   STATUS: "STATUS",
@@ -49,15 +19,42 @@ export const commandIntents = {
 }
 
 export const supportedCommands = {
-  ASSIGN: "assign",
-  STATUS: "status",
-  DESCRIPTION: "description",
-  DUE: "due",
-  TAGS: "tags",
-  COPY: "copt",
-  DUPLICATE: "duplicate",
-  REORDER: "reorder",
-  DELETE: "delete"
+  ASSIGN: {
+    description: "Search for a user to assign him",
+    alias: []
+  },
+  STATUS: {
+    description: "Change status of the task",
+    alias: []
+  },
+  DESCRIPTION: {
+    description: "Add a long description to the task",
+    alias: []
+  },
+  DUE: {
+    description: "Set a deadline date for the task",
+    alias: []
+  },
+  TAGS: {
+    description: "Add comma separated tags",
+    alias: []
+  },
+  COPY: {
+    description: "Copy this task to the clipboard",
+    alias: []
+  },
+  DUPLICATE: {
+    description: "Create a clone for the selected task",
+    alias: []
+  },
+  REORDER: {
+    description: "Enter a new order for the task",
+    alias: []
+  },
+  DELETE: {
+    description: "Delete this task permanently",
+    alias: []
+  }
 }
 
 export const panelPages = {
