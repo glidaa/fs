@@ -5,6 +5,7 @@ import * as projectsActions from "../actions/projects"
 import { initProjectState, OK, PENDING } from "../constants"
 import parseLinkedList from "../utils/parseLinkedList"
 import tasksIllustartion from "../assets/undraw_Add_notes_re_ln36.svg"
+import filterObj from '../utils/filterObj';
 
 const ProjectNotSelected = (props) => {
   const { app: { projectAddingStatus }, projects, dispatch } = props
@@ -14,7 +15,7 @@ const ProjectNotSelected = (props) => {
       projectsActions.handleCreateProject(
         initProjectState(
           parseLinkedList(
-            projects["owned"],
+            filterObj(projects, x => x.isOwned),
             "prevProject",
             "nextProject"
           ).reverse()[0]?.id

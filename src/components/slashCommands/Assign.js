@@ -78,31 +78,31 @@ const Assign = (props) => {
 
   return (
     <>
-        {commandParam && <AssigneeSuggestion
-            key="::anonymous::"
-            onClick={handleChooseAnonymousUser}
+      {commandParam && <AssigneeSuggestion
+        key="::anonymous::"
+        onClick={handleChooseAnonymousUser}
+      >
+        <LetterAvatar>{commandParam[0].toUpperCase()}</LetterAvatar>
+        <div>
+          <span>{commandParam}</span>
+          <span>Anonymous Assignee</span>
+        </div>
+      </AssigneeSuggestion>}
+      {results.map(x => (
+        <AssigneeSuggestion
+          key={x.username}
+          onClick={() => handleChooseRegisteredUser(x.username)}
         >
-            <LetterAvatar>{commandParam[0].toUpperCase()}</LetterAvatar>
-            <div>
-            <span>{commandParam}</span>
-            <span>Anonymous Assignee</span>
-            </div>
-        </AssigneeSuggestion>}
-        {results.map(x => (
-            <AssigneeSuggestion
-            key={x.username}
-            onClick={() => handleChooseRegisteredUser(x.username)}
-            >
-            {x.avatar ?
-                <ImageAvatar src={x.avatar} /> :
-                <LetterAvatar>{(x.firstName[0] + x.lastName[0]).toUpperCase()}</LetterAvatar>
-            }
-            <div>
-                <span>{`${x.firstName} ${x.lastName}`}</span>
-                <span>{x.email}</span>
-            </div>
-            </AssigneeSuggestion>
-        ))}
+          {x.avatar ?
+            <ImageAvatar src={x.avatar} /> :
+            <LetterAvatar>{(x.firstName[0] + x.lastName[0]).toUpperCase()}</LetterAvatar>
+          }
+          <div>
+            <span>{`${x.firstName} ${x.lastName}`}</span>
+            <span>{x.email}</span>
+          </div>
+        </AssigneeSuggestion>
+      ))}
     </>
   );
 };

@@ -1,20 +1,96 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import styledComponents from "styled-components"
+import * as tasksActions from "../../actions/tasks"
+import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
 
 const Status = (props) => {
   const {
-    commandParam
+    commandParam,
+    app: {
+      selectedTask
+    },
+    dispatch
   } = props
+
+  const supportedStatus = [["Todo", "#FF1744"], ["Started", "#FF9100"], ["Finished", "#00E676"]]
+
+  const getSuggestedStatus = (commandParam) => {
+    return supportedStatus.filter(x => new RegExp(`^${commandParam || ".*"}`, "i").test(x[0]))
+  }
+
+  const suggestedStatus = useMemo(() => getSuggestedStatus(commandParam), [commandParam])
+
+  const [selection, setSelection] = useState(0)
+  const nonUpdatedSelection = useRef(selection)
+  const nonUpdatedSuggestedStatus = useRef(suggestedStatus)
+
+  const chooseStatus = (selectedStatus) => {
+    switch(selectedStatus) {
+      case "TODO":
+        dispatch(appActions.setCommand(""))
+        return dispatch(tasksActions.handleUpdateTask({
+          id: selectedTask,
+          status: "todo"
+        }))
+      case "STARTED":
+        dispatch(appActions.setCommand(""))
+        return dispatch(tasksActions.handleUpdateTask({
+          id: selectedTask,
+          status: "pending"
+        }))
+      case "FINISHED":
+        dispatch(appActions.setCommand(""))
+        return dispatch(tasksActions.handleUpdateTask({
+          id: selectedTask,
+          status: "done"
+        }))
+      default:
+        return 0
+    }
+  }
+
+  useEffect(() => {
+    const handleKeyUp = (e) => {
+      const selection = nonUpdatedSelection.current
+      const suggestedStatus = nonUpdatedSuggestedStatus.current
+      if (e.key === "Enter") {
+        chooseStatus(suggestedStatus[selection][0].toUpperCase()) 
+      } else if (e.key === "ArrowUp") {
+        if (selection > 0) {
+          setSelection(selection - 1)
+        }
+      } else if (e.key === "ArrowDown") {
+        if (selection < suggestedStatus.length - 1) {
+          setSelection(selection + 1)
+        }
+      }
+    }
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  }, [])
+
+  useEffect(() => {
+    nonUpdatedSelection.current = selection
+    nonUpdatedSuggestedStatus.current = suggestedStatus
+  }, [selection])
+
+  useEffect(() => {
+    setSelection(0)
+  }, [commandParam])
 
   return (
     <>
-      {[["Todo", "#FF1744"], ["Started", "#FF9100"], ["Finished", "#00E676"]].filter(x => new RegExp(`^${commandParam || ".*"}`, "i").test(x[0])).map(x => (
-        <StatusSuggestion key={x} onClick={() => props.onChooseSuggestion('/' + x)}>
-            <div>
-              <span style={{ color: x[1], marginRight: 10 }}>⬤</span>
-              <span>{x[0]}</span>
-            </div>
+      {suggestedStatus.map((x, i) => (
+        <StatusSuggestion
+          key={x}
+          isSelected={selection === i}
+          onMouseEnter={() => setSelection(i)}
+        >
+          <div>
+            <span style={{ color: x[1], marginRight: 10 }}>⬤</span>
+            <span>{x[0]}</span>
+          </div>
         </StatusSuggestion>
       ))}
     </>
@@ -26,6 +102,7 @@ const StatusSuggestion = styledComponents.div`
   flex-direction: row;
   align-items: center;
   gap: 10px;
+  background-color: ${({ isSelected }) => isSelected ? "#F5F5F5" : "transparent"};
   padding: 10px 20px;
   transition: background-color 0.2s;
   cursor: pointer;
@@ -45,9 +122,6 @@ const StatusSuggestion = styledComponents.div`
         text-transform: capitalize;
       }
     }
-  }
-  &:hover {
-    background-color: #F5F5F5;
   }
 `
 

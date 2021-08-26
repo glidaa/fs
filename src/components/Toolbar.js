@@ -20,6 +20,7 @@ const TasksPanel = (props) => {
     user,
     dispatch
   } = props;
+  console.log(user)
   const openLeftPanel = (page) => {
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== page)) {
       dispatch(appActions.setLeftPanelPage(page))
@@ -74,14 +75,22 @@ const TasksPanel = (props) => {
           }}
         />
         <Spacer color="#222222" />
-        <UserIndicator onClick={goToLoginPage}>
-          <LoginIcon
-              width="24"
-              height="24"
-              strokeWidth="32"
-              color="#FFFFFF"
-          />
-        </UserIndicator>
+        
+          {user.state === AuthState.SignedIn ? (
+            <LetterAvatar onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
+              {user.data.attributes.given_name[0].toUpperCase() + 
+              user.data.attributes.family_name[0].toUpperCase()}
+            </LetterAvatar>
+          ) : (
+            <UserIndicator onClick={goToLoginPage}>
+              <LoginIcon
+                width="24"
+                height="24"
+                strokeWidth="32"
+                color="#FFFFFF"
+              />
+            </UserIndicator>
+          )}
       </BottomControls>
     </ToolbarContainer>
   );
@@ -172,6 +181,18 @@ const UserIndicator = styledComponents(ToolbarAction)`
   background-color: #006EFF;
   border-radius: 8px;
   padding: 10px;
+`
+
+const LetterAvatar = styledComponents(ToolbarAction)`
+  border-radius: 8px;
+  color: #006EFF;
+  background-color: #CCE2FF;
+  line-height: 0;
+  font-size: 14px;
+  min-width: 42px;
+  min-height: 42px;
+  width: 42px;
+  height: 42px;
 `
 
 export default connect((state) => ({

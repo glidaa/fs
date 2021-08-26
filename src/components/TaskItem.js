@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react"
+import React, { useRef, useMemo, useEffect } from "react"
 import styledComponents from "styled-components";
 import { connect } from "react-redux";
 import useWindowSize from "../utils/useWindowSize";
@@ -23,16 +23,13 @@ import AvatarArray from "./AvatarArray";
 const TaskItem = (props) => {
 
 	const {
-		users,
 		item,
-		user,
 		tasks,
 		projects,
 		app: {
 			selectedTask,
 			selectedProject,
 			taskAddingStatus,
-			isDropdownOpened,
 			isRightPanelOpened,
 			lockedTaskField,
 			command
@@ -95,6 +92,8 @@ const TaskItem = (props) => {
 		);
 	};
 
+	useEffect(() => () => forceIdle(), [])
+
 	const toggleStatus = (item) => {
 		dispatch(
 			tasksActions.handleUpdateTask({
@@ -104,9 +103,9 @@ const TaskItem = (props) => {
 		);
 	};
 
-	const onKeyUp = (e) => {
-		if (e.key === "Enter" && e.shiftKey) {
-			if (Object.keys(projects.owned).includes(selectedProject)) {
+	const handleKeyUp = (e) => {
+		if (!command) {
+			if (e.key === "Enter" && e.shiftKey) {
 				if (taskAddingStatus === OK) {
 					forceIdle()
 					dispatch(
@@ -119,28 +118,32 @@ const TaskItem = (props) => {
 						)
 					);
 				}
-			}
-		} else if (e.key === "ArrowUp") {
-			const prevTask = tasks[selectedTask].prevTask
-			forceIdle()
-			if (!prevTask) {
-				return dispatch(appActions.handleSetProjectTitle(true))
-			} else {
-				return dispatch(appActions.handleSetTask(prevTask))
-			}
-		} else if (e.key === "ArrowDown") {
-			const nextTask = tasks[selectedTask].nextTask
-			if (nextTask) {
+			} else if (e.key === "ArrowUp") {
+				const prevTask = tasks[selectedTask].prevTask
 				forceIdle()
-				return dispatch(appActions.handleSetTask(nextTask))
+				if (!prevTask) {
+					return dispatch(appActions.handleSetProjectTitle(true))
+				} else {
+					return dispatch(appActions.handleSetTask(prevTask))
+				}
+			} else if (e.key === "ArrowDown") {
+				const nextTask = tasks[selectedTask].nextTask
+				if (nextTask) {
+					forceIdle()
+					return dispatch(appActions.handleSetTask(nextTask))
+				}
+			} else if (e.key === "Escape" || e.key === "Enter") {
+				forceIdle()
+				return dispatch(appActions.handleSetTask(null))
 			}
-		} else if (e.key === "Enter" && command) {
-			return dispatch(appActions.handleApplyCommand())
-		} else if (e.key === "Escape" || e.key === "Enter") {
-			forceIdle()
-			return dispatch(appActions.handleSetTask(null))
 		}
 	};
+
+	const handleKeyDown = (e) => {
+		if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "Enter") {
+			e.preventDefault()
+		}
+	}
 
 	const onChooseSuggestion = (suggestion) =>
 		dispatch(
@@ -239,7 +242,8 @@ const TaskItem = (props) => {
 									className="task"
 									placeholder="Task…"
 									value={tasks[selectedTask].task + command}
-									onKeyUp={onKeyUp}
+									onKeyUp={handleKeyUp}
+									onKeyDown={handleKeyDown}
 									onChange={onChange}
 									onBlur={forceIdle}
 									autoFocus={true}
@@ -563,6 +567,8 @@ const TaskItemStatusToggle = styledComponents.button`
 	border-radius: 100%;
 	width: 20px;
 	height: 20px;
+	min-height: 20px;
+	min-width: 20px;
 	padding: 2.5px;
 	cursor: pointer;
 `

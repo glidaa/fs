@@ -3,12 +3,6 @@ import { panelPages } from "../constants"
 import * as tasksActions from "./tasks"
 import * as observersActions from "./observers"
 import * as commentsActions from "./comments"
-import {
-  commandIntents,
-  supportedCommands
-} from "../constants";
-import copyTask from "../utils/copyTask";
-import parseLinkedList from "../utils/parseLinkedList";
 
 export const SET_PROJECT = "SET_PROJECT";
 export const SET_TASK = "SET_TASK";
@@ -26,23 +20,15 @@ export const SET_LOCKED_TASK_FIELD = "SET_LOCKED_TASK_FIELD";
 export const SET_RIGHT_PANEL_PAGE = "SET_RIGHT_PANEL_PAGE";
 export const SET_LEFT_PANEL_PAGE = "SET_LEFT_PANEL_PAGE";
 
-const setProject = (id, scope) => ({
+const setProject = (id) => ({
   type: SET_PROJECT,
-  id,
-  scope
+  id
 });
 
 const setTask = (id) => ({
   type: SET_TASK,
   id
 });
-
-const setCommand = (command, intent) => ({
-  type: SET_COMMAND,
-  command,
-  intent
-});
-
 
 const setProjectTitle = (status) => ({
   type: SET_PROJECT_TITLE,
@@ -57,6 +43,12 @@ const setLeftPanel = (status) => ({
 const setRightPanel = (status) => ({
   type: SET_DETAILS_PANEL,
   status
+});
+
+export const setCommand = (command, intent) => ({
+  type: SET_COMMAND,
+  command,
+  intent
 });
 
 export const setRightPanelPage = (page) => ({
@@ -111,19 +103,14 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
     dispatch(handleSetTask(null));
     dispatch(tasksActions.emptyTasks());
     if (id) {
-      if (projects["owned"][id]) {
-        dispatch(setProject(id, "owned"))
+      if (projects[id]) {
+        dispatch(setProject(id))
         if (shouldChangeURL) {
           if (user.state === AuthState.SignedIn) {
-            app.history.push(`/${projects["owned"][id].permalink}`)
+            app.history.push(`/${projects[id].permalink}`)
           } else {
-            app.history.push(`/local/${projects["owned"][id].permalink}`)
+            app.history.push(`/local/${projects[id].permalink}`)
           }
-        }
-      } else if (projects["assigned"][id]) {
-        dispatch(setProject(id, "assigned"))
-        if (shouldChangeURL) {
-          app.history.push(`/${projects["assigned"][id].permalink}`)
         }
       }
       dispatch(tasksActions.handleFetchTasks(id))
@@ -134,7 +121,7 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
       if (shouldChangeURL) {
         app.history.push("/")
       }
-      dispatch(setProject(null, null))
+      dispatch(setProject(null))
     }
   }
 }
@@ -199,104 +186,4 @@ export const handleSetLeftPanel = (status) => (dispatch, getState) => {
     dispatch(setRightPanel(false))
   }
   return dispatch(setLeftPanel(status))
-}
-
-export const handleSetCommand = (command) => (dispatch) => {
-  if (command) {
-    const tokens = /^\/(\w*)\s*(.*)\s*$/m.exec(command)
-    dispatch(setDropdown(false))
-    switch (tokens[1].toUpperCase()) {
-      case "ASSIGN":
-        dispatch(setCommand(command, "ASSIGN"))
-        break
-      case "STATUS":
-        dispatch(setCommand(command, "STATUS"))
-        break
-      case "DESCRIPTION":
-        dispatch(setCommand(command, "DESCRIPTION"))
-        break
-      case "DUE":
-        dispatch(setCommand(command, "DUE"))
-        break
-      case "TAGS":
-        dispatch(setCommand(command, "TAGS"))
-        break
-      case "DUPLICATE":
-        dispatch(setCommand(command, "DUPLICATE"))
-        break
-      case "COPY":
-        dispatch(setCommand(command, "COPY"))
-        break
-      case "DELETE":
-        dispatch(setCommand(command, "DELETE"))
-        break
-      default:
-        dispatch(setDropdown(true))
-        return dispatch(setCommand(`/${tokens[1]}`, "UNKNOWN"))
-    }
-  } else {
-    dispatch(setDropdown(false))
-    dispatch(setCommand("", null))
-  }
-}
-
-export const handleApplyCommand = () => (dispatch, getState) => {
-  const { tasks, app } = getState()
-  dispatch(setCommand("", null))
-  if (app.command) {
-    const tokens = /^\/(\w*)\s*(.*)\s*$/m.exec(app.command)
-    dispatch(setDropdown(false))
-    switch (tokens[1]) {
-      case "STATUS":
-        dispatch(tasksActions.handleUpdateTask({
-          id: app.selectedTask,
-          status: tokens[2]
-        }))
-        break
-      case "DESCRIPTION":
-        return dispatch(tasksActions.handleUpdateTask({
-          id: app.selectedTask,
-          description: tokens[2].trim()
-        }))
-      case "DUE":
-        return dispatch(tasksActions.handleUpdateTask({
-          id: app.selectedTask,
-          due: (new Date(tokens[2])).getTime()
-        }))
-      case "TAGS":
-        return dispatch(tasksActions.handleUpdateTask({
-          id: app.selectedTask,
-          tag: [
-            ...tasks[app.selectedTask].tags,
-            ...tokens[2].split(",").map(x => x.trim())
-          ]
-        }))
-      case "DUPLICATE":
-        dispatch(tasksActions.handleCreateTask(
-          copyTask(
-            tasks[app.selectedTask],
-            app.selectedProject,
-            parseLinkedList(
-              tasks,
-              "prevTask",
-              "nextTask"
-            ).reverse()[0]?.id
-          )
-        ))
-        return dispatch(handleSetTask(null))
-      case "COPY":
-        window.localStorage.setItem("tasksClipboard",
-          "COPIEDTASKSTART=>" +
-          JSON.stringify(tasks[app.selectedTask]) +
-          "<=COPIEDTASKEND"
-        )
-        return dispatch(handleSetTask(null))
-      case "/":
-        dispatch(setDropdown(true))
-        return dispatch(setCommand(app.command))
-      default:
-        dispatch(setDropdown(true))
-        return dispatch(setCommand("/"))
-    }
-  }
 }

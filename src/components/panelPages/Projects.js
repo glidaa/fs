@@ -30,6 +30,7 @@ import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outli
 import { ReactComponent as AddIcon } from "../../assets/add-outline.svg";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
+import filterObj from "../../utils/filterObj";
 
 const Sortable = (props) => {
 
@@ -140,14 +141,14 @@ const Projects = (props) => {
 	const [scope, setScope] = useState("owned")
 	const onSortEnd = ({oldIndex, newIndex}) => {
 		if (oldIndex > newIndex) {
-		const sortedProjects = parseLinkedList(projects["owned"], "prevProject", "nextProject")
+		const sortedProjects = parseLinkedList(filterObj(projects, x => x.isOwned), "prevProject", "nextProject")
 			dispatch(projectsActions.handleUpdateProject({
 				id: sortedProjects[oldIndex].id,
 				prevProject: sortedProjects[newIndex - 1]?.id || null,
 				nextProject:  sortedProjects[newIndex]?.id || null,
 			}))
 		} else if (oldIndex < newIndex) {
-			const sortedProjects = parseLinkedList(projects["owned"], "prevProject", "nextProject")
+			const sortedProjects = parseLinkedList(filterObj(projects, x => x.isOwned), "prevProject", "nextProject")
 			dispatch(projectsActions.handleUpdateProject({
 				id: sortedProjects[oldIndex].id,
 				prevProject: sortedProjects[newIndex]?.id || null,
@@ -156,18 +157,20 @@ const Projects = (props) => {
 		}
 	};
   const createNewProject = () => {
-    projectAddingStatus === OK &&
-    dispatch(
-      projectsActions.handleCreateProject(
-        initProjectState(
-          parseLinkedList(
-            projects["owned"],
-            "prevProject",
-            "nextProject"
-          ).reverse()[0]?.id
+    if (projectAddingStatus === OK) {
+      dispatch(appActions.handleSetLeftPanel(false))
+      dispatch(
+        projectsActions.handleCreateProject(
+          initProjectState(
+            parseLinkedList(
+              filterObj(projects, x => x.isOwned),
+              "prevProject",
+              "nextProject"
+            ).reverse()[0]?.id
+          )
         )
       )
-    )
+    }
   }
   const closePanel = () => {
     dispatch(appActions.handleSetLeftPanel(false))
@@ -216,7 +219,7 @@ const Projects = (props) => {
         <ProjectItems>
           {scope === "assigned" ? (
             <>
-              {Object.values(projects[scope]).map(project => (
+              {Object.values(filterObj(projects, x => (scope === "owned" && x.isOwned) || (scope === "assigned" && x.isAssigned))).map(project => (
                 <ProjectItem
                   key={project.id}
                   project={project}
@@ -226,10 +229,10 @@ const Projects = (props) => {
             </>
           ) : (
             <Sortable
-              items={parseLinkedList(projects, "prevProject", "nextProject").map(({ id }) => id)}
+              items={parseLinkedList(filterObj(projects, x => (scope === "owned" && x.isOwned) || (scope === "assigned" && x.isAssigned)), "prevProject", "nextProject").map(({ id }) => id)}
               onDragEnd={onSortEnd}
             >
-              {parseLinkedList(projects[scope], "prevProject", "nextProject").map((value, index) => (
+              {parseLinkedList(filterObj(projects, x => (scope === "owned" && x.isOwned) || (scope === "assigned" && x.isAssigned)), "prevProject", "nextProject").map((value, index) => (
                 <SortableItem
                   key={value.id}
                   index={index}
@@ -270,7 +273,6 @@ const PanelTabs = styledComponents.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 90px;
 	& > div {
 		display: flex;
 		flex-direction: row;

@@ -4,6 +4,7 @@ import * as tasksActions from "./tasks"
 import * as commentsActions from "./comments"
 import * as appActions from "./app"
 import * as subscriptions from "../graphql/subscriptions"
+import filterObj from "../utils/filterObj";
 
 export const SET_PROJECTS_OBSERVERS = "SET_PROJECTS_OBSERVERS";
 export const CLEAR_PROJECTS_OBSERVERS = "CLEAR_PROJECTS_OBSERVERS";
@@ -48,9 +49,10 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
   observers.push(API.graphql(graphqlOperation(subscriptions.onCreateOwnedProject, data)).subscribe({
     next: e => {
       const { projects } = getState()
+      const ownedProjects = filterObj(projects, x => x.isOwned)
       const incoming = e.value.data.onCreateOwnedProject
-      if (!Object.keys(projects.owned).includes(incoming.id)) {
-        dispatch(projectsActions.createProject(incoming))
+      if (!Object.keys(ownedProjects).includes(incoming.id)) {
+        dispatch(projectsActions.createProject(incoming, "owned"))
       }
     },
     error: error => console.warn(error)
@@ -58,9 +60,10 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
   observers.push(API.graphql(graphqlOperation(subscriptions.onImportOwnedProjects, data)).subscribe({
     next: e => {
       const { projects } = getState()
+      const ownedProjects = filterObj(projects, x => x.isOwned)
       const incoming = e.value.data.onImportOwnedProjects.items
       for (const project of incoming) {
-        if (!Object.keys(projects.owned).includes(project.id)) {
+        if (!Object.keys(ownedProjects).includes(project.id)) {
           dispatch(projectsActions.createProject(project))
         }
       }
@@ -70,8 +73,9 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
   observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateOwnedProject, data)).subscribe({
     next: e => {
       const { projects } = getState()
+      const ownedProjects = filterObj(projects, x => x.isOwned)
       const incoming = e.value.data.onUpdateOwnedProject
-      if (Object.keys(projects.owned).includes(incoming.id)) {
+      if (Object.keys(ownedProjects).includes(incoming.id)) {
         dispatch(projectsActions.updateProject(incoming))
       }
     },
@@ -80,8 +84,9 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
   observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteOwnedProject, data)).subscribe({
     next: e => {
       const { app, projects } = getState()
+      const ownedProjects = filterObj(projects, x => x.isOwned)
       const removedItemID = e.value.data.onDeleteOwnedProject.id;
-      if (Object.keys(projects.owned).includes(removedItemID)) {
+      if (Object.keys(ownedProjects).includes(removedItemID)) {
         if (app.selectedProject === removedItemID) {
           dispatch(appActions.handleSetTask(null))
         }

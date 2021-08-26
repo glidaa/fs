@@ -22,10 +22,14 @@ const ProjectItem = (props) => {
   const removeProject = () => {
     dispatch(projectsActions.handleRemoveProject(project))
   }
+  const selectProject = (id) => {
+    dispatch(appActions.handleSetLeftPanel(false))
+    dispatch(appActions.handleSetProject(id))
+  }
   return (
     <ProjectItemShell
       isSelected={selectedProject === project.id}
-      onClick={() => dispatch(appActions.handleSetProject(project.id))}
+      onClick={() => selectProject(project.id)}
       {...listeners}
     >
       <ProjectItemPermission>

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { connect } from "react-redux";
 import { DatePicker } from "../DatePicker";
 import * as appActions from "../../actions/app";
@@ -40,6 +40,8 @@ const Details = (props) => {
 		}
 		clearTimeout(idleTrigger.current)
 	}
+
+	useEffect(() => () => forceIdle(), [])
   
   const handleChange = (e) => {
     if (["task", "description"].includes(e.target.name)) {
@@ -91,8 +93,8 @@ const Details = (props) => {
       </PanelPageToolbar>
       {selectedTask && (
         <>
-          <DetailsForm onSubmit={(e) => e.preventDefault()}>
-            <form>
+          <DetailsForm>
+            <form onSubmit={(e) => e.preventDefault()}>
               <Detail>
                 <label htmlFor="assignee">
                   <AssignIcon width={18} />
@@ -174,7 +176,7 @@ const Details = (props) => {
               <input type="submit" name="submit" value="Submit"></input>
             </form>
           </DetailsForm>
-          {user.state === AuthState.SignedIn && <Comments />}
+          {false && user.state === AuthState.SignedIn && <Comments />}
         </>
       )}
     </>

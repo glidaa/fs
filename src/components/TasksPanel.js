@@ -27,6 +27,7 @@ import * as tasksActions from "../actions/tasks";
 import { OK, initTaskState } from "../constants";
 import useWindowSize from "../utils/useWindowSize";
 import ProjectTitle from './ProjectTitle';
+import { FETCH_PROJECTS } from '../actions/projects';
 
 const Sortable = (props) => {
 
@@ -129,7 +130,10 @@ const SortableItem = (props) => {
 
 const TasksPanel = (props) => {
   const {
-    app,
+    app: {
+      selectedProject,
+      taskAddingStatus
+    },
     tasks,
     projects,
     dispatch,
@@ -158,12 +162,11 @@ const TasksPanel = (props) => {
   };
   const addNewTask = (e) => {
     e.target.getAttribute("name") === "TasksPanelContainer" &&
-    Object.keys(projects.owned).includes(app.selectedProject) &&
-    app.taskAddingStatus === OK &&
+    taskAddingStatus === OK &&
     dispatch(
       tasksActions.handleCreateTask(
         initTaskState(
-          app.selectedProject,
+          selectedProject,
           parseLinkedList(tasks, "prevTask", "nextTask").reverse()[0]?.id
         )
       )
@@ -174,8 +177,13 @@ const TasksPanel = (props) => {
       name="TasksPanelContainer"
       onClick={addNewTask}
     >
-      {app.selectedProject ? (
+      {selectedProject ? (
         <>
+          <TasksToolbar>
+            <span>
+              {projects[selectedProject].permalink}
+            </span>
+          </TasksToolbar>
           <ProjectTitle />
           <Sortable
             items={parseLinkedList(tasks, "prevTask", "nextTask").map(({ id }) => id)}
@@ -187,9 +195,7 @@ const TasksPanel = (props) => {
                   key={value.id}
                   index={index}
                   value={value}
-                  readOnly={
-                    !Object.keys(projects.owned).includes(app.selectedProject)
-                  }
+                  readOnly={false}
                 />
               )
             )}
@@ -202,7 +208,7 @@ const TasksPanel = (props) => {
 
 const TasksPanelContainer = styledComponents.div`
   flex: 2;
-  padding: 40px;
+  padding: 20px 40px 40px 40px;
   overflow: auto;
   background-color: #F8F8F8;
   min-height: calc(100vh - 80px);
@@ -212,6 +218,16 @@ const TasksPanelContainer = styledComponents.div`
     min-height: 100vh;
   }
 `;
+
+const TasksToolbar = styledComponents.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  & > span {
+    font-size: 12px;
+  }
+`
 
 export default connect((state) => ({
   tasks: state.tasks,

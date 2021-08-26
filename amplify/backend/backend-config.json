@@ -18,11 +18,6 @@
           ]
         }
       }
-    },
-    "fsRealtimeDataManager": {
-      "service": "API Gateway",
-      "providerPlugin": "awscloudformation",
-      "authorizationType": "NONE"
     }
   },
   "auth": {

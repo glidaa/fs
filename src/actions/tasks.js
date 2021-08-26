@@ -96,7 +96,7 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
   if (update.task) {
     const tokens = /^(.*?)(\/.*||)$/m.exec(update.task)
     update.task = tokens[1];
-    dispatch(appActions.handleSetCommand(tokens[2]))
+    dispatch(appActions.setCommand(tokens[2]))
   }
   const updateWithID = {id: prevTaskState.id, ...update };
   if (user.state === AuthState.SignedIn) {
@@ -106,7 +106,7 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
     return API.graphql(graphqlOperation(mutations.updateTask, { input: updateWithID }))
       .catch(() => {
         if (tasks[prevTaskState.id]) {
-          dispatch(appActions.handleSetCommand(prevCommands))
+          dispatch(appActions.setCommand(prevCommands))
           return dispatch(updateTask(prevTaskState))
         }
       })

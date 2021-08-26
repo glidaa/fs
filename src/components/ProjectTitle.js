@@ -15,10 +15,7 @@ const ProjectTitle = (props) => {
 			selectedProject,
 			taskAddingStatus
 		},
-		projects: {
-			owned,
-			assigned
-		},
+		projects,
 		tasks,
 		readOnly,
 		dispatch
@@ -34,19 +31,17 @@ const ProjectTitle = (props) => {
 	const onKeyUp = (e) => {
 		const firstTask = parseLinkedList(tasks, "prevTask", "nextTask")[0]?.id
 		if (e.key === "Enter") {
-			if (Object.keys(owned).includes(selectedProject)) {
-				if (taskAddingStatus === OK) {
-					appActions.handleSetProjectTitle(false)
-					dispatch(
-						tasksActions.handleCreateTask(
-							initTaskState(
-								selectedProject,
-								null,
-								firstTask
-							)
+			if (taskAddingStatus === OK) {
+				appActions.handleSetProjectTitle(false)
+				dispatch(
+					tasksActions.handleCreateTask(
+						initTaskState(
+							selectedProject,
+							null,
+							firstTask
 						)
 					)
-				}
+				)
 			}
 		} else if (e.key === "ArrowDown") {
 			dispatch(appActions.handleSetProjectTitle(false))
@@ -69,7 +64,7 @@ const ProjectTitle = (props) => {
 					<input
 						type="text"
 						placeholder="Project Title…"
-						value={{ ...owned, ...assigned }[selectedProject].title}
+						value={projects[selectedProject].title}
 						onKeyUp={onKeyUp}
 						onChange={onChange}
 						autoFocus={true}
@@ -79,10 +74,10 @@ const ProjectTitle = (props) => {
 				</ProjectTitleInput>
 			) : (
 				<ProjectTitleHeader
-					className={{ ...owned, ...assigned }[selectedProject].title ? null : "placeholder"}
+					className={projects[selectedProject].title ? null : "placeholder"}
 					onClick={selectTitle}
 				>
-					{{ ...owned, ...assigned }[selectedProject].title || "Project Title…"}
+					{projects[selectedProject].title || "Project Title…"}
 				</ProjectTitleHeader>
 			)}
 		</ProjectTitleShell>

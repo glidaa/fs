@@ -1,78 +1,96 @@
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
 import { CREATE_PROJECT, UPDATE_PROJECT, REMOVE_PROJECT, EMPTY_PROJECTS, FETCH_PROJECTS } from "../actions/projects"
+import filterObj from "../utils/filterObj"
 
-const initProjectsState = {
-  owned: {},
-  assigned: {}
-}
-
-export default function (state = initProjectsState, action) {
+export default function (state = {}, action) {
   let stateClone = {...state}
   switch(action.type) {
     case CREATE_PROJECT:
-      stateClone[action.scope] = injectItemOrder(
-        stateClone[action.scope],
-        action.projectState,
-        action.projectState.prevProject,
-        action.projectState.nextProject,
-        "prevProject",
-        "nextProject"
-      )
-      return {...stateClone,
-        [action.scope]: {
-          ...stateClone[action.scope],
-          [action.projectState.id]: action.projectState
-        }
-      }
-    case UPDATE_PROJECT:
-      const { scope } = action
-      const update = Object.fromEntries(Object.entries(action.update).filter(item => item[1] != null))
-      if (update.prevProject && update.nextProject) {
-        stateClone[scope] = removeItemOrder(
-          stateClone[scope],
-          stateClone[scope][update.id],
+      if (action.scope === "owned") {
+        stateClone = injectItemOrder(
+          stateClone,
+          action.projectState,
+          action.projectState.prevProject,
+          action.projectState.nextProject,
           "prevProject",
           "nextProject"
         )
-        stateClone[scope] = injectItemOrder(
-          stateClone[scope],
-          stateClone[scope][update.id],
+      }
+      return {
+        ...stateClone,
+        [action.projectState.id]: {
+          ...action.projectState,
+          isOwned: stateClone[action.projectState.id]?.isOwned || action.scope === "owned",
+          isAssigned: stateClone[action.projectState.id]?.isAssigned || action.scope === "assigned",
+          isTemp: stateClone[action.projectState.id]?.isTemp || action.scope === "temp"
+        }
+      }
+    case UPDATE_PROJECT:
+      const update = Object.fromEntries(Object.entries(action.update).filter(item => item[1] != null))
+      if (update.prevProject && update.nextProject) {
+        stateClone = removeItemOrder(
+          stateClone,
+          stateClone[update.id],
+          "prevProject",
+          "nextProject"
+        )
+        stateClone = injectItemOrder(
+          stateClone,
+          stateClone[update.id],
           update.prevProject,
           update.nextProject,
           "prevProject",
           "nextProject"
         )
       }
-      return {...stateClone,
-        [scope]: {
-          ...stateClone[scope],
-          [update.id]: {
-            ...stateClone[scope][update.id],
-            ...update
-          }
+      return {
+        ...stateClone,
+        [update.id]: {
+          ...stateClone[update.id],
+          ...update
         }
       }
     case REMOVE_PROJECT:
-      stateClone[action.scope] = removeItemOrder(
-        stateClone[action.scope],
-        stateClone[action.scope][action.id],
-        "prevProject",
-        "nextProject"
-      )
-      delete stateClone[action.scope][action.id]
+      if (action.scope === "owned") {
+        stateClone = removeItemOrder(
+          stateClone,
+          stateClone[action.id],
+          "prevProject",
+          "nextProject"
+        )
+      }
+      if ((action.scope === "owned" && !stateClone[action.id].isAssigned && !stateClone[action.id].isTemp) ||
+          (action.scope === "assigned" && !stateClone[action.id].isOwned && !stateClone[action.id].isTemp) ||
+          (action.scope === "temp" && !stateClone[action.id].isOwned) && !stateClone[action.id].isAssigned)
+      {
+        delete stateClone[action.id]
+      } else {
+        stateClone[action.id] = {
+          ...stateClone[action.id],
+          ...(action.scope === "owned" && {isOwned: false}),
+          ...(action.scope === "assigned" && {isAssigned: false}),
+          ...(action.scope === "temp" && {isTemp: false})
+        }
+      }
       return stateClone
     case EMPTY_PROJECTS:
-      return {...initProjectsState}
+      return {}
     case FETCH_PROJECTS:
-      const newState = {
-        ...state,
-        [action.scope]: {}
+      if (action.scope === "owned") {
+        stateClone = filterObj(stateClone, x => !x.isOwned && (x.isAssigned || x.isTemp))
+      } else if (action.scope === "assigned") {
+        stateClone = filterObj(stateClone, x => !x.isAssigned && (x.isOwned || x.isTemp))
       }
       for (const project of action.projects) {
-        newState[action.scope][project.id] = project
+        stateClone[project.id] = {
+          ...project,
+          isTemp: false,
+          isOwned: stateClone[project.id]?.isOwned || action.scope === "owned",
+          isAssigned: stateClone[project.id]?.isAssigned || action.scope === "assigned"
+        }
       }
-      return newState
+      return stateClone
     default:
       return state
   }

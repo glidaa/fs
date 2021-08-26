@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import "../App.css";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import Amplify, { PubSub } from "aws-amplify";
+import Amplify, { API, graphqlOperation } from "aws-amplify";
 import { AuthState, onAuthUIStateChange } from "@aws-amplify/ui-components";
 import * as projectsActions from "../actions/projects";
 import * as tasksActions from "../actions/tasks";
 import * as appActions from "../actions/app";
 import * as userActions from "../actions/user";
 import aws_exports from "../aws-exports";
+import * as queries from "../graphql/queries"
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
 import TasksPanel from "./TasksPanel";
 import Loading from "./Loading";
@@ -16,7 +16,6 @@ import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
 Amplify.configure(aws_exports);
-PubSub.configure(aws_exports);
 
 const App = (props) => {
   const { dispatch, user, projects, app } = props;
@@ -51,65 +50,47 @@ const App = (props) => {
       window.addEventListener("storage", fetchLocalProjects);
     }
   }, []);
+
   useEffect(() => {
-    if (routeMatch) {
+    (async () => {
+    if (routeMatch && history.action === "POP" && !app.isLoading) {
       const {
         params: { username, projectPermalink, taskPermalink },
       } = routeMatch;
-      if (history.action === "POP") {
-        if (!app.isLoading) {
-          if (user.state === AuthState.SignedIn) {
-            if (username && projectPermalink) {
-              const allProjects = Object.values({
-                ...projects.owned,
-                ...projects.assigned,
-              });
-              const reqUserProjects = allProjects.filter(
-                (x) => x.owner === username
-              );
-              if (reqUserProjects.length > 0) {
-                const reqProject = reqUserProjects.filter(
-                  (x) => x.permalink === projectPermalink
-                )[0];
-                if (reqProject) {
-                  dispatch(appActions.handleSetProject(reqProject.id, false));
-                  if (taskPermalink) {
-                    dispatch(tasksActions.handleFetchTasks(reqProject.id)).then(
-                      (tasks) => {
-                        const reqTask = Object.values(tasks).filter(
-                          (x) =>
-                            x.permalink === parseInt(taskPermalink, 10)
-                        )[0];
-                        if (reqTask) {
-                          dispatch(appActions.handleSetTask(reqTask.id, false));
-                        }
-                      }
-                    );
-                  } else {
-                    history.replace(`/${username}/${projectPermalink}`);
-                  }
-                } else {
-                  history.replace("/");
-                }
-              } else {
-                history.replace("/");
-              }
+      if (user.state === AuthState.SignedIn && username && projectPermalink) {
+        let reqProject = Object.values(projects).filter(x => x.permalink === `${username}/${projectPermalink}`)[0]
+        if (!reqProject) {
+          reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
+            permalink: `${username}/${projectPermalink}`
+          }))).data.getProjectByPermalink
+          dispatch(projectsActions.setTempProject(reqProject))
+        }
+        if (reqProject) {
+          dispatch(appActions.handleSetProject(reqProject.id, false));
+          if (taskPermalink) {
+            const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id))
+            const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(taskPermalink, 10))[0]
+            if (reqTask) {
+              dispatch(appActions.handleSetTask(reqTask.id, false));
             }
           } else {
-            if (projectPermalink) {
-              const reqProject = Object.values(projects.owned).filter(
-                (x) => x.permalink === projectPermalink
-              )[0];
-              if (reqProject) {
-                dispatch(appActions.handleSetProject(reqProject.id, false));
-              } else {
-                history.replace("/");
-              }
-            }
+            history.replace(`/${username}/${projectPermalink}`);
           }
+        } else {
+          history.replace("/");
         }
+      } else if (user.state !== AuthState.SignedIn && projectPermalink) {
+        const reqProject = Object.values(projects).filter((x) => x.permalink === projectPermalink)[0];
+        if (reqProject) {
+          dispatch(appActions.handleSetProject(reqProject.id, false));
+        } else {
+          history.replace("/");
+        }
+      } else {
+        history.replace("/")
       }
     }
+    })()
   }, [routeMatch, app, user]);
   return (
     <div className="App">
@@ -152,6 +133,5 @@ const App = (props) => {
 export default connect((state) => ({
   user: state.user,
   projects: state.projects,
-  tasks: state.tasks,
   app: state.app,
 }))(App);
