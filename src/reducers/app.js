@@ -1,13 +1,10 @@
-import { SET_PROJECT, SET_TASK, SET_DROPDOWN, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_HISTORY, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE } from "../actions/app"
+import { SET_PROJECT, SET_TASK, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_HISTORY, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE } from "../actions/app"
 import { panelPages, OK } from "../constants"
 
 const initState = {
   selectedProject: null,
-  selectedProjectScope: null,
   selectedTask: null,
   command: "",
-  commandIntent: null,
-  isDropdownOpened: false,
   projectsTab: "owned",
   projectAddingStatus: OK,
   taskAddingStatus: OK,
@@ -25,13 +22,11 @@ const initState = {
 export default function (state = initState, action) {
   switch(action.type) {
     case SET_PROJECT:
-      return {...state, selectedProject: action.id, selectedProjectScope: action.scope}
+      return {...state, selectedProject: action.id}
     case SET_TASK:
       return {...state, selectedTask: action.id}
     case SET_COMMAND:
-      return {...state, command: action.command, commandIntent: action.intent}
-    case SET_DROPDOWN:
-      return {...state, isDropdownOpened: action.status}
+      return {...state, command: action.command}
     case SET_PROJECT_PANEL:
       return {...state, isLeftPanelOpened: action.status}
     case SET_DETAILS_PANEL:

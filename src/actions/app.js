@@ -7,7 +7,6 @@ import * as commentsActions from "./comments"
 export const SET_PROJECT = "SET_PROJECT";
 export const SET_TASK = "SET_TASK";
 export const SET_COMMAND = "SET_COMMAND";
-export const SET_DROPDOWN = "SET_DROPDOWN";
 export const SET_PROJECT_ADDING_STATUS = "SET_PROJECT_ADDING_STATUS";
 export const SET_TASK_ADDING_STATUS = "SET_TASK_ADDING_STATUS";
 export const SET_HISTORY = "SET_HISTORY";
@@ -45,10 +44,9 @@ const setRightPanel = (status) => ({
   status
 });
 
-export const setCommand = (command, intent) => ({
+export const setCommand = (command) => ({
   type: SET_COMMAND,
-  command,
-  intent
+  command
 });
 
 export const setRightPanelPage = (page) => ({
@@ -64,11 +62,6 @@ export const setLeftPanelPage = (page) => ({
 export const setLockedTaskField = (fieldName) => ({
   type: SET_LOCKED_TASK_FIELD,
   fieldName
-});
-
-export const setDropdown = (status) => ({
-  type: SET_DROPDOWN,
-  status
 });
 
 export const setProjectAddingStatus = (status) => ({
@@ -136,11 +129,10 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
     }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].permalink}`)
+        app.history.push(`/${projects[app.selectedProject].permalink}`)
       }
     }
     dispatch(setCommand(""))
-    dispatch(setDropdown(false))
     dispatch(setTask(null))
   } else if (!id) {
     if (app.isRightPanelOpened) {
@@ -153,7 +145,7 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
     }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].permalink}/${tasks[id].permalink}`)
+        app.history.push(`/${projects[app.selectedProject].permalink}/${tasks[id].permalink}`)
       }
     }
     dispatch(setTask(id))

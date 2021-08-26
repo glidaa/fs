@@ -63,7 +63,7 @@ const App = (props) => {
           reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
             permalink: `${username}/${projectPermalink}`
           }))).data.getProjectByPermalink
-          dispatch(projectsActions.setTempProject(reqProject))
+          dispatch(projectsActions.createProject(reqProject, "temp"))
         }
         if (reqProject) {
           dispatch(appActions.handleSetProject(reqProject.id, false));
