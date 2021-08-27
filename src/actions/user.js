@@ -1,5 +1,3 @@
-import * as usersActions from "./users"
-
 export const SET_STATE = "SET_STATE";
 export const SET_DATA = "SET_DATA";
 
@@ -15,12 +13,9 @@ const setData = (userData) => ({
 
 export const handleSetData = (userData) => (dispatch) => {
   if (userData) {
-    const firstName = userData.attributes.given_name
-    const lastName = userData.attributes.family_name
-    const username = userData.username
-    const name = `${firstName} ${lastName}`
-    // dispatch(usersActions.addUser(username, name))
-    dispatch(setData(userData))
+    const { firstName, lastName } = userData
+    const abbr = firstName[0].toUpperCase() + lastName[0].toUpperCase()
+    dispatch(setData({...userData, abbr}))
   } else {
     dispatch(setData(null))
   }

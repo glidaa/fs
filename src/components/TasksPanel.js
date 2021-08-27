@@ -27,7 +27,6 @@ import * as tasksActions from "../actions/tasks";
 import { OK, initTaskState } from "../constants";
 import useWindowSize from "../utils/useWindowSize";
 import ProjectTitle from './ProjectTitle';
-import { FETCH_PROJECTS } from '../actions/projects';
 
 const Sortable = (props) => {
 
@@ -138,7 +137,6 @@ const TasksPanel = (props) => {
     projects,
     dispatch,
   } = props;
-  let { width } = useWindowSize();
   const onSortEnd = (oldIndex, newIndex) => {
     if (oldIndex > newIndex) {
       const sortedTasks = parseLinkedList(tasks, "prevTask", "nextTask");
@@ -208,14 +206,15 @@ const TasksPanel = (props) => {
 
 const TasksPanelContainer = styledComponents.div`
   flex: 2;
-  padding: 20px 40px 40px 40px;
+  padding: 20px 40px 20px 40px;
   overflow: auto;
   background-color: #F8F8F8;
   min-height: calc(100vh - 80px);
   @media only screen and (max-width: 768px) {
 		padding: 0px;
     background-color: #F4F7FF;
-    min-height: 100vh;
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -227,6 +226,9 @@ const TasksToolbar = styledComponents.div`
   & > span {
     font-size: 12px;
   }
+	@media only screen and (max-width: 768px) {
+		margin: 10px 0;
+	}
 `
 
 export default connect((state) => ({

@@ -42,6 +42,7 @@ const SidePanelShell = styledComponents.div`
     width: 100vw;
     border-radius: 0;
     max-width: 100vw;
+    height: 100%;
   }
   z-index: 9999;
 `;

@@ -104,7 +104,7 @@ const ProjectTitleHeader = styledComponents.span`
 		color: #D3D3D3;
 	}
 	@media only screen and (max-width: 768px) {
-		padding: 15px 20px 15px 20px;
+		padding: 5px 20px 5px 20px;
 		font-size: 22px;
 	}
 `

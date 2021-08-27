@@ -7,7 +7,7 @@ import * as appActions from "./app"
 import * as projectsActions from "./projects"
 import * as usersActions from "./users"
 import * as mutations from "../graphql/mutations"
-import { DONE, ERROR, NOT_ASSIGNED, NOT_STARTED, OK, PENDING } from "../constants";
+import { OK, PENDING } from "../constants";
 import prepareTaskToBeSent from "../utils/prepareTaskToBeSent";
 
 export const CREATE_TASK = "CREATE_TASK";
@@ -195,9 +195,15 @@ export const handleFetchTasks = (projectID) => async (dispatch, getState) => {
     try {
       const res = await API.graphql(graphqlOperation(listTasksForProject, { projectID }))
       const items = res.data.listTasksForProject.items
+      let usersToBeFetched = []
       for (const item of items) {
-        dispatch(usersActions.handleAddUsers(item.assignees))
+        usersToBeFetched = [...new Set([
+          ...usersToBeFetched,
+          ...item.assignees.filter(x => /^user:.*$/.test(x)).map(x => x.replace(/^user:/, "")),
+          ...item.watchers
+        ])]
       }
+      await dispatch(usersActions.handleAddUsers(usersToBeFetched))
       dispatch(fetchTasks(items))
       return getState().tasks
     } catch (err) {

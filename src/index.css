@@ -48,9 +48,13 @@ input:read-only {
 }
 
 @media only screen and (max-width: 768px) {
+  body {
+    background-color: #F4F7FF;
+  }
   .mainPage {
-    position: relative;
+    top: 0;
     background-color: #F4F7FF;
     width: 100vw;
+    height: calc(100% - 90px)
   }
 }

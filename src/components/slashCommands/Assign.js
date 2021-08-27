@@ -146,8 +146,8 @@ const LetterAvatar = styledComponents.div`
   align-items: center;
   justify-content: center;
   border-radius: 100%;
-  background-color: #FF93AF;
-  color: #6B001D;
+  color: #006EFF;
+  background-color: #CCE2FF;
   line-height: 0;
   font-size: 13.33px;
   min-width: 32px;

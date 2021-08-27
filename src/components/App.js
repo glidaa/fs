@@ -40,12 +40,24 @@ const App = (props) => {
   useEffect(() => {
     dispatch(appActions.setHistory(history));
     onAuthUIStateChange(async (nextAuthState, authData) => {
-      dispatch(userActions.handleSetData(authData));
-      dispatch(userActions.setState(nextAuthState));
+      if (nextAuthState === AuthState.SignedIn) {
+        const userData = (await API.graphql(
+          graphqlOperation(
+            queries.getUserByUsername, {
+              username: authData.username
+            }
+          )
+        )).data.getUserByUsername
+        dispatch(userActions.handleSetData(userData))
+        dispatch(userActions.setState(AuthState.SignedIn))
+      } else {
+        dispatch(userActions.handleSetData(null))
+        dispatch(userActions.setState(nextAuthState))
+      }
       if (nextAuthState === AuthState.SignedIn) {
         window.removeEventListener("storage", fetchLocalProjects);
       }
-    });
+    })
     if (user.state !== AuthState.SignedIn) {
       window.addEventListener("storage", fetchLocalProjects);
     }
@@ -76,18 +88,12 @@ const App = (props) => {
           } else {
             history.replace(`/${username}/${projectPermalink}`);
           }
-        } else {
-          history.replace("/");
         }
       } else if (user.state !== AuthState.SignedIn && projectPermalink) {
         const reqProject = Object.values(projects).filter((x) => x.permalink === projectPermalink)[0];
         if (reqProject) {
           dispatch(appActions.handleSetProject(reqProject.id, false));
-        } else {
-          history.replace("/");
         }
-      } else {
-        history.replace("/")
       }
     }
     })()

@@ -52,7 +52,7 @@ const AssigneeField = (props) => {
 
   const processedValue = useMemo(() => processValue(value, users), [value, users]);
 
-  const handleUnassigneeTask = (username) => {
+  const handleUnassignTask = (username) => {
     dispatch(tasksActions.updateTask({
       id: selectedTask,
       assignee: NOT_ASSIGNED
@@ -82,10 +82,10 @@ const AssigneeField = (props) => {
             <AssigneeItem key={x}>
               {x.isUser && (x.avatar ?
                 <ImageAvatar src={x.avatar} /> :
-                <LetterAvatar>{(x.firstName[0] + x.lastName[0]).toUpperCase()}</LetterAvatar>
+                <LetterAvatar>{x.abbr}</LetterAvatar>
               )}
-              {!x.isUser && <LetterAvatar>{(x.name[0]).toUpperCase()}</LetterAvatar>}
-              <span>{(x.firstName || x.name)}</span>
+              {!x.isUser && <LetterAvatar>{x.name[0].toUpperCase()}</LetterAvatar>}
+              <span>{x.firstName || x.name}</span>
             </AssigneeItem>
           ))}
         </>
@@ -212,8 +212,8 @@ const LetterAvatar = styledComponents.div`
   align-items: center;
   justify-content: center;
   border-radius: 100%;
-  background-color: #FF93AF;
-  color: #6B001D;
+  color: #006EFF;
+  background-color: #CCE2FF;
   line-height: 0;
   font-size: 13.33px;
   min-width: 32px;

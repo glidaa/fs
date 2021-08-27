@@ -60,9 +60,7 @@ const ProjectItem = (props) => {
 								lastName: "Bunney"
 							},
 							{
-								avatar: "",
-								firstName: "Ahmed",
-								lastName: "Hassan"
+								name: "Ahmed Hassan"
 							},
 							{
 								avatar: "https://i.pravatar.cc/38?img=3",
@@ -86,7 +84,7 @@ const ProjectItem = (props) => {
 							}
 						]}
             borderColor="#006EFF"
-            size="38" 
+            size={38} 
           />
           <ProjectItemDate>
             Created {formatDate(new Date(project.createdAt).getTime())}

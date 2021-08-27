@@ -14,10 +14,7 @@ import { ReactComponent as DuplicateIcon } from "../assets/duplicate-outline.svg
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
 import Specials from "./Specials";
-import {
-	OK,
-	initTaskState,
-} from "../constants";
+import { OK, initTaskState } from "../constants";
 import AvatarArray from "./AvatarArray";
 
 const TaskItem = (props) => {
@@ -25,7 +22,7 @@ const TaskItem = (props) => {
 	const {
 		item,
 		tasks,
-		projects,
+		users,
 		app: {
 			selectedTask,
 			selectedProject,
@@ -45,6 +42,25 @@ const TaskItem = (props) => {
 
 	const inputRef = useRef(null)
 	const idleTrigger = useRef(null)
+
+	const processAssingees = (value, users) => {
+		const result = []
+		for (const assignee of value) {
+			const isValidAssignee = /^(user|anonymous):(.*)$/.test(assignee)
+			if (isValidAssignee) {
+				const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
+				const isUser = assigneeType === "user"
+				if (isUser) {
+					result.push({...users[assigneeID], isUser})
+				} else {
+					result.push({ name: assigneeID, isUser })
+				}
+			}
+		}
+		return result
+	}
+	
+	const processedAssingees = useMemo(() => processAssingees(item.assignees, users), [item.assignees, users]);
 
 	const getSpecialsPos = (inputRef) => {
 		if (inputRef.current) {
@@ -314,40 +330,9 @@ const TaskItem = (props) => {
 					</TaskItemDueDate>
 					<AvatarArray
 						max={3}
-						users={[
-							{
-								avatar: "https://i.pravatar.cc/38?img=2",
-								firstName: "Bugs",
-								lastName: "Bunney"
-							},
-							{
-								avatar: "",
-								firstName: "Ahmed",
-								lastName: "Hassan"
-							},
-							{
-								avatar: "https://i.pravatar.cc/38?img=3",
-								firstName: "Loyed",
-								lastName: "Garamdon"
-							},
-							{
-								avatar: "https://i.pravatar.cc/38?img=4",
-								firstName: "Kissy",
-								lastName: "Johns"
-							},
-							{
-								avatar: "https://i.pravatar.cc/38?img=5",
-								firstName: "Sponge",
-								lastName: "Pop"
-							},
-							{
-								avatar: "https://i.pravatar.cc/38?img=6",
-								firstName: "Kogoro",
-								lastName: "Mori"
-							}
-						]}
+						users={processedAssingees}
 						borderColor="#F8F8F8"
-						size={ width > 768 ? "24" : "18" }
+						size={ width > 768 ? 24 : 18 }
 					/>
 				</TaskItemRightPart>
 			</TaskItemCore>
@@ -474,7 +459,7 @@ const TaskItemRightPart = styledComponents.div`
 	@media only screen and (max-width: 768px) {
 		flex-direction: column;
 		gap: 2px;
-		width: ${({ isFocused }) => isFocused ? "0px" : "62px"};
+		width: ${({ isFocused }) => isFocused ? "0px" : "68px"};
 	}
 `
 
@@ -511,7 +496,7 @@ const TaskItemDueDate = styledComponents.span`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: fit-content;
+	width: 64px;
 	color: #FFFFFF;
 	font-weight: 600;
 	font-size: 0.7em;
@@ -520,6 +505,7 @@ const TaskItemDueDate = styledComponents.span`
     border-radius: 10px;
     padding: 3px 10px;
 	@media only screen and (max-width: 768px) {
+		width: 48px;
 		font-size: 0.5em;
 	}
 `
@@ -576,7 +562,6 @@ const TaskItemStatusToggle = styledComponents.button`
 export default connect((state) => ({
 	user: state.user,
 	tasks: state.tasks,
-	projects: state.projects,
 	app: state.app,
 	users: state.users,
 }))(TaskItem);

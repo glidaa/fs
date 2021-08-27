@@ -218,21 +218,22 @@ const Projects = (props) => {
         </PanelTabs>}
         <ProjectItems>
           {scope === "assigned" ? (
-            <>
-              {Object.values(filterObj(projects, x => (scope === "owned" && x.isOwned) || (scope === "assigned" && x.isAssigned))).map(project => (
-                <ProjectItem
-                  key={project.id}
-                  project={project}
-                  readOnly={true}
-                />
+            <div>
+              {Object.values(projects).filter(x => x.isAssigned).map(project => (
+                <div key={project.id}>
+                  <ProjectItem
+                    project={project}
+                    readOnly={false}
+                  />
+                </div>
               ))}
-            </>
+            </div>
           ) : (
             <Sortable
-              items={parseLinkedList(filterObj(projects, x => (scope === "owned" && x.isOwned) || (scope === "assigned" && x.isAssigned)), "prevProject", "nextProject").map(({ id }) => id)}
+              items={parseLinkedList(filterObj(projects, x => x.isOwned), "prevProject", "nextProject").map(({ id }) => id)}
               onDragEnd={onSortEnd}
             >
-              {parseLinkedList(filterObj(projects, x => (scope === "owned" && x.isOwned) || (scope === "assigned" && x.isAssigned)), "prevProject", "nextProject").map((value, index) => (
+              {parseLinkedList(filterObj(projects, x => x.isOwned), "prevProject", "nextProject").map((value, index) => (
                 <SortableItem
                   key={value.id}
                   index={index}

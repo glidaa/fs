@@ -48,15 +48,12 @@ const Loading = (props) => {
         dispatch(appActions.handleSetProject(reqProject.id, false))
         setLoadingMsg("We Are Getting The Requested Tasks")
         await dispatch(tasksActions.handleFetchTasks(reqProject.id))
-        dispatch(appActions.setLoading(false))
-      } else {
-        history.replace("/")
-        dispatch(appActions.setLoading(false))
       }
     } else if (params.projectPermalink &&
       params.username &&
       user.state === AuthState.SignedOut) {
         setShouldLogin(true)
+        return 0
     } else if (params.projectPermalink &&
       params.username &&
       user.state === AuthState.SignedIn) {
@@ -80,32 +77,34 @@ const Loading = (props) => {
             const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(params.taskPermalink, 10))[0]
             if (reqTask) {
               dispatch(appActions.handleSetTask(reqTask.id, false))
-              dispatch(appActions.setLoading(false))
-            } else {
-              dispatch(appActions.setLoading(false))
             }
           } else {
             history.replace(`/${params.username}/${params.projectPermalink}`)
-            dispatch(appActions.setLoading(false))
           }
-        } else {
-          history.replace("/")
-          dispatch(appActions.setLoading(false))
         }
       } else {
         if (user.state === AuthState.SignedIn) {
           setLoadingMsg("We Are Fetching Your Own Projects")
           await dispatch(projectsActions.handleFetchOwnedProjects())
           setLoadingMsg("We Are Fetching Projects Assigned To You")
-          await dispatch(projectsActions.handleFetchAssignedProjects())
+          const projects = await dispatch(projectsActions.handleFetchAssignedProjects())
           dispatch(observersActions.handleSetProjectsObservers())
-          dispatch(appActions.setLoading(false))
+          const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
+          if (firstProject) {
+            dispatch(appActions.handleSetProject(firstProject.id, false))
+            history.replace(`/${firstProject.permalink}`)
+          }
         } else {
           setLoadingMsg("We Are Fetching Your Own Projects")
-          await dispatch(projectsActions.handleFetchOwnedProjects())
-          dispatch(appActions.setLoading(false))
+          const projects = await dispatch(projectsActions.handleFetchOwnedProjects())
+          const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
+          if (firstProject) {
+            dispatch(appActions.handleSetProject(firstProject.id, false))
+            history.replace(`/local/${firstProject.permalink}`)
+          }
         }
       }
+      dispatch(appActions.setLoading(false))
     })()
   }, [])
   return (

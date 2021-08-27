@@ -12,21 +12,29 @@ const AccountSettings = (props) => {
     user: {
       data: {
         username,
-        attributes: {
-          given_name,
-          family_name
-        }
-      }
+        firstName,
+        lastName,
+        email,
+        gender,
+        birthdate,
+        plan,
+        avatar,
+        abbr
+      },
     },
     dispatch
   } = props;
 
-  const [newFirstName, setNewFirstName] = useState(given_name)
-  const [newLastName, setNewLastName] = useState(family_name)
+  const [newFirstName, setNewFirstName] = useState(firstName)
+  const [newLastName, setNewLastName] = useState(lastName)
+  const [newEmail, setNewEmail] = useState(email)
+  const [newGender, setNewGender] = useState(gender)
+  const [newBirthdate, setNewBirthdate] = useState(birthdate)
+  const [newAvatar, setNewAvatar] = useState(avatar)
 
   const checkIsChanaged = (newFirstName, newLastName) => (
-    newFirstName !== given_name ||
-    newLastName !== family_name
+    newFirstName !== firstName ||
+    newLastName !== lastName
   )
 
   const isChanged = useMemo(() => checkIsChanaged(newFirstName, newLastName), [newFirstName, newLastName])
@@ -63,9 +71,9 @@ const AccountSettings = (props) => {
       </PanelPageToolbar>
       <AccountSettingsHeader>
         <LetterAvatar>
-            {given_name[0].toUpperCase() + family_name[0].toUpperCase()}
+            {abbr}
         </LetterAvatar>
-        <span>{given_name} {family_name}</span>
+        <span>{firstName} {lastName}</span>
         <span>@{username}</span>
       </AccountSettingsHeader>
       <AccountSettingsForm>
@@ -92,6 +100,45 @@ const AccountSettings = (props) => {
               placeholder="last name…"
               onChange={(e) => setNewLastName(e.target.value)}
               value={newLastName}
+            ></input>
+          </AccountSetting>
+          <AccountSetting>
+            <label htmlFor="email">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              placeholder="email…"
+              disabled
+              onChange={(e) => setNewEmail(e.target.value)}
+              value={newEmail}
+            ></input>
+          </AccountSetting>
+          <AccountSetting>
+            <label htmlFor="gender">
+              Gender
+            </label>
+            <input
+              type="text"
+              name="gender"
+              placeholder="gender…"
+              disabled
+              onChange={(e) => setNewGender(e.target.value)}
+              value={newGender}
+            ></input>
+          </AccountSetting>
+          <AccountSetting>
+            <label htmlFor="birthdate">
+              Birthdate
+            </label>
+            <input
+              type="text"
+              name="birthdate"
+              placeholder="birthdate…"
+              disabled
+              onChange={(e) => setNewBirthdate(e.target.value)}
+              value={newBirthdate}
             ></input>
           </AccountSetting>
           <input type="submit" name="submit" value="Submit"></input>
@@ -222,8 +269,5 @@ const LetterAvatar = styledComponents.div`
 
 export default connect((state) => ({
   user: state.user,
-  tasks: state.tasks,
-  app: state.app,
-  comments: state.comments,
-  users: state.users,
+  app: state.app
 }))(AccountSettings);

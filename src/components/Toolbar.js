@@ -20,7 +20,6 @@ const TasksPanel = (props) => {
     user,
     dispatch
   } = props;
-  console.log(user)
   const openLeftPanel = (page) => {
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== page)) {
       dispatch(appActions.setLeftPanelPage(page))
@@ -78,8 +77,7 @@ const TasksPanel = (props) => {
         
           {user.state === AuthState.SignedIn ? (
             <LetterAvatar onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
-              {user.data.attributes.given_name[0].toUpperCase() + 
-              user.data.attributes.family_name[0].toUpperCase()}
+              {user.data.abbr}
             </LetterAvatar>
           ) : (
             <UserIndicator onClick={goToLoginPage}>
@@ -117,7 +115,6 @@ const ToolbarContainer = styledComponents.div`
     width: calc(100vw - 40px - 20px);
     height: 40px;
     border-radius: 16px;
-    z-index: 999;
 	}
 `;
 
