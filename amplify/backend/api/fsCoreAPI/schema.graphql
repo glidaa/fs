@@ -163,7 +163,7 @@ type Query {
 
 type Subscription {
 	onPushUserUpdate(username: String!): UserUpdate
-		@aws_subscribe(mutations: ["pushUserUpdate", "updateUser])
+		@aws_subscribe(mutations: ["pushUserUpdate", "updateUser"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	onCreateOwnedProject(owner: String!): Project
