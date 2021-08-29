@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
+import { API, graphqlOperation } from "aws-amplify";
+import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
 import styledComponents from "styled-components";
 import SimpleBar from 'simplebar-react';
@@ -32,12 +34,27 @@ const AccountSettings = (props) => {
   const [newBirthdate, setNewBirthdate] = useState(birthdate)
   const [newAvatar, setNewAvatar] = useState(avatar)
 
-  const checkIsChanaged = (newFirstName, newLastName) => (
-    newFirstName !== firstName ||
-    newLastName !== lastName
+  const checkIsChanaged = (
+    newFirstName,
+    newLastName,
+    firstName,
+    lastName
+  ) => (
+    !(newFirstName === firstName &&
+    newLastName === lastName)
   )
 
-  const isChanged = useMemo(() => checkIsChanaged(newFirstName, newLastName), [newFirstName, newLastName])
+  const isChanged = useMemo(() => checkIsChanaged(
+    newFirstName,
+    newLastName,
+    firstName,
+    lastName
+  ), [
+    newFirstName,
+    newLastName,
+    firstName,
+    lastName
+  ])
   
   const closePanel = () => {
     return dispatch(appActions.handleSetLeftPanel(false))
@@ -46,7 +63,13 @@ const AccountSettings = (props) => {
     
 	}
   const saveChanges = () => {
-
+    API.graphql(graphqlOperation(mutations.updateUser, {
+      input: {
+        username,
+        ...(newFirstName !== firstName && { firstName: newFirstName }),
+        ...(newLastName !== lastName && { lastName: newLastName })
+      }
+    }))
   }
   return (
     <>
@@ -144,7 +167,10 @@ const AccountSettings = (props) => {
           <input type="submit" name="submit" value="Submit"></input>
         </form>
       </AccountSettingsForm>
-      <SaveSettingsBtn disabled={isChanged}>
+      <SaveSettingsBtn
+        onClick={saveChanges}
+        disabled={!isChanged}
+      >
         Save Changes
       </SaveSettingsBtn>
     </>
@@ -250,6 +276,13 @@ const SaveSettingsBtn = styledComponents.button`
   outline: none;
   border: none;
   cursor: pointer;
+  transition: background-color 0.3s linear;
+  &:hover {
+    background-color: #0058cc;
+  }
+  &:disabled {
+    background-color: #338bff;
+  }
 `
 
 const LetterAvatar = styledComponents.div`

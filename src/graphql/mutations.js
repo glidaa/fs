@@ -37,6 +37,7 @@ export const createProject = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      members
     }
   }
 `;
@@ -121,6 +122,25 @@ export const updateComment = /* GraphQL */ `
     }
   }
 `;
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      username
+      firstName
+      lastName
+      gender
+      birthdate
+      email
+      plan
+      avatar
+      sharedProjects
+      watchedTasks
+      assignedTasks
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const deleteProjectAndTasks = /* GraphQL */ `
   mutation DeleteProjectAndTasks($projectID: ID!) {
     deleteProjectAndTasks(projectID: $projectID) {
@@ -138,6 +158,7 @@ export const deleteProjectAndTasks = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      members
     }
   }
 `;
@@ -269,6 +290,7 @@ export const importData = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        members
       }
     }
   }

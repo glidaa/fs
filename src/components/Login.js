@@ -26,13 +26,13 @@ const Login = (props) => {
           )
         )).data.getUserByUsername
         dispatch(userActions.handleSetData(userData))
-        dispatch(userActions.setState(AuthState.SignedIn))
+        dispatch(userActions.handleSetState(AuthState.SignedIn))
         dispatch(observersActions.handleSetProjectsObservers())
         dispatch(appActions.setLoading(true))
         setShouldRedirect(true)
       } else {
         dispatch(userActions.handleSetData(null))
-        dispatch(userActions.setState(nextAuthState))
+        dispatch(userActions.handleSetState(nextAuthState))
       }
 		});
   }, [])

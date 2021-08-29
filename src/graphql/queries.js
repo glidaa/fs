@@ -58,6 +58,7 @@ export const getProjectById = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      members
     }
   }
 `;
@@ -78,6 +79,7 @@ export const getProjectByPermalink = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      members
     }
   }
 `;
@@ -99,6 +101,7 @@ export const listOwnedProjects = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        members
       }
     }
   }
@@ -121,6 +124,7 @@ export const listAssignedProjects = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        members
       }
     }
   }
@@ -143,6 +147,7 @@ export const listWatchedProjects = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        members
       }
     }
   }
@@ -181,6 +186,41 @@ export const listCommentsForTask = /* GraphQL */ `
         updatedAt
         owner
       }
+    }
+  }
+`;
+export const searchUsers = /* GraphQL */ `
+  query SearchUsers(
+    $filter: SearchableUserFilterInput
+    $sort: SearchableUserSortInput
+    $limit: Int
+    $nextToken: String
+    $from: Int
+  ) {
+    searchUsers(
+      filter: $filter
+      sort: $sort
+      limit: $limit
+      nextToken: $nextToken
+      from: $from
+    ) {
+      items {
+        username
+        firstName
+        lastName
+        gender
+        birthdate
+        email
+        plan
+        avatar
+        sharedProjects
+        watchedTasks
+        assignedTasks
+        createdAt
+        updatedAt
+      }
+      nextToken
+      total
     }
   }
 `;

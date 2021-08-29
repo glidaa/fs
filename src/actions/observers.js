@@ -3,15 +3,27 @@ import * as projectsActions from "./projects"
 import * as tasksActions from "./tasks"
 import * as commentsActions from "./comments"
 import * as appActions from "./app"
+import * as userActions from "./user"
 import * as subscriptions from "../graphql/subscriptions"
 import filterObj from "../utils/filterObj";
 
+export const SET_USER_OBSERVERS = "SET_USER_OBSERVERS";
+export const CLEAR_USER_OBSERVERS = "CLEAR_USER_OBSERVERS";
 export const SET_PROJECTS_OBSERVERS = "SET_PROJECTS_OBSERVERS";
 export const CLEAR_PROJECTS_OBSERVERS = "CLEAR_PROJECTS_OBSERVERS";
 export const SET_TASKS_OBSERVERS = "SET_TASKS_OBSERVERS";
 export const CLEAR_TASKS_OBSERVERS = "CLEAR_TASKS_OBSERVERS";
 export const SET_COMMENTS_OBSERVERS = "SET_COMMENTS_OBSERVERS";
 export const CLEAR_COMMENTS_OBSERVERS = "CLEAR_COMMENTS_OBSERVERS";
+
+const setUserObservers = (observers) => ({
+  type: SET_USER_OBSERVERS,
+  observers
+});
+
+const clearUserObservers = () => ({
+  type: CLEAR_USER_OBSERVERS
+});
 
 const setProjectsObservers = (observers) => ({
   type: SET_PROJECTS_OBSERVERS,
@@ -39,6 +51,32 @@ const setCommentsObservers = (observers) => ({
 const clearCommentsObservers = () => ({
   type: CLEAR_COMMENTS_OBSERVERS
 });
+
+export const handleSetUserObservers = () => (dispatch, getState) => {
+  const { user } = getState()
+  const observers = [];
+  const data = {
+    username: user.data.username
+  }
+  observers.push(API.graphql(graphqlOperation(subscriptions.onPushUserUpdate, data)).subscribe({
+    next: e => {
+      const incoming = e.value.data.onPushUserUpdate
+      dispatch(userActions.handleSetData(incoming))
+    },
+    error: error => console.warn(error)
+  }))
+  return dispatch(setUserObservers(observers))
+}
+
+export const handleClearUserObservers = () => (dispatch, getState) => {
+  const { observers } = getState()
+  if (observers.user) {
+    for (const observer of observers.user) {
+      observer.unsubscribe()
+    }
+  }
+  return dispatch(clearUserObservers())
+}
 
 export const handleSetProjectsObservers = () => (dispatch, getState) => {
   const { user } = getState()

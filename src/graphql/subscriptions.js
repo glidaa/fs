@@ -37,6 +37,7 @@ export const onCreateOwnedProject = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      members
     }
   }
 `;
@@ -59,6 +60,7 @@ export const onImportOwnedProjects = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        members
       }
     }
   }
@@ -99,6 +101,7 @@ export const onDeleteOwnedProject = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      members
     }
   }
 `;

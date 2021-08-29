@@ -1,4 +1,6 @@
 import {
+  SET_USER_OBSERVERS,
+  CLEAR_USER_OBSERVERS,
   SET_PROJECTS_OBSERVERS,
   CLEAR_PROJECTS_OBSERVERS,
   SET_TASKS_OBSERVERS,
@@ -10,11 +12,16 @@ import {
 const initState = {
   projects: null,
   tasks: null,
-  comments: null
+  comments: null,
+  user: null
 }
 
 export default function (state = initState, action) {
   switch(action.type) {
+    case SET_USER_OBSERVERS:
+      return {...state, user: action.observers}
+    case CLEAR_USER_OBSERVERS:
+      return {...state, user: null}
     case SET_PROJECTS_OBSERVERS:
       return {...state, projects: action.observers}
     case CLEAR_PROJECTS_OBSERVERS:

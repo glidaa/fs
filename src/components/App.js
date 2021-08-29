@@ -49,10 +49,10 @@ const App = (props) => {
           )
         )).data.getUserByUsername
         dispatch(userActions.handleSetData(userData))
-        dispatch(userActions.setState(AuthState.SignedIn))
+        dispatch(userActions.handleSetState(AuthState.SignedIn))
       } else {
         dispatch(userActions.handleSetData(null))
-        dispatch(userActions.setState(nextAuthState))
+        dispatch(userActions.handleSetState(nextAuthState))
       }
       if (nextAuthState === AuthState.SignedIn) {
         window.removeEventListener("storage", fetchLocalProjects);

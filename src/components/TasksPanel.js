@@ -176,7 +176,6 @@ const TasksPanel = (props) => {
     )
   }
   const openProjectSettings = () => {
-    console.log("OK")
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== panelPages.PROJECT_SETTINGS)) {
       dispatch(appActions.setLeftPanelPage(panelPages.PROJECT_SETTINGS))
       dispatch(appActions.handleSetLeftPanel(true))

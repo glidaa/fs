@@ -5,8 +5,8 @@ import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects";
 import formatDate from "../utils/formatDate";
 import ProgressRing from "./ProgressRing";
-import AvatarArray from "./AvatarArray";
 import { ReactComponent as GlobeIcon } from "../assets/earth-outline.svg"
+import { ReactComponent as DocumentLockIcon } from "../assets/document-lock-outline.svg"
 import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 
@@ -29,8 +29,10 @@ const ProjectItem = (props) => {
     dispatch(projectsActions.handleRemoveProject(project))
   }
   const selectProject = (id) => {
-    dispatch(appActions.handleSetLeftPanel(false))
-    dispatch(appActions.handleSetProject(id))
+    if (selectedProject !== project.id) {
+      dispatch(appActions.handleSetLeftPanel(false))
+      dispatch(appActions.handleSetProject(id))
+    }
   }
   return (
     <ProjectItemShell
@@ -39,12 +41,22 @@ const ProjectItem = (props) => {
       {...listeners}
     >
       <ProjectItemPermission>
-        <GlobeIcon
-          height="200"
-          width="200"
-          strokeWidth="24"
-          color="#000000"
-        />
+        {project.privacy === "public" && (
+          <GlobeIcon
+            height="200"
+            width="200"
+            strokeWidth="24"
+            color="#000000"
+          />
+        )}
+        {project.privacy === "private" && (
+          <DocumentLockIcon
+            height="200"
+            width="200"
+            strokeWidth="24"
+            color="#000000"
+          />
+        )}
       </ProjectItemPermission>
       <ProjectItemContainer>
         <ProjectItemLeftPart>
@@ -57,49 +69,14 @@ const ProjectItem = (props) => {
             <PendingTasksCount>{project.pendingCount}</PendingTasksCount>
             <DoneTasksCount>{project.doneCount}</DoneTasksCount>
           </TasksCount>
-          <AvatarArray
-            max={4}
-						users={[
-							{
-								avatar: "https://i.pravatar.cc/38?img=2",
-								firstName: "Bugs",
-								lastName: "Bunney"
-							},
-							{
-								name: "Ahmed Hassan"
-							},
-							{
-								avatar: "https://i.pravatar.cc/38?img=3",
-								firstName: "Loyed",
-								lastName: "Garamdon"
-							},
-							{
-								avatar: "https://i.pravatar.cc/38?img=4",
-								firstName: "Kissy",
-								lastName: "Johns"
-							},
-							{
-								avatar: "https://i.pravatar.cc/38?img=5",
-								firstName: "Sponge",
-								lastName: "Pop"
-							},
-							{
-								avatar: "https://i.pravatar.cc/38?img=6",
-								firstName: "Kogoro",
-								lastName: "Mori"
-							}
-						]}
-            borderColor="#006EFF"
-            size={38} 
-          />
           <ProjectItemDate>
             Created {formatDate(new Date(project.createdAt).getTime())}
           </ProjectItemDate>
         </ProjectItemLeftPart>
         <ProjectItemRightPart>
           <ProgressRing
-            radius={42}
-            stroke={5}
+            radius={36}
+            stroke={3.5}
             progress={project.doneCount / (project.todoCount + project.pendingCount + project.doneCount) * 100}
           />
           <ProjectItemActions>

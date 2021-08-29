@@ -22,7 +22,7 @@
         "fsCognitoPostConfirmation": {
           "GROUP": "free",
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsCognitoPostConfirmation-33564562596850563571-build.zip"
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-4e31525957586a65674a-build.zip"
         },
         "fsCoreApiResolver": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",

@@ -874,14 +874,14 @@ async function updateUser(ctx) {
     };
     const UpdateUserCognitoParams = {
       UserAttributes: [
-        ...(updateData.firstName && [{
+        ...((updateData.firstName && [{
           Name: 'given_name',
           Value: updateData.firstName
-        }]),
-        ...(updateData.lastName && [{
+        }]) || []),
+        ...((updateData.lastName && [{
           Name: 'family_name',
           Value: updateData.lastName
-        }])
+        }]) || [])
       ],
       UserPoolId: USERPOOL,
       Username: username

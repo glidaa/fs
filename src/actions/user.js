@@ -1,7 +1,10 @@
+import { AuthState } from '@aws-amplify/ui-components';
+import * as observersActions from "./observers"
+
 export const SET_STATE = "SET_STATE";
 export const SET_DATA = "SET_DATA";
 
-export const setState = (userSate) => ({
+const setState = (userSate) => ({
   type: SET_STATE,
   userSate
 });
@@ -10,6 +13,16 @@ const setData = (userData) => ({
   type: SET_DATA,
   userData
 });
+
+export const handleSetState = (userState) => (dispatch) => {
+  if (userState !== AuthState.SignedIn) {
+    dispatch(observersActions.handleClearUserObservers())
+  }
+  dispatch(setState(userState))
+  if (userState === AuthState.SignedIn) {
+    dispatch(observersActions.handleSetUserObservers())
+  }
+}
 
 export const handleSetData = (userData) => (dispatch) => {
   if (userData) {
