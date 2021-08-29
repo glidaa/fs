@@ -271,15 +271,6 @@ async function isProjectOwner(projectID, client) {
   }
 }
 
-async function isTaskOwner(taskID, client) {
-  try {
-    const { owner } = cachedTasks[taskID] || await getTask(taskID)
-    return client === owner
-  } catch (err) {
-    throw new Error(err)
-  }
-}
-
 async function isCommentOwner(commentID, client) {
   try {
     const { owner } = cachedComments[commentID] || await getComment(commentID)
@@ -1485,10 +1476,44 @@ async function deleteProjectAndTasks(ctx) {
 async function deleteTaskAndComments(ctx) {
   const taskID = ctx.arguments.taskId
   const client = ctx.identity.username
-  if (await isTaskOwner(taskID, client)) {
+  if (await isTaskEditableByClient(taskID, client)) {
     const removeCommentsProm = removeCommentsOfTask(taskID);
     await removeTaskOrder(taskID)
     await updateTaskCount(taskID)
+    const taskAssignees = cachedTasks[taskID].assignees
+    const taskWatchers = cachedTasks[taskID].watchers
+    const taskUsers = [...new Set([...taskAssignees, ...taskWatchers])]
+    if (taskUsers.length) {
+      const { projectID } = cachedTasks[taskID]
+      const taskPath = `${projectID}/${taskID}`
+      for (const taskUser of taskUsers) {
+        const [, taskUserType, taskUserID] = taskUser.match(/(user|anonymous):(.*)/)
+        if (taskUserType === "user") {
+          const userGetParams = {
+            TableName: USERTABLE,
+            Key: {
+              "username": taskUserID
+            }
+          }
+          const userData = await docClient.get(userGetParams).promise()
+          const userUpdateParams = {
+            TableName: USERTABLE,
+            Key: {
+              "username": taskUserID
+            },
+            UpdateExpression: "set assignedTasks=:assignedTasks, watchedTasks=:watchedTasks, updatedAt = :updatedAt",
+            ExpressionAttributeValues: {
+              ":assignedTasks": userData.Item.assignedTasks.filter(x => x !== taskPath),
+              ":watchedTasks": userData.Item.watchedTasks.filter(x => x !== taskPath),
+              ":updatedAt": new Date().toISOString()
+            },
+            ReturnValues: "ALL_NEW"
+          }
+          const userUpdate = await docClient.update(userUpdateParams).promise();
+          await _pushUserUpdate(userUpdate.Attributes)
+        }
+      }
+    }
     const removeTaskProm = deleteTask(taskID);
     const [_, deletedTask] = await Promise.all([
       removeCommentsProm,
@@ -1699,6 +1724,38 @@ async function onDeleteCommentByTaskID(ctx) {
 
 async function removeTasksOfProject(projectID) {
   const tasks = await _listTasksForProject(projectID);
+  const projectAssignees = tasks.map(x => x.assignees).flat()
+  const projectWatchers = tasks.map(x => x.watchers).flat()
+  const projectUsers = [...new Set([...projectAssignees, ...projectWatchers])]
+  if (projectUsers.length) {
+    for (const projectUser of projectUsers) {
+      const [, projectUserType, projectUserID] = projectUser.match(/(user|anonymous):(.*)/)
+      if (projectUserType === "user") {
+        const userGetParams = {
+          TableName: USERTABLE,
+          Key: {
+            "username": projectUserID
+          }
+        }
+        const userData = await docClient.get(userGetParams).promise()
+        const userUpdateParams = {
+          TableName: USERTABLE,
+          Key: {
+            "username": projectUserID
+          },
+          UpdateExpression: "set assignedTasks=:assignedTasks, watchedTasks=:watchedTasks, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":assignedTasks": userData.Item.assignedTasks.filter(x => new RegExp(`^${projectID}/.*`).test(x)),
+            ":watchedTasks": userData.Item.watchedTasks.filter(x => new RegExp(`^${projectID}/.*`).test(x)),
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        const userUpdate = await docClient.update(userUpdateParams).promise();
+        await _pushUserUpdate(userUpdate.Attributes)
+      }
+    }
+  }
   await deleteTasks(tasks);
 }
 
@@ -1830,14 +1887,14 @@ async function deleteProject(id) {
   }
 }
 
-async function deleteTask(id) {
+async function deleteTask(taskID) {
   const params = {
     TableName: TASKTABLE,
     Key: {
-      id
+      taskID
     },
     ReturnValues: "ALL_OLD",
-  };
+  }
   try {
     const data = await docClient.delete(params).promise();
     const response = data.Attributes;

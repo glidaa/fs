@@ -19,7 +19,13 @@ const ProjectItem = (props) => {
     dispatch,
     listeners
   } = props
-  const removeProject = () => {
+  const shareProject = (e) => {
+    e.stopPropagation()
+    const linkToBeCopied = window.location.href.replace(/\/\d+/, "")
+    navigator.clipboard.writeText(linkToBeCopied)
+  }
+  const removeProject = (e) => {
+    e.stopPropagation()
     dispatch(projectsActions.handleRemoveProject(project))
   }
   const selectProject = (id) => {
@@ -99,6 +105,7 @@ const ProjectItem = (props) => {
           <ProjectItemActions>
             <ProjectItemAction>
               <ShareIcon
+                onClick={shareProject}
                 height="20"
                 width="20"
                 strokeWidth="42"
