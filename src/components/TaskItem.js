@@ -28,6 +28,7 @@ const TaskItem = (props) => {
 			selectedProject,
 			taskAddingStatus,
 			isRightPanelOpened,
+			isActionSheetOpened,
 			lockedTaskField,
 			command
 		},
@@ -185,10 +186,10 @@ const TaskItem = (props) => {
 	}
 
 	const openRightPanel = (item) => {
+		if (item.id !== selectedTask) {
+			dispatch(appActions.handleSetTask(item.id))
+		}
 		if (!isRightPanelOpened) {
-			if (item.id !== selectedTask) {
-				dispatch(appActions.handleSetTask(item.id))
-			}
 			return dispatch(appActions.handleSetRightPanel(true))
 		}
 	}
@@ -262,7 +263,7 @@ const TaskItem = (props) => {
 									onKeyDown={handleKeyDown}
 									onChange={onChange}
 									onBlur={forceIdle}
-									autoFocus={true}
+									autoFocus={!(isRightPanelOpened || isActionSheetOpened)}
 									contentEditable={false}
 									readOnly={readOnly}
 								/>
@@ -454,7 +455,7 @@ const TaskItemRightPart = styledComponents.div`
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	width: ${({ isFocused }) => isFocused ? "0px" : "150px"};
+	width: ${({ isFocused }) => isFocused ? "0px" : "170px"};
 	transition: width 0.3s ease-in-out;
 	@media only screen and (max-width: 768px) {
 		flex-direction: column;

@@ -83,7 +83,7 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
 
 export const handleUpdateProject = (update) => (dispatch, getState) => {
   const { user, projects } = getState()
-  const prevProjectState = {...projects[OWNED][update.id]}
+  const prevProjectState = {...projects[update.id]}
   const updateWithID = {id: prevProjectState.id, ...update };
   if (user.state === AuthState.SignedIn) {
     dispatch(updateProject(updateWithID, OWNED))
@@ -193,7 +193,7 @@ export const handleFetchAssignedProjects = () => async (dispatch, getState) => {
 
 export const handleUpdateTaskCount = (projectID, prevStatus, nextStatus) => (dispatch, getState) => {
   const { projects } = getState()
-  const prevProjectState = {...projects[OWNED][projectID]}
+  const prevProjectState = {...projects[projectID]}
   const prevTodoCount = prevProjectState.todoCount
   const prevPendingCount = prevProjectState.pendingCount
   const prevDoneCount = prevProjectState.doneCount

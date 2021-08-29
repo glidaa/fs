@@ -23,6 +23,7 @@ const USER_NOT_FOUND = "USER_NOT_FOUND";
 const PROJECT_NOT_FOUND = "PROJECT_NOT_FOUND";
 const TASK_NOT_FOUND = "TASK_NOT_FOUND";
 const COMMENT_NOT_FOUND = "COMMENT_NOT_FOUND";
+const PERMALINK_USED = "PERMALINK_USED";
 
 const TODO = "todo"
 const PENDING = "pending"
@@ -61,6 +62,9 @@ const resolvers = {
     },
     updateComment: (ctx) => {
       return updateComment(ctx);
+    },
+    updateUser: (ctx) => {
+      return updateUser(ctx);
     },
     deleteProjectAndTasks: (ctx) => {
       return deleteProjectAndTasks(ctx);
@@ -705,8 +709,26 @@ async function updateProject(ctx) {
     const expAttrVal = {}
     let updateExp = []
     for (const item in updateData) {
-      expAttrVal[`:${item}`] = updateData[item]
-      updateExp.push(`${item}=:${item}`)
+      if (item === "permalink") {
+        const params = {
+          TableName: PROJECTTABLE,
+          IndexName: "byPermalink",
+          KeyConditionExpression: "permalink = :permalink",
+          ExpressionAttributeValues: {
+            ":permalink": `${client}/${updateData[item]}`
+          }
+        }
+        const data = await docClient.query(params).promise();
+        if (!data.Items[0]) {
+          expAttrVal[`:${item}`] = `${client}/${updateData[item]}`
+          updateExp.push(`${item}=:${item}`)
+        } else {
+          throw new Error(PERMALINK_USED)
+        }
+      } else {
+        expAttrVal[`:${item}`] = updateData[item]
+        updateExp.push(`${item}=:${item}`)
+      }
     }
     expAttrVal[":updatedAt"] = new Date().toISOString()
     updateExp.push("updatedAt=:updatedAt")
@@ -829,6 +851,56 @@ async function updateComment(ctx) {
         taskID: cachedComments[commentID].taskID,
         ...data.Attributes
       }
+    } catch (err) {
+      throw new Error(err);
+    }
+  } else {
+    throw new Error(UNAUTHORIZED)
+  }
+}
+
+async function updateUser(ctx) {
+  const updateData = ctx.arguments.input
+  const { username } = updateData
+  const client = ctx.identity.username
+  if (client === username) {
+    delete updateData.username
+    const expAttrVal = {}
+    let updateExp = []
+    for (const item in updateData) {
+      expAttrVal[`:${item}`] = updateData[item]
+      updateExp.push(`${item}=:${item}`)
+    }
+    expAttrVal[":updatedAt"] = new Date().toISOString()
+    updateExp.push("updatedAt=:updatedAt")
+    updateExp = `set ${updateExp.join(", ")}`
+    const UpdateUserParams = {
+      TableName: USERTABLE,
+      Key: {
+        "username": username
+      },
+      UpdateExpression: updateExp,
+      ExpressionAttributeValues: expAttrVal,
+      ReturnValues: "ALL_NEW"
+    };
+    const UpdateUserCognitoParams = {
+      UserAttributes: [
+        ...(updateData.firstName && [{
+          Name: 'given_name',
+          Value: updateData.firstName
+        }]),
+        ...(updateData.lastName && [{
+          Name: 'family_name',
+          Value: updateData.lastName
+        }])
+      ],
+      UserPoolId: USERPOOL,
+      Username: username
+    };
+    try {
+      await cognitoClient.adminUpdateUserAttributes(UpdateUserCognitoParams).promise()
+      const data = await docClient.update(UpdateUserParams).promise();
+      return data.Attributes
     } catch (err) {
       throw new Error(err);
     }

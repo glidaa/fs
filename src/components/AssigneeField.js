@@ -158,21 +158,21 @@ const NoAssignees = styledComponents.div`
   background-color: transparent;
   outline: none;
   height: fit-content;
-  border: 1px solid #006EFF;
+  border: 1px solid #C0C0C0;
   & > span {
     font-weight: 600;
-    font-size: 0.9em;
-    color: #006EFF;
+    font-size: 14px;
+    color: #222222;
   }
   & > button {
     outline: none;
     border: none;
-    background-color: #F8F8F8;
-    color: #222222;
+    background-color: #CCE2FF;
+    color: #006EFF;
     padding: 5px 10px;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 0.9em;
+    font-size: 12px;
     cursor: pointer;
   }
 `

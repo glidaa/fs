@@ -13,12 +13,6 @@ import 'simplebar/dist/simplebar.min.css';
 import AssigneeField from "../AssigneeField";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
-import { ReactComponent as AssignIcon } from "../../assets/emoji_u1f4cc.svg"
-import { ReactComponent as CalenderIcon } from "../../assets/emoji_u1f4c6.svg"
-import { ReactComponent as TagIcon } from "../../assets/emoji_u1f3f7.svg"
-import { ReactComponent as TaskIcon } from "../../assets/emoji_u1f4dd.svg"
-import { ReactComponent as DescriptionIcon } from "../../assets/emoji_u1f4c3.svg"
-import { ReactComponent as StatusIcon } from "../../assets/emoji_u1f6a6.svg"
 
 const Details = (props) => {
   const {
@@ -97,8 +91,7 @@ const Details = (props) => {
             <form onSubmit={(e) => e.preventDefault()}>
               <Detail>
                 <label htmlFor="assignee">
-                  <AssignIcon width={18} />
-                  <span>Assigned To</span>
+                  Assigned To
                 </label>
                 <AssigneeField
                   name="assignees"
@@ -108,8 +101,7 @@ const Details = (props) => {
               </Detail>
               <Detail>
                 <label htmlFor="task">
-                  <TaskIcon width={18} />
-                  <span>Task</span>
+                  Task
                 </label>
                 <input
                   type="text"
@@ -124,8 +116,7 @@ const Details = (props) => {
               </Detail>
               <Detail>
                 <label htmlFor="description">
-                  <DescriptionIcon width={18} />
-                  <span>Description</span>
+                  Description
                 </label>
                 <input
                   type="text"
@@ -140,8 +131,7 @@ const Details = (props) => {
               </Detail>
               <Detail>
                 <label htmlFor="due">
-                  <CalenderIcon width={18} />
-                  <span>Due</span>
+                  Due
                 </label>
                 <DatePicker
                   name="due"
@@ -153,8 +143,7 @@ const Details = (props) => {
               </Detail>
               <Detail>
                 <label htmlFor="tag">
-                  <TagIcon width={18} />
-                  <span>Tags</span>
+                  Tags
                 </label>
                 <TagField
                   onChange={handleChange}
@@ -164,8 +153,7 @@ const Details = (props) => {
               </Detail>
               <Detail>
                 <label htmlFor="status">
-                  <StatusIcon width={18} />
-                  <span>Status</span>
+                  Status
                 </label>
                 <StatusField
                   onChange={handleChange}
@@ -207,20 +195,13 @@ const Detail = styledComponents.div`
   align-items: flex-start;
   justify-content: center;
   margin: 0 25px;
-  gap: 10px;
+  gap: 5px;
   & > label {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    & > span {
-      color: #222222;
-      margin-bottom: 0;
-      width: max-content;
-      font-size: 16px;
-      font-weight: 600;
-    }
+    color: #222222;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 16px;
+    font-weight: 600;
   }
   & > input {
     width: calc(100% - 20px);

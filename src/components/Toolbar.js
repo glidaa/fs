@@ -4,7 +4,6 @@ import * as appActions from "../actions/app"
 import { AuthState } from "@aws-amplify/ui-components";
 import { connect } from "react-redux";
 import { panelPages } from "../constants"
-import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as ProjectsIcon } from "../assets/albums-outline.svg"
 import { ReactComponent as NotificationIcon } from "../assets/notifications-outline.svg"
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
@@ -63,18 +62,6 @@ const TasksPanel = (props) => {
         </ToolbarAction>
       </TopControls>
       <BottomControls>
-        <ShareBtn
-          width="20"
-          height="20"
-          strokeWidth="32"
-          color="#006EFF"
-          onClick={() => {
-            const linkToBeCopied = window.location.href.replace(/\/\d+/, "")
-            navigator.clipboard.writeText(linkToBeCopied)
-          }}
-        />
-        <Spacer color="#222222" />
-        
           {user.state === AuthState.SignedIn ? (
             <LetterAvatar onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
               {user.data.abbr}
@@ -158,14 +145,6 @@ const ToolbarAction = styledComponents.button`
 const Spacer = styledComponents.div`
   border-top: 1px solid ${({ color }) => color};
   width: 100%;
-`
-
-const ShareBtn = styledComponents(ShareIcon)`
-  border-radius: 8px;
-  padding: 10px;
-  cursor: pointer;
-  background-color: #FFFFFF;
-  border: 1px solid #006EFF;
 `
 
 const Logo = styledComponents.span`

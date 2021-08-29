@@ -23,9 +23,12 @@ import { connect } from "react-redux";
 import parseLinkedList from "../utils/parseLinkedList";
 import TaskItem from "./TaskItem";
 import ProjectNotSelected from "./ProjectNotSelected";
+import * as appActions from "../actions/app";
 import * as tasksActions from "../actions/tasks";
 import { OK, initTaskState } from "../constants";
-import useWindowSize from "../utils/useWindowSize";
+import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
+import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
+import { panelPages } from "../constants"
 import ProjectTitle from './ProjectTitle';
 
 const Sortable = (props) => {
@@ -131,7 +134,9 @@ const TasksPanel = (props) => {
   const {
     app: {
       selectedProject,
-      taskAddingStatus
+      taskAddingStatus,
+      isLeftPanelOpened,
+      leftPanelPage
     },
     tasks,
     projects,
@@ -170,6 +175,13 @@ const TasksPanel = (props) => {
       )
     )
   }
+  const openProjectSettings = () => {
+    console.log("OK")
+    if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== panelPages.PROJECT_SETTINGS)) {
+      dispatch(appActions.setLeftPanelPage(panelPages.PROJECT_SETTINGS))
+      dispatch(appActions.handleSetLeftPanel(true))
+    }
+  }
   return (
     <TasksPanelContainer
       name="TasksPanelContainer"
@@ -178,9 +190,32 @@ const TasksPanel = (props) => {
       {selectedProject ? (
         <>
           <TasksToolbar>
+            <ToolbarAction
+              onClick={() => {
+                const linkToBeCopied = window.location.href.replace(/\/\d+/, "")
+                navigator.clipboard.writeText(linkToBeCopied)
+              }}
+            >
+              <ShareIcon
+                width={14}
+                height={14}
+                strokeWidth={32}
+                color="#006EFF"
+              />
+              <span>Share</span>
+            </ToolbarAction>
             <span>
               {projects[selectedProject].permalink}
             </span>
+            <ToolbarAction onClick={openProjectSettings}>
+              <SettingsIcon
+                width={14}
+                height={14}
+                strokeWidth={32}
+                color="#006EFF"
+              />
+              <span>Settings</span>
+            </ToolbarAction>
           </TasksToolbar>
           <ProjectTitle />
           <Sortable
@@ -201,8 +236,8 @@ const TasksPanel = (props) => {
         </>
       ) : <ProjectNotSelected />}
     </TasksPanelContainer>
-  );
-};
+  )
+}
 
 const TasksPanelContainer = styledComponents.div`
   flex: 2;
@@ -216,19 +251,38 @@ const TasksPanelContainer = styledComponents.div`
     width: 100%;
     height: 100%;
   }
-`;
+`
 
 const TasksToolbar = styledComponents.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-direction: row;
+  margin: 0 12px;
   & > span {
     font-size: 12px;
   }
 	@media only screen and (max-width: 768px) {
-		margin: 10px 0;
+		margin: 20px 20px 10px 20px;
 	}
+`
+
+const ToolbarAction = styledComponents.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 12px;
+  padding: 5px;
+  line-height: 0;
+  width: 80px;
+  color: #006EFF;
+  background-color: #CCE2FF;
+  border-radius: 6px;
+  outline: none;
+  border: none;
+  cursor: pointer;
 `
 
 export default connect((state) => ({
