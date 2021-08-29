@@ -64,10 +64,14 @@ const Loading = (props) => {
         dispatch(observersActions.handleSetProjectsObservers())
         let reqProject = Object.values(projects).filter(x => x.permalink === `${params.username}/${params.projectPermalink}`)[0]
         if (!reqProject) {
-          reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
-            permalink: `${params.username}/${params.projectPermalink}`
-          }))).data.getProjectByPermalink
-          dispatch(projectsActions.createProject(reqProject, "temp"))
+          try {
+            reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
+              permalink: `${params.username}/${params.projectPermalink}`
+            }))).data.getProjectByPermalink
+            dispatch(projectsActions.createProject(reqProject, "temp"))
+          } catch {
+            reqProject = null
+          }
         }
         if (reqProject) {
           dispatch(appActions.handleSetProject(reqProject.id, false))

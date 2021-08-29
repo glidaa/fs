@@ -39,6 +39,7 @@ type Project
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
 	owner: String!
+	members: [String!]
 }
 
 type Task

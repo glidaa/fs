@@ -72,10 +72,14 @@ const App = (props) => {
       if (user.state === AuthState.SignedIn && username && projectPermalink) {
         let reqProject = Object.values(projects).filter(x => x.permalink === `${username}/${projectPermalink}`)[0]
         if (!reqProject) {
-          reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
-            permalink: `${username}/${projectPermalink}`
-          }))).data.getProjectByPermalink
-          dispatch(projectsActions.createProject(reqProject, "temp"))
+          try {
+            reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
+              permalink: `${username}/${projectPermalink}`
+            }))).data.getProjectByPermalink
+            dispatch(projectsActions.createProject(reqProject, "temp"))
+          } catch {
+            reqProject = null
+          }
         }
         if (reqProject) {
           dispatch(appActions.handleSetProject(reqProject.id, false));

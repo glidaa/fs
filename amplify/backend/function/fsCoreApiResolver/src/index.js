@@ -2,9 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
 const https = require('https');
 const urlParse = require("url").URL;
-const { DataExchange } = require('aws-sdk');
 
-const cachedUsers = []
 const cachedProjects = {}
 const cachedTasks = {}
 const cachedComments = {}
@@ -249,7 +247,7 @@ async function getComment(commentID) {
 async function isProjectSharedWithClient(projectID, client) {
   try {
     const { privacy, members, owner } = cachedProjects[projectID] || await getProject(projectID)
-    return "public" === privacy || members.includes(client) || client === owner
+    return "public" === privacy || members?.includes(client) || client === owner
   } catch (err) {
     throw new Error(err)
   }
@@ -258,7 +256,7 @@ async function isProjectSharedWithClient(projectID, client) {
 async function isProjectEditableByClient(projectID, client) {
   try {
     const { privacy, members, owner, permissions } = cachedProjects[projectID] || await getProject(projectID)
-    return ("rw" === permissions && ("public" === privacy || members.includes(client))) || client === owner
+    return ("rw" === permissions && ("public" === privacy || members?.includes(client))) || client === owner
   } catch (err) {
     throw new Error(err)
   }
@@ -1300,7 +1298,7 @@ async function getProjectByPermalink(ctx) {
     const data = await docClient.query(params).promise();
     if (data.Items[0]) {
       const { privacy, members, owner } = data.Items[0]
-      if ("public" === privacy || members.includes(client) || client === owner) {
+      if ("public" === privacy || members?.includes(client) || client === owner) {
         return data.Items[0]
       } else {
         throw new Error(UNAUTHORIZED)
