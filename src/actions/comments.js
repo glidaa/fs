@@ -41,7 +41,8 @@ export const handleCreateComment = (commentState) => (dispatch, getState) => {
       dispatch(createComment(commentState))
     }
     return API.graphql(graphqlOperation(mutations.createComment, { input: commentState }))
-      .catch(() => {
+      .catch((err) => {
+        console.error(err)
         if (commentState.taskID === getState().app.selectedTask) {
           return dispatch(removeComment(commentState.id))
         }
@@ -58,7 +59,8 @@ export const handleUpdateComment = (update) => (dispatch, getState) => {
       dispatch(updateComment(updateWithID))
     }
     return API.graphql(graphqlOperation(mutations.updateComment, { input: updateWithID }))
-      .catch(() => {
+      .catch((err) => {
+        console.error(err)
         if (comments[prevCommentState.id]) {
           return dispatch(updateComment(prevCommentState))
         }
@@ -73,7 +75,8 @@ export const handleRemoveComment = (commentState) => (dispatch, getState) => {
       dispatch(removeComment(commentState.id))
     }
     return API.graphql(graphqlOperation(mutations.deleteComment, { commentID: commentState.id }))
-      .catch(() => {
+      .catch((err) => {
+        console.error(err)
         if (comments[commentState.id]) {
           dispatch(createComment(commentState))
         }

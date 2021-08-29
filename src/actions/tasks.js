@@ -104,7 +104,8 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
       dispatch(updateTask(updateWithID))
     }
     return API.graphql(graphqlOperation(mutations.updateTask, { input: updateWithID }))
-      .catch(() => {
+      .catch((err) => {
+        console.error(err)
         if (tasks[prevTaskState.id]) {
           dispatch(appActions.setCommand(prevCommands))
           return dispatch(updateTask(prevTaskState))
@@ -160,7 +161,8 @@ export const handleRemoveTask = (taskState) => (dispatch, getState) => {
       dispatch(removeTask(taskState.id))
     }
     return API.graphql(graphqlOperation(mutations.deleteTaskAndComments, { taskId: taskState.id }))
-      .catch(() => {
+      .catch((err) => {
+        console.error(err)
         if (tasks[taskState.id]) {
           dispatch(createTask(taskState))
         }

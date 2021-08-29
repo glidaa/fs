@@ -1509,6 +1509,7 @@ async function deleteTaskAndComments(ctx) {
             },
             ReturnValues: "ALL_NEW"
           }
+          console.log(userData.Item.assignedTasks)
           const userUpdate = await docClient.update(userUpdateParams).promise();
           await _pushUserUpdate(userUpdate.Attributes)
         }
@@ -1891,7 +1892,7 @@ async function deleteTask(taskID) {
   const params = {
     TableName: TASKTABLE,
     Key: {
-      taskID
+      "id": taskID
     },
     ReturnValues: "ALL_OLD",
   }

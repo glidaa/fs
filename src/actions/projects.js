@@ -88,7 +88,8 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
   if (user.state === AuthState.SignedIn) {
     dispatch(updateProject(updateWithID, OWNED))
     return API.graphql(graphqlOperation(mutations.updateProject, { input: updateWithID }))
-      .catch(() => {
+      .catch((err) => {
+        console.error(err)
         return dispatch(updateProject(prevProjectState, OWNED))
       })
   } else {
