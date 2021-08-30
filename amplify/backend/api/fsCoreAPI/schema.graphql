@@ -83,7 +83,7 @@ type Mutation {
 	pushUserUpdate(input: PushUserUpdateInput!): UserUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
-	pushProjectUpdate(input: UpdateProjectInput!): ProjectUpdate
+	pushProjectUpdate(input: PushProjectUpdateInput!): ProjectUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 	createProject(input: CreateProjectInput!): Project
@@ -226,6 +226,24 @@ input PushUserUpdateInput {
 	assignedTasks: [ID!]
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
+}
+
+input PushProjectUpdateInput {
+	id: ID!
+	prevProject: ID
+	nextProject: ID
+	permalink: String
+	title: String
+	tasksCount: Int
+	todoCount: Int
+	pendingCount: Int
+	doneCount: Int
+	privacy: ProjectPrivacy
+	permissions: Permissions
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	members: [String!]
 }
 
 input CreateProjectInput {

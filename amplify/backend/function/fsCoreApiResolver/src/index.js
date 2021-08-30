@@ -1971,7 +1971,7 @@ async function _pushUserUpdate(userUpdate) {
 
 async function _pushProjectUpdate(projectUpdate) {
   const graphqlQuery = /* GraphQL */ `
-    mutation pushProjectUpdate($input: UpdateProjectInput!) {
+    mutation pushProjectUpdate($input: PushProjectUpdateInput!) {
       pushProjectUpdate(input: $input) {
         id
 	      prevProject
