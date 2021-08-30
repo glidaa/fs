@@ -594,16 +594,13 @@ async function updateTaskCount(taskID, nextStatus = null) {
       ":isDone": (prevStatus === DONE ? -1 : 0) || (nextStatus === DONE ? 1 : 0),
       ":updatedAt": new Date().toISOString()
     },
-    ReturnValues: "UPDATED_NEW"
+    ReturnValues: "ALL_NEW"
   };
   try {
     if (prevStatus !== nextStatus) {
-      const projectUpdate = await docClient.update(projectUpdateParams).promise();
-      await _pushProjectUpdate(projectUpdate.Attributes)
-      cachedProjects[projectID] = {
-        ...cachedProjects[projectID],
-        ...projectUpdate.Attributes
-      }
+      const updatedProject = await docClient.update(projectUpdateParams).promise();
+      await _pushProjectUpdate(updatedProject.Attributes)
+      cachedProjects[projectID] = {...updatedProject.Attributes}
     }
   } catch (err) {
     throw new Error(err);
