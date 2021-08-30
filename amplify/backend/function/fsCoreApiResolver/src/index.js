@@ -201,7 +201,7 @@ async function getProject(projectID) {
 
 async function getTask(taskID) {
   if (cachedTasks[taskID]) {
-    cachedTasks[taskID]
+    return cachedTasks[taskID]
   } else {
     const params = {
       TableName: TASKTABLE,
@@ -344,7 +344,7 @@ async function removeProjectOrder(projectID) {
       "id": prevProject
     },
     UpdateExpression: "SET nextProject = :nextProject, updatedAt = :updatedAt",
-    ReturnValues: "UPDATED_NEW",
+    ReturnValues: "ALL_NEW",
     ExpressionAttributeValues: {
       ":nextProject": nextProject,
       ":updatedAt": new Date().toISOString()
@@ -356,7 +356,7 @@ async function removeProjectOrder(projectID) {
       "id": nextProject
     },
     UpdateExpression: "SET prevProject = :prevProject, updatedAt = :updatedAt",
-    ReturnValues: "UPDATED_NEW",
+    ReturnValues: "ALL_NEW",
     ExpressionAttributeValues: {
       ":prevProject": prevProject,
       ":updatedAt": new Date().toISOString()
@@ -365,17 +365,11 @@ async function removeProjectOrder(projectID) {
   try {
     if (prevProject) {
       const updatedPrevProject = await docClient.update(prevProjectUpdateParams).promise()
-      cachedProjects[prevProject] = {
-        ...cachedProjects[prevProject],
-        ...updatedPrevProject.Attributes
-      }
+      cachedProjects[prevProject] = {...updatedPrevProject.Attributes}
     }
     if (nextProject) {
       const updatedNextProject = await docClient.update(nextProjectUpdateParams).promise()
-      cachedProjects[nextProject] = {
-        ...cachedProjects[nextProject],
-        ...updatedNextProject.Attributes
-      }
+      cachedProjects[nextProject] = {...updatedNextProject.Attributes}
     }
   } catch (err) {
     throw new Error(err);
@@ -409,7 +403,7 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
       "id": prevProject
     },
     UpdateExpression: "SET nextProject = :nextProject, updatedAt = :updatedAt",
-    ReturnValues: "UPDATED_NEW",
+    ReturnValues: "ALL_NEW",
     ExpressionAttributeValues: {
       ":nextProject": projectID,
       ":updatedAt": new Date().toISOString()
@@ -421,7 +415,7 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
       "id": nextProject
     },
     UpdateExpression: "SET prevProject = :prevProject, updatedAt = :updatedAt",
-    ReturnValues: "UPDATED_NEW",
+    ReturnValues: "ALL_NEW",
     ExpressionAttributeValues: {
       ":prevProject": projectID,
       ":updatedAt": new Date().toISOString()
@@ -430,17 +424,11 @@ async function injectProjectOrder(projectID, prevProject, nextProject) {
   try {
     if (prevProject) {
       const updatedPrevProject = await docClient.update(prevProjectUpdateParams).promise()
-      cachedProjects[prevProject] = {
-        ...cachedProjects[prevProject],
-        ...updatedPrevProject.Attributes
-      }
+      cachedProjects[prevProject] = {...updatedPrevProject.Attributes}
     }
     if (nextProject) {
       const updatedNextProject = await docClient.update(nextProjectUpdateParams).promise()
-      cachedProjects[nextProject] = {
-        ...cachedProjects[nextProject],
-        ...updatedNextProject.Attributes
-      }
+      cachedProjects[nextProject] = {...updatedNextProject.Attributes}
     }
   } catch (err) {
     throw new Error(err);
@@ -497,7 +485,7 @@ async function removeTaskOrder(taskID) {
       "id": prevTask
     },
     UpdateExpression: "SET nextTask = :nextTask, updatedAt = :updatedAt",
-    ReturnValues: "UPDATED_NEW",
+    ReturnValues: "ALL_NEW",
     ExpressionAttributeValues: {
       ":nextTask": nextTask,
       ":updatedAt": new Date().toISOString()
@@ -509,7 +497,7 @@ async function removeTaskOrder(taskID) {
       "id": nextTask
     },
     UpdateExpression: "SET prevTask = :prevTask, updatedAt = :updatedAt",
-    ReturnValues: "UPDATED_NEW",
+    ReturnValues: "ALL_NEW",
     ExpressionAttributeValues: {
       ":prevTask": prevTask,
       ":updatedAt": new Date().toISOString()
@@ -518,17 +506,11 @@ async function removeTaskOrder(taskID) {
   try {
     if (prevTask) {
       const updatedPrevTask = await docClient.update(prevTaskUpdateParams).promise()
-      cachedTasks[prevTask] = {
-        ...cachedTasks[prevTask],
-        ...updatedPrevTask.Attributes
-      }
+      cachedTasks[prevTask] = {...updatedPrevTask.Attributes}
     }
     if (nextTask) {
       const updatedNextTask = await docClient.update(nextTaskUpdateParams).promise()
-      cachedTasks[nextTask] = {
-        ...cachedTasks[nextTask],
-        ...updatedNextTask.Attributes
-      }
+      cachedTasks[nextTask] = {...updatedNextTask.Attributes}
     }
   } catch (err) {
     throw new Error(err);
@@ -542,7 +524,7 @@ async function injectTaskOrder(taskID, prevTask, nextTask) {
       "id": prevTask
     },
     UpdateExpression: "SET nextTask = :nextTask, updatedAt = :updatedAt",
-    ReturnValues: "UPDATED_NEW",
+    ReturnValues: "ALL_NEW",
     ExpressionAttributeValues: {
       ":nextTask": taskID,
       ":updatedAt": new Date().toISOString()
@@ -554,7 +536,7 @@ async function injectTaskOrder(taskID, prevTask, nextTask) {
       "id": nextTask
     },
     UpdateExpression: "SET prevTask = :prevTask, updatedAt = :updatedAt",
-    ReturnValues: "UPDATED_NEW",
+    ReturnValues: "ALL_NEW",
     ExpressionAttributeValues: {
       ":prevTask": taskID,
       ":updatedAt": new Date().toISOString()
@@ -563,17 +545,11 @@ async function injectTaskOrder(taskID, prevTask, nextTask) {
   try {
     if (prevTask) {
       const updatedPrevTask = await docClient.update(prevTaskUpdateParams).promise()
-      cachedTasks[prevTask] = {
-        ...cachedTasks[prevTask],
-        ...updatedPrevTask.Attributes
-      }
+      cachedTasks[prevTask] = {...updatedPrevTask.Attributes}
     }
     if (nextTask) {
       const updatedNextTask = await docClient.update(nextTaskUpdateParams).promise()
-      cachedTasks[nextTask] = {
-        ...cachedTasks[nextTask],
-        ...updatedNextTask.Attributes
-      }
+      cachedTasks[nextTask] = {...updatedNextTask.Attributes}
     }
   } catch (err) {
     throw new Error(err);
@@ -762,7 +738,7 @@ async function updateTask(ctx) {
   const taskID = updateData.id
   const client = ctx.identity.username
   if (await isTaskEditableByClient(taskID, client)) {
-    delete updateData["id"]
+    delete updateData.id
     const expAttrVal = {}
     const expAttrNames = {}
     let updateExp = []
@@ -785,7 +761,7 @@ async function updateTask(ctx) {
       },
       UpdateExpression: updateExp,
       ExpressionAttributeValues: expAttrVal,
-      ReturnValues: "UPDATED_NEW"
+      ReturnValues: "ALL_NEW"
     };
     if (Object.keys(expAttrNames).length) {
       taskUpdateParams.ExpressionAttributeNames = expAttrNames
@@ -796,10 +772,7 @@ async function updateTask(ctx) {
         await injectTaskOrder(taskID, updateData.prevTask, updateData.nextTask)
       }
       const data = await docClient.update(taskUpdateParams).promise();
-      cachedTasks[taskID] = {
-        ...cachedTasks[taskID],
-        ...data.Attributes
-      }
+      cachedTasks[taskID] = {...data.Attributes}
       if (updateData.status) {
         await updateTaskCount(taskID, updateData.status)
       }
