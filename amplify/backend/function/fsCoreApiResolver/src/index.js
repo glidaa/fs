@@ -643,7 +643,7 @@ async function createTask(ctx) {
         ":isDone": taskData.status === DONE ? 1 : 0,
         ":updatedAt": new Date().toISOString()
       },
-      ReturnValues: "UPDATED_NEW"
+      ReturnValues: "ALL_NEW"
     };
     const taskParams = {
       TableName: TASKTABLE,
@@ -658,10 +658,8 @@ async function createTask(ctx) {
         await injectTaskOrder(taskData.id, taskData.prevTask, taskData.nextTask)
       }
       const updatedProject = await docClient.update(projectUpdateParams).promise()
-      cachedProjects[projectID] = {
-        ...cachedProjects[projectID],
-        ...updatedProject.Attributes
-      }
+      await _pushProjectUpdate(updatedProject.Attributes)
+      cachedProjects[projectID] = {...updatedProject.Attributes}
       return taskData;
     } catch (err) {
       throw new Error(err);
