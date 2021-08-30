@@ -6,7 +6,7 @@ import styledComponents from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
-import { ReactComponent as LogOutIcon } from "../../assets/trash-outline.svg"
+import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import PrivacyField from '../PrivacyField';
 import PermissionsField from '../PermissionsField';
 
@@ -73,8 +73,8 @@ const AccountSettings = (props) => {
   const closePanel = () => {
     return dispatch(appActions.handleSetLeftPanel(false))
   }
-  const logOut = () => {
-
+  const removeProject = () => {
+    dispatch(projectsActions.handleRemoveProject(projects[selectedProject]))
   }
   const saveChanges = () => {
     dispatch(projectsActions.handleUpdateProject({
@@ -97,8 +97,8 @@ const AccountSettings = (props) => {
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Project Settings</PanelPageTitle>
-        <PanelPageToolbarAction onClick={logOut}>
-          <LogOutIcon
+        <PanelPageToolbarAction onClick={removeProject}>
+          <RemoveIcon
               width={24}
               height={24}
               strokeWidth={32}
@@ -209,6 +209,9 @@ const NonPrefixedInputField = styledComponents.input`
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
+  &:disabled {
+    background-color: #FAFAFA;
+  }
   &::placeholder {
     color: #C0C0C0;
   }
@@ -228,10 +231,14 @@ const PrefixedInputField = styledComponents.div`
   & > span {
     color: #C0C0C0;
   }
+  background-color: ${({ disabled }) => disabled ? "#FAFAFA" : "transparent"};
   & > input {
     border: none;
     outline: none;
     padding: 0;
+    &:disabled {
+      background-color: #FAFAFA;
+    }
     &::placeholder {
       color: #C0C0C0;
     }

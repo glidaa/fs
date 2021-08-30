@@ -49,7 +49,10 @@ const TasksPanel = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color={isLeftPanelOpened ? "#006EFF" : "#222222"}
+              color={
+                isLeftPanelOpened && leftPanelPage === panelPages.PROJECTS ?
+                "#006EFF" : "#222222"
+              }
           />
         </ToolbarAction>
         <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>

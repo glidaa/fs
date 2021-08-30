@@ -47,10 +47,6 @@ export const supportedCommands = {
     description: "Create a clone for the selected task",
     alias: []
   },
-  REORDER: {
-    description: "Enter a new order for the task",
-    alias: []
-  },
   DELETE: {
     description: "Delete this task permanently",
     alias: []

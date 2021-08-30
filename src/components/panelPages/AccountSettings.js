@@ -216,6 +216,9 @@ const AccountSetting = styledComponents.div`
     border-radius: 8px;
     font-size: 14px;
     font-weight: 400;
+    &:disabled {
+      background-color: #FAFAFA;
+    }
     &::placeholder {
       color: #C0C0C0;
     }

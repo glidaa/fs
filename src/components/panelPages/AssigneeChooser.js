@@ -4,7 +4,6 @@ import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../../actions/app";
 import styledComponents from "styled-components";
 import * as tasksActions from "../../actions/tasks"
-import { assignTask } from "../../graphql/mutations";
 import { AuthState } from "@aws-amplify/ui-components";
 import { panelPages } from "../../constants";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -16,7 +15,6 @@ const AssigneeChooser = (props) => {
       selectedTask
     },
     user,
-    tasks,
     dispatch
   } = props;
 
@@ -27,31 +25,13 @@ const AssigneeChooser = (props) => {
     return dispatch(appActions.setRightPanelPage(panelPages.DETAILS))
   }
   const handleAssignTask = async (username) => {
-    const prevAssignees = [...tasks[selectedTask].assignees]
-    dispatch(tasksActions.updateTask({
-      id: selectedTask,
-      assignees: [...new Set([...prevAssignees, username])]
-    }))
-    if (user.state === AuthState.SignedIn) {
-      try {
-        await API.graphql(graphqlOperation(assignTask, {
-          taskID: selectedTask,
-          assignee: username
-        }))
-        closeChooser()
-      } catch {
-        dispatch(tasksActions.updateTask({
-          id: selectedTask,
-          assignees: prevAssignees
-        }))
-      }
-    } else {
-      closeChooser()
-    }
+    await dispatch(tasksActions.handleAssignTask(selectedTask, username))
+    closeChooser()
   }
   const handleChangeKeyword = (e) => {
     const nextKeyword = e.target.value
     setKeyword(nextKeyword)
+    const firstLastName = nextKeyword.split(/\s+/)
     if (user.state === AuthState.SignedIn && nextKeyword.trim()) {
       const query = `
         query SearchUsers($filter: SearchableUserFilterInput!) {
@@ -68,7 +48,15 @@ const AssigneeChooser = (props) => {
       `
       const filter = {or: [
         { username: { matchPhrasePrefix: nextKeyword } },
-        { firstName: { matchPhrasePrefix: nextKeyword } },
+        ...((firstLastName.length !== 2 && [{
+          firstName: { matchPhrasePrefix: nextKeyword }
+        }]) || []),
+        ...((firstLastName.length === 2 && [{
+          and: [
+            { firstName: { matchPhrasePrefix: firstLastName[0] } },
+            { lastName: { matchPhrasePrefix: firstLastName[1] } },
+          ]
+        }]) || []),
         { email: { matchPhrasePrefix: nextKeyword } }
       ]}
       API.graphql(graphqlOperation(query, { filter })).then(res => setResults(res.data.searchUsers.items || []))
@@ -79,12 +67,6 @@ const AssigneeChooser = (props) => {
   const shareTask = () => {
       const linkToBeCopied = window.location.href
       navigator.clipboard.writeText(linkToBeCopied)
-  }
-  const handleChooseRegisteredUser = (username) => {
-    handleAssignTask(`user:${username}`)
-  }
-  const handleChooseAnonymousUser = () => {
-    handleAssignTask(`anonymous:${keyword}`)
   }
   return (
     <>
@@ -117,7 +99,7 @@ const AssigneeChooser = (props) => {
       <SearchResults>
         {keyword && <AnonymousUserItem
           key="::anonymous::"
-          onClick={handleChooseAnonymousUser}
+          onClick={() => handleAssignTask(`anonymous:${keyword}`)}
         >
           <LetterAvatar>{keyword[0].toUpperCase()}</LetterAvatar>
           <div>
@@ -128,7 +110,7 @@ const AssigneeChooser = (props) => {
         {results.map(x => (
           <SearchResultsItem
             key={x.username}
-            onClick={() => handleChooseRegisteredUser(x.username)}
+            onClick={() => handleAssignTask(`user:${x.username}`)}
           >
            {x.avatar ?
               <ImageAvatar src={x.avatar} /> :

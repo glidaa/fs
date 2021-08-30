@@ -6,7 +6,8 @@ const PermissionsField = (props) => {
 	const {
 		value,
 		onChange,
-    readOnly
+    readOnly,
+    disabled
 	} = props;
 
 	const onSelect = (permission) => {
@@ -19,7 +20,7 @@ const PermissionsField = (props) => {
 	};
 
 	return (
-		<PermissionsFieldShell>
+		<PermissionsFieldShell disabled={disabled}>
 			<ReadWritePermissionSelection
         isSelected={value === "rw"}
         onClick={() => onSelect("rw")}
@@ -43,6 +44,8 @@ const PermissionsFieldShell = styledComponents.div`
 	flex-direction: column;
 	gap: 5px;
   width: 100%;
+  opacity: ${({disabled}) => disabled ? "0.6" : "1"};
+  transition: opacity 0.3s linear;
 `
 
 const PermissionSelection = styledComponents.button`

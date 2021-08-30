@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react'
 import styledComponents from "styled-components"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
-import copyTask from "../../utils/copyTask";
-import parseLinkedList from "../../utils/parseLinkedList";
-import { connect } from "react-redux";
+import copyTask from "../../utils/copyTask"
+import parseLinkedList from "../../utils/parseLinkedList"
+import { connect } from "react-redux"
 import { supportedCommands } from "../../constants"
 import { ReactComponent as AssignIcon } from "../../assets/person-add-outline.svg"
 import { ReactComponent as CalenderIcon } from "../../assets/calendar-outline.svg"
@@ -14,7 +14,6 @@ import { ReactComponent as StatusIcon } from "../../assets/checkbox-outline.svg"
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import { ReactComponent as CopyIcon } from "../../assets/copy-outline.svg"
 import { ReactComponent as DuplicateIcon } from "../../assets/duplicate-outline.svg"
-import { ReactComponent as ReorderIcon } from "../../assets/reorder-four-outline.svg"
 
 const Commands = (props) => {
   const {
@@ -36,8 +35,6 @@ const Commands = (props) => {
   const suggestedIntents = useMemo(() => getSuggestedIntents(command), [command])
 
   const [selection, setSelection] = useState(0)
-  const nonUpdatedSelection = useRef(selection)
-  const nonUpdatedSuggestedIntents = useRef(suggestedIntents)
 
   const chooseCommand = (selectedCommand) => {
     switch(selectedCommand) {
@@ -73,8 +70,6 @@ const Commands = (props) => {
 
   useEffect(() => {
     const handleKeyUp = (e) => {
-      const selection = nonUpdatedSelection.current
-      const suggestedIntents = nonUpdatedSuggestedIntents.current
       if (e.key === "Enter") {
         chooseCommand(suggestedIntents[selection]) 
       } else if (e.key === "ArrowUp") {
@@ -89,11 +84,6 @@ const Commands = (props) => {
     }
     window.addEventListener('keyup', handleKeyUp);
     return () => window.removeEventListener('keyup', handleKeyUp);
-  }, [])
-
-  useEffect(() => {
-    nonUpdatedSelection.current = selection
-    nonUpdatedSuggestedIntents.current = suggestedIntents
   }, [selection, suggestedIntents])
 
   useEffect(() => {
@@ -107,6 +97,7 @@ const Commands = (props) => {
           key={x}
           isSelected={selection === i}
           onMouseEnter={() => setSelection(i)}
+          onClick={() => chooseCommand(x)}
         >
           {x === "ASSIGN" && <AssignIcon color="#006EFF" strokeWidth="32" height={24} />}
           {x === "DUE" && <CalenderIcon color="#006EFF" fill="#006EFF" strokeWidth="32" height={24} />}
@@ -116,7 +107,6 @@ const Commands = (props) => {
           {x === "DELETE" && <RemoveIcon color="#006EFF" strokeWidth="32" height={24} />}
           {x === "COPY" && <CopyIcon color="#006EFF" strokeWidth="32" height={24} />}
           {x === "DUPLICATE" && <DuplicateIcon color="#006EFF" strokeWidth="32" height={24} />}
-          {x === "REORDER" && <ReorderIcon color="#006EFF" strokeWidth="32" height={24} />}
           <div>
             <span>{x}</span>
             <span>{supportedCommands[x].description}</span>

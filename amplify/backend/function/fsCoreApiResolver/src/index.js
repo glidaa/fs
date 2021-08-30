@@ -43,6 +43,9 @@ const resolvers = {
     pushUserUpdate: (ctx) => {
       return pushUserUpdate(ctx);
     },
+    pushProjectUpdate: (ctx) => {
+      return pushProjectUpdate(ctx);
+    },
     createProject: (ctx) => {
       return createProject(ctx);
     },
@@ -325,6 +328,14 @@ async function pushUserUpdate(ctx) {
   }
 }
 
+async function pushProjectUpdate(ctx) {
+  try {
+    return ctx.arguments.input
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
 async function removeProjectOrder(projectID) {
   const { prevProject, nextProject } = cachedProjects[projectID] || await getProject(projectID)
   const prevProjectUpdateParams = {
@@ -587,10 +598,11 @@ async function updateTaskCount(taskID, nextStatus = null) {
   };
   try {
     if (prevStatus !== nextStatus) {
-      const updatedProject = await docClient.update(projectUpdateParams).promise();
+      const projectUpdate = await docClient.update(projectUpdateParams).promise();
+      await _pushProjectUpdate(projectUpdate.Attributes)
       cachedProjects[projectID] = {
         ...cachedProjects[projectID],
-        ...updatedProject.Attributes
+        ...projectUpdate.Attributes
       }
     }
   } catch (err) {
@@ -1937,6 +1949,61 @@ async function _pushUserUpdate(userUpdate) {
       operationName: "pushUserUpdate",
       variables: {
         input: userUpdate
+      }
+    });
+    const signer = new AWS.Signers.V4(req, "appsync", true);
+    signer.addAuthorization(AWS.config.credentials, AWS.util.date.getDate());
+    const data = await new Promise((resolve, reject) => {
+      const httpRequest = https.request({ ...req, host: endpoint }, (result) => {
+        let data = "";
+        result.on("data", (chunk) => {
+          data += chunk;
+        });
+        result.on("end", () => {
+          resolve(JSON.parse(data.toString()));
+        });
+      });
+      httpRequest.write(req.body);
+      httpRequest.end();
+    });
+    console.log(data)
+  } catch (err) {
+    throw new Error(err)
+  }
+}
+
+async function _pushProjectUpdate(projectUpdate) {
+  const graphqlQuery = /* GraphQL */ `
+    mutation pushProjectUpdate($input: UpdateProjectInput!) {
+      pushProjectUpdate(input: $input) {
+        id
+	      prevProject
+	      nextProject
+	      permalink
+	      title
+	      tasksCount
+	      todoCount
+	      pendingCount
+	      doneCount
+	      privacy
+	      permissions
+	      updatedAt
+	      owner
+      }
+    }
+  `
+  try {
+    const req = new AWS.HttpRequest(APIURL, REGION);
+    const endpoint = new urlParse(APIURL).hostname.toString()
+    req.method = "POST";
+    req.path = "/graphql";
+    req.headers.host = endpoint;
+    req.headers["Content-Type"] = "application/json";
+    req.body = JSON.stringify({
+      query: graphqlQuery,
+      operationName: "pushProjectUpdate",
+      variables: {
+        input: projectUpdate
       }
     });
     const signer = new AWS.Signers.V4(req, "appsync", true);

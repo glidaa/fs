@@ -83,6 +83,9 @@ type Mutation {
 	pushUserUpdate(input: PushUserUpdateInput!): UserUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
+	pushProjectUpdate(input: UpdateProjectInput!): ProjectUpdate
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_iam
 	createProject(input: CreateProjectInput!): Project
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -176,7 +179,7 @@ type Subscription {
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	onUpdateOwnedProject(owner: String!): ProjectUpdate
-		@aws_subscribe(mutations: ["updateProject"])
+		@aws_subscribe(mutations: ["updateProject", "pushProjectUpdate"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	onDeleteOwnedProject(owner: String!): Project

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styledComponents from "styled-components"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
@@ -22,8 +22,6 @@ const Status = (props) => {
   const suggestedStatus = useMemo(() => getSuggestedStatus(commandParam), [commandParam])
 
   const [selection, setSelection] = useState(0)
-  const nonUpdatedSelection = useRef(selection)
-  const nonUpdatedSuggestedStatus = useRef(suggestedStatus)
 
   const chooseStatus = (selectedStatus) => {
     switch(selectedStatus) {
@@ -52,8 +50,6 @@ const Status = (props) => {
 
   useEffect(() => {
     const handleKeyUp = (e) => {
-      const selection = nonUpdatedSelection.current
-      const suggestedStatus = nonUpdatedSuggestedStatus.current
       if (e.key === "Enter") {
         chooseStatus(suggestedStatus[selection][0].toUpperCase()) 
       } else if (e.key === "ArrowUp") {
@@ -68,12 +64,7 @@ const Status = (props) => {
     }
     window.addEventListener('keyup', handleKeyUp);
     return () => window.removeEventListener('keyup', handleKeyUp);
-  }, [])
-
-  useEffect(() => {
-    nonUpdatedSelection.current = selection
-    nonUpdatedSuggestedStatus.current = suggestedStatus
-  }, [selection])
+  }, [selection, suggestedStatus])
 
   useEffect(() => {
     setSelection(0)
@@ -86,6 +77,7 @@ const Status = (props) => {
           key={x}
           isSelected={selection === i}
           onMouseEnter={() => setSelection(i)}
+          onClick={() => chooseStatus(x)}
         >
           <div>
             <span style={{ color: x[1], marginRight: 10 }}>⬤</span>

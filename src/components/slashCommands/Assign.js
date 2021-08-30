@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styledComponents from "styled-components"
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "aws-amplify";
+import * as appActions from "../../actions/app"
 import * as tasksActions from "../../actions/tasks"
 import { AuthState } from "@aws-amplify/ui-components";
-import { assignTask } from "../../graphql/mutations";
 
 const Assign = (props) => {
   const {
@@ -13,37 +13,19 @@ const Assign = (props) => {
     },
     commandParam,
     user,
-    tasks,
     dispatch
   } = props
 
   const [results, setResults] = useState([])
+  const [selection, setSelection] = useState(0)
 
   const handleAssignTask = async (username) => {
-    const prevAssignees = [...tasks[selectedTask].assignees]
-    dispatch(tasksActions.updateTask({
-      id: selectedTask,
-      assignees: [...new Set([...prevAssignees, username])]
-    }))
-    if (user.state === AuthState.SignedIn) {
-      try {
-        await API.graphql(graphqlOperation(assignTask, {
-          taskID: selectedTask,
-          assignee: username
-        }))
-        //closeChooser()
-      } catch {
-        dispatch(tasksActions.updateTask({
-          id: selectedTask,
-          assignees: prevAssignees
-        }))
-      }
-    } else {
-      //closeChooser()
-    }
+    dispatch(tasksActions.handleAssignTask(selectedTask, username))
+    dispatch(appActions.setCommand(""))
   }
   useEffect(() => {
     if (user.state === AuthState.SignedIn && commandParam) {
+      const firstLastName = commandParam.split(/\s+/)
       const query = `
         query SearchUsers($filter: SearchableUserFilterInput!) {
           searchUsers(filter: $filter) {
@@ -59,7 +41,15 @@ const Assign = (props) => {
       `
       const filter = {or: [
         { username: { matchPhrasePrefix: commandParam } },
-        { firstName: { matchPhrasePrefix: commandParam } },
+        ...((firstLastName.length !== 2 && [{
+          firstName: { matchPhrasePrefix: commandParam }
+        }]) || []),
+        ...((firstLastName.length === 2 && [{
+          and: [
+            { firstName: { matchPhrasePrefix: firstLastName[0] } },
+            { lastName: { matchPhrasePrefix: firstLastName[1] } },
+          ]
+        }]) || []),
         { email: { matchPhrasePrefix: commandParam } }
       ]}
       API.graphql(graphqlOperation(query, { filter })).then(res => setResults(res.data.searchUsers.items || []))
@@ -68,19 +58,40 @@ const Assign = (props) => {
     }
   }, [commandParam])
 
-  
-  const handleChooseRegisteredUser = (username) => {
-    handleAssignTask(`user:${username}`)
-  }
-  const handleChooseAnonymousUser = () => {
-    handleAssignTask(`anonymous:${commandParam}`)
-  }
+  useEffect(() => {
+    const handleKeyUp = (e) => {
+      if (e.key === "Enter") {
+        if (selection === 0) {
+          handleAssignTask(`anonymous:${commandParam}`) 
+        } else {
+          handleAssignTask(`user:${results[selection - 1].username}`) 
+        }
+      } else if (e.key === "ArrowUp") {
+        if (selection > 0) {
+          setSelection(selection - 1)
+        }
+      } else if (e.key === "ArrowDown") {
+        if (selection < results.length) {
+          setSelection(selection + 1)
+        }
+      }
+    }
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  }, [selection, results])
+
+  useEffect(() => {
+    setSelection(0)
+  }, [commandParam])
 
   return (
     <>
+      {!commandParam && <NoKeyword>Search For Assignees</NoKeyword>}
       {commandParam && <AssigneeSuggestion
         key="::anonymous::"
-        onClick={handleChooseAnonymousUser}
+        isSelected={selection === 0}
+        onMouseEnter={() => setSelection(0)}
+        onClick={() => handleAssignTask(`anonymous:${commandParam}`)}
       >
         <LetterAvatar>{commandParam[0].toUpperCase()}</LetterAvatar>
         <div>
@@ -88,10 +99,12 @@ const Assign = (props) => {
           <span>Anonymous Assignee</span>
         </div>
       </AssigneeSuggestion>}
-      {results.map(x => (
+      {results.map((x, i) => (
         <AssigneeSuggestion
           key={x.username}
-          onClick={() => handleChooseRegisteredUser(x.username)}
+          isSelected={selection === i + 1}
+          onMouseEnter={() => setSelection(i + 1)}
+          onClick={() => handleAssignTask(`user:${x.username}`)}
         >
           {x.avatar ?
             <ImageAvatar src={x.avatar} /> :
@@ -113,6 +126,7 @@ const AssigneeSuggestion = styledComponents.div`
   align-items: center;
   gap: 10px;
   padding: 10px 20px;
+  background-color: ${({ isSelected }) => isSelected ? "#F5F5F5" : "transparent"};
   transition: background-color 0.2s;
   cursor: pointer;
   & > div {
@@ -128,9 +142,6 @@ const AssigneeSuggestion = styledComponents.div`
       font-weight: 400;
       font-size: 12px;
     }
-  }
-  &:hover {
-    background-color: #F5F5F5;
   }
 `
 
@@ -154,6 +165,14 @@ const LetterAvatar = styledComponents.div`
   min-height: 32px;
   width: 32px;
   height: 32px;
+`
+
+const NoKeyword = styledComponents.span`
+  display: flex;
+  width: 100%;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
 `
 
 export default connect((state) => ({

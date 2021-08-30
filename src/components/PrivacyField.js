@@ -6,7 +6,8 @@ const PrivacyField = (props) => {
 	const {
 		value,
 		onChange,
-    readOnly
+    readOnly,
+    disabled
 	} = props;
 
 	const onSelect = (privacy) => {
@@ -19,7 +20,7 @@ const PrivacyField = (props) => {
 	};
 
 	return (
-		<PrivacyFieldShell>
+		<PrivacyFieldShell disabled={disabled}>
 			<PublicPrivacySelection
         isSelected={value === "public"}
         onClick={() => onSelect("public")}
@@ -43,6 +44,8 @@ const PrivacyFieldShell = styledComponents.div`
 	flex-direction: column;
 	gap: 5px;
   width: 100%;
+  opacity: ${({disabled}) => disabled ? "0.6" : "1"};
+  transition: opacity 0.3s linear;
 `
 
 const PrivacySelection = styledComponents.button`

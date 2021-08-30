@@ -21,11 +21,13 @@ const Tags = (props) => {
   const suggestedTags = useMemo(() => getSuggestedTags(commandParam), [commandParam])
 
   const chooseTags = () => {
-    dispatch(appActions.setCommand(""))
-    dispatch(tasksActions.handleUpdateTask({
-        id: selectedTask,
-        tags: [...new Set([...tasks[selectedTask], ...suggestedTags])]
-    }))
+    if (suggestedTags){
+      dispatch(appActions.setCommand(""))
+      dispatch(tasksActions.handleUpdateTask({
+          id: selectedTask,
+          tags: [...new Set([...tasks[selectedTask], ...suggestedTags])]
+      }))
+    }
   }
 
   useEffect(() => {
@@ -36,12 +38,15 @@ const Tags = (props) => {
     }
     window.addEventListener('keyup', handleKeyUp);
     return () => window.removeEventListener('keyup', handleKeyUp);
-  }, [])
+  }, [suggestedTags, tasks, selectedTask])
 
   return (
-    <TagsSuggestion isActive={suggestedTags}>
-        {suggestedTags && suggestedTags.map(x => <TagItem key={x}>{x}</TagItem>)}
-        {!suggestedTags && <NoTags>Enter Comma Separated Tags</NoTags>}
+    <TagsSuggestion
+      isActive={suggestedTags}
+      onClick={chooseTags}
+    >
+      {suggestedTags && suggestedTags.map(x => <TagItem key={x}>{x}</TagItem>)}
+      {!suggestedTags && <NoTags>Enter Comma Separated Tags</NoTags>}
     </TagsSuggestion>
   );
 };

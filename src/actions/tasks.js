@@ -190,6 +190,58 @@ export const handleRemoveTask = (taskState) => (dispatch, getState) => {
   }
 }
 
+export const handleAssignTask = (taskID, username) => async (dispatch, getState) => {
+  const {
+    tasks,
+    user
+  } = getState()
+  const prevAssignees = [...tasks[taskID].assignees]
+  if (user.state === AuthState.SignedIn || /^anonymous:.*$/.test(username)) {
+    dispatch(updateTask({
+      id: taskID,
+      assignees: [...new Set([...prevAssignees, username])]
+    }))
+  }
+  if (user.state === AuthState.SignedIn) {
+    try {
+      await API.graphql(graphqlOperation(mutations.assignTask, {
+        taskID: taskID,
+        assignee: username
+      }))
+    } catch {
+      dispatch(updateTask({
+        id: taskID,
+        assignees: prevAssignees
+      }))
+    }
+  }
+}
+
+export const handleAddWatcher = (taskID, username) => async (dispatch, getState) => {
+  const {
+    tasks,
+    user
+  } = getState()
+  if (user.state === AuthState.SignedIn) {
+    const prevWatchers = [...tasks[taskID].watchers]
+    dispatch(updateTask({
+      id: taskID,
+      watchers: [...new Set([...prevWatchers, username])]
+    }))
+    try {
+      await API.graphql(graphqlOperation(mutations.addWatcher, {
+        taskID: taskID,
+        watcher: username
+      }))
+    } catch {
+      dispatch(updateTask({
+        id: taskID,
+        watchers: prevWatchers
+      }))
+    }
+  }
+}
+
 export const handleFetchTasks = (projectID) => async (dispatch, getState) => {
   const { user } = getState()
   dispatch(appActions.handleSetTask(null))
