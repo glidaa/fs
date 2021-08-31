@@ -177,7 +177,7 @@ exports.handler = async function (ctx) {
 
 async function getProject(projectID) {
   if (cachedProjects[projectID]) {
-    cachedProjects[projectID]
+    return cachedProjects[projectID]
   } else {
     const params = {
       TableName: PROJECTTABLE,
@@ -225,7 +225,7 @@ async function getTask(taskID) {
 
 async function getComment(commentID) {
   if (cachedComments[commentID]) {
-    cachedComments[commentID]
+    return cachedComments[commentID]
   } else {
     const params = {
       TableName: COMMENTTABLE,
@@ -771,11 +771,10 @@ async function updateTask(ctx) {
         await removeTaskOrder(taskID)
         await injectTaskOrder(taskID, updateData.prevTask, updateData.nextTask)
       }
-      const data = await docClient.update(taskUpdateParams).promise();
-      cachedTasks[taskID] = {...data.Attributes}
       if (updateData.status) {
         await updateTaskCount(taskID, updateData.status)
       }
+      const data = await docClient.update(taskUpdateParams).promise();
       return {
         id: taskID,
         projectID: cachedTasks[taskID].projectID,
