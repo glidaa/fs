@@ -573,6 +573,12 @@ async function updateTaskCount(taskID, nextStatus = null) {
     ReturnValues: "ALL_NEW"
   };
   try {
+    console.log("previous status:")
+    console.log(prevStatus)
+    console.log("next status:")
+    console.log(nextStatus)
+    console.log("Cached Tasks")
+    console.log(cachedTasks)
     if (prevStatus !== nextStatus) {
       const updatedProject = await docClient.update(projectUpdateParams).promise();
       await _pushProjectUpdate(updatedProject.Attributes)
@@ -734,6 +740,8 @@ async function updateProject(ctx) {
 }
 
 async function updateTask(ctx) {
+  console.log("Init Tasks")
+  console.log(cachedTasks)
   const updateData = ctx.arguments.input
   const taskID = updateData.id
   const client = ctx.identity.username
@@ -771,7 +779,11 @@ async function updateTask(ctx) {
         await removeTaskOrder(taskID)
         await injectTaskOrder(taskID, updateData.prevTask, updateData.nextTask)
       }
+      console.log("Update Data")
+      console.log(updateData)
       if (updateData.status) {
+        console.log("Cached Tasks")
+        console.log(cachedTasks)
         await updateTaskCount(taskID, updateData.status)
       }
       const data = await docClient.update(taskUpdateParams).promise();
