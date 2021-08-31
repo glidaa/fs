@@ -176,7 +176,7 @@ exports.handler = async function (ctx) {
 
   async function getProject(projectID) {
     if (cachedProjects[projectID]) {
-      return cachedProjects[projectID]
+      return {...cachedProjects[projectID]}
     } else {
       const params = {
         TableName: PROJECTTABLE,
@@ -187,7 +187,7 @@ exports.handler = async function (ctx) {
       try {
         const data = await docClient.get(params).promise()
         if (data.Item) {
-          cachedProjects[projectID] = data.Item
+          cachedProjects[projectID] = {...data.Item}
           return data.Item
         } else {
           throw new Error(PROJECT_NOT_FOUND)
@@ -200,7 +200,7 @@ exports.handler = async function (ctx) {
 
   async function getTask(taskID) {
     if (cachedTasks[taskID]) {
-      return cachedTasks[taskID]
+      return {...cachedTasks[taskID]}
     } else {
       const params = {
         TableName: TASKTABLE,
@@ -211,7 +211,7 @@ exports.handler = async function (ctx) {
       try {
         const data = await docClient.get(params).promise()
         if (data.Item) {
-          cachedTasks[taskID] = data.Item
+          cachedTasks[taskID] = {...data.Item}
           return data.Item
         } else {
           throw new Error(TASK_NOT_FOUND)
@@ -224,7 +224,7 @@ exports.handler = async function (ctx) {
 
   async function getComment(commentID) {
     if (cachedComments[commentID]) {
-      return cachedComments[commentID]
+      return {...cachedComments[commentID]}
     } else {
       const params = {
         TableName: COMMENTTABLE,
@@ -235,7 +235,7 @@ exports.handler = async function (ctx) {
       try {
         const data = await docClient.get(params).promise()
         if (data.Item) {
-          cachedComments[commentID] = data.Item
+          cachedComments[commentID] = {...data.Item}
           return data.Item
         } else {
           throw new Error(COMMENT_NOT_FOUND)
@@ -248,7 +248,7 @@ exports.handler = async function (ctx) {
 
   async function isProjectSharedWithClient(projectID, client) {
     try {
-      const { privacy, members, owner } = cachedProjects[projectID] || await getProject(projectID)
+      const { privacy, members, owner } = await getProject(projectID)
       return "public" === privacy || members?.includes(client) || client === owner
     } catch (err) {
       throw new Error(err)
@@ -257,7 +257,7 @@ exports.handler = async function (ctx) {
 
   async function isProjectEditableByClient(projectID, client) {
     try {
-      const { privacy, members, owner, permissions } = cachedProjects[projectID] || await getProject(projectID)
+      const { privacy, members, owner, permissions } = await getProject(projectID)
       return ("rw" === permissions && ("public" === privacy || members?.includes(client))) || client === owner
     } catch (err) {
       throw new Error(err)
@@ -266,7 +266,7 @@ exports.handler = async function (ctx) {
 
   async function isProjectOwner(projectID, client) {
     try {
-      const { owner } = cachedProjects[projectID] || await getProject(projectID)
+      const { owner } = await getProject(projectID)
       return client === owner
     } catch (err) {
       throw new Error(err)
@@ -275,7 +275,7 @@ exports.handler = async function (ctx) {
 
   async function isCommentOwner(commentID, client) {
     try {
-      const { owner } = cachedComments[commentID] || await getComment(commentID)
+      const { owner } = await getComment(commentID)
       return client === owner
     } catch (err) {
       throw new Error(err)
@@ -284,7 +284,7 @@ exports.handler = async function (ctx) {
 
   async function isTaskSharedWithClient(taskID, client) {
     try {
-      const { projectID } = cachedTasks[taskID] || await getTask(taskID)
+      const { projectID } = await getTask(taskID)
       return await isProjectSharedWithClient(projectID, client)
     } catch (err) {
       throw new Error(err)
@@ -293,7 +293,7 @@ exports.handler = async function (ctx) {
 
   async function isTaskEditableByClient(taskID, client) {
     try {
-      const { projectID } = cachedTasks[taskID] || await getTask(taskID)
+      const { projectID } = await getTask(taskID)
       return await isProjectEditableByClient(projectID, client)
     } catch (err) {
       throw new Error(err)
@@ -336,7 +336,7 @@ exports.handler = async function (ctx) {
   }
 
   async function removeProjectOrder(projectID) {
-    const { prevProject, nextProject } = cachedProjects[projectID] || await getProject(projectID)
+    const { prevProject, nextProject } = await getProject(projectID)
     const prevProjectUpdateParams = {
       TableName: PROJECTTABLE,
       Key: {
@@ -461,7 +461,7 @@ exports.handler = async function (ctx) {
       };
       try {
         await docClient.put(params).promise();
-        cachedProjects[projectData.id] = projectData
+        cachedProjects[projectData.id] = {...projectData}
         if (isCont) {
           await injectProjectOrder(projectData.id, projectData.prevProject, null)
         } else {
@@ -477,7 +477,7 @@ exports.handler = async function (ctx) {
   }
 
   async function removeTaskOrder(taskID) {
-    const { prevTask, nextTask } = cachedTasks[taskID] || await getTask(taskID)
+    const { prevTask, nextTask } = await getTask(taskID)
     const prevTaskUpdateParams = {
       TableName: TASKTABLE,
       Key: {
@@ -556,7 +556,7 @@ exports.handler = async function (ctx) {
   }
 
   async function updateTaskCount(taskID, nextStatus = null) {
-    const { projectID, status: prevStatus } = cachedTasks[taskID] || await getTask(taskID)
+    const { projectID, status: prevStatus } = await getTask(taskID)
     const projectUpdateParams = {
       TableName: PROJECTTABLE,
       Key: {
@@ -586,7 +586,7 @@ exports.handler = async function (ctx) {
     const projectID = ctx.arguments.input.projectID
     const client = ctx.identity.username
     if (await isProjectEditableByClient(projectID, client)) {
-      const projectData = cachedProjects[projectID] || await getProject(projectID)
+      const projectData = await getProject(projectID)
       const taskData = {
         ...ctx.arguments.input,
         id: uuidv4(),
@@ -626,7 +626,7 @@ exports.handler = async function (ctx) {
       };
       try {
         await docClient.put(taskParams).promise();
-        cachedTasks[taskData.id] = taskData
+        cachedTasks[taskData.id] = {...taskData}
         if (isCont) {
           await injectTaskOrder(taskData.id, taskData.prevTask, null)
         } else {
@@ -661,7 +661,7 @@ exports.handler = async function (ctx) {
       };
       try {
         await docClient.put(params).promise();
-        cachedComments[commentData.id] = commentData
+        cachedComments[commentData.id] = {...commentData}
         return commentData;
       } catch (err) {
         throw new Error(err);
@@ -890,7 +890,7 @@ exports.handler = async function (ctx) {
         }
       }
       const userData = isUser && await docClient.get(userGetParams).promise()
-      const { projectID, assignees } = cachedTasks[taskID] || await getTask(taskID)
+      const { projectID, assignees } = await getTask(taskID)
       const taskPath = `${projectID}/${taskID}`
       if (await isProjectEditableByClient(projectID, client)) {
         if (!assignees.includes(assignee)) {
@@ -957,7 +957,7 @@ exports.handler = async function (ctx) {
         }
       }
       const userData = isUser && await docClient.get(userGetParams).promise()
-      const { projectID, assignees } = cachedTasks[taskID] || await getTask(taskID)
+      const { projectID, assignees } = await getTask(taskID)
       const taskPath = `${projectID}/${taskID}`
       if (await isProjectEditableByClient(projectID, client)) {
         if (assignees.includes(assignee)) {
@@ -1024,7 +1024,7 @@ exports.handler = async function (ctx) {
         }
       }
       const userData = isUser && await docClient.get(userGetParams).promise()
-      const { projectID, watchers } = cachedTasks[taskID] || await getTask(taskID)
+      const { projectID, watchers } = await getTask(taskID)
       const taskPath = `${projectID}/${taskID}`
       if (await isProjectEditableByClient(projectID, client)) {
         if (!watchers.includes(watcher)) {
@@ -1091,7 +1091,7 @@ exports.handler = async function (ctx) {
         }
       }
       const userData = isUser && await docClient.get(userGetParams).promise()
-      const { projectID, watchers } = cachedTasks[taskID] || await getTask(taskID)
+      const { projectID, watchers } = await getTask(taskID)
       const taskPath = `${projectID}/${taskID}`
       if (await isProjectEditableByClient(projectID, client)) {
         if (watchers.includes(watcher)) {
