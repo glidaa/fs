@@ -54,7 +54,7 @@ export const supportedCommands = {
 }
 
 export const panelPages = {
-  DETAILS: "DETAILS",
+  TASK_HUB: "TASK_HUB",
   PROJECTS: "PROJECTS",
   NOTIFICATIONS: "NOTIFICATIONS",
   ASSIGNEE_CHOOSER: "ASSIGNEE_CHOOSER",

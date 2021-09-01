@@ -84,17 +84,23 @@ export const handleRemoveComment = (commentState) => (dispatch, getState) => {
   }
 }
 
-export const handleFetchComments = (taskID) => (dispatch, getState) => {
+export const handleFetchComments = (taskID) => async (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    return API.graphql(graphqlOperation(listCommentsForTask, { taskID }))
-      .then(e => {
-        const result = e.data.listCommentsForTask.items;
-        for (const item of result) {
-          // dispatch(usersActions.handleAddUser(item.owner))
-        }
-        dispatch(fetchComments(e.data.listCommentsForTask.items))
-      })
-      .catch(e => console.error(e))
+    try {
+      const res = await API.graphql(graphqlOperation(listCommentsForTask, { taskID }))
+      const items = res.data.listCommentsForTask.items;
+      let usersToBeFetched = []
+      for (const item of items) {
+        usersToBeFetched = [...new Set([
+          ...usersToBeFetched,
+          item.owner
+        ])]
+      }
+      await dispatch(usersActions.handleAddUsers(usersToBeFetched))
+      dispatch(fetchComments(items))
+    } catch (err) {
+      console.error(err)
+    }
   }
 }

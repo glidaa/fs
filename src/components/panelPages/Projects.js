@@ -31,6 +31,7 @@ import { ReactComponent as AddIcon } from "../../assets/add-outline.svg";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import filterObj from "../../utils/filterObj";
+import PanelTabs from "../PanelTabs";
 
 const Sortable = (props) => {
 
@@ -200,22 +201,16 @@ const Projects = (props) => {
             />
           </PanelPageToolbarAction>
         </PanelPageToolbar>
-        {user.state === AuthState.SignedIn && <PanelTabs>
-          <div>
-            <span
-              className={scope === "owned" ? "active" : null}
-              onClick={() => scope !== "owned" && setScope("owned")}
-            >
-              Owned
-            </span>
-            <span
-              className={scope === "assigned" ? "active" : null}
-              onClick={() => scope !== "assigned" && setScope("assigned")}
-            >
-              Assigned
-            </span>
-          </div>
-        </PanelTabs>}
+        {user.state === AuthState.SignedIn && (
+          <PanelTabs
+            tabs={[
+              ["owned", "Owned"],
+              ["assigned", "Assigned"]
+            ]}
+            value={scope}
+            onChange={(newVal) => setScope(newVal)}
+          />
+        )}
         <ProjectItems>
           {scope === "assigned" ? (
             <div>
@@ -269,37 +264,6 @@ const PanelPageTitle = styledComponents.span`
   font-size: 18px;
   font-weight: 600;
 `
-
-const PanelTabs = styledComponents.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	& > div {
-		display: flex;
-		flex-direction: row;
-		gap: 5px;
-		padding: 5px;
-		background-color: #BDBDBD;
-		border-radius: 24px;
-		height: fit-content;
-		width: fit-content;
-		& > span {
-			border-radius: 24px;
-			padding: 2px 10px;
-			font-weight: 600;
-			display: flex;
-			justify-content: center;
-			background-color: transparent;
-			color: #FFFFFF;
-			cursor: pointer;
-			&.active {
-				color: #222222;
-				background-color: #FFFFFF;
-				cursor: default;
-			}
-		}
-	}
-`;
 
 const ProjectItems = styledComponents(SimpleBar)`
   flex: 1;

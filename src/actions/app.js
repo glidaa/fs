@@ -140,8 +140,8 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
     }
     dispatch(setTask(null))
   } else {
-    if (app.selectedTask && app.isRightPanelOpened && app.rightPanelPage !== panelPages.DETAILS) {
-      dispatch(setRightPanelPage(panelPages.DETAILS))
+    if (app.selectedTask && app.isRightPanelOpened && app.rightPanelPage !== panelPages.TASK_HUB) {
+      dispatch(setRightPanelPage(panelPages.TASK_HUB))
     }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {

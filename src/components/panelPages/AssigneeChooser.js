@@ -22,7 +22,7 @@ const AssigneeChooser = (props) => {
   const [results, setResults] = useState([])
 
   const closeChooser = () => {
-    return dispatch(appActions.setRightPanelPage(panelPages.DETAILS))
+    return dispatch(appActions.setRightPanelPage(panelPages.TASK_HUB))
   }
   const handleAssignTask = async (username) => {
     await dispatch(tasksActions.handleAssignTask(selectedTask, username))

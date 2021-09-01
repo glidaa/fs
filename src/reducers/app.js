@@ -15,7 +15,7 @@ const initState = {
   isActionSheetOpened: false,
   isProjectTitleSelected: false,
   lockedTaskField: null,
-  rightPanelPage: panelPages.DETAILS,
+  rightPanelPage: panelPages.TASK_HUB,
   leftPanelPage: panelPages.PROJECTS
 }
 
