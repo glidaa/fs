@@ -20,6 +20,25 @@ export const pushUserUpdate = /* GraphQL */ `
     }
   }
 `;
+export const pushProjectUpdate = /* GraphQL */ `
+  mutation PushProjectUpdate($input: PushProjectUpdateInput!) {
+    pushProjectUpdate(input: $input) {
+      id
+      prevProject
+      nextProject
+      permalink
+      title
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
+      updatedAt
+      owner
+    }
+  }
+`;
 export const createProject = /* GraphQL */ `
   mutation CreateProject($input: CreateProjectInput!) {
     createProject(input: $input) {

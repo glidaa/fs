@@ -678,6 +678,7 @@ exports.handler = async function (ctx) {
     if (await isProjectOwner(projectID, client)) {
       delete updateData["id"]
       const expAttrVal = {}
+      const expAttrNames = {}
       let updateExp = []
       for (const item in updateData) {
         if (item === "permalink") {
@@ -698,7 +699,12 @@ exports.handler = async function (ctx) {
           }
         } else {
           expAttrVal[`:${item}`] = updateData[item]
-          updateExp.push(`${item}=:${item}`)
+          if (item === "permissions") {
+            updateExp.push(`#${item}=:${item}`)
+            expAttrNames[`#${item}`] = item
+          } else {
+            updateExp.push(`${item}=:${item}`)
+          }
         }
       }
       expAttrVal[":updatedAt"] = new Date().toISOString()
@@ -713,6 +719,9 @@ exports.handler = async function (ctx) {
         ExpressionAttributeValues: expAttrVal,
         ReturnValues: "UPDATED_NEW"
       };
+      if (Object.keys(expAttrNames).length) {
+        params.ExpressionAttributeNames = expAttrNames
+      }
       try {
         if (updateData.prevProject !== undefined && updateData.nextProject !== undefined) {
           await removeProjectOrder(projectID)
