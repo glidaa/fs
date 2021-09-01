@@ -23,6 +23,7 @@ const TaskItem = (props) => {
 		item,
 		tasks,
 		users,
+		projects,
 		app: {
 			selectedTask,
 			selectedProject,
@@ -32,7 +33,6 @@ const TaskItem = (props) => {
 			lockedTaskField,
 			command
 		},
-		readOnly,
 		listeners,
 		isSorting,
 		isDragging,
@@ -180,7 +180,7 @@ const TaskItem = (props) => {
 	}
 
 	const selectItem = (item) => {
-		if (!readOnly) {
+		if (projects[selectedProject].permissions === "rw") {
 			return dispatch(appActions.handleSetTask(item.id))
 		}
 	}
@@ -265,7 +265,6 @@ const TaskItem = (props) => {
 									onBlur={forceIdle}
 									autoFocus={!(isRightPanelOpened || isActionSheetOpened)}
 									contentEditable={false}
-									readOnly={readOnly}
 								/>
 							</TaskItemInput>
 						) : (
@@ -565,4 +564,5 @@ export default connect((state) => ({
 	tasks: state.tasks,
 	app: state.app,
 	users: state.users,
+	projects: state.projects,
 }))(TaskItem);

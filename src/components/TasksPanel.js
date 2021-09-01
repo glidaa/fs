@@ -94,7 +94,6 @@ const SortableItem = (props) => {
   const {
     index,
     value,
-    readOnly,
     setHideShow 
   } = props
 
@@ -120,7 +119,6 @@ const SortableItem = (props) => {
       <TaskItem
         key={index}
         item={value}
-        readOnly={readOnly}
         setHideShow={setHideShow}
         isSorting={isSorting}
         isDragging={isDragging}
@@ -227,7 +225,6 @@ const TasksPanel = (props) => {
                   key={value.id}
                   index={index}
                   value={value}
-                  readOnly={false}
                 />
               )
             )}

@@ -278,6 +278,7 @@ input UpdateProjectInput {
 	nextProject: ID
 	permalink: String
 	privacy: ProjectPrivacy
+	permissions: Permissions
 	title: String
 }
 
