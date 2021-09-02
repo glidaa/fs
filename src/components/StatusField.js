@@ -19,7 +19,7 @@ const StatusField = (props) => {
 	};
 
 	return (
-		<StatusFieldShell>
+		<StatusFieldShell readOnly={readOnly}>
 			<TodoStatusSelection
         isSelected={value === "todo"}
         onClick={() => onSelect("todo")}
@@ -39,43 +39,45 @@ const StatusField = (props) => {
         Finished
       </FinishedStatusSelection>
 		</StatusFieldShell>
-	);
-};
+	)
+}
+
+const StatusSelection = styledComponents.button`
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  outline: none;
+  transition: color 0.2s, border-color 0.2s;
+  ${({ isSelected }) => isSelected ? `
+    color: #5D6969;
+    border-color: #7DAAFC;
+    cursor: default;
+  ` : `
+    color: #AAA8AC;
+  `}
+`
 
 const StatusFieldShell = styledComponents.div`
 	display: flex;
 	flex-direction: row;
 	gap: 5px;
-`
-
-const StatusSelection = styledComponents.button`
-    padding: 5px 10px;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    outline: none;
-    cursor: pointer;
-		transition: color 0.2s, border-color 0.2s;
-    ${({ isSelected }) => isSelected ? `
-      color: #5D6969;
-      border-color: #7DAAFC;
-    ` : `
-      color: #AAA8AC;
-    `}
-    
+  ${StatusSelection} {
+    cursor: ${({readOnly}) => readOnly ? "default" : "pointer"};
+  }
 `
 
 const TodoStatusSelection = styledComponents(StatusSelection)`
-    background-color: #FFEBE5;
+  background-color: #FFEBE5;
 `
 
 const StartedStatusSelection = styledComponents(StatusSelection)`
-    background-color: #FDF1DB;
+  background-color: #FDF1DB;
 `
 
 const FinishedStatusSelection = styledComponents(StatusSelection)`
-    background-color: #DAF6F4;
+  background-color: #DAF6F4;
 `
 
 export default StatusField

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as projectsActions from "../../actions/projects";
+import { AuthState } from "@aws-amplify/ui-components";
 import styledComponents from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
@@ -10,11 +11,12 @@ import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import PrivacyField from '../PrivacyField';
 import PermissionsField from '../PermissionsField';
 
-const AccountSettings = (props) => {
+const ProjectSettings = (props) => {
   const {
     app: {
         selectedProject
     },
+    user,
     projects,
     dispatch
   } = props;
@@ -106,9 +108,9 @@ const AccountSettings = (props) => {
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
-      <AccountSettingsForm>
+      <ProjectSettingsForm>
         <form onSubmit={(e) => e.preventDefault()}>
-          <AccountSetting>
+          <ProjectSetting>
             <label htmlFor="title">
               Title
             </label>
@@ -119,8 +121,8 @@ const AccountSettings = (props) => {
               onChange={(e) => setNewTitle(e.target.value)}
               value={newTitle}
             />
-          </AccountSetting>
-          <AccountSetting>
+          </ProjectSetting>
+          <ProjectSetting>
             <label htmlFor="permalink">
               Permalink
             </label>
@@ -136,28 +138,32 @@ const AccountSettings = (props) => {
                 value={newPermalink}
               />
             </PrefixedInputField>
-          </AccountSetting>
-          <AccountSetting>
-            <label htmlFor="privacy">
-              Privacy
-            </label>
-            <PrivacyField
-              value={newPrivacy}
-              onChange={(e) => setNewPrivacy(e.target.value)}
-            />
-          </AccountSetting>
-          <AccountSetting>
-            <label htmlFor="permissions">
-              Permissions
-            </label>
-            <PermissionsField
-              value={newPermissions}
-              onChange={(e) => setNewPermissions(e.target.value)}
-            />
-          </AccountSetting>
+          </ProjectSetting>
+          {user.state === AuthState.SignedIn && (
+            <>
+              <ProjectSetting>
+                <label htmlFor="privacy">
+                  Privacy
+                </label>
+                <PrivacyField
+                  value={newPrivacy}
+                  onChange={(e) => setNewPrivacy(e.target.value)}
+                />
+              </ProjectSetting>
+              <ProjectSetting>
+                <label htmlFor="permissions">
+                  Permissions
+                </label>
+                <PermissionsField
+                  value={newPermissions}
+                  onChange={(e) => setNewPermissions(e.target.value)}
+                />
+              </ProjectSetting>
+            </>
+          )}
           <NonPrefixedInputField type="submit" name="submit" value="Submit"></NonPrefixedInputField>
         </form>
-      </AccountSettingsForm>
+      </ProjectSettingsForm>
       <SaveSettingsBtn
         onClick={saveChanges}
         disabled={!isChanged}
@@ -168,7 +174,7 @@ const AccountSettings = (props) => {
   );
 };
 
-const AccountSettingsForm = styledComponents(SimpleBar)`
+const ProjectSettingsForm = styledComponents(SimpleBar)`
   flex: 1;
   overflow: auto;
   height: 0;
@@ -186,7 +192,7 @@ const AccountSettingsForm = styledComponents(SimpleBar)`
   }
 `;
 
-const AccountSetting = styledComponents.div`
+const ProjectSetting = styledComponents.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -292,5 +298,6 @@ const SaveSettingsBtn = styledComponents.button`
 
 export default connect((state) => ({
   app: state.app,
-  projects: state.projects
-}))(AccountSettings);
+  projects: state.projects,
+  user: state.user
+}))(ProjectSettings);

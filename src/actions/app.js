@@ -122,6 +122,7 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
 export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState) => {
   const { user, projects, tasks, app } = getState()
   dispatch(observersActions.handleClearCommentsObservers())
+  dispatch(commentsActions.emptyComments())
   dispatch(setProjectTitle(false))
   if (!id && app.selectedTask) {
     if (app.isRightPanelOpened) {

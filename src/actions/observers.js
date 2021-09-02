@@ -4,6 +4,7 @@ import * as tasksActions from "./tasks"
 import * as commentsActions from "./comments"
 import * as appActions from "./app"
 import * as userActions from "./user"
+import * as usersActions from "./users"
 import * as subscriptions from "../graphql/subscriptions"
 import filterObj from "../utils/filterObj";
 
@@ -151,20 +152,30 @@ export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
   if (app.selectedProject === projectID) {
     const observers = [];
     observers.push(API.graphql(graphqlOperation(subscriptions.onCreateTaskByProjectId, { projectID })).subscribe({
-      next: e => {
+      next: async (e) => {
         const { tasks } = getState()
         const incoming = e.value.data.onCreateTaskByProjectID
         if (!Object.keys(tasks).includes(incoming.id)) {
+          const usersToBeFetched = [...new Set([
+            ...incoming.assignees.filter(x => /^user:.*$/.test(x)).map(x => x.replace(/^user:/, "")),
+            ...incoming.watchers
+          ])]
+          await dispatch(usersActions.handleAddUsers(usersToBeFetched))
           dispatch(tasksActions.createTask(incoming))
         }
       },
       error: error => console.warn(error)
     }))
     observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateTaskByProjectId, { projectID })).subscribe({
-      next: e => {
+      next: async (e) => {
         const { tasks } = getState()
         const incoming = e.value.data.onUpdateTaskByProjectID
         if (Object.keys(tasks).includes(incoming.id)) {
+          const usersToBeFetched = [...new Set([
+            ...(incoming.assignees?.filter(x => /^user:.*$/.test(x))?.map(x => x.replace(/^user:/, "")) || []),
+            ...(incoming.watchers || [])
+          ])]
+          await dispatch(usersActions.handleAddUsers(usersToBeFetched))
           delete incoming[getState().app.lockedTaskField]
           dispatch(tasksActions.updateTask(incoming))
         }
@@ -203,10 +214,11 @@ export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
     if (app.selectedTask === taskID) {
     const observers = [];
     observers.push(API.graphql(graphqlOperation(subscriptions.onCreateCommentByTaskId, { taskID })).subscribe({
-      next: e => {
+      next: async (e) => {
         const { comments } = getState()
         const incoming = e.value.data.onCreateCommentByTaskID
         if (!Object.keys(comments).includes(incoming.id)) {
+          await dispatch(usersActions.handleAddUsers([incoming.owner]))
           dispatch(commentsActions.createComment(incoming))
         }
       },

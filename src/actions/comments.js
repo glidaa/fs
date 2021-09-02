@@ -37,15 +37,9 @@ const fetchComments = (comments) => ({
 export const handleCreateComment = (commentState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    if (commentState.taskID === getState().app.selectedTask) {
-      dispatch(createComment(commentState))
-    }
     return API.graphql(graphqlOperation(mutations.createComment, { input: commentState }))
       .catch((err) => {
         console.error(err)
-        if (commentState.taskID === getState().app.selectedTask) {
-          return dispatch(removeComment(commentState.id))
-        }
       })
   }
 }

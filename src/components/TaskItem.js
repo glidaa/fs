@@ -1,6 +1,7 @@
 import React, { useRef, useMemo, useEffect } from "react"
 import styledComponents from "styled-components";
 import { connect } from "react-redux";
+import { AuthState } from "@aws-amplify/ui-components";
 import useWindowSize from "../utils/useWindowSize";
 import formatDate from "../utils/formatDate"
 import copyTaskCore from "../utils/copyTask"
@@ -23,6 +24,7 @@ const TaskItem = (props) => {
 		item,
 		tasks,
 		users,
+    user,
 		projects,
 		app: {
 			selectedTask,
@@ -60,6 +62,14 @@ const TaskItem = (props) => {
 		}
 		return result
 	}
+
+  const getReadOnly = (user, projects, selectedProject) => {
+    return user.state === AuthState.SignedIn &&
+		projects[selectedProject].owner !== user.data.username &&
+		projects[selectedProject].permissions === "r"
+  }
+
+  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])
 	
 	const processedAssingees = useMemo(() => processAssingees(item.assignees, users), [item.assignees, users]);
 
@@ -123,7 +133,7 @@ const TaskItem = (props) => {
 	const handleKeyUp = (e) => {
 		if (!command) {
 			if (e.key === "Enter" && e.shiftKey) {
-				if (taskAddingStatus === OK) {
+				if (taskAddingStatus === OK && !readOnly) {
 					forceIdle()
 					dispatch(
 						tasksActions.handleCreateTask(
@@ -180,9 +190,7 @@ const TaskItem = (props) => {
 	}
 
 	const selectItem = (item) => {
-		if (projects[selectedProject].permissions === "rw") {
-			return dispatch(appActions.handleSetTask(item.id))
-		}
+		return dispatch(appActions.handleSetTask(item.id))
 	}
 
 	const openRightPanel = (item) => {
@@ -265,6 +273,7 @@ const TaskItem = (props) => {
 									onBlur={forceIdle}
 									autoFocus={!(isRightPanelOpened || isActionSheetOpened)}
 									contentEditable={false}
+                  readOnly={readOnly}
 								/>
 							</TaskItemInput>
 						) : (
@@ -286,13 +295,15 @@ const TaskItem = (props) => {
 									color="#006EFF"
 								/>
 							</TaskItemAction>
-							<TaskItemAction onClick={() => duplicateTask(item)}>
-								<DuplicateIcon
-									height="18"
-									strokeWidth="34"
-									color="#006EFF"
-								/>
-							</TaskItemAction>
+							{!readOnly && (
+                <TaskItemAction onClick={() => duplicateTask(item)}>
+                  <DuplicateIcon
+                    height="18"
+                    strokeWidth="34"
+                    color="#006EFF"
+                  />
+                </TaskItemAction>
+              )}
 							<TaskItemAction onClick={() => shareTask(item)}>
 								<ShareIcon
 									height="18"
@@ -300,13 +311,15 @@ const TaskItem = (props) => {
 									color="#006EFF"
 								/>
 							</TaskItemAction>
-							<TaskItemAction onClick={() => removeTask(item)}>
-								<RemoveIcon
-									height="18"
-									strokeWidth="34"
-									color="#006EFF"
-								/>
-							</TaskItemAction>
+							{!readOnly && (
+                <TaskItemAction onClick={() => removeTask(item)}>
+                  <RemoveIcon
+                    height="18"
+                    strokeWidth="34"
+                    color="#006EFF"
+                  />
+							  </TaskItemAction>
+              )}
 							<TaskItemAction onClick={() => openRightPanel(item)}>
 								<DetailsIcon
 									height="18"

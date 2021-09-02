@@ -1,5 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { connect } from "react-redux";
+import { AuthState } from "@aws-amplify/ui-components";
 import { DatePicker } from "../../DatePicker";
 import * as appActions from "../../../actions/app";
 import * as tasksActions from "../../../actions/tasks";
@@ -13,11 +14,13 @@ import AssigneeField from "../../AssigneeField";
 const Details = (props) => {
   const {
     tasks,
+    projects,
+    user,
     app: {
+      selectedProject,
       selectedTask,
       lockedTaskField
     },
-    readOnly,
     dispatch
   } = props;
 
@@ -31,6 +34,14 @@ const Details = (props) => {
 	}
 
 	useEffect(() => () => forceIdle(), [])
+
+  const getReadOnly = (user, projects, selectedProject) => {
+    return user.state === AuthState.SignedIn &&
+      projects[selectedProject].owner !== user.data.username &&
+      projects[selectedProject].permissions === "r"
+  }
+
+  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])
   
   const handleChange = (e) => {
     if (["task", "description"].includes(e.target.name)) {
@@ -179,6 +190,7 @@ const Detail = styledComponents.div`
 
 export default connect((state) => ({
   user: state.user,
+  projects: state.projects,
   tasks: state.tasks,
   app: state.app,
   comments: state.comments,

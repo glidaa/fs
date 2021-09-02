@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import { useOuterClick } from 'react-outer-click';
@@ -19,8 +19,13 @@ export const DatePicker = (props) => {
       setIsPickerOpened(false);
     }
   })
+  useEffect(() => {
+    if (readOnly && isPickerOpened) {
+      setIsPickerOpened(false)
+    }
+  }, [readOnly, isPickerOpened, setIsPickerOpened])
   return (
-    <DatePickerContainer ref={selectRef}>
+    <DatePickerContainer ref={selectRef} readOnly={readOnly}>
       <input
         name={props.name}
         value={formatDate(props.value)}
@@ -55,7 +60,7 @@ const DatePickerContainer = styledComponents.div`
     width: 100%;
     color: transparent;
     text-shadow: 0 0 0 #222222;
-    cursor: pointer;
+    cursor: ${({readOnly}) => readOnly ? "default" : "pointer"};
     transition: border 0.3s, box-shadow 0.3s;
     font-size: 14px;
     font-weight: 400;

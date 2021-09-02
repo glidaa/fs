@@ -1,11 +1,10 @@
 import React, { useMemo, useEffect, useRef } from 'react';
-import { API, graphqlOperation } from "aws-amplify";
 import { connect } from "react-redux"
 import styledComponents from "styled-components";
 import * as tasksActions from "../actions/tasks"
-import { unassignTask } from "../graphql/mutations";
 import * as appActions from "../actions/app";
-import { NOT_ASSIGNED, panelPages } from "../constants";
+import { ReactComponent as RemoveIcon } from "../assets/close-outline.svg"
+import { panelPages } from "../constants";
 
 const AssigneeField = (props) => {
   const {
@@ -41,9 +40,9 @@ const AssigneeField = (props) => {
         const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
         const isUser = assigneeType === "user"
         if (isUser) {
-          result.push({...users[assigneeID], isUser})
+          result.push({...users[assigneeID], raw: assignee, isUser})
         } else {
-          result.push({ name: assigneeID, isUser })
+          result.push({ name: assigneeID, raw: assignee, isUser })
         }
       }
     }
@@ -53,19 +52,7 @@ const AssigneeField = (props) => {
   const processedValue = useMemo(() => processValue(value, users), [value, users]);
 
   const handleUnassignTask = (username) => {
-    dispatch(tasksActions.updateTask({
-      id: selectedTask,
-      assignee: NOT_ASSIGNED
-    }))
-    API.graphql(graphqlOperation(unassignTask, {
-      taskID: selectedTask,
-      assignee: username
-    })).catch(() => {
-      dispatch(tasksActions.updateTask({
-        id: selectedTask,
-        assignee: username
-      }))
-    })
+    dispatch(tasksActions.handleUnassignTask(selectedTask, username))
   }
 
   return (
@@ -79,7 +66,15 @@ const AssigneeField = (props) => {
             </NewAssigneeBtn>
           )}
           {processedValue.map(x => (
-            <AssigneeItem key={x}>
+            <AssigneeItem key={x.raw}>
+              <RemoveBtn onClick={() => handleUnassignTask(x.raw)}>         
+                <RemoveIcon
+                  height="16"
+                  width="16"
+                  strokeWidth="32"
+                  color="#006EFF"
+                />
+              </RemoveBtn>
               {x.isUser && (x.avatar ?
                 <ImageAvatar src={x.avatar} /> :
                 <LetterAvatar>{x.abbr}</LetterAvatar>
@@ -92,7 +87,11 @@ const AssigneeField = (props) => {
       ) : (
         <NoAssignees>
           <span>No Users Assigned Yet</span>
-          <button onClick={openChooser}>+ Add Assignee</button>
+          {!readOnly && (
+            <button onClick={openChooser}>
+              + Add Assignee
+            </button>
+          )}
         </NoAssignees>
       )}
     </AssigneeFieldShell>
@@ -178,6 +177,7 @@ const NoAssignees = styledComponents.div`
 `
 
 const AssigneeItem = styledComponents.span`
+  position: relative;
   display: flex;
   gap: 5px;
   padding: 10px 15px;
@@ -220,6 +220,18 @@ const LetterAvatar = styledComponents.div`
   min-height: 32px;
   width: 32px;
   height: 32px;
+`
+
+const RemoveBtn = styledComponents.button`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  outline: none;
+  border: none;
+  line-height: 0;
+  padding: 0;
+  background-color: transparent;
+  cursor: pointer;
 `
 
 export default connect((state) => ({

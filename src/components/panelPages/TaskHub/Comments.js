@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useOuterClick } from 'react-outer-click';
 import { useState, useRef } from "react"
 import { connect } from "react-redux";
+import { AuthState } from "@aws-amplify/ui-components";
 import styledComponents from "styled-components";
 import { stateToHTML } from 'draft-js-export-html';
 import { Editor, EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';
@@ -10,7 +11,17 @@ import { ReactComponent as RemoveIcon } from "../../../assets/trash-outline.svg"
 import * as commentsActions from "../../../actions/comments";
 
 const Comments = (props) => {
-  const { user, users, comments, app, dispatch } = props
+  const {
+    user,
+    users,
+    comments,
+    app: {
+      selectedProject,
+      selectedTask
+    },
+    projects,
+    dispatch
+  } = props
   const newCommentRef = useRef(null)
   const [isNewCommentOpened, setIsNewCommentOpened] = useState(false)
   const [editorState, setEditorState] = useState(
@@ -39,7 +50,13 @@ const Comments = (props) => {
     }
     return results.length ? results : null
   }
+  const getReadOnly = (user, projects, selectedProject) => {
+    return user.state === AuthState.SignedIn &&
+      projects[selectedProject].owner !== user.data.username &&
+      projects[selectedProject].permissions === "r"
+  }
   const processedComments = useMemo(() => processComments(comments), [comments])
+  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])
   const openNewComment = () => {
     if (!isNewCommentOpened) {
       setIsNewCommentOpened(true);
@@ -55,7 +72,7 @@ const Comments = (props) => {
     e.stopPropagation()
     const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
     dispatch(commentsActions.handleCreateComment({
-      taskID: app.selectedTask,
+      taskID: selectedTask,
       content: content
     }))
     setEditorState(EditorState.push(editorState, ContentState.createFromText('')))
@@ -118,30 +135,36 @@ const Comments = (props) => {
           </NoComments>
         )}
       </CommentUnits>
-      <NewComment>
-        {user.data.avatar ? 
-          <ImageAvatar src={user.data.avatar} /> :
-          <LetterAvatar>{user.data.abbr}</LetterAvatar>
-        }
-        <CommentField onClick={openNewComment} ref={newCommentRef}>
-          <CommentInput>
-            <Editor
-              editorState={editorState}
-              onChange={setEditorState}
-              placeholder="Ask a question or post an update…"
-              expanded={isNewCommentOpened}
-            />
-          </CommentInput>
-          {isNewCommentOpened && <CommentControls>
-            <div>
+      {readOnly ? (
+        <CommentNotAllowed>
+          You can&#39;t comment on this Task
+        </CommentNotAllowed>
+      ) : (
+        <NewComment>
+          {user.data.avatar ? 
+            <ImageAvatar src={user.data.avatar} /> :
+            <LetterAvatar>{user.data.abbr}</LetterAvatar>
+          }
+          <CommentField onClick={openNewComment} ref={newCommentRef}>
+            <CommentInput>
+              <Editor
+                editorState={editorState}
+                onChange={setEditorState}
+                placeholder="Ask a question or post an update…"
+                expanded={isNewCommentOpened}
+              />
+            </CommentInput>
+            {isNewCommentOpened && <CommentControls>
+              <div>
 
-            </div>
-            <div>
-              <button onClick={submitComment}>Comment</button>
-            </div>
-          </CommentControls>}
-        </CommentField>
-      </NewComment>
+              </div>
+              <div>
+                <button onClick={submitComment}>Comment</button>
+              </div>
+            </CommentControls>}
+          </CommentField>
+        </NewComment>
+      )}
     </CommentsContainer>
   )
 }
@@ -294,6 +317,14 @@ const CommentDay = styledComponents.span`
   width: 100%;
 `
 
+const CommentNotAllowed = styledComponents.span`
+  font-weight: 600;
+  font-size: 12px;
+  color: #C0C0C0;
+  text-align: center;
+  width: 100%;
+`
+
 const ImageAvatar = styledComponents.img`
   display: inline;
   border-radius: 100%;
@@ -338,5 +369,6 @@ export default connect((state) => ({
   user: state.user,
   app: state.app,
   comments: state.comments,
+  projects: state.projects,
   users: state.users,
 }))(Comments);
