@@ -67,7 +67,7 @@ const AssigneeField = (props) => {
           )}
           {processedValue.map(x => (
             <AssigneeItem key={x.raw}>
-              <RemoveBtn onClick={() => handleUnassignTask(x.raw)}>         
+              <RemoveBtn onClick={() => handleUnassignTask(x.raw)}>
                 <RemoveIcon
                   height="16"
                   width="16"

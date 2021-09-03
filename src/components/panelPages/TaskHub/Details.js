@@ -1,8 +1,7 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { connect } from "react-redux";
 import { AuthState } from "@aws-amplify/ui-components";
 import { DatePicker } from "../../DatePicker";
-import * as appActions from "../../../actions/app";
 import * as tasksActions from "../../../actions/tasks";
 import styledComponents from "styled-components";
 import StatusField from "../../StatusField";
@@ -18,22 +17,10 @@ const Details = (props) => {
     user,
     app: {
       selectedProject,
-      selectedTask,
-      lockedTaskField
+      selectedTask
     },
     dispatch
   } = props;
-
-  const idleTrigger = useRef(null)
-	
-	const forceIdle = () => {
-		if (["task", "description"].includes(lockedTaskField)) {
-			dispatch(appActions.setLockedTaskField(null))
-		}
-		clearTimeout(idleTrigger.current)
-	}
-
-	useEffect(() => () => forceIdle(), [])
 
   const getReadOnly = (user, projects, selectedProject) => {
     return user.state === AuthState.SignedIn &&
@@ -44,17 +31,6 @@ const Details = (props) => {
   const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])
   
   const handleChange = (e) => {
-    if (["task", "description"].includes(e.target.name)) {
-      if (lockedTaskField !== e.target.name) {
-        dispatch(appActions.setLockedTaskField(e.target.name))
-      }
-      clearTimeout(idleTrigger.current)
-      idleTrigger.current = setTimeout(() => {
-        if (lockedTaskField === e.target.name) {
-          dispatch(appActions.setLockedTaskField(null))
-        }
-      }, 5000);
-    }
     dispatch(
       tasksActions.handleUpdateTask({
         id: selectedTask,
@@ -84,7 +60,6 @@ const Details = (props) => {
             name="task"
             placeholder="task…"
             onChange={handleChange}
-            onBlur={forceIdle}
             value={tasks[selectedTask].task || ""}
             contentEditable={false}
             readOnly={readOnly}
@@ -99,7 +74,6 @@ const Details = (props) => {
             name="description"
             placeholder="description…"
             onChange={handleChange}
-            onBlur={forceIdle}
             value={tasks[selectedTask].description || ""}
             contentEditable={false}
             readOnly={readOnly}

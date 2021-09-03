@@ -318,7 +318,7 @@ const TaskItem = (props) => {
 				</TaskItemLeftPart>
 				<TaskItemRightPart isFocused={item.id === selectedTask}>
 					<TaskItemDueDate>
-						{formatDate(item.due)}
+						{item.due ? formatDate(item.due) : "No Due"}
 					</TaskItemDueDate>
 					<AvatarArray
 						max={3}

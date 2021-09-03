@@ -87,7 +87,7 @@ export const initTaskState = (projectID, prevTask = null, nextTask = null) => ({
   prevTask: prevTask,
   nextTask: nextTask,
   description: null,
-  due: Date.now(),
+  due: null,
   tags: [],
   assignees: [],
   status: "todo"
