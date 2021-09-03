@@ -111,11 +111,13 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
   }))
   observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateOwnedProject, data)).subscribe({
     next: e => {
-      const { projects } = getState()
+      const { projects, mutations } = getState()
       const ownedProjects = filterObj(projects, x => x.isOwned)
       const incoming = e.value.data.onUpdateOwnedProject
-      if (Object.keys(ownedProjects).includes(incoming.id)) {
-        dispatch(projectsActions.updateProject(incoming))
+      if (!mutations.includes(incoming.mutationID)) {
+        if (Object.keys(ownedProjects).includes(incoming.id)) {
+          dispatch(projectsActions.updateProject(incoming))
+        }
       }
     },
     error: error => console.warn(error)
@@ -168,16 +170,17 @@ export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
     }))
     observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateTaskByProjectId, { projectID })).subscribe({
       next: async (e) => {
-        const { tasks } = getState()
+        const { tasks, mutations } = getState()
         const incoming = e.value.data.onUpdateTaskByProjectID
-        if (Object.keys(tasks).includes(incoming.id)) {
-          const usersToBeFetched = [...new Set([
-            ...(incoming.assignees?.filter(x => /^user:.*$/.test(x))?.map(x => x.replace(/^user:/, "")) || []),
-            ...(incoming.watchers || [])
-          ])]
-          await dispatch(usersActions.handleAddUsers(usersToBeFetched))
-          delete incoming[getState().app.lockedTaskField]
-          dispatch(tasksActions.updateTask(incoming))
+        if (!mutations.includes(incoming.mutationID)) {
+          if (Object.keys(tasks).includes(incoming.id)) {
+            const usersToBeFetched = [...new Set([
+              ...(incoming.assignees?.filter(x => /^user:.*$/.test(x))?.map(x => x.replace(/^user:/, "")) || []),
+              ...(incoming.watchers || [])
+            ])]
+            await dispatch(usersActions.handleAddUsers(usersToBeFetched))
+            dispatch(tasksActions.updateTask(incoming))
+          }
         }
       },
       error: error => console.warn(error)
@@ -226,10 +229,12 @@ export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
     }))
     observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateCommentByTaskId, { taskID })).subscribe({
       next: e => {
-        const { comments } = getState()
+        const { comments, mutations } = getState()
         const incoming = e.value.data.onUpdateCommentByTaskID
-        if (Object.keys(comments).includes(incoming.id)) {
-          dispatch(commentsActions.updateComment(incoming))
+        if (!mutations.includes(incoming.mutationID)) {
+          if (Object.keys(comments).includes(incoming.id)) {
+            dispatch(commentsActions.updateComment(incoming))
+          }
         }
       },
       error: error => console.warn(error)

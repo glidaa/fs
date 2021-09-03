@@ -44,7 +44,6 @@ const TaskItem = (props) => {
 	const { width } = useWindowSize();
 
 	const inputRef = useRef(null)
-	const idleTrigger = useRef(null)
 
 	const processAssingees = (value, users) => {
 		const result = []
@@ -93,24 +92,11 @@ const TaskItem = (props) => {
 	}
 
 	const specialsPos = useMemo(() => getSpecialsPos(inputRef), [tasks])
-	
-	const forceIdle = () => {
-		if (lockedTaskField === "task") {
-			dispatch(appActions.setLockedTaskField(null))
-		}
-		clearTimeout(idleTrigger.current)
-	}
 
 	const onChange = (e) => {
 		if (lockedTaskField !== "task") {
 			dispatch(appActions.setLockedTaskField("task"))
 		}
-		clearTimeout(idleTrigger.current)
-		idleTrigger.current = setTimeout(() => {
-			if (lockedTaskField === "task") {
-				dispatch(appActions.setLockedTaskField(null))
-			}
-		}, 5000);
 		dispatch(
 			tasksActions.handleUpdateTask({
 				id: selectedTask,
@@ -118,8 +104,6 @@ const TaskItem = (props) => {
 			})
 		);
 	};
-
-	useEffect(() => () => forceIdle(), [])
 
 	const toggleStatus = (item) => {
 		dispatch(
@@ -134,7 +118,6 @@ const TaskItem = (props) => {
 		if (!command) {
 			if (e.key === "Enter") {
 				if (taskAddingStatus === OK && !readOnly) {
-					forceIdle()
 					dispatch(
 						tasksActions.handleCreateTask(
 							initTaskState(
@@ -147,7 +130,6 @@ const TaskItem = (props) => {
 				}
 			} else if (e.key === "ArrowUp") {
 				const prevTask = tasks[selectedTask].prevTask
-				forceIdle()
 				if (!prevTask) {
 					return dispatch(appActions.handleSetProjectTitle(true))
 				} else {
@@ -156,11 +138,9 @@ const TaskItem = (props) => {
 			} else if (e.key === "ArrowDown") {
 				const nextTask = tasks[selectedTask].nextTask
 				if (nextTask) {
-					forceIdle()
 					return dispatch(appActions.handleSetTask(nextTask))
 				}
 			} else if (e.key === "Escape") {
-				forceIdle()
 				return dispatch(appActions.handleSetTask(null))
 			}
 		}
@@ -270,7 +250,6 @@ const TaskItem = (props) => {
 									onKeyUp={handleKeyUp}
 									onKeyDown={handleKeyDown}
 									onChange={onChange}
-									onBlur={forceIdle}
 									autoFocus={!(isRightPanelOpened || isActionSheetOpened)}
 									contentEditable={false}
                   readOnly={readOnly}

@@ -2,11 +2,13 @@ import { API, graphqlOperation } from "aws-amplify";
 import { AuthState } from '@aws-amplify/ui-components';
 import { listOwnedProjects, listAssignedProjects } from "../graphql/queries"
 import * as appActions from "./app"
+import * as mutationsActions from "./mutations"
 import * as mutations from "../graphql/mutations"
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
 import { OK, PENDING } from "../constants";
 import prepareProjectToBeSent from "../utils/prepareProjectToBeSent";
+import generateMutationID from "../utils/generateMutationID";
 
 export const CREATE_PROJECT = "CREATE_PROJECT";
 export const UPDATE_PROJECT = "UPDATE_PROJECT";
@@ -87,8 +89,10 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
   const prevProjectState = {...projects[update.id]}
   const updateWithID = {id: prevProjectState.id, ...update };
   if (user.state === AuthState.SignedIn) {
+    const mutationID = generateMutationID(user.data.username)
+    dispatch(mutationsActions.addMutation(mutationID))
     dispatch(updateProject(updateWithID, OWNED))
-    return API.graphql(graphqlOperation(mutations.updateProject, { input: updateWithID }))
+    return API.graphql(graphqlOperation(mutations.updateProject, { input: { ...updateWithID, mutationID } }))
       .catch((err) => {
         console.error(err)
         return dispatch(updateProject(prevProjectState, OWNED))

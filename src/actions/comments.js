@@ -3,6 +3,8 @@ import { AuthState } from '@aws-amplify/ui-components';
 import { listCommentsForTask } from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
 import * as usersActions from "./users"
+import * as mutationsActions from "./mutations"
+import generateMutationID from "../utils/generateMutationID";
 
 export const CREATE_COMMENT = "CREATE_COMMENT";
 export const UPDATE_COMMENT = "UPDATE_COMMENT";
@@ -49,10 +51,12 @@ export const handleUpdateComment = (update) => (dispatch, getState) => {
   const prevCommentState = {...comments[update.id]}
   const updateWithID = {id: prevCommentState.id, ...update };
   if (user.state === AuthState.SignedIn) {
+    const mutationID = generateMutationID(user.data.username)
+    dispatch(mutationsActions.addMutation(mutationID))
     if (comments[prevCommentState.id]) {
       dispatch(updateComment(updateWithID))
     }
-    return API.graphql(graphqlOperation(mutations.updateComment, { input: updateWithID }))
+    return API.graphql(graphqlOperation(mutations.updateComment, { input: { ...updateWithID, mutationID } }))
       .catch((err) => {
         console.error(err)
         if (comments[prevCommentState.id]) {

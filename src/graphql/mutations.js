@@ -36,6 +36,7 @@ export const pushProjectUpdate = /* GraphQL */ `
       permissions
       updatedAt
       owner
+      mutationID
     }
   }
 `;
@@ -109,6 +110,7 @@ export const updateProject = /* GraphQL */ `
       permissions
       updatedAt
       owner
+      mutationID
     }
   }
 `;
@@ -128,6 +130,7 @@ export const updateTask = /* GraphQL */ `
       watchers
       assignees
       updatedAt
+      mutationID
     }
   }
 `;
@@ -138,6 +141,7 @@ export const updateComment = /* GraphQL */ `
       taskID
       content
       updatedAt
+      mutationID
     }
   }
 `;
@@ -230,6 +234,7 @@ export const assignTask = /* GraphQL */ `
       watchers
       assignees
       updatedAt
+      mutationID
     }
   }
 `;
@@ -249,6 +254,7 @@ export const unassignTask = /* GraphQL */ `
       watchers
       assignees
       updatedAt
+      mutationID
     }
   }
 `;
@@ -268,6 +274,7 @@ export const addWatcher = /* GraphQL */ `
       watchers
       assignees
       updatedAt
+      mutationID
     }
   }
 `;
@@ -287,6 +294,7 @@ export const removeWatcher = /* GraphQL */ `
       watchers
       assignees
       updatedAt
+      mutationID
     }
   }
 `;

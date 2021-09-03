@@ -6,9 +6,11 @@ import removeItemOrder from "../utils/removeItemOrder"
 import * as appActions from "./app"
 import * as projectsActions from "./projects"
 import * as usersActions from "./users"
+import * as mutationsActions from "./mutations"
 import * as mutations from "../graphql/mutations"
 import { OK, PENDING } from "../constants";
 import prepareTaskToBeSent from "../utils/prepareTaskToBeSent";
+import generateMutationID from "../utils/generateMutationID";
 
 export const CREATE_TASK = "CREATE_TASK";
 export const UPDATE_TASK = "UPDATE_TASK";
@@ -100,10 +102,12 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
   }
   const updateWithID = {id: prevTaskState.id, ...update };
   if (user.state === AuthState.SignedIn) {
+    const mutationID = generateMutationID(user.data.username)
+    dispatch(mutationsActions.addMutation(mutationID))
     if (tasks[prevTaskState.id]) {
       dispatch(updateTask(updateWithID))
     }
-    return API.graphql(graphqlOperation(mutations.updateTask, { input: updateWithID }))
+    return API.graphql(graphqlOperation(mutations.updateTask, { input: { ...updateWithID, mutationID } }))
       .catch((err) => {
         console.error(err)
         if (tasks[prevTaskState.id]) {

@@ -81,6 +81,7 @@ export const onUpdateOwnedProject = /* GraphQL */ `
       permissions
       updatedAt
       owner
+      mutationID
     }
   }
 `;
@@ -142,6 +143,7 @@ export const onUpdateTaskByProjectId = /* GraphQL */ `
       watchers
       assignees
       updatedAt
+      mutationID
     }
   }
 `;
@@ -185,6 +187,7 @@ export const onUpdateCommentByTaskId = /* GraphQL */ `
       taskID
       content
       updatedAt
+      mutationID
     }
   }
 `;
