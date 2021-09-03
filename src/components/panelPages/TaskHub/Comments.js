@@ -51,9 +51,9 @@ const Comments = (props) => {
     return results.length ? results : null
   }
   const getReadOnly = (user, projects, selectedProject) => {
-    return user.state === AuthState.SignedIn && selectedProject &&
-      projects[selectedProject].owner !== user.data.username &&
-      projects[selectedProject].permissions === "r"
+    return user.state === AuthState.SignedIn &&
+      projects[selectedProject]?.owner !== user.data.username &&
+      projects[selectedProject]?.permissions === "r"
   }
   const processedComments = useMemo(() => processComments(comments), [comments])
   const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])

@@ -61,7 +61,9 @@ const ProjectItem = (props) => {
       <ProjectItemContainer>
         <ProjectItemLeftPart>
           <ProjectItemHeader>
-            <ProjectItemTitle>{project.title}</ProjectItemTitle>
+            <ProjectItemTitle isNullTitle={!project.title}>
+              {project.title || "Untitled Project"}
+            </ProjectItemTitle>
             <ProjectItemPermalink>{project.permalink}</ProjectItemPermalink>
           </ProjectItemHeader>
           <TasksCount>

@@ -36,9 +36,9 @@ const Details = (props) => {
 	useEffect(() => () => forceIdle(), [])
 
   const getReadOnly = (user, projects, selectedProject) => {
-    return user.state === AuthState.SignedIn && selectedProject &&
-      projects[selectedProject].owner !== user.data.username &&
-      projects[selectedProject].permissions === "r"
+    return user.state === AuthState.SignedIn &&
+      projects[selectedProject]?.owner !== user.data.username &&
+      projects[selectedProject]?.permissions === "r"
   }
 
   const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])

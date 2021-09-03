@@ -64,11 +64,10 @@ const ProjectTitle = (props) => {
 					<input
 						type="text"
 						placeholder="Project Title…"
-						value={projects[selectedProject].title}
+						value={projects[selectedProject].title || ""}
 						onKeyUp={onKeyUp}
 						onChange={onChange}
 						autoFocus={true}
-						contentEditable={false}
 						readOnly={readOnly}
 					/>
 				</ProjectTitleInput>

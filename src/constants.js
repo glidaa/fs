@@ -64,11 +64,10 @@ export const panelPages = {
 }
 
 export const initProjectState = (prevProject = null, nextProject = null) => {
-  const randomWords = rword.generate(2, { capitalize: 'first' })
   return {
     id: uuidv4(),
-    title: randomWords.join(" "),
-    permalink: randomWords.join("-").toLowerCase(),
+    title: null,
+    permalink: rword.generate(2).join("-"),
     prevProject: prevProject,
     nextProject: nextProject,
     todoCount: 0,

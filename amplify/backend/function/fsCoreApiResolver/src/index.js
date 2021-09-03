@@ -674,9 +674,11 @@ exports.handler = async function (ctx) {
   async function updateProject(ctx) {
     const updateData = ctx.arguments.input
     const projectID = updateData.id
+    const mutationID = updateData.mutationID
     const client = ctx.identity.username
     if (await isProjectOwner(projectID, client)) {
-      delete updateData["id"]
+      delete updateData.id
+      delete updateData.mutationID
       const expAttrVal = {}
       const expAttrNames = {}
       let updateExp = []
@@ -731,6 +733,7 @@ exports.handler = async function (ctx) {
         return {
           id: projectID,
           owner: client,
+          mutationID: mutationID,
           ...data.Attributes
         }
       } catch (err) {
@@ -744,9 +747,11 @@ exports.handler = async function (ctx) {
   async function updateTask(ctx) {
     const updateData = ctx.arguments.input
     const taskID = updateData.id
+    const mutationID = updateData.mutationID
     const client = ctx.identity.username
     if (await isTaskEditableByClient(taskID, client)) {
       delete updateData.id
+      delete updateData.mutationID
       const expAttrVal = {}
       const expAttrNames = {}
       let updateExp = []
@@ -786,6 +791,7 @@ exports.handler = async function (ctx) {
         return {
           id: taskID,
           projectID: cachedTasks[taskID].projectID,
+          mutationID: mutationID,
           ...data.Attributes
         }
       } catch (err) {
@@ -799,9 +805,11 @@ exports.handler = async function (ctx) {
   async function updateComment(ctx) {
     const updateData = ctx.arguments.input
     const commentID = updateData.id
+    const mutationID = updateData.mutationID
     const client = ctx.identity.username
     if (await isCommentOwner(commentID, client)) {
-      delete updateData["id"]
+      delete updateData.id
+      delete updateData.mutationID
       const expAttrVal = {}
       let updateExp = []
       for (const item in updateData) {
@@ -825,6 +833,7 @@ exports.handler = async function (ctx) {
         return {
           id: commentID,
           taskID: cachedComments[commentID].taskID,
+          mutationID: mutationID,
           ...data.Attributes
         }
       } catch (err) {

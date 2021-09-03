@@ -24,7 +24,7 @@ const TaskItem = (props) => {
 		item,
 		tasks,
 		users,
-    user,
+        user,
 		projects,
 		app: {
 			selectedTask,
@@ -64,9 +64,9 @@ const TaskItem = (props) => {
 	}
 
   const getReadOnly = (user, projects, selectedProject) => {
-    return user.state === AuthState.SignedIn && selectedProject &&
-		projects[selectedProject].owner !== user.data.username &&
-		projects[selectedProject].permissions === "r"
+    return user.state === AuthState.SignedIn &&
+		projects[selectedProject]?.owner !== user.data.username &&
+		projects[selectedProject]?.permissions === "r"
   }
 
   const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])
@@ -132,7 +132,7 @@ const TaskItem = (props) => {
 
 	const handleKeyUp = (e) => {
 		if (!command) {
-			if (e.key === "Enter" && e.shiftKey) {
+			if (e.key === "Enter") {
 				if (taskAddingStatus === OK && !readOnly) {
 					forceIdle()
 					dispatch(
@@ -159,7 +159,7 @@ const TaskItem = (props) => {
 					forceIdle()
 					return dispatch(appActions.handleSetTask(nextTask))
 				}
-			} else if (e.key === "Escape" || e.key === "Enter") {
+			} else if (e.key === "Escape") {
 				forceIdle()
 				return dispatch(appActions.handleSetTask(null))
 			}
