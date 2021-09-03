@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import styledComponents from "styled-components"
@@ -9,8 +9,9 @@ import * as tasksActions from "../actions/tasks"
 import * as observersActions from "../actions/observers"
 import * as queries from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
-import { AuthState } from '@aws-amplify/ui-components';
+import { AuthState } from '@aws-amplify/ui-components'
 import { Redirect, useHistory } from "react-router-dom"
+import { panelPages } from '../constants';
 
 const Loading = (props) => {
   const { user, route, dispatch } = props
@@ -81,6 +82,8 @@ const Loading = (props) => {
             const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(params.taskPermalink, 10))[0]
             if (reqTask) {
               dispatch(appActions.handleSetTask(reqTask.id, false))
+              dispatch(appActions.setRightPanelPage(panelPages.TASK_HUB))
+              dispatch(appActions.handleSetRightPanel(true))
             }
           } else {
             history.replace(`/${params.username}/${params.projectPermalink}`)

@@ -53,8 +53,9 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
     return API.graphql(graphqlOperation(mutations.createProject, { input: dataToSend }))
       .then((incoming) => {
         dispatch(createProject(incoming.data.createProject, OWNED))
-        dispatch(appActions.handleSetProject(null))
         dispatch(appActions.handleSetProject(incoming.data.createProject.id))
+        dispatch(appActions.handleSetLeftPanel(false))
+        dispatch(appActions.handleSetProjectTitle(true))
         dispatch(appActions.setProjectAddingStatus(OK))
       }).catch((err) => {
         console.error(err)
@@ -125,7 +126,7 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
 export const handleRemoveProject = (projectState) => (dispatch, getState) => {
   const { user, app } = getState()
   if (app.selectedProject === projectState.id) {
-    dispatch(appActions.handleSetProject(null))
+    dispatch(appActions.handleSetProject(projectState.prevProject))
   }
   if (user.state === AuthState.SignedIn) {
     dispatch(removeProject(projectState.id, OWNED))

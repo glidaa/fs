@@ -64,7 +64,7 @@ const TaskItem = (props) => {
 	}
 
   const getReadOnly = (user, projects, selectedProject) => {
-    return user.state === AuthState.SignedIn &&
+    return user.state === AuthState.SignedIn && selectedProject &&
 		projects[selectedProject].owner !== user.data.username &&
 		projects[selectedProject].permissions === "r"
   }
