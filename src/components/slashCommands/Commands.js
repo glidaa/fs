@@ -22,14 +22,24 @@ const Commands = (props) => {
       selectedTask,
       selectedProject
     },
+    scrollableNodeRef,
     tasks,
     dispatch
   } = props
 
   const supportedIntents = Object.keys(supportedCommands)
+  const supportedAlias = Object.fromEntries(Object.entries(supportedCommands).map(x => [x[1].alias, x[0]]).filter(x => x[0]))
 
   const getSuggestedIntents = (command) => {
-    return supportedIntents.filter(x => new RegExp(`^${/^\/(\w*)\s*(.*)\s*$/m.exec(command)[1]}`, "i").test(x))
+    const commandTokens = /^\/(\w*)\s*(.*)\s*$/m.exec(command)
+    let results = supportedIntents.filter(x => new RegExp(`^${commandTokens[1]}`, "i").test(x))
+    if (supportedAlias[commandTokens[1].toLowerCase()]) {
+      if (results.includes(supportedAlias[commandTokens[1].toLowerCase()])) {
+        results = results.filter(x => x !== supportedAlias[commandTokens[1].toLowerCase()])
+      }
+      results.unshift(supportedAlias[commandTokens[1].toLowerCase()])
+    }
+    return results.length ? results : null
   }
 
   const suggestedIntents = useMemo(() => getSuggestedIntents(command), [command])
@@ -70,14 +80,24 @@ const Commands = (props) => {
 
   useEffect(() => {
     const handleKeyUp = (e) => {
+      const scrollableElem = scrollableNodeRef?.current
+      const scrollableElemHeight = scrollableElem?.getBoundingClientRect().height
       if (e.key === "Enter") {
         chooseCommand(suggestedIntents[selection]) 
       } else if (e.key === "ArrowUp") {
         if (selection > 0) {
+          const minHeight = scrollableElem?.scrollTop - 59 * (selection - 1) + scrollableElemHeight - 15
+          if (scrollableElemHeight < minHeight) {
+            scrollableElem?.scrollBy(0, scrollableElemHeight - minHeight)
+          }
           setSelection(selection - 1)
         }
       } else if (e.key === "ArrowDown") {
         if (selection < suggestedIntents.length - 1) {
+          const minHeight = 15 + 59 * (selection + 2) - scrollableElem?.scrollTop
+          if (scrollableElemHeight < minHeight) {
+            scrollableElem?.scrollBy(0, minHeight - scrollableElemHeight)
+          }
           setSelection(selection + 1)
         }
       }
@@ -90,31 +110,30 @@ const Commands = (props) => {
     setSelection(0)
   }, [command])
 
-  return (
-    <>
-      {suggestedIntents.map((x, i) => (
-        <CommandSuggestion
-          key={x}
-          isSelected={selection === i}
-          onMouseEnter={() => setSelection(i)}
-          onClick={() => chooseCommand(x)}
-        >
-          {x === "ASSIGN" && <AssignIcon color="#006EFF" strokeWidth="32" height={24} />}
-          {x === "DUE" && <CalenderIcon color="#006EFF" fill="#006EFF" strokeWidth="32" height={24} />}
-          {x === "TAGS" && <TagsIcon color="#006EFF" strokeWidth="32" height={24} />}
-          {x === "DESCRIPTION" && <DescriptionIcon color="#006EFF" strokeWidth="32" height={24} />}
-          {x === "STATUS" && <StatusIcon color="#006EFF" strokeWidth="32" height={24} />}
-          {x === "DELETE" && <RemoveIcon color="#006EFF" strokeWidth="32" height={24} />}
-          {x === "COPY" && <CopyIcon color="#006EFF" strokeWidth="32" height={24} />}
-          {x === "DUPLICATE" && <DuplicateIcon color="#006EFF" strokeWidth="32" height={24} />}
-          <div>
-            <span>{x}</span>
-            <span>{supportedCommands[x].description}</span>
-          </div>
-        </CommandSuggestion>
-      ))}
-    </>
-  );
+  return suggestedIntents ? suggestedIntents.map((x, i) => (
+    <CommandSuggestion
+      key={x}
+      isSelected={selection === i}
+      onMouseEnter={() => setSelection(i)}
+      onClick={() => chooseCommand(x)}
+    >
+      {x === "ASSIGN" && <AssignIcon color="#006EFF" strokeWidth="32" height={24} />}
+      {x === "DUE" && <CalenderIcon color="#006EFF" fill="#006EFF" strokeWidth="32" height={24} />}
+      {x === "TAGS" && <TagsIcon color="#006EFF" strokeWidth="32" height={24} />}
+      {x === "DESCRIPTION" && <DescriptionIcon color="#006EFF" strokeWidth="32" height={24} />}
+      {x === "STATUS" && <StatusIcon color="#006EFF" strokeWidth="32" height={24} />}
+      {x === "DELETE" && <RemoveIcon color="#006EFF" strokeWidth="32" height={24} />}
+      {x === "COPY" && <CopyIcon color="#006EFF" strokeWidth="32" height={24} />}
+      {x === "DUPLICATE" && <DuplicateIcon color="#006EFF" strokeWidth="32" height={24} />}
+      <div>
+        <div>
+          <span>{x}</span>
+          {supportedCommands[x].alias && <span>{supportedCommands[x].alias}</span>}
+        </div>
+        <span>{supportedCommands[x].description}</span>
+      </div>
+    </CommandSuggestion>
+  )) : (<NoIntent>No Commands Found</NoIntent>)
 };
 
 const CommandSuggestion = styledComponents.div`
@@ -129,13 +148,35 @@ const CommandSuggestion = styledComponents.div`
   & > div {
     display: flex;
     flex-direction: column;
-    & > span:nth-child(1) {
-      color: #222222;
-      font-weight: 600;
-      font-size: 14px;
-      text-transform: lowercase;
-      &::first-letter {
-        text-transform: capitalize;
+    & > div:nth-child(1) {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 5px;
+      & > span:nth-child(1) {
+        color: #222222;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: lowercase;
+        &::first-letter {
+          text-transform: capitalize;
+        }
+      }
+      & > span:nth-child(2) {
+        line-height: 0;
+        height: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        color: #006EFF;
+        background-color: #CCE2FF;
+        font-weight: 600;
+        padding: 2px;
+        border-radius: 4px;
+        font-size: 12px;
+        text-transform: lowercase;
       }
     }
     & > span:nth-child(2) {
@@ -144,6 +185,16 @@ const CommandSuggestion = styledComponents.div`
       font-size: 12px;
     }
   }
+`
+
+const NoIntent = styledComponents.span`
+  display: flex;
+  width: 100%;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
 `
 
 export default connect((state) => ({

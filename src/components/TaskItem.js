@@ -257,10 +257,11 @@ const TaskItem = (props) => {
 							</TaskItemInput>
 						) : (
 							<TaskItemHeader
-								className={item.task ? null : "placeholder"}
 								onClick={() => selectItem(item)}
+                isPlaceholder={!item.task}
+                isDone={item.status === "done"}
 							>
-								{item.status === "done" ? <strike>{item.task}</strike> : item.task || "Task…"}
+								{item.task || "Task…"}
 							</TaskItemHeader>
 						)}
 					</TaskItemLeftLeftPart>
@@ -464,9 +465,8 @@ const TaskItemHeader = styledComponents.span`
 	overflow: hidden;
 	cursor: text;
 	flex: 1;
-	&.placeholder {
-		color: #D3D3D3;
-	}
+  text-decoration: ${({isDone}) => isDone ? "line-through" : "none"};
+  color: ${({isPlaceholder}) => isPlaceholder ? "#D3D3D3" : "#222222"};
 `
 
 const TaskItemInput = styledComponents.div`

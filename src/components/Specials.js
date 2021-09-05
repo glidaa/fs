@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, createRef } from 'react';
 import styledComponents, { keyframes } from "styled-components"
 import { connect } from "react-redux";
 import SimpleBar from 'simplebar-react';
@@ -15,6 +15,7 @@ const Specials = (props) => {
   } = props
 
   const supportedIntents = Object.keys(supportedCommands)
+  const scrollableNodeRef = createRef()
 
   const tokenizeCommand = (command) => {
     const tokens =  /^\/(\w*\s{0,1})\s*(.*)\s*$/m.exec(command)
@@ -25,16 +26,15 @@ const Specials = (props) => {
 
   const [commandIntent, commandParam] = useMemo(() => tokenizeCommand(command), [command])
 
-  return (
-    <>
-      {slashCommands[commandIntent] && (
-        <DropdownContainer $posInfo={posInfo}>
-          {React.createElement(slashCommands[commandIntent], {commandIntent, commandParam})}
-        </DropdownContainer>
-      )}
-    </>
-  );
-};
+  return slashCommands[commandIntent] && (
+    <DropdownContainer
+      $posInfo={posInfo}
+      scrollableNodeProps={{ ref: scrollableNodeRef }}
+    >
+      {React.createElement(slashCommands[commandIntent], {commandIntent, commandParam, scrollableNodeRef })}
+    </DropdownContainer>
+  )
+}
 
 const openAnim = keyframes`
   from {

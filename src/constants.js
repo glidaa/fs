@@ -21,35 +21,35 @@ export const commandIntents = {
 export const supportedCommands = {
   ASSIGN: {
     description: "Search for a user to assign him",
-    alias: []
+    alias: "a"
   },
   STATUS: {
     description: "Change status of the task",
-    alias: []
+    alias: null
   },
   DESCRIPTION: {
     description: "Add a long description to the task",
-    alias: []
+    alias: null
   },
   DUE: {
     description: "Set a deadline date for the task",
-    alias: []
+    alias: null
   },
   TAGS: {
     description: "Add comma separated tags",
-    alias: []
+    alias: null
   },
   COPY: {
     description: "Copy this task to the clipboard",
-    alias: []
+    alias: null
   },
   DUPLICATE: {
     description: "Create a clone for the selected task",
-    alias: []
+    alias: null
   },
   DELETE: {
     description: "Delete this task permanently",
-    alias: []
+    alias: null
   }
 }
 
