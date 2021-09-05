@@ -10,6 +10,7 @@ const Status = (props) => {
     app: {
       selectedTask
     },
+    scrollableNodeRef,
     dispatch
   } = props
 
@@ -50,14 +51,24 @@ const Status = (props) => {
 
   useEffect(() => {
     const handleKeyUp = (e) => {
+      const scrollableElem = scrollableNodeRef?.current
+      const scrollableElemHeight = scrollableElem?.getBoundingClientRect().height
       if (e.key === "Enter") {
         chooseStatus(suggestedStatus[selection][0].toUpperCase()) 
       } else if (e.key === "ArrowUp") {
         if (selection > 0) {
+          const minHeight = scrollableElem?.scrollTop - 47 * (selection - 1) + scrollableElemHeight - 15
+          if (scrollableElemHeight < minHeight) {
+            scrollableElem?.scrollBy(0, scrollableElemHeight - minHeight)
+          }
           setSelection(selection - 1)
         }
       } else if (e.key === "ArrowDown") {
         if (selection < suggestedStatus.length - 1) {
+          const minHeight = 15 + 47 * (selection + 2) - scrollableElem?.scrollTop
+          if (scrollableElemHeight < minHeight) {
+            scrollableElem?.scrollBy(0, minHeight - scrollableElemHeight)
+          }
           setSelection(selection + 1)
         }
       }

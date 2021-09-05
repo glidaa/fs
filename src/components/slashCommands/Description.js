@@ -4,7 +4,7 @@ import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
 
-const Tags = (props) => {
+const Description = (props) => {
   const {
     commandParam,
     app: {
@@ -14,18 +14,18 @@ const Tags = (props) => {
     dispatch
   } = props
 
-  const getSuggestedTags = (commandParam) => {
-    return commandParam ? [...new Set(commandParam.split(/(?:\s*,\s*)+/).filter(x => x))] : null
+  const getSuggestedDescription = (commandParam) => {
+    return commandParam
   }
 
-  const suggestedTags = useMemo(() => getSuggestedTags(commandParam), [commandParam])
+  const suggestedDescription = useMemo(() => getSuggestedDescription(commandParam), [commandParam])
 
-  const chooseTags = () => {
-    if (suggestedTags){
+  const chooseDescription = () => {
+    if (suggestedDescription){
       dispatch(appActions.setCommand(""))
       dispatch(tasksActions.handleUpdateTask({
           id: selectedTask,
-          tags: [...new Set([...tasks[selectedTask], ...suggestedTags])]
+          description: suggestedDescription
       }))
     }
   }
@@ -33,25 +33,25 @@ const Tags = (props) => {
   useEffect(() => {
     const handleKeyUp = (e) => {
       if (e.key === "Enter") {
-        chooseTags() 
+        chooseDescription() 
       }
     }
     window.addEventListener('keyup', handleKeyUp);
     return () => window.removeEventListener('keyup', handleKeyUp);
-  }, [suggestedTags, tasks, selectedTask])
+  }, [suggestedDescription, tasks, selectedTask])
 
   return (
-    <TagsSuggestion
-      isActive={suggestedTags}
-      onClick={chooseTags}
+    <DescriptionSuggestion
+      isActive={suggestedDescription}
+      onClick={chooseDescription}
     >
-      {suggestedTags && suggestedTags.map(x => <TagItem key={x}>{x}</TagItem>)}
-      {!suggestedTags && <NoTags>Enter Comma Separated Tags</NoTags>}
-    </TagsSuggestion>
+      {suggestedDescription && suggestedDescription}
+      {!suggestedDescription && <NoDescription>Enter An Appropriate Description</NoDescription>}
+    </DescriptionSuggestion>
   );
 };
 
-const TagsSuggestion = styledComponents.div`
+const DescriptionSuggestion = styledComponents.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -59,26 +59,13 @@ const TagsSuggestion = styledComponents.div`
   flex-direction: row;
   align-items: center;
   gap: 5px;
+  font-size: 14px;
   background-color: ${({ isActive }) => isActive ? "#F5F5F5" : "transparent"};
   padding: 10px 20px;
   cursor: pointer;
 `
 
-const TagItem = styledComponents.span`
-  display: inline-flex;
-  padding: 5px 10px;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 14px;
-  width: fit-content;
-  height: fit-content;
-  color: #006EFF;
-  background-color: #cce2ff;
-  flex-direction: row;
-  align-items: center;
-`
-
-const NoTags = styledComponents.span`
+const NoDescription = styledComponents.span`
   display: flex;
   width: 100%;
   font-size: 14px;
@@ -89,4 +76,4 @@ const NoTags = styledComponents.span`
 export default connect((state) => ({
 	app: state.app,
 	tasks: state.tasks
-}))(Tags);
+}))(Description);
