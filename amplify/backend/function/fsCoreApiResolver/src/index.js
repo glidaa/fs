@@ -1227,12 +1227,17 @@ exports.handler = async function (ctx) {
         const tasks = project.tasks
         const projectData = await createProject({
           identity: {
-            sub: client
+            username: client
           },
           arguments: {
             input: {
               permalink: project.permalink,
-              title: project.title
+              title: project.title,
+              prevProject: project.prevProject,
+              nextProject: project.nextProject,
+              privacy: project.privacy,
+              permissions: project.permissions,
+              members: project.members
             }
           }
         })
@@ -1242,16 +1247,19 @@ exports.handler = async function (ctx) {
           const task = sortedTasks[k]
           await createTask({
             identity: {
-              sub: client
+              username: client
             },
             arguments: {
               input: {
                 projectID: projectData.id,
                 task: task.task,
+                prevTask: project.prevTask,
+                nextTask: project.nextTask,
                 description: task.description,
                 due: task.due,
                 tags: task.tags,
-                status: task.status
+                status: task.status,
+                assignees: task.assignees
               }
             }
           })
