@@ -116,16 +116,16 @@ type Mutation {
 	deleteComment(commentID: ID!): Comment
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	assignTask(taskID: ID!, assignee: String!): TaskUpdate
+	assignTask(taskID: ID!, assignee: String!, mutationID: String!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	unassignTask(taskID: ID!, assignee: String!): TaskUpdate
+	unassignTask(taskID: ID!, assignee: String!, mutationID: String!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	addWatcher(taskID: ID!, watcher: String!): TaskUpdate
+	addWatcher(taskID: ID!, watcher: String!, mutationID: String!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	removeWatcher(taskID: ID!, watcher: String!): TaskUpdate
+	removeWatcher(taskID: ID!, watcher: String!, mutationID: String!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	importData(data: String!): ImportedProjectsList
@@ -280,7 +280,7 @@ input UpdateProjectInput {
 	privacy: ProjectPrivacy
 	permissions: Permissions
 	title: String
-	mutationID: String
+	mutationID: String!
 }
 
 input UpdateTaskInput {
@@ -292,7 +292,7 @@ input UpdateTaskInput {
 	due: AWSTimestamp
 	tags: [String!]
 	status: TaskStatus
-	mutationID: String
+	mutationID: String!
 }
 
 input UpdateUserInput {
@@ -304,7 +304,7 @@ input UpdateUserInput {
 input UpdateCommentInput {
 	id: ID!
 	content: AWSJSON
-	mutationID: String
+	mutationID: String!
 }
 
 type UserUpdate
@@ -341,7 +341,7 @@ type ProjectUpdate
 	permissions: Permissions
 	updatedAt: AWSDateTime!
 	owner: String!
-	mutationID: String
+	mutationID: String!
 }
 
 type TaskUpdate
@@ -360,7 +360,7 @@ type TaskUpdate
 	watchers: [String!]
 	assignees: [String!]
 	updatedAt: AWSDateTime!
-	mutationID: String
+	mutationID: String!
 }
 
 type CommentUpdate
@@ -370,7 +370,7 @@ type CommentUpdate
 	taskID: ID!
 	content: AWSJSON
 	updatedAt: AWSDateTime!
-	mutationID: String
+	mutationID: String!
 }
 
 type UsersList

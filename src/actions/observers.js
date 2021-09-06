@@ -117,8 +117,8 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
       if (!mutations.includes(incoming.mutationID)) {
         if (Object.keys(ownedProjects).includes(incoming.id)) {
           const lastMutationDate = projects[incoming.id].mutatedAt || null
-          const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)[1], 10)
-          if (lastMutationDate < mutationDate) {
+          const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
+          if (!mutationDate || (mutationDate && lastMutationDate < mutationDate)) {
             dispatch(projectsActions.updateProject({
               ...incoming,
               mutatedAt: mutationDate
@@ -182,8 +182,8 @@ export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
         if (!mutations.includes(incoming.mutationID)) {
           if (Object.keys(tasks).includes(incoming.id)) {
             const lastMutationDate = tasks[incoming.id].mutatedAt || null
-            const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)[1], 10)
-            if (lastMutationDate < mutationDate) {
+            const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
+            if (!mutationDate || (mutationDate && lastMutationDate < mutationDate)) {
               const usersToBeFetched = [...new Set([
                 ...(incoming.assignees?.filter(x => /^user:.*$/.test(x))?.map(x => x.replace(/^user:/, "")) || []),
                 ...(incoming.watchers || [])
@@ -248,8 +248,8 @@ export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
         if (!mutations.includes(incoming.mutationID)) {
           if (Object.keys(comments).includes(incoming.id)) {
             const lastMutationDate = comments[incoming.id].mutatedAt || null
-            const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)[1], 10)
-            if (lastMutationDate < mutationDate) {
+            const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
+            if (!mutationDate || (mutationDate && lastMutationDate < mutationDate)) {
               dispatch(commentsActions.updateComment({
                 ...incoming,
                 mutatedAt: mutationDate

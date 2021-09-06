@@ -895,7 +895,7 @@ exports.handler = async function (ctx) {
   }
 
   async function assignTask(ctx) {
-    const { assignee, taskID } = ctx.arguments
+    const { assignee, taskID, mutationID } = ctx.arguments
     const client = ctx.identity.username
     const isValidAssignee = /^(user|anonymous):(.*)$/.test(assignee)
     if (isValidAssignee) {
@@ -945,6 +945,7 @@ exports.handler = async function (ctx) {
             return {
               id: taskID,
               projectID: cachedTasks[taskID].projectID,
+              mutationID: mutationID,
               ...updatedTask.Attributes
             }
           } catch (err) {
@@ -962,7 +963,7 @@ exports.handler = async function (ctx) {
   }
 
   async function unassignTask(ctx) {
-    const { assignee, taskID } = ctx.arguments
+    const { assignee, taskID, mutationID } = ctx.arguments
     const client = ctx.identity.username
     const isValidAssignee = /^(user|anonymous):(.*)$/.test(assignee)
     if (isValidAssignee) {
@@ -1012,6 +1013,7 @@ exports.handler = async function (ctx) {
             return {
               id: taskID,
               projectID: cachedTasks[taskID].projectID,
+              mutationID: mutationID,
               ...updatedTask.Attributes
             }
           } catch (err) {
@@ -1029,7 +1031,7 @@ exports.handler = async function (ctx) {
   }
 
   async function addWatcher(ctx) {
-    const { watcher, taskID } = ctx.arguments
+    const { watcher, taskID, mutationID } = ctx.arguments
     const client = ctx.identity.username
     const isValidWatcher = /^(user|anonymous):(.*)$/.test(watcher)
     if (isValidWatcher) {
@@ -1079,6 +1081,7 @@ exports.handler = async function (ctx) {
             return {
               id: taskID,
               projectID: cachedTasks[taskID].projectID,
+              mutationID: mutationID,
               ...updatedTask.Attributes
             }
           } catch (err) {
@@ -1096,7 +1099,7 @@ exports.handler = async function (ctx) {
   }
 
   async function removeWatcher(ctx) {
-    const { watcher, taskID } = ctx.arguments
+    const { watcher, taskID, mutationID } = ctx.arguments
     const client = ctx.identity.username
     const isValidWatcher = /^(user|anonymous):(.*)$/.test(watcher)
     if (isValidWatcher) {
@@ -1146,6 +1149,7 @@ exports.handler = async function (ctx) {
             return {
               id: taskID,
               projectID: cachedTasks[taskID].projectID,
+              mutationID: mutationID,
               ...updatedTask.Attributes
             }
           } catch (err) {
