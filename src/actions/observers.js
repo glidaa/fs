@@ -116,7 +116,9 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
       const incoming = e.value.data.onUpdateOwnedProject
       if (!mutations.includes(incoming.mutationID)) {
         if (Object.keys(ownedProjects).includes(incoming.id)) {
-          dispatch(projectsActions.updateProject(incoming))
+          if (new Date(projects[incoming.id].updatedAt).getTime() < new Date(incoming.updatedAt).getTime()) {
+            dispatch(projectsActions.updateProject(incoming))
+          }
         }
       }
     },
@@ -174,12 +176,14 @@ export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
         const incoming = e.value.data.onUpdateTaskByProjectID
         if (!mutations.includes(incoming.mutationID)) {
           if (Object.keys(tasks).includes(incoming.id)) {
-            const usersToBeFetched = [...new Set([
-              ...(incoming.assignees?.filter(x => /^user:.*$/.test(x))?.map(x => x.replace(/^user:/, "")) || []),
-              ...(incoming.watchers || [])
-            ])]
-            await dispatch(usersActions.handleAddUsers(usersToBeFetched))
-            dispatch(tasksActions.updateTask(incoming))
+            if (new Date(tasks[incoming.id].updatedAt).getTime() < new Date(incoming.updatedAt).getTime()) {
+              const usersToBeFetched = [...new Set([
+                ...(incoming.assignees?.filter(x => /^user:.*$/.test(x))?.map(x => x.replace(/^user:/, "")) || []),
+                ...(incoming.watchers || [])
+              ])]
+              await dispatch(usersActions.handleAddUsers(usersToBeFetched))
+              dispatch(tasksActions.updateTask(incoming))
+            }
           }
         }
       },
@@ -233,7 +237,9 @@ export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
         const incoming = e.value.data.onUpdateCommentByTaskID
         if (!mutations.includes(incoming.mutationID)) {
           if (Object.keys(comments).includes(incoming.id)) {
-            dispatch(commentsActions.updateComment(incoming))
+            if (new Date(comments[incoming.id].updatedAt).getTime() < new Date(incoming.updatedAt).getTime()) {
+              dispatch(commentsActions.updateComment(incoming))
+            }
           }
         }
       },
