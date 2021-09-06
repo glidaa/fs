@@ -1591,7 +1591,8 @@ exports.handler = async function (ctx) {
         permissions: "rw",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        owner: client
+        owner: client,
+        mutationID: "DUMMY_MUTATION_ID"
       }
     } else {
       throw new Error(UNAUTHORIZED)
@@ -1646,7 +1647,8 @@ exports.handler = async function (ctx) {
       return {
         id: "00000000-0000-0000-0000-000000000000",
         projectID: "00000000-0000-0000-0000-000000000000",
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
+        mutationID: "DUMMY_MUTATION_ID"
       }
     } else {
       throw new Error(UNAUTHORIZED)
@@ -1699,7 +1701,8 @@ exports.handler = async function (ctx) {
         content: {},
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        owner: client
+        owner: client,
+        mutationID: "DUMMY_MUTATION_ID"
       }
     } else {
       throw new Error(UNAUTHORIZED)

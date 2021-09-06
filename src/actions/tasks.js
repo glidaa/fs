@@ -208,9 +208,15 @@ export const handleAssignTask = (taskID, username) => async (dispatch, getState)
   }
   if (user.state === AuthState.SignedIn) {
     try {
+      if (/^user:.*$/.test(username)) {
+        await dispatch(usersActions.handleAddUsers(username.replace(/^user:/, "")))
+      }
+      const mutationID = generateMutationID(user.data.username)
+      dispatch(mutationsActions.addMutation(mutationID))
       await API.graphql(graphqlOperation(mutations.assignTask, {
         taskID: taskID,
-        assignee: username
+        assignee: username,
+        mutationID: mutationID
       }))
     } catch {
       dispatch(updateTask({
@@ -233,9 +239,15 @@ export const handleAddWatcher = (taskID, username) => async (dispatch, getState)
       watchers: [...new Set([...prevWatchers, username])]
     }))
     try {
+      if (/^user:.*$/.test(username)) {
+        await dispatch(usersActions.handleAddUsers(username.replace(/^user:/, "")))
+      }
+      const mutationID = generateMutationID(user.data.username)
+      dispatch(mutationsActions.addMutation(mutationID))
       await API.graphql(graphqlOperation(mutations.addWatcher, {
         taskID: taskID,
-        watcher: username
+        watcher: username,
+        mutationID: mutationID
       }))
     } catch {
       dispatch(updateTask({
@@ -258,9 +270,12 @@ export const handleUnassignTask = (taskID, username) => async (dispatch, getStat
   }))
   if (user.state === AuthState.SignedIn) {
     try {
+      const mutationID = generateMutationID(user.data.username)
+      dispatch(mutationsActions.addMutation(mutationID))
       await API.graphql(graphqlOperation(mutations.unassignTask, {
         taskID: taskID,
-        assignee: username
+        assignee: username,
+        mutationID: mutationID
       }))
     } catch {
       dispatch(updateTask({
@@ -283,9 +298,12 @@ export const handleRemoveWatcher= (taskID, username) => async (dispatch, getStat
       watchers: [...prevWatchers].filter(x => x !== username)
     }))
     try {
+      const mutationID = generateMutationID(user.data.username)
+      dispatch(mutationsActions.addMutation(mutationID))
       await API.graphql(graphqlOperation(mutations.unassignTask, {
         taskID: taskID,
-        watcher: username
+        watcher: username,
+        mutationID: mutationID
       }))
     } catch {
       dispatch(updateTask({
