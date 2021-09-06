@@ -116,7 +116,10 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
       const incoming = e.value.data.onUpdateOwnedProject
       if (!mutations.includes(incoming.mutationID)) {
         if (Object.keys(ownedProjects).includes(incoming.id)) {
-          if (new Date(projects[incoming.id].updatedAt).getTime() < new Date(incoming.updatedAt).getTime()) {
+          const lastModDate = new Date(projects[incoming.id].updatedAt).getTime()
+          const incomingModDate = new Date(incoming.updatedAt).getTime()
+          const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
+          if ((!mutationDate || (mutationDate && lastModDate < mutationDate)) && (lastModDate < incomingModDate)) {
             dispatch(projectsActions.updateProject(incoming))
           }
         }
@@ -176,7 +179,10 @@ export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
         const incoming = e.value.data.onUpdateTaskByProjectID
         if (!mutations.includes(incoming.mutationID)) {
           if (Object.keys(tasks).includes(incoming.id)) {
-            if (new Date(tasks[incoming.id].updatedAt).getTime() < new Date(incoming.updatedAt).getTime()) {
+            const lastModDate = new Date(tasks[incoming.id].updatedAt).getTime()
+            const incomingModDate = new Date(incoming.updatedAt).getTime()
+            const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
+            if ((!mutationDate || (mutationDate && lastModDate < mutationDate)) && (lastModDate < incomingModDate)) {
               const usersToBeFetched = [...new Set([
                 ...(incoming.assignees?.filter(x => /^user:.*$/.test(x))?.map(x => x.replace(/^user:/, "")) || []),
                 ...(incoming.watchers || [])
@@ -237,7 +243,10 @@ export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
         const incoming = e.value.data.onUpdateCommentByTaskID
         if (!mutations.includes(incoming.mutationID)) {
           if (Object.keys(comments).includes(incoming.id)) {
-            if (new Date(comments[incoming.id].updatedAt).getTime() < new Date(incoming.updatedAt).getTime()) {
+            const lastModDate = new Date(comments[incoming.id].updatedAt).getTime()
+            const incomingModDate = new Date(incoming.updatedAt).getTime()
+            const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
+            if ((!mutationDate || (mutationDate && lastModDate < mutationDate)) && (lastModDate < incomingModDate)) {
               dispatch(commentsActions.updateComment(incoming))
             }
           }
