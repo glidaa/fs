@@ -200,17 +200,15 @@ export const handleAssignTask = (taskID, username) => async (dispatch, getState)
     user
   } = getState()
   const prevAssignees = [...tasks[taskID].assignees]
-  if (user.state === AuthState.SignedIn || /^anonymous:.*$/.test(username)) {
-    dispatch(updateTask({
-      id: taskID,
-      assignees: [...new Set([...prevAssignees, username])]
-    }))
-  }
   if (user.state === AuthState.SignedIn) {
     try {
       if (/^user:.*$/.test(username)) {
-        await dispatch(usersActions.handleAddUsers(username.replace(/^user:/, "")))
+        await dispatch(usersActions.handleAddUsers([username.replace(/^user:/, "")]))
       }
+      dispatch(updateTask({
+        id: taskID,
+        assignees: [...new Set([...prevAssignees, username])]
+      }))
       const mutationID = generateMutationID(user.data.username)
       dispatch(mutationsActions.addMutation(mutationID))
       await API.graphql(graphqlOperation(mutations.assignTask, {
@@ -224,6 +222,11 @@ export const handleAssignTask = (taskID, username) => async (dispatch, getState)
         assignees: prevAssignees
       }))
     }
+  } else if (/^anonymous:.*$/.test(username)) {
+    dispatch(updateTask({
+      id: taskID,
+      assignees: [...new Set([...prevAssignees, username])]
+    }))
   }
 }
 
@@ -239,9 +242,7 @@ export const handleAddWatcher = (taskID, username) => async (dispatch, getState)
       watchers: [...new Set([...prevWatchers, username])]
     }))
     try {
-      if (/^user:.*$/.test(username)) {
-        await dispatch(usersActions.handleAddUsers(username.replace(/^user:/, "")))
-      }
+      await dispatch(usersActions.handleAddUsers(username))
       const mutationID = generateMutationID(user.data.username)
       dispatch(mutationsActions.addMutation(mutationID))
       await API.graphql(graphqlOperation(mutations.addWatcher, {
