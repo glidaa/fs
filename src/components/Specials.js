@@ -1,88 +1,77 @@
-import React from 'react';
-import styledComponents from "styled-components"
-import PropTypes from 'prop-types';
+import React, { useMemo, createRef } from 'react';
+import styledComponents, { keyframes } from "styled-components"
+import { connect } from "react-redux";
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
+import { supportedCommands } from "../constants"
+import slashCommands from "./slashCommands"
 
-export const Specials = (props) => {
-  const prevNotification = () => {
-    
-  }
-  const nextNotification = () => {
+const Specials = (props) => {
+  const {
+    app: {
+      command
+    },
+    posInfo
+  } = props
 
+  const supportedIntents = Object.keys(supportedCommands)
+  const scrollableNodeRef = createRef()
+
+  const tokenizeCommand = (command) => {
+    const tokens =  /^\/(\w*\s{0,1})\s*(.*)\s*$/m.exec(command)
+    const commandIntent = supportedIntents.map(x => `${x} `).includes(tokens[1].toUpperCase()) ? tokens[1].slice(0, -1).toUpperCase() : "COMMANDS"
+    const commandParam = tokens[2] ? tokens[2].trim() : null
+    return [commandIntent, commandParam]
   }
-  return (
-    <DropdownContainer data-testid="specialsDropdown">
-      <Notifications>
-        <span onClick={prevNotification}>{"<"}</span>
-        <span>{"@Sue assigned task"}</span>
-        <span onClick={nextNotification}>{">"}</span>
-      </Notifications>
-      {props.suggestionsList.map((x, i) => (
-        props.suggestionsCondition[i] ? (
-        <Suggestion key={x} onClick={() => props.onChooseSuggestion('/' + x)}>
-            <b>/{x}</b> - {props.suggestionsDescription[i]}
-        </Suggestion>
-        ) : null
-      ))}
+
+  const [commandIntent, commandParam] = useMemo(() => tokenizeCommand(command), [command])
+
+  return slashCommands[commandIntent] && (
+    <DropdownContainer
+      $posInfo={posInfo}
+      scrollableNodeProps={{ ref: scrollableNodeRef }}
+    >
+      {React.createElement(slashCommands[commandIntent], {commandIntent, commandParam, scrollableNodeRef })}
     </DropdownContainer>
-  );
-};
+  )
+}
 
-const DropdownContainer = styledComponents.div`
-  position: absolute;
+const openAnim = keyframes`
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 300px;
+  }
+`;
+
+const DropdownContainer = styledComponents(SimpleBar)`
+  position: fixed;
+  top: ${({ $posInfo }) => $posInfo.top}px;
+  left: ${({ $posInfo }) => $posInfo.left}px;
   display: flex;
   flex-direction: column;
-  width: fit-content;
-  border: 0.5px solid #222222;
+  justify-content: flex-start;
   background-color: #FFFFFF;
   z-index: 999;
-  box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
-  height: fit-content;
-`
-
-const Notifications = styledComponents.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  & > span:nth-child(1), & > span:nth-child(3) {
-    cursor: pointer;
+  border-radius: 10px;
+  border: none;
+  padding: 15px 0;
+  box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
+  width: 320px;
+  max-height: 300px;
+  animation: ${openAnim} 0.3s ease;
+  @media only screen and (max-width: 768px) {
+    left: 0;
+    max-height: 200px;
+    width: 100vw;
+    border-radius: 0px;
+    box-shadow: none;
   }
 `
 
-const Suggestion = styledComponents.div`
-  cursor: pointer;
-  color: #505172;
-  padding: 2px 10px;
-  &:hover {
-    background-color: #F5F5F5;
-  }
-`
-
-Specials.propTypes = {
-  onChooseSuggestion: PropTypes.func.isRequired,
-  suggestionsList: PropTypes.array.isRequired,
-  suggestionsCondition: PropTypes.array.isRequired,
-  suggestionsDescription:  PropTypes.array.isRequired
-};
-
-Specials.defaultProps = {
-  onChooseSuggestion: null,
-  suggestionsList: [
-    "s",
-    "l",
-    "x",
-    "q"
-  ],
-  suggestionsCondition: [
-    true,
-    true,
-    true,
-    false
-  ],
-  suggestionsDescription: [
-    "Login to save your tasks",
-    "Create a new account",
-    "Mark this note as done",
-    "Logout"
-  ],
-};
+export default connect((state) => ({
+	app: state.app,
+	user: state.user
+}))(Specials);

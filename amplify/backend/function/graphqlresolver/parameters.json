@@ -1,8 +1,0 @@
-{
-    "apiGraphQLAPIIdOutput":{
-        "Fn::GetAtt":[
-            "apitodo",
-            "Outputs.GraphQLAPIIdOutput"
-        ]
-    }
-}

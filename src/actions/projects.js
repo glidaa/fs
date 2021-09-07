@@ -2,11 +2,13 @@ import { API, graphqlOperation } from "aws-amplify";
 import { AuthState } from '@aws-amplify/ui-components';
 import { listOwnedProjects, listAssignedProjects } from "../graphql/queries"
 import * as appActions from "./app"
+import * as mutationsActions from "./mutations"
 import * as mutations from "../graphql/mutations"
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
 import { OK, PENDING } from "../constants";
 import prepareProjectToBeSent from "../utils/prepareProjectToBeSent";
+import generateMutationID from "../utils/generateMutationID";
 
 export const CREATE_PROJECT = "CREATE_PROJECT";
 export const UPDATE_PROJECT = "UPDATE_PROJECT";
@@ -53,8 +55,9 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
     return API.graphql(graphqlOperation(mutations.createProject, { input: dataToSend }))
       .then((incoming) => {
         dispatch(createProject(incoming.data.createProject, OWNED))
-        dispatch(appActions.handleSetProject(null))
         dispatch(appActions.handleSetProject(incoming.data.createProject.id))
+        dispatch(appActions.handleSetLeftPanel(false))
+        dispatch(appActions.handleSetProjectTitle(true))
         dispatch(appActions.setProjectAddingStatus(OK))
       }).catch((err) => {
         console.error(err)
@@ -73,7 +76,7 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
     )
     localProjects[projectState.id] = {
       ...projectState,
-      notes: []
+      tasks: []
     }
     window.localStorage.setItem("projects", JSON.stringify(localProjects))
     dispatch(appActions.handleSetProject(null))
@@ -83,12 +86,15 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
 
 export const handleUpdateProject = (update) => (dispatch, getState) => {
   const { user, projects } = getState()
-  const prevProjectState = {...projects[OWNED][update.id]}
+  const prevProjectState = {...projects[update.id]}
   const updateWithID = {id: prevProjectState.id, ...update };
   if (user.state === AuthState.SignedIn) {
+    const mutationID = generateMutationID(user.data.username)
+    dispatch(mutationsActions.addMutation(mutationID))
     dispatch(updateProject(updateWithID, OWNED))
-    return API.graphql(graphqlOperation(mutations.updateProject, { input: updateWithID }))
-      .catch(() => {
+    return API.graphql(graphqlOperation(mutations.updateProject, { input: { ...updateWithID, mutationID } }))
+      .catch((err) => {
+        console.error(err)
         return dispatch(updateProject(prevProjectState, OWNED))
       })
   } else {
@@ -124,11 +130,11 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
 export const handleRemoveProject = (projectState) => (dispatch, getState) => {
   const { user, app } = getState()
   if (app.selectedProject === projectState.id) {
-    dispatch(appActions.handleSetProject(null))
+    dispatch(appActions.handleSetProject(projectState.prevProject))
   }
   if (user.state === AuthState.SignedIn) {
     dispatch(removeProject(projectState.id, OWNED))
-    return API.graphql(graphqlOperation(mutations.deleteProjectAndNotes, { projectID: projectState.id }))
+    return API.graphql(graphqlOperation(mutations.deleteProjectAndTasks, { projectID: projectState.id }))
       .catch((err) => {
         console.log(err)
         dispatch(createProject(projectState, OWNED))
@@ -163,7 +169,7 @@ export const handleFetchOwnedProjects = () => async (dispatch, getState) => {
     if (localProjects) {
       localProjects = Object.values(localProjects)
       localProjects = localProjects.map(project => {
-        delete project.notes
+        delete project.tasks
         return project
       })
       dispatch(fetchProjects(localProjects, OWNED))
@@ -189,4 +195,33 @@ export const handleFetchAssignedProjects = () => async (dispatch, getState) => {
     dispatch(fetchProjects([], ASSIGNED))
     return getState().projects
   }
+}
+
+export const handleUpdateTaskCount = (projectID, prevStatus, nextStatus) => (dispatch, getState) => {
+  const { projects } = getState()
+  const prevProjectState = {...projects[projectID]}
+  const prevTodoCount = prevProjectState.todoCount
+  const prevPendingCount = prevProjectState.pendingCount
+  const prevDoneCount = prevProjectState.doneCount
+  const todoCountInc = (prevStatus === "todo" ? -1 : 0) || (nextStatus === "todo" ? 1 : 0)
+  const pendingCountInc = (prevStatus === "pending" ? -1 : 0) || (nextStatus === "pending" ? 1 : 0)
+  const doneCountInc = (prevStatus === "done" ? -1 : 0) || (nextStatus === "done" ? 1 : 0)
+  const update = {
+    id: projectID,
+    todoCount: prevTodoCount + todoCountInc,
+    pendingCount: prevPendingCount + pendingCountInc,
+    doneCount: prevDoneCount + doneCountInc
+  }
+  dispatch(updateProject(update, OWNED));
+  let localProjects = JSON.parse(window.localStorage.getItem("projects"))
+  localProjects = {
+    ...localProjects,
+    [projectID]: {
+      ...localProjects[projectID],
+      todoCount: prevTodoCount + todoCountInc,
+      pendingCount: prevPendingCount + pendingCountInc,
+      doneCount: prevDoneCount + doneCountInc
+    }
+  }
+  return window.localStorage.setItem("projects", JSON.stringify(localProjects))
 }

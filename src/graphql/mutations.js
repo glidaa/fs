@@ -1,6 +1,45 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const pushUserUpdate = /* GraphQL */ `
+  mutation PushUserUpdate($input: PushUserUpdateInput!) {
+    pushUserUpdate(input: $input) {
+      username
+      firstName
+      lastName
+      gender
+      birthdate
+      email
+      plan
+      avatar
+      sharedProjects
+      watchedTasks
+      assignedTasks
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const pushProjectUpdate = /* GraphQL */ `
+  mutation PushProjectUpdate($input: PushProjectUpdateInput!) {
+    pushProjectUpdate(input: $input) {
+      id
+      prevProject
+      nextProject
+      permalink
+      title
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
+      updatedAt
+      owner
+      mutationID
+    }
+  }
+`;
 export const createProject = /* GraphQL */ `
   mutation CreateProject($input: CreateProjectInput!) {
     createProject(input: $input) {
@@ -9,35 +48,37 @@ export const createProject = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
+      members
     }
   }
 `;
-export const createNote = /* GraphQL */ `
-  mutation CreateNote($input: CreateNoteInput!) {
-    createNote(input: $input) {
+export const createTask = /* GraphQL */ `
+  mutation CreateTask($input: CreateTaskInput!) {
+    createTask(input: $input) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
@@ -45,7 +86,7 @@ export const createComment = /* GraphQL */ `
   mutation CreateComment($input: CreateCommentInput!) {
     createComment(input: $input) {
       id
-      noteID
+      taskID
       content
       createdAt
       updatedAt
@@ -61,35 +102,35 @@ export const updateProject = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
-      createdAt
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       updatedAt
       owner
+      mutationID
     }
   }
 `;
-export const updateNote = /* GraphQL */ `
-  mutation UpdateNote($input: UpdateNoteInput!) {
-    updateNote(input: $input) {
+export const updateTask = /* GraphQL */ `
+  mutation UpdateTask($input: UpdateTaskInput!) {
+    updateTask(input: $input) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
-      createdAt
+      watchers
+      assignees
       updatedAt
-      owner
-      assignee
+      mutationID
     }
   }
 `;
@@ -97,51 +138,71 @@ export const updateComment = /* GraphQL */ `
   mutation UpdateComment($input: UpdateCommentInput!) {
     updateComment(input: $input) {
       id
-      noteID
+      taskID
       content
-      createdAt
       updatedAt
-      owner
+      mutationID
     }
   }
 `;
-export const deleteProjectAndNotes = /* GraphQL */ `
-  mutation DeleteProjectAndNotes($projectID: ID!) {
-    deleteProjectAndNotes(projectID: $projectID) {
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      username
+      firstName
+      lastName
+      gender
+      birthdate
+      email
+      plan
+      avatar
+      sharedProjects
+      watchedTasks
+      assignedTasks
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteProjectAndTasks = /* GraphQL */ `
+  mutation DeleteProjectAndTasks($projectID: ID!) {
+    deleteProjectAndTasks(projectID: $projectID) {
       id
       prevProject
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
+      members
     }
   }
 `;
-export const deleteNoteAndComments = /* GraphQL */ `
-  mutation DeleteNoteAndComments($noteId: ID!) {
-    deleteNoteAndComments(noteId: $noteId) {
+export const deleteTaskAndComments = /* GraphQL */ `
+  mutation DeleteTaskAndComments($taskId: ID!) {
+    deleteTaskAndComments(taskId: $taskId) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
     }
   }
 `;
@@ -149,7 +210,7 @@ export const deleteComment = /* GraphQL */ `
   mutation DeleteComment($commentID: ID!) {
     deleteComment(commentID: $commentID) {
       id
-      noteID
+      taskID
       content
       createdAt
       updatedAt
@@ -157,53 +218,95 @@ export const deleteComment = /* GraphQL */ `
     }
   }
 `;
-export const assignNote = /* GraphQL */ `
-  mutation AssignNote($noteID: ID!, $assignee: String!) {
-    assignNote(noteID: $noteID, assignee: $assignee) {
+export const assignTask = /* GraphQL */ `
+  mutation AssignTask($taskID: ID!, $assignee: String!, $mutationID: String!) {
+    assignTask(taskID: $taskID, assignee: $assignee, mutationID: $mutationID) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
-      createdAt
+      watchers
+      assignees
       updatedAt
-      owner
-      assignee
+      mutationID
     }
   }
 `;
-export const disallowNote = /* GraphQL */ `
-  mutation DisallowNote($noteID: ID!, $assignee: String!) {
-    disallowNote(noteID: $noteID, assignee: $assignee) {
+export const unassignTask = /* GraphQL */ `
+  mutation UnassignTask(
+    $taskID: ID!
+    $assignee: String!
+    $mutationID: String!
+  ) {
+    unassignTask(
+      taskID: $taskID
+      assignee: $assignee
+      mutationID: $mutationID
+    ) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
-      createdAt
+      watchers
+      assignees
       updatedAt
-      owner
-      assignee
+      mutationID
+    }
+  }
+`;
+export const addWatcher = /* GraphQL */ `
+  mutation AddWatcher($taskID: ID!, $watcher: String!, $mutationID: String!) {
+    addWatcher(taskID: $taskID, watcher: $watcher, mutationID: $mutationID) {
+      id
+      projectID
+      prevTask
+      nextTask
+      permalink
+      task
+      description
+      due
+      tags
+      status
+      watchers
+      assignees
+      updatedAt
+      mutationID
+    }
+  }
+`;
+export const removeWatcher = /* GraphQL */ `
+  mutation RemoveWatcher(
+    $taskID: ID!
+    $watcher: String!
+    $mutationID: String!
+  ) {
+    removeWatcher(taskID: $taskID, watcher: $watcher, mutationID: $mutationID) {
+      id
+      projectID
+      prevTask
+      nextTask
+      permalink
+      task
+      description
+      due
+      tags
+      status
+      watchers
+      assignees
+      updatedAt
+      mutationID
     }
   }
 `;
@@ -217,10 +320,16 @@ export const importData = /* GraphQL */ `
         nextProject
         permalink
         title
-        notesCount
+        tasksCount
+        todoCount
+        pendingCount
+        doneCount
+        privacy
+        permissions
         createdAt
         updatedAt
         owner
+        members
       }
     }
   }

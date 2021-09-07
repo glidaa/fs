@@ -1,35 +1,52 @@
-import { SET_PROJECT, SET_NOTE, SET_DROPDOWN, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_NOTE_ADDING_STATUS, SET_HISTORY } from "../actions/app"
-import { OK } from "../constants"
+import { SET_PROJECT, SET_TASK, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_HISTORY, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE } from "../actions/app"
+import { panelPages, OK } from "../constants"
 
 const initState = {
   selectedProject: null,
-  selectedProjectScope: null,
-  selectedNote: null,
+  selectedTask: null,
   command: "",
-  isDropdownOpened: false,
   projectsTab: "owned",
   projectAddingStatus: OK,
-  noteAddingStatus: OK,
+  taskAddingStatus: OK,
   history: null,
-  isLoading: true
+  isLoading: true,
+  isLeftPanelOpened: false,
+  isRightPanelOpened: false,
+  isActionSheetOpened: false,
+  isProjectTitleSelected: false,
+  lockedTaskField: null,
+  rightPanelPage: panelPages.TASK_HUB,
+  leftPanelPage: panelPages.PROJECTS
 }
 
 export default function (state = initState, action) {
   switch(action.type) {
     case SET_PROJECT:
-      return {...state, selectedProject: action.id, selectedProjectScope: action.scope}
-    case SET_NOTE:
-      return {...state, selectedNote: action.id}
+      return {...state, selectedProject: action.id}
+    case SET_TASK:
+      return {...state, selectedTask: action.id}
     case SET_COMMAND:
       return {...state, command: action.command}
-    case SET_DROPDOWN:
-      return {...state, isDropdownOpened: action.status}
+    case SET_PROJECT_PANEL:
+      return {...state, isLeftPanelOpened: action.status}
+    case SET_DETAILS_PANEL:
+      return {...state, isRightPanelOpened: action.status}
+    case SET_ACTION_SHEET:
+      return {...state, isActionSheetOpened: action.status}
+    case SET_PROJECT_TITLE:
+      return {...state, isProjectTitleSelected: action.status}
     case SET_PROJECT_ADDING_STATUS:
       return {...state, projectAddingStatus: action.status}
-    case SET_NOTE_ADDING_STATUS:
-      return {...state, noteAddingStatus: action.status}
+    case SET_TASK_ADDING_STATUS:
+      return {...state, taskAddingStatus: action.status}
     case SET_HISTORY:
       return {...state, history: action.history}
+    case SET_LOCKED_TASK_FIELD:
+      return {...state, lockedTaskField: action.fieldName}
+    case SET_RIGHT_PANEL_PAGE:
+      return {...state, rightPanelPage: action.page}
+    case SET_LEFT_PANEL_PAGE:
+      return {...state, leftPanelPage: action.page}
     case SET_LOADING:
       return {...state, isLoading: action.isLoading}
     default:

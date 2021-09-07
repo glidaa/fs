@@ -1,9 +1,10 @@
-import * as usersActions from "./users"
+import { AuthState } from '@aws-amplify/ui-components';
+import * as observersActions from "./observers"
 
 export const SET_STATE = "SET_STATE";
 export const SET_DATA = "SET_DATA";
 
-export const setState = (userSate) => ({
+const setState = (userSate) => ({
   type: SET_STATE,
   userSate
 });
@@ -13,11 +14,22 @@ const setData = (userData) => ({
   userData
 });
 
+export const handleSetState = (userState) => (dispatch) => {
+  if (userState !== AuthState.SignedIn) {
+    dispatch(observersActions.handleClearUserObservers())
+  }
+  dispatch(setState(userState))
+  if (userState === AuthState.SignedIn) {
+    dispatch(observersActions.handleSetUserObservers())
+  }
+}
+
 export const handleSetData = (userData) => (dispatch) => {
-  const firstName = userData.attributes.given_name
-  const lastName = userData.attributes.family_name
-  const username = userData.username
-  const name = `${firstName} ${lastName}`
-  dispatch(usersActions.addUser(username, name))
-  dispatch(setData(userData))
+  if (userData) {
+    const { firstName, lastName } = userData
+    const abbr = firstName[0].toUpperCase() + lastName[0].toUpperCase()
+    dispatch(setData({...userData, abbr}))
+  } else {
+    dispatch(setData(null))
+  }
 }

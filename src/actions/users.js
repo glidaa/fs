@@ -1,42 +1,21 @@
-import { API, Auth } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
+import { listUsersByUsernames } from "../graphql/queries"
 
-export const ADD_USER = "ADD_USER";
+export const ADD_USERS = "ADD_USERS";
 
-export const addUser = (username, name) => ({
-  type: ADD_USER,
-  username,
-  name
+export const addUsers = (users) => ({
+  type: ADD_USERS,
+  users
 });
 
-const getUserName = async (username) => {
-  let firstName = ""
-  let lastName = ""
-  const queryData = { 
-    headers: { 
-      'Content-Type': 'application/json',
-      Authorization: `${(await Auth.currentSession()).getAccessToken().getJwtToken()}`,
-    },
-    queryStringParameters: {
-        username: username,
-    },
-  };
-  const data = await API.get("AdminQueries", "/getUser", queryData)
-  for (const entry of data.UserAttributes) {
-    if (entry.Name === "given_name") {
-      firstName = entry.Value
-    } else if (entry.Name === "family_name") {
-      lastName = entry.Value
-    }
-  }
-  return `${firstName} ${lastName}`
-}
-
-export const handleAddUser = (username) => (dispatch, getState) => {
+export const handleAddUsers = (usernames) => async (dispatch, getState) => {
   const { users } = getState()
-  if (users[username] === undefined) {
-    dispatch(addUser(username, null))
-    getUserName(username).then((name) => {
-      return dispatch(addUser(username, name))
-    })
-  }
+  usernames = usernames.filter(x => !users[x])
+  const res = await API.graphql(graphqlOperation(listUsersByUsernames, { usernames }))
+  const items = res.data.listUsersByUsernames.items
+  const itemsWithAbbr = items.map(x => {
+    const abbr = x.firstName[0].toUpperCase() + x.lastName[0].toUpperCase()
+    return { ...x, abbr }
+  })
+  return dispatch(addUsers(itemsWithAbbr))
 }

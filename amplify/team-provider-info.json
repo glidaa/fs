@@ -13,12 +13,24 @@
     },
     "categories": {
       "auth": {
-        "forwardslashe21e583a": {}
+        "fsCognito": {
+          "googleClientId": "0000"
+        },
+        "userPoolGroups": {}
       },
       "function": {
-        "AdminQueries7d56620a": {
+        "fsCognitoPostConfirmation": {
+          "GROUP": "free",
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/AdminQueries7d56620a-574a6c7a4b6f30663855-build.zip"
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-4e31525957586a65674a-build.zip"
+        },
+        "fsCoreApiResolver": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCoreApiResolver-715a2b62545371797261-build.zip"
+        },
+        "fsCognitoPostConfirmationInvoker": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmationInvoker-2b6e7742464651426843-build.zip"
         }
       },
       "hosting": {

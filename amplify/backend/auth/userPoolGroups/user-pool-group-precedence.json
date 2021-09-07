@@ -1,0 +1,10 @@
+[
+  {
+    "groupName": "free",
+    "precedence": 1
+  },
+  {
+    "groupName": "pro",
+    "precedence": 2
+  }
+]

@@ -1,8 +1,11 @@
+import React from 'react';
 import { useState, useEffect } from "react"
 import { Redirect } from "react-router-dom"
 import { connect } from "react-redux"
+import { API, graphqlOperation } from "aws-amplify";
 import * as userActions from "../actions/user"
 import * as appActions from "../actions/app"
+import * as queries from "../graphql/queries"
 import * as observersActions from "../actions/observers"
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 import { AmplifyAuthenticator, AmplifyContainer, AmplifySignUp } from "@aws-amplify/ui-react";
@@ -14,14 +17,22 @@ const Login = (props) => {
   useEffect(() => {
     setReferrer(props.route.location.state?.referrer)
     onAuthUIStateChange(async (nextAuthState, authData) => {
-      dispatch(userActions.handleSetData(authData))
-      dispatch(userActions.setState(nextAuthState))
       if (nextAuthState === AuthState.SignedIn) {
-        //window.removeEventListener("storage", fetchLocalProjects)
+        const userData = (await API.graphql(
+          graphqlOperation(
+            queries.getUserByUsername, {
+              username: authData.username
+            }
+          )
+        )).data.getUserByUsername
+        dispatch(userActions.handleSetData(userData))
+        dispatch(userActions.handleSetState(AuthState.SignedIn))
         dispatch(observersActions.handleSetProjectsObservers())
-        //migrateLocalNotes();
         dispatch(appActions.setLoading(true))
         setShouldRedirect(true)
+      } else {
+        dispatch(userActions.handleSetData(null))
+        dispatch(userActions.handleSetState(nextAuthState))
       }
 		});
   }, [])
@@ -31,7 +42,7 @@ const Login = (props) => {
         <Redirect to={referrer || "/"} />
       ) : (
         <AmplifyContainer>
-          <AmplifyAuthenticator usernameAlias="email">
+          <AmplifyAuthenticator>
             <AmplifySignUp headerText="Create a new account" formFields={[
               {
                 label: "First Name",

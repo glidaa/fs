@@ -1,0 +1,8 @@
+{
+  "apifsCoreAPIGraphQLAPIIdOutput": {
+    "Fn::GetAtt": [
+      "apifsCoreAPI",
+      "Outputs.GraphQLAPIIdOutput"
+    ]
+  }
+}
