@@ -79,6 +79,9 @@ const App = (props) => {
             dispatch(projectsActions.createProject(reqProject, "temp"))
           } catch {
             reqProject = null
+            if (taskPermalink) {
+              history.replace(`/${username}/${projectPermalink}`)
+            }
           }
         }
         if (reqProject) {

@@ -25,7 +25,7 @@ const Tags = (props) => {
       dispatch(appActions.setCommand(""))
       dispatch(tasksActions.handleUpdateTask({
           id: selectedTask,
-          tags: [...new Set([...tasks[selectedTask], ...suggestedTags])]
+          tags: [...new Set([...tasks[selectedTask].tags, ...suggestedTags])]
       }))
     }
   }

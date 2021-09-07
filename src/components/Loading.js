@@ -72,6 +72,9 @@ const Loading = (props) => {
             dispatch(projectsActions.createProject(reqProject, "temp"))
           } catch {
             reqProject = null
+            if (params.taskPermalink) {
+              history.replace(`/${params.username}/${params.projectPermalink}`)
+            }
           }
         }
         if (reqProject) {

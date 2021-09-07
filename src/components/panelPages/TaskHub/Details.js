@@ -41,6 +41,7 @@ const Details = (props) => {
   return selectedTask && (
     <DetailsForm>
       <form onSubmit={(e) => e.preventDefault()}>
+        <input type="submit" name="submit" value="Submit"></input>
         <Detail>
           <label htmlFor="assignee">
             Assigned To
@@ -92,7 +93,7 @@ const Details = (props) => {
           />
         </Detail>
         <Detail>
-          <label htmlFor="tag">
+          <label htmlFor="tags">
             Tags
           </label>
           <TagField
@@ -111,7 +112,6 @@ const Details = (props) => {
             readOnly={readOnly}
           />
         </Detail>
-        <input type="submit" name="submit" value="Submit"></input>
       </form>
     </DetailsForm>
   )

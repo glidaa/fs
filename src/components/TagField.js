@@ -17,13 +17,13 @@ const TagField = (props) => {
   }
 
   const handleTagInput = (e) => {
-    if (e.code === "Enter") {
+    if (e.code === "Enter" && e.target.value.trim()) {
       const tagsSet = new Set(value || [])
-      tagsSet.add(e.target.value)
+      tagsSet.add(e.target.value.trim())
       e.target.value = ""
       onChange({ target: {
         value: Array.from(tagsSet),
-        name: "tag"
+        name: "tags"
       }})
     }
 }
@@ -45,7 +45,7 @@ const TagField = (props) => {
             tagsSet.delete(x)
             onChange({ target: {
               value: Array.from(tagsSet),
-              name: "tag"
+              name: "tags"
             }})
           }}>
             ×
