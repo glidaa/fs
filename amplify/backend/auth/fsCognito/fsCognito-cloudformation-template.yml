@@ -97,6 +97,9 @@ Parameters:
   authProviders:
     Type: CommaDelimitedList
 
+  googleClientId:
+    Type: String
+
   userPoolGroups:
     Type: String
 
@@ -986,7 +989,7 @@ Resources:
             - { region: !Ref "AWS::Region", client: !Ref UserPool }
 
       SupportedLoginProviders:
-        accounts.google.com: 0000
+        accounts.google.com: !Ref googleClientId
 
       AllowUnauthenticatedIdentities: !Ref allowUnauthenticatedIdentities
 
@@ -1044,4 +1047,4 @@ Outputs:
     Description: role arn
 
   GoogleWebClient:
-    Value: 0000
+    Value: !Ref googleClientId
