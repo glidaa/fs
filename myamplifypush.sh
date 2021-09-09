@@ -96,7 +96,8 @@ CODEGEN="{\
 
 AUTHCONFIG="{\
 \"googleClientId\":\"0000\",\
-\"googleAppIdUserPool\":\"0000\"\
+\"googleAppIdUserPool\":\"0000\",\
+\"googleAppSecretUserPool\":\"0000\"\
 }"
 
 CATEGORIES="{\
