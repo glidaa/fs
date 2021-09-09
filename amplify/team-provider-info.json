@@ -13,6 +13,9 @@
     },
     "categories": {
       "auth": {
+        "fsCognito": {
+          "googleClientId": "0000"
+        },
         "userPoolGroups": {}
       },
       "function": {
