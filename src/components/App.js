@@ -16,8 +16,10 @@ import Loading from "./Loading";
 import Login from "./Login";
 Amplify.configure(aws_exports);
 PubSub.configure(aws_exports);
-
+import {ToastProvider, DefaultToast} from 'react-toast-notifications'
 const App = (props) => {
+  
+
   const { dispatch, user, projects, app } = props;
   const [state, setState] = useState({
     projectPanel: false,
@@ -126,7 +128,17 @@ const App = (props) => {
       }
     }
   }, [routeMatch, app, user]);
+  const MyCustomToast = ({ children, ...props }) => (
+    <DefaultToast {...props}>
+      <div style={{backgroundColor: '#fff', color: '#000'}} class="css-1rjh2i2-icon">     
+      <div class="css-1rjh2i2-icon"></div>
+      {children}</div>
+    </DefaultToast>
+  );
   return (
+    <ToastProvider placement='bottom-left' components={{Toast: MyCustomToast}}> 
+    
+    
     <div className="App">
       <Route
         exact
@@ -169,6 +181,7 @@ const App = (props) => {
         )}
       />
     </div>
+    </ToastProvider>
   );
 };
 

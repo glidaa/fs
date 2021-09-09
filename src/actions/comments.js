@@ -43,7 +43,7 @@ export const handleCreateComment = (commentState) => (dispatch, getState) => {
     return API.graphql(graphqlOperation(mutations.createComment, { input: commentState }))
       .catch(() => {
         if (commentState.noteID === getState().app.selectedNote) {
-          return dispatch(removeComment(commentState.id))
+          return dispatch(removeComment(commentState.id)) 
         }
       })
   }

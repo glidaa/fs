@@ -16,6 +16,8 @@ import PasteBtn from "./PasteBtn";
 import * as projectsActions from "../actions/projects";
 import { initProjectState, OK, PENDING, initNoteState } from "../constants";
 import useWindowSize from "../utils/useWindowSize";
+import {  useToasts } from 'react-toast-notifications'
+
 
 const DragHandle = sortableHandle(() => (
   <img className="drag-icon" alt="item handler" src={handlerIcon} width="20" />
@@ -38,6 +40,7 @@ const SortableContainer = sortableContainer(({ children }) => {
 });
 
 const NotesPanel = (props) => {
+  const { addToast } = useToasts();
   const {
     app,
     notes,
@@ -69,6 +72,7 @@ const NotesPanel = (props) => {
     }
   };
   return (
+    
     <NotesPanelContainer
       name="NotesPanelContainer"
       onClick={(e) => {
@@ -82,7 +86,12 @@ const NotesPanel = (props) => {
                 parseLinkedList(notes, "prevNote", "nextNote").reverse()[0]?.id
               )
             )
-          );
+          )
+      }}
+      onKeyDown={(e) => {
+        if (e.code === "Enter") {
+          addToast('added a note')
+        }
       }}
     >
       {app.selectedProject ? (

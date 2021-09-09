@@ -10,8 +10,9 @@ import Comments from "./Comments";
 import "draft-js/dist/Draft.css";
 import AssigneeField from "./AssigneeField";
 import useWindowSize from "../utils/useWindowSize";
-
+import {  useToasts } from 'react-toast-notifications'
 const SidePanel = (props) => {
+  const { addToast } = useToasts();
   const {
     user,
     notes,
@@ -39,7 +40,12 @@ const SidePanel = (props) => {
         <>
           <DetailsForm onSubmit={(e) => e.preventDefault()}>
             <ShareBtn isNote={true} />
-            <input
+            <input 
+              onKeyDown={(e) => {
+              if (e.code === "Enter") {
+                addToast('added a note')
+              }
+            }}
               type="text"
               name="note"
               placeholder="Note…"
@@ -61,6 +67,11 @@ const SidePanel = (props) => {
             <div>
               <label htmlFor="task">Task</label>
               <input
+              onKeyDown={(e) => {
+                if (e.code === "Enter") {
+                  addToast('added a task')
+                }
+              }}
                 type="text"
                 name="task"
                 placeholder="task"
@@ -73,6 +84,11 @@ const SidePanel = (props) => {
             <div>
               <label htmlFor="description">Description</label>
               <input
+              onKeyDown={(e) => {
+                if (e.code === "Enter") {
+                  addToast('added a description')
+                }
+              }}
                 type="text"
                 name="description"
                 placeholder="description"
@@ -85,6 +101,11 @@ const SidePanel = (props) => {
             <div>
               <label htmlFor="steps">Steps</label>
               <input
+              onKeyDown={(e) => {
+                if (e.code === "Enter") {
+                  addToast('added steps')
+                }
+              }}
                 type="text"
                 name="steps"
                 placeholder="steps"
@@ -97,6 +118,11 @@ const SidePanel = (props) => {
             <div>
               <label htmlFor="due">Due</label>
               <DatePicker
+              onKeyDown={(e) => {
+                if (e.code === "Enter") {
+                  addToast('added a note')
+                }
+              }}
                 name="due"
                 onChange={handleChange}
                 placeholder="due"
@@ -107,6 +133,11 @@ const SidePanel = (props) => {
             <div>
               <label htmlFor="watcher">Watcher</label>
               <input
+              onKeyDown={(e) => {
+                if (e.code === "Enter") {
+                  addToast('added a watcher')
+                }
+              }}
                 type="text"
                 name="watcher"
                 placeholder="watcher"
@@ -119,6 +150,11 @@ const SidePanel = (props) => {
             <div>
               <label htmlFor="tag">Tag</label>
               <Tag
+                onKeyDown={(e) => {
+                  if (e.code === "Enter") {
+                    addToast('tagged something')
+                  }
+                }}
                 name="tag"
                 onChange={handleChange}
                 value={notes[app.selectedNote].tag || []}
@@ -128,6 +164,11 @@ const SidePanel = (props) => {
             <div>
               <label htmlFor="sprint">Sprint</label>
               <input
+              onKeyDown={(e) => {
+                if (e.code === "Enter") {
+                  addToast('added this task to a sprint')
+                }
+              }}
                 type="text"
                 name="sprint"
                 placeholder="sprint"
