@@ -4,12 +4,11 @@ import { handleCreateNote } from "../actions/notes"
 import { initNoteState, OK, PENDING } from "../constants"
 import { connect } from "react-redux";
 import parseLinkedList from "../utils/parseLinkedList"
-
 const NewTask = (props) => {
-  const { app, notes, dispatch } = props
+  const { app, notes, dispatch } = props;
   return (
     <NewTaskContainer isInactive={app.noteAddingStatus === PENDING}>
-       <div>
+      <div>
           <img alt="item handler" src={addIcon} width="20" />
           <div className="newTaskContainer">
             <span onClick={() => (

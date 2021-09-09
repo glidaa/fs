@@ -1,8 +1,10 @@
 import React from 'react';
 import styledComponents from "styled-components"
+import {  useToasts } from 'react-toast-notifications'
 
 export const Tag = (props) => {
   const { readOnly } = props
+  const { addToast } = useToasts();
   const handleTagClick = (e) => {
     const tag = e.target.innerText;
   }
@@ -10,7 +12,7 @@ export const Tag = (props) => {
     <TagContainer>
       {props.value.map(x => (
         <TagItem key={x}>
-          <span onClick={handleTagClick}>{x}</span>
+          <span onClick={handleTagClick } >{x}</span>
           <span onClick={() => {
             const tagsSet = new Set(props.value || [])
             tagsSet.delete(x)
@@ -34,7 +36,7 @@ export const Tag = (props) => {
             props.onChange({ target: {
               value: Array.from(tagsSet),
               name: props.name
-            }})
+            }}), addToast(`tagged something`, {appereance: 'info'})
           }
       }} />
     </TagInput>}

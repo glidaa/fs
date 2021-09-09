@@ -8,6 +8,9 @@ import * as usersActions from "./users"
 import * as mutations from "../graphql/mutations"
 import { DONE, ERROR, NOT_ASSIGNED, NOT_STARTED, OK, PENDING } from "../constants";
 import prepareNoteToBeSent from "../utils/prepareNoteToBeSent";
+import { ToastProvider, useToasts } from 'react-toast-notifications'
+
+
 
 export const CREATE_NOTE = "CREATE_NOTE";
 export const UPDATE_NOTE = "UPDATE_NOTE";
@@ -40,6 +43,7 @@ const fetchNotes = (notes) => ({
 });
 
 export const handleCreateNote = (noteState) => (dispatch, getState) => {
+
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
     dispatch(appActions.setNoteAddingStatus(PENDING))

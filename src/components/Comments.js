@@ -7,6 +7,10 @@ import {stateToHTML} from 'draft-js-export-html';
 import {Editor, EditorState, ContentState, convertToRaw, convertFromRaw} from 'draft-js';
 import * as commentsActions from "../actions/comments";
 
+
+  
+
+
 const Comments = (props) => {
   const { user, users, comments, app, dispatch } = props
   const newCommentRef = useRef(null)
@@ -51,7 +55,8 @@ const Comments = (props) => {
                   <span
                     onClick={() => (
                       x.owner === user.data.username &&
-                      dispatch(commentsActions.handleRemoveComment(x)
+                      dispatch(commentsActions.handleRemoveComment(x),
+                      
                     ))}
                   >
                     ×
