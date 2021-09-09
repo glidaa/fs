@@ -97,9 +97,6 @@ Parameters:
   authProviders:
     Type: CommaDelimitedList
 
-  googleClientId:
-    Type: String
-
   userPoolGroups:
     Type: String
 
