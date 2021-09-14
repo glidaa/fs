@@ -2,10 +2,11 @@ import React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import styledComponents from "styled-components"
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation, Auth } from "aws-amplify";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
 import * as tasksActions from "../actions/tasks"
+import * as userActions from "../actions/user"
 import * as observersActions from "../actions/observers"
 import * as queries from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
@@ -19,9 +20,29 @@ const Loading = (props) => {
   const [loadingMsg, setLoadingMsg] = useState("Please Wait A Moment")
   const history = useHistory()
   useEffect(() => {
+    const setUserData = async (authData) => {
+    }
     (async () => {
     const { match: { params } } = route
-    if (user.state === AuthState.SignedIn) {
+    const authData = await Auth.currentUserInfo()
+    let currUser = {...user}
+    if (authData) {
+      const userData = (await API.graphql(
+        graphqlOperation(
+          queries.getUserByUsername, {
+            username: authData.username
+          }
+        )
+      )).data.getUserByUsername
+      dispatch(userActions.handleSetData(userData))
+      dispatch(userActions.handleSetState(AuthState.SignedIn))
+      dispatch(observersActions.handleSetProjectsObservers())
+      currUser = {
+        state: AuthState.SignedIn,
+        data:userData
+      }
+    }
+    if (currUser.state === AuthState.SignedIn) {
       const localProjectsList = JSON.parse(window.localStorage.getItem("projects"))
       if (localProjectsList) {
         const localProjects = Object.values(localProjectsList)
@@ -40,7 +61,7 @@ const Loading = (props) => {
     }
     if (params.projectPermalink &&
         !params.username &&
-        user.state === AuthState.SignedOut) {
+        currUser.state === AuthState.SignedOut) {
       setLoadingMsg("We Are Fetching Your Own Projects")
       const projects = await dispatch(projectsActions.handleFetchOwnedProjects())
       const reqProject = Object.values(projects)
@@ -52,12 +73,12 @@ const Loading = (props) => {
       }
     } else if (params.projectPermalink &&
       params.username &&
-      user.state === AuthState.SignedOut) {
+      currUser.state === AuthState.SignedOut) {
         setShouldLogin(true)
         return 0
     } else if (params.projectPermalink &&
       params.username &&
-      user.state === AuthState.SignedIn) {
+      currUser.state === AuthState.SignedIn) {
         setLoadingMsg("We Are Fetching Your Own Projects")
         await dispatch(projectsActions.handleFetchOwnedProjects())
         setLoadingMsg("We Are Fetching Projects Assigned To You")
@@ -93,7 +114,7 @@ const Loading = (props) => {
           }
         }
       } else {
-        if (user.state === AuthState.SignedIn) {
+        if (currUser.state === AuthState.SignedIn) {
           setLoadingMsg("We Are Fetching Your Own Projects")
           await dispatch(projectsActions.handleFetchOwnedProjects())
           setLoadingMsg("We Are Fetching Projects Assigned To You")
