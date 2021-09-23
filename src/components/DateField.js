@@ -1,12 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import DayPicker from 'react-day-picker';
-import 'react-day-picker/lib/style.css';
-import { useOuterClick } from 'react-outer-click';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Calendar } from "react-modern-calendar-datepicker";
+import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import styledComponents from "styled-components"
 import { ReactComponent as RemoveIcon } from "../assets/close-outline.svg"
 import formatDate from '../utils/formatDate';
 
-export const DatePicker = (props) => {
+const DateField = (props) => {
   const {
     name,
     value,
@@ -14,7 +13,6 @@ export const DatePicker = (props) => {
     onChange,
     readOnly
   } = props
-  const selectRef = useRef(null)
   const [isPickerOpened, setIsPickerOpened] = useState(false)
   const clearValue = () => {
     if (!readOnly) onChange({ target: { value: null, name: name }})
@@ -24,24 +22,34 @@ export const DatePicker = (props) => {
       setIsPickerOpened(isPickerOpened ? false : true)
     }
   }
-  const selectValue = (day) => {
+  const pickValue = ({ day, month, year }) => {
     if (!readOnly) {
       togglePicker()
-      onChange({ target: { value: day.getTime(), name: name }})
+      onChange({ target: { value: new Date(`${month}-${day}-${year}`).getTime(), name: name }})
     }
   }
-  useOuterClick(selectRef, () => {
-    if (isPickerOpened) {
-      setIsPickerOpened(false);
+  const getPickerValue = (value) => {
+    if (!value) return null
+    const dateObj = new Date(value)
+    const day = dateObj.getDate()
+    const month = dateObj.getMonth() + 1
+    const year = dateObj.getFullYear()
+    return { day, month, year }
+  }
+  const pickerValue = useMemo(() => getPickerValue(value), [value])
+  const handleOverlayClick = (e) => {
+    e.stopPropagation()
+    if (e.target === e.currentTarget) {
+      setIsPickerOpened(false)
     }
-  })
+  }
   useEffect(() => {
     if (readOnly && isPickerOpened) {
       setIsPickerOpened(false)
     }
   }, [readOnly, isPickerOpened, setIsPickerOpened])
   return (
-    <DatePickerContainer ref={selectRef} readOnly={readOnly}>
+    <DateFieldContainer readOnly={readOnly}>
       <input
         name={name}
         value={value ? formatDate(value) : ""}
@@ -61,15 +69,21 @@ export const DatePicker = (props) => {
         </ClearBtn>
       )}
       {isPickerOpened && (
-        <Calendar>
-          <DayPicker onDayClick={selectValue} />
-        </Calendar>
+        <PickerContainer onClick={handleOverlayClick}>
+          <Calendar
+            value={pickerValue}
+            onChange={pickValue}
+            colorPrimary="#006EFF"
+            colorPrimaryLight="#338bff"
+            shouldHighlightWeekends
+          />
+        </PickerContainer>
       )}
-    </DatePickerContainer>
+    </DateFieldContainer>
   );
 };
 
-const DatePickerContainer = styledComponents.div`
+const DateFieldContainer = styledComponents.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -93,16 +107,18 @@ const DatePickerContainer = styledComponents.div`
     }
   }
 `
-const Calendar = styledComponents.div`
-  position: relative;
+
+const PickerContainer = styledComponents.div`
   display: flex;
-  flex-direction: column;
-  background-color: #FFFFFF;
-  width: fit-content;
-  & > div.DayPicker {
-    font-size: 12px;
-  }
-  box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #000000AA;
+  z-index: 9999;
 `
 
 const ClearBtn = styledComponents.button`
@@ -112,3 +128,5 @@ const ClearBtn = styledComponents.button`
   line-height: 0;
   cursor: pointer;
 `
+
+export default DateField

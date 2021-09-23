@@ -11,10 +11,10 @@ import * as queries from "../graphql/queries"
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
 import TasksPanel from "./TasksPanel";
 import Loading from "./Loading";
-import Login from "./Login";
 import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
+import AuthFlow from "./authFlow";
 Amplify.configure(aws_exports);
 
 const App = (props) => {
@@ -110,7 +110,7 @@ const App = (props) => {
       <Route
         exact
         path="/login"
-        render={(routeProps) => <Login route={routeProps} />}
+        render={(routeProps) => <AuthFlow route={routeProps} />}
       />
       <Route
         exact

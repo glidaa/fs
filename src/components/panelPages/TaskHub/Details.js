@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { connect } from "react-redux";
 import { AuthState } from "@aws-amplify/ui-components";
-import { DatePicker } from "../../DatePicker";
+import DateField from "../../DateField";
 import * as tasksActions from "../../../actions/tasks";
 import styledComponents from "styled-components";
 import StatusField from "../../StatusField";
@@ -84,10 +84,10 @@ const Details = (props) => {
           <label htmlFor="due">
             Due
           </label>
-          <DatePicker
+          <DateField
             name="due"
             onChange={handleChange}
-            placeholder="No date choosen"
+            placeholder="no date selected"
             value={tasks[selectedTask].due}
             readOnly={readOnly}
           />
