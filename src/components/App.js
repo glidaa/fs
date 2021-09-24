@@ -109,7 +109,12 @@ const App = (props) => {
     <div className="App">
       <Route
         exact
-        path="/login"
+        sensitive
+        path={[
+          "/login",
+          "/signup",
+          "/forgot-password",
+        ]}
         render={(routeProps) => <AuthFlow route={routeProps} />}
       />
       <Route

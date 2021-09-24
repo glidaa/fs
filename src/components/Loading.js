@@ -20,8 +20,6 @@ const Loading = (props) => {
   const [loadingMsg, setLoadingMsg] = useState("Please Wait A Moment")
   const history = useHistory()
   useEffect(() => {
-    const setUserData = async (authData) => {
-    }
     (async () => {
     const { match: { params } } = route
     const authData = await Auth.currentUserInfo()

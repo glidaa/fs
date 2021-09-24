@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styledComponents from "styled-components"
 import { useState } from "react"
 import { connect } from "react-redux"
@@ -21,16 +21,130 @@ const NewAccount = (props) => {
   const [password, setPassword] = useState("")
   const [dateOfBirth, setDateOfBirth] = useState("")
   const [gender, setGender] = useState("male")
+  const [firstNameError, setFirstNameError] = useState(null)
+  const [lastNameError, setLastNameError] = useState(null)
+  const [usernameError, setUsernameError] = useState(null)
+  const [emailError, setEmailError] = useState(null)
+  const [passwordError, setPasswordError] = useState(null)
+  const [dateOfBirthError, setDateOfBirthError] = useState(null)
+  const validateFirstName = (value = firstName) => {
+    setFirstNameError(null)
+    if (!value.trim()) {
+      setFirstNameError("Required field.")
+    }
+  }
+  const validateLastName = (value = lastName) => {
+    setLastNameError(null)
+    if (!value.trim()) {
+      setLastNameError("Required field.")
+    }
+  }
+  const validateUsername = (value = username) => {
+    setUsernameError(null)
+    if (!value.trim()) {
+      setUsernameError("Required field.")
+      return
+    }
+    const re = /^\w+$/;
+    const isValid = re.test(value)
+    if (!isValid) setUsernameError("Only letters, numbers and underscore are allowed.")
+  }
+  const validateEmail = (value = email) => {
+    setEmailError(null)
+    if (!value.trim()) {
+      setEmailError("Required field.")
+      return
+    }
+    const re = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
+    const isValid = re.test(value)
+    if (!isValid) setEmailError("Email is not valid.")
+  }
+  const validatePassword = (value = password) => {
+    setPasswordError(null)
+    if (!value.trim()) {
+      setPasswordError("Required field.")
+      return
+    }
+    if (value.length < 8) {
+      setPasswordError("Password must contain at least 8 characters.")
+      return
+    }
+    const re = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    const isValid = re.test(value)
+    if (!isValid) setPasswordError("Password must contain lowercase, uppercase, numerical and symbolic characters.")
+  }
+  const validateDateOfBirth = (value = dateOfBirth) => {
+    setDateOfBirthError(null)
+    if (!value) {
+      setDateOfBirthError("Required field.")
+    }
+  }
+  const getIsSubmissionPossible = (
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
+    dateOfBirth,
+    firstNameError,
+    lastNameError,
+    usernameError,
+    emailError,
+    passwordError,
+    dateOfBirthError
+  ) => {
+    return !(
+      !firstName ||
+      !lastName ||
+      !username ||
+      !email ||
+      !password ||
+      !dateOfBirth ||
+      firstNameError ||
+      lastNameError ||
+      usernameError ||
+      emailError ||
+      passwordError ||
+      dateOfBirthError
+    )
+  }
+  const isSubmissionPossible = useMemo(() => getIsSubmissionPossible(
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
+    dateOfBirth,
+    firstNameError,
+    lastNameError,
+    usernameError,
+    emailError,
+    passwordError,
+    dateOfBirthError
+  ), [
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
+    dateOfBirth,
+    firstNameError,
+    lastNameError,
+    usernameError,
+    emailError,
+    passwordError,
+    dateOfBirthError
+  ])
   const handleNewAccount = async (e) => {
     e.preventDefault()
     try {
-      const { user } = await Auth.signUp({
-        username: username,
+      await Auth.signUp({
+        username: username.trim(),
         password: password,
         attributes: {
-            given_name: firstName,
-            family_name: lastName,
-            email: email,
+            given_name: firstName.trim(),
+            family_name: lastName.trim(),
+            email: email.trim(),
             birthdate: new Date(dateOfBirth).toISOString().substring(0, 10),
             gender: gender,
             phone_number: phoneNumber,
@@ -42,6 +156,13 @@ const NewAccount = (props) => {
       setShouldRedirect(true)
     } catch (error) {
       console.log('error signing in', error);
+      switch(error.code) {
+        case "UsernameExistsException":
+          setUsernameError("This username is taken!")
+          break
+        default:
+          break
+      }
       dispatch(userActions.handleSetData(null))
       dispatch(userActions.handleSetState(AuthState.SignedOut))
     }
@@ -56,13 +177,46 @@ const NewAccount = (props) => {
       console.log('error signing in', error);
     }
   }
+  const handleChange = ({ target: { name, value } }) => {
+    switch (name) {
+      case "firstName":
+        setFirstName(value)
+        validateFirstName(value)
+        break
+      case "lastName":
+        setLastName(value)
+        validateLastName(value)
+        break
+      case "username":
+        setUsername(value)
+        validateUsername(value)
+        break
+      case "email":
+        setEmail(value)
+        validateEmail(value)
+        break
+      case "password":
+        setPassword(value)
+        validatePassword(value)
+        break
+      case "dateOfBirth":
+        setDateOfBirth(value)
+        validateDateOfBirth(value)
+        break
+      case "gender":
+        setGender(value)
+        break
+      default:
+        break
+    }
+  }
   return currStep === 0 ? (
     <NewAccountFormContainer>
       <NewAccountFormHeader>
         <span>Create Account</span>
       </NewAccountFormHeader>
       <NewAccountForm onSubmit={handleNewAccount}>
-        <NewAccountFormEntry>
+        <NewAccountFormEntry isError={firstNameError}>
           <label htmlFor="firstName">
             First Name
           </label>
@@ -71,11 +225,12 @@ const NewAccount = (props) => {
             name="firstName"
             placeholder="first name…"
             autoComplete="given-name"
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={handleChange}
             value={firstName}
           ></input>
+          {firstNameError && <span>{firstNameError}</span>}
         </NewAccountFormEntry>
-        <NewAccountFormEntry>
+        <NewAccountFormEntry isError={lastNameError}>
           <label htmlFor="lastName">
             Last Name
           </label>
@@ -84,11 +239,12 @@ const NewAccount = (props) => {
             name="lastName"
             placeholder="last name…"
             autoComplete="family-name"
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={handleChange}
             value={lastName}
           ></input>
+          {lastNameError && <span>{lastNameError}</span>}
         </NewAccountFormEntry>
-        <NewAccountFormEntry>
+        <NewAccountFormEntry isError={usernameError}>
           <label htmlFor="username">
             Username
           </label>
@@ -97,11 +253,12 @@ const NewAccount = (props) => {
             name="username"
             placeholder="username…"
             autoComplete="username"
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleChange}
             value={username}
           ></input>
+          {usernameError && <span>{usernameError}</span>}
         </NewAccountFormEntry>
-        <NewAccountFormEntry>
+        <NewAccountFormEntry isError={emailError}>
           <label htmlFor="email">
             Email
           </label>
@@ -110,11 +267,12 @@ const NewAccount = (props) => {
             name="email"
             placeholder="email…"
             autoComplete="email"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleChange}
             value={email}
           ></input>
+          {emailError && <span>{emailError}</span>}
         </NewAccountFormEntry>
-        <NewAccountFormEntry>
+        <NewAccountFormEntry isError={passwordError}>
           <label htmlFor="password">
             Password
           </label>
@@ -123,9 +281,10 @@ const NewAccount = (props) => {
             name="password"
             placeholder="password…"
             autoComplete="new-password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleChange}
             value={password}
           ></input>
+          {passwordError && <span>{passwordError}</span>}
         </NewAccountFormEntry>
         <NewAccountFormEntry>
           <label htmlFor="dateOfBirth">
@@ -133,21 +292,23 @@ const NewAccount = (props) => {
           </label>
           <DateField
             name="dateOfBirth"
-            onChange={(e) => setDateOfBirth(e.target.value)}
+            onChange={handleChange}
             placeholder="no date selected"
+            isError={dateOfBirthError}
             value={dateOfBirth}
           />
+          {dateOfBirthError && <span>{dateOfBirthError}</span>}
         </NewAccountFormEntry>
         <NewAccountFormEntry>
           <label htmlFor="gender">
             Gender
           </label>
           <GenderField
-            onChange={(e) => setGender(e.target.value)}
+            onChange={handleChange}
             value={gender}
           />
         </NewAccountFormEntry>
-        <input type="submit" value="Sign Up" />
+        <input type="submit" value="Sign Up" disabled={!isSubmissionPossible} />
       </NewAccountForm>
     </NewAccountFormContainer>
   ) : (
@@ -164,7 +325,7 @@ const NewAccount = (props) => {
             type="text"
             name="verificationCode"
             placeholder="Code…"
-            onChange={(e) => setVerificationCode(e.target.value)}
+            onChange={handleChange}
             value={verificationCode}
           ></input>
         </NewAccountFormEntry>
@@ -281,7 +442,7 @@ const NewAccountFormEntry = styledComponents.div`
   & > input {
     width: calc(100% - 20px);
     padding: 5px 10px;
-    border: 1px solid #C0C0C0;
+    border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
     border-radius: 8px;
     font-size: 14px;
     font-weight: 400;
@@ -291,6 +452,10 @@ const NewAccountFormEntry = styledComponents.div`
     &::placeholder {
       color: #C0C0C0;
     }
+  }
+  & > span {
+    color: #FF0000;
+    font-size: 12px;
   }
 `
 

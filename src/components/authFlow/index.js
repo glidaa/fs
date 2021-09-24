@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styledComponents from "styled-components"
-import { useState, useEffect } from "react"
 import { Redirect } from "react-router-dom"
 import { connect } from "react-redux"
 import { Auth, Hub } from "aws-amplify";
 import * as appActions from "../../actions/app"
 import TasksIllustartion from "../../assets/oleg-chursin-vaPoJZB9Mzg-unsplash.jpg"
 import Login from './Login';
+import NewAccount from './NewAccount';
+import ForgotPassword from './ForgotPassword';
 
 const AuthFlow = (props) => {
-  const { dispatch } = props
+  const { route, dispatch } = props
   const [shouldRedirect, setShouldRedirect] = useState(false)
   const [referrer, setReferrer] = useState(null)
   const [currPage, setCurrPage] = useState(Login)
@@ -28,6 +29,21 @@ const AuthFlow = (props) => {
       }
     });
   }, [])
+  useEffect(() => {
+    switch (route.match?.path) {
+      case "/login":
+        setCurrPage(Login)
+        break
+      case "/signup":
+        setCurrPage(NewAccount)
+        break
+      case "/forgot-password":
+        setCurrPage(ForgotPassword)
+        break
+      default:
+        break
+    }
+  }, [route])
   return (
     <>
       {shouldRedirect ? (

@@ -5,15 +5,15 @@ import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
-import ForgotPassword from "./ForgotPassword"
-import NewAccount from "./NewAccount"
 import { ReactComponent as GoogleLogo } from "../../assets/google-logo.svg"
 import { AuthState } from '@aws-amplify/ui-components';
+import { useHistory } from 'react-router';
 
 const Login = (props) => {
-  const { setCurrPage, setShouldRedirect, dispatch } = props
+  const { setShouldRedirect, dispatch } = props
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const history = useHistory();
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
@@ -67,11 +67,11 @@ const Login = (props) => {
             value={password}
           ></input>
         </LoginFormEntry>
-        <NewAccountLink onClick={() => setCurrPage(NewAccount)}>
+        <NewAccountLink onClick={() => history.push("/signup")}>
           <span>No Account? </span>
           <span>Create One</span>
         </NewAccountLink>
-        <ForgotPasswordLink onClick={() => setCurrPage(ForgotPassword)}>
+        <ForgotPasswordLink onClick={() => history.push("/forgot-password")}>
           Forgot Password?
         </ForgotPasswordLink>
         <input type="submit" value="Sign In" />

@@ -11,7 +11,8 @@ const DateField = (props) => {
     value,
     placeholder,
     onChange,
-    readOnly
+    readOnly,
+    isError
   } = props
   const [isPickerOpened, setIsPickerOpened] = useState(false)
   const clearValue = () => {
@@ -49,7 +50,7 @@ const DateField = (props) => {
     }
   }, [readOnly, isPickerOpened, setIsPickerOpened])
   return (
-    <DateFieldContainer readOnly={readOnly}>
+    <DateFieldContainer readOnly={readOnly} isError={isError}>
       <input
         name={name}
         value={value ? formatDate(value) : ""}
@@ -90,7 +91,7 @@ const DateFieldContainer = styledComponents.div`
   justify-content: space-between;
   width: calc(100% - 20px);
   padding: 5px 10px;
-  border: 1px solid #C0C0C0;
+  border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
   border-radius: 8px;
   & > input {
     flex: 1;

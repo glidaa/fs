@@ -989,7 +989,7 @@ Resources:
             - { region: !Ref "AWS::Region", client: !Ref UserPool }
 
       SupportedLoginProviders:
-        accounts.google.com: !Ref googleClientId
+        accounts.google.com: 0000
 
       AllowUnauthenticatedIdentities: !Ref allowUnauthenticatedIdentities
 
@@ -1047,4 +1047,4 @@ Outputs:
     Description: role arn
 
   GoogleWebClient:
-    Value: !Ref googleClientId
+    Value: 0000
