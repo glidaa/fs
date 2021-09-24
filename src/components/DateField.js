@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar } from "react-modern-calendar-datepicker";
-import 'react-modern-calendar-datepicker/lib/DatePicker.css';
+import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
+import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 import styledComponents from "styled-components"
 import { ReactComponent as RemoveIcon } from "../assets/close-outline.svg"
 import formatDate from '../utils/formatDate';

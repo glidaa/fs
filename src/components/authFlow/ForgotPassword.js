@@ -38,7 +38,7 @@ const ForgotPassword = (props) => {
       <ForgotPasswordForm onSubmit={initiatePasswordRecovery}>
         <ForgotPasswordFormEntry>
         <label htmlFor="username">
-          Username*
+          Username
         </label>
         <input
           type="test"
@@ -97,9 +97,9 @@ const ForgotPasswordFormContainer = styledComponents.div`
   background-color: #FFFFFF;
   border-radius: 25px;
   height: fit-content;
-  max-height: calc(100% - 90px);
+  max-height: calc(100% - 70px);
   width: 350px;
-  padding: 45px;
+  padding: 35px;
   @media only screen and (max-width: 768px) {
     width: 100%;
     height: 100%;
@@ -114,7 +114,7 @@ const ForgotPasswordFormHeader = styledComponents.div`
   color: #222222;
   & > span:nth-child(1) {
     font-weight: 600;
-    font-size: 28px;
+    font-size: 24px;
   }
   & > span:nth-child(2) {
     font-weight: 400;
@@ -137,7 +137,6 @@ const ForgotPasswordForm = styledComponents.form`
     border-radius: 8px;
     outline: none;
     border: none;
-    cursor: pointer;
     transition: background-color 0.3s linear;
     &:hover {
       background-color: #0058cc;
@@ -159,7 +158,7 @@ const ForgotPasswordFormEntry = styledComponents.div`
     color: #222222;
     margin-bottom: 0;
     width: max-content;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
   }
   & > input {

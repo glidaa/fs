@@ -95,9 +95,9 @@ CODEGEN="{\
 }"
 
 AUTHCONFIG="{\
-\"googleClientId\":\"0000\",\
-\"googleAppIdUserPool\":\"0000\",\
-\"googleAppSecretUserPool\":\"0000\"\
+\"googleClientId\":\"637088123316-jegbuu2nel72tpedrq16ldismufgt6fp.apps.googleusercontent.com\",\
+\"googleAppIdUserPool\":\"637088123316-jegbuu2nel72tpedrq16ldismufgt6fp.apps.googleusercontent.com\",\
+\"googleAppSecretUserPool\":\"ywBgg0ZC5RMVeJDerNINUglu\"\
 }"
 
 CATEGORIES="{\
