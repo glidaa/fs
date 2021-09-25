@@ -10,6 +10,7 @@ export default (taskState, projectID, prevTask = null, nextTask = null) => {
     description: taskState.description,
     due: taskState.due,
     tags: taskState.tags,
-    status: taskState.status
+    status: taskState.status,
+    assignees: []
   }
 }

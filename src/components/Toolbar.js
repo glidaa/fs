@@ -54,12 +54,15 @@ const TasksPanel = (props) => {
               }
           />
         </ToolbarAction>
-        <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
+        <ToolbarAction onClick={() => openLeftPanel(panelPages.APP_SETTINGS)}>
           <SettingsIcon
               width="24"
               height="24"
               strokeWidth="32"
-              color="#222222"
+              color={
+                isLeftPanelOpened && leftPanelPage === panelPages.APP_SETTINGS ?
+                "#006EFF" : "#222222"
+              }
           />
         </ToolbarAction>
       </TopControls>

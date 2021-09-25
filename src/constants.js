@@ -60,7 +60,8 @@ export const panelPages = {
   ASSIGNEE_CHOOSER: "ASSIGNEE_CHOOSER",
   WATCHER_CHOOSER: "WATCHER_CHOOSER",
   ACCOUNT_SETTINGS: "ACCOUNT_SETTINGS",
-  PROJECT_SETTINGS: "PROJECT_SETTINGS"
+  PROJECT_SETTINGS: "PROJECT_SETTINGS",
+  APP_SETTINGS: "APP_SETTINGS"
 }
 
 export const initProjectState = (prevProject = null, nextProject = null) => {

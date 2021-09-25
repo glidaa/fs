@@ -139,7 +139,7 @@ const LoginForm = styledComponents.form`
     border-radius: 8px;
     outline: none;
     border: none;
-    transition: background-color 0.3s linear;
+    transition: background-color 0.3s;
     &:hover {
       background-color: #0058cc;
     }

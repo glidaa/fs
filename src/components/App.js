@@ -5,6 +5,7 @@ import { AuthState } from "../constants";
 import * as projectsActions from "../actions/projects";
 import * as tasksActions from "../actions/tasks";
 import * as appActions from "../actions/app";
+import * as appSettingsActions from "../actions/appSettings";
 import aws_exports from "../aws-exports";
 import * as queries from "../graphql/queries"
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
@@ -36,10 +37,22 @@ const App = (props) => {
     }
   };
 
+  const fetchAppSettings = () => {
+    const fetchedSettings = window.localStorage.getItem("appSettings")
+    if (fetchedSettings) {
+      dispatch(appSettingsActions.importAppSettings(JSON.parse(fetchedSettings)))
+    }
+  }
+
   useEffect(() => {
     dispatch(appActions.setHistory(history));
+    window.addEventListener("storage", fetchAppSettings);
     if (user.state !== AuthState.SignedIn) {
       window.addEventListener("storage", fetchLocalProjects);
+    }
+    return () => {
+      window.removeEventListener("storage", fetchAppSettings)
+      window.removeEventListener("storage", fetchLocalProjects)
     }
   }, []);
 

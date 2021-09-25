@@ -35,7 +35,7 @@ const SidePanelShell = styledComponents.div`
   flex: 1;
   transition: all 0.2s ease;
   transform: ${({ isOpened, isRight }) => (isOpened ? "translateX(0)" : `translateX(${isRight ? "100%" : "-100%"})`)};
-  max-width: ${({ isOpened }) => (isOpened ? "100vw" : "0px")};
+  max-width: ${({ isOpened }) => (isOpened ? "365px" : "0px")};
   overflow: ${({ isOpened }) => (isOpened ? "auto" : "hidden")};
   @media only screen and (max-width: 768px) {
     position: fixed;

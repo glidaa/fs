@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import {
   closestCenter,
   DndContext,
@@ -25,10 +25,9 @@ import TaskItem from "./TaskItem";
 import ProjectNotSelected from "./ProjectNotSelected";
 import * as appActions from "../actions/app";
 import * as tasksActions from "../actions/tasks";
-import { OK, initTaskState } from "../constants";
+import { OK, initTaskState, panelPages, AuthState } from "../constants";
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
-import { panelPages } from "../constants"
 import ProjectTitle from './ProjectTitle';
 
 const Sortable = (props) => {
@@ -59,9 +58,7 @@ const Sortable = (props) => {
     <DndContext
       collisionDetection={closestCenter}
       onDragStart={({active}) => {
-        if (!active) {
-          return;
-        }
+        if (!active) return;
         setActiveId(active.id);
       }}
       onDragEnd={({over}) => {
@@ -94,17 +91,18 @@ const SortableItem = (props) => {
   const {
     index,
     value,
-    setHideShow 
+    setHideShow,
+    sortable
   } = props
 
   const {
     isSorting,
     isDragging,
     listeners,
-    setNodeRef,
     transform,
     transition,
-  } = useSortable({id: value.id});
+    setNodeRef,
+  } = useSortable({id: value.id, disabled: !sortable});
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -138,6 +136,7 @@ const TasksPanel = (props) => {
     },
     tasks,
     projects,
+    user,
     dispatch,
   } = props;
   const onSortEnd = (oldIndex, newIndex) => {
@@ -179,6 +178,12 @@ const TasksPanel = (props) => {
       dispatch(appActions.handleSetLeftPanel(true))
     }
   }
+  const getReadOnly = (user, projects, selectedProject) => {
+    return user.state === AuthState.SignedIn &&
+		projects[selectedProject]?.owner !== user.data.username &&
+		projects[selectedProject]?.permissions === "r"
+  }
+  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])
   return (
     <TasksPanelContainer
       name="TasksPanelContainer"
@@ -225,6 +230,7 @@ const TasksPanel = (props) => {
                   key={value.id}
                   index={index}
                   value={value}
+                  sortable={!readOnly}
                 />
               )
             )}
@@ -285,4 +291,5 @@ export default connect((state) => ({
   tasks: state.tasks,
   app: state.app,
   projects: state.projects,
+  user: state.user
 }))(TasksPanel);

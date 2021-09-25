@@ -288,7 +288,7 @@ const CommentControls = styledComponents.div`
         color: #FFFFFF;
         border: none;
         outline: none;
-        transition: background-color 0.3s linear;
+        transition: background-color 0.3s;
         &:hover {
           background-color: #0058cc;
         }

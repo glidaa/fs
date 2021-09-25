@@ -6,6 +6,7 @@ import app from "./app"
 import mutations from "./mutations"
 import observers from "./observers"
 import users from "./users"
+import appSettings from "./appSettings"
 
 export default {
   user,
@@ -15,5 +16,6 @@ export default {
   app,
   observers,
   users,
-  mutations
+  mutations,
+  appSettings
 }

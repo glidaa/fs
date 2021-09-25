@@ -28,7 +28,7 @@ button {
           user-select: none;
 }
 
-input {
+input, select {
   outline: none;
 }
 

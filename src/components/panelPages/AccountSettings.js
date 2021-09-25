@@ -279,7 +279,7 @@ const SaveSettingsBtn = styledComponents.button`
   outline: none;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s linear;
+  transition: background-color 0.3s;
   &:hover {
     background-color: #0058cc;
   }

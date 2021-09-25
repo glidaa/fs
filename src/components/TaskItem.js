@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useEffect } from "react"
+import React, { useRef, useMemo } from "react"
 import styledComponents from "styled-components";
 import { connect } from "react-redux";
 import useWindowSize from "../utils/useWindowSize";
