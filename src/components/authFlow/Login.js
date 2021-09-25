@@ -5,7 +5,6 @@ import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
-import { ReactComponent as GoogleLogo } from "../../assets/google-logo.svg"
 import { AuthState } from '@aws-amplify/ui-components';
 import { useHistory } from 'react-router';
 
@@ -31,15 +30,6 @@ const Login = (props) => {
       <LoginFormHeader>
         <span>Login</span>
       </LoginFormHeader>
-      <LoginWithGoogleBtn
-        onClick={() => Auth.federatedSignIn({provider: 'Google'})}
-      >
-        <GoogleLogo height={18} />
-        <span>Sign in with Google</span>
-      </LoginWithGoogleBtn>
-      <LoginWithEmailHeader>
-        or Sign in with Email
-      </LoginWithEmailHeader>
       <LoginForm onSubmit={handleLogin}>
         <LoginFormEntry>
           <label htmlFor="username">
@@ -187,24 +177,6 @@ const LoginFormEntry = styledComponents.div`
   }
 `
 
-const LoginWithGoogleBtn = styledComponents.button`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  color: #222222;
-  cursor: pointer;
-  outline: none;
-  background-color: #FFFFFF;
-  padding: 10px 0;
-  border: 1px solid #C0C0C0;
-  width: 100%;
-  font-weight: 600;
-  font-size: 14px;
-  border-radius: 8px;
-`
-
 const NewAccountLink = styledComponents.div`
   font-size: 14px;
   justify-self: flex-start;
@@ -221,25 +193,6 @@ const ForgotPasswordLink = styledComponents.span`
   cursor: pointer;
   &:hover {
 
-  }
-`
-
-const LoginWithEmailHeader = styledComponents.span`
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #C0C0C0;
-  &::after, &::before {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background-color: #C0C0C0;
-  }
-  &::before {
-    margin-right: 1rem;
-  }
-  &::after {
-    margin-left: 1rem;
   }
 `
 

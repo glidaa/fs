@@ -13,9 +13,7 @@
     },
     "categories": {
       "auth": {
-        "fsCognito": {
-          "googleClientId": "637088123316-jegbuu2nel72tpedrq16ldismufgt6fp.apps.googleusercontent.com"
-        },
+        "fsCognito": {},
         "userPoolGroups": {}
       },
       "function": {

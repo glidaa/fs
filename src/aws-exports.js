@@ -19,8 +19,8 @@ const awsmobile = {
             "profile",
             "aws.cognito.signin.user.admin"
         ],
-        "redirectSignIn": "https://forwardslash.ch/",
-        "redirectSignOut": "https://forwardslash.ch/",
+        "redirectSignIn": "https://forwardslash.ch/,http://localhost:3000/",
+        "redirectSignOut": "https://forwardslash.ch/,http://localhost:3000/",
         "responseType": "code"
     },
     "federationTarget": "COGNITO_USER_AND_IDENTITY_POOLS",
