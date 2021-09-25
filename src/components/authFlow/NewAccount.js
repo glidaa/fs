@@ -152,8 +152,6 @@ const NewAccount = (props) => {
         }
       });
       setCurrStep(1)
-      dispatch(appActions.setLoading(true))
-      setShouldRedirect(true)
     } catch (error) {
       console.log('error signing in', error);
       switch(error.code) {

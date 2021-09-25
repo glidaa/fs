@@ -66,7 +66,7 @@
   "hostedUIDomainName": "fs",
   "authProvidersUserPool": ["Google"],
   "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid profile email\",\"AttributeMapping\":{\"birthdate\":\"birthdays\",\"email\":\"email\",\"family_name\":\"family_name\",\"gender\":\"genders\",\"given_name\":\"given_name\",\"phone_number\":\"phoneNumbers\",\"picture\":\"picture\",\"username\":\"sub\"}}]",
-  "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://forwardslash.ch/\"],\"LogoutURLs\":[\"https://forwardslash.ch/\"]}",
+  "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://forwardslash.ch/\",\"http://localhost:3000/\"],\"LogoutURLs\":[\"https://forwardslash.ch/\",\"http://localhost:3000/\"]}",
   "userPoolGroupList": ["free", "pro"],
   "serviceName": "Cognito",
   "parentStack": {
