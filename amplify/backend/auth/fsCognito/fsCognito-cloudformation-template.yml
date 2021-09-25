@@ -597,9 +597,6 @@ Outputs:
   IdentityPoolName:
     Value: !GetAtt IdentityPool.Name
 
-  OAuthMetadata:
-    Value: !Ref oAuthMetadata
-
   UserPoolId:
     Value: !Ref "UserPool"
     Description: Id for the user pool
