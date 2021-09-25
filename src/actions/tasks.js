@@ -1,5 +1,5 @@
 import { API, graphqlOperation } from "aws-amplify";
-import { AuthState } from '@aws-amplify/ui-components';
+import { AuthState } from '../constants';
 import { listTasksForProject } from "../graphql/queries"
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"

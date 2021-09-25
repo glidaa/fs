@@ -1,7 +1,6 @@
 import React, { useRef, useMemo, useEffect } from "react"
 import styledComponents from "styled-components";
 import { connect } from "react-redux";
-import { AuthState } from "@aws-amplify/ui-components";
 import useWindowSize from "../utils/useWindowSize";
 import formatDate from "../utils/formatDate"
 import copyTaskCore from "../utils/copyTask"
@@ -15,7 +14,7 @@ import { ReactComponent as DuplicateIcon } from "../assets/duplicate-outline.svg
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
 import Specials from "./Specials";
-import { OK, initTaskState } from "../constants";
+import { OK, initTaskState, AuthState } from "../constants";
 import AvatarArray from "./AvatarArray";
 
 const TaskItem = (props) => {

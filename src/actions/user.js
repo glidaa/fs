@@ -1,4 +1,4 @@
-import { AuthState } from '@aws-amplify/ui-components';
+import { AuthState } from '../constants';
 import * as observersActions from "./observers"
 
 export const SET_STATE = "SET_STATE";

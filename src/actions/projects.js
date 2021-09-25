@@ -1,12 +1,11 @@
 import { API, graphqlOperation } from "aws-amplify";
-import { AuthState } from '@aws-amplify/ui-components';
 import { listOwnedProjects, listAssignedProjects } from "../graphql/queries"
 import * as appActions from "./app"
 import * as mutationsActions from "./mutations"
 import * as mutations from "../graphql/mutations"
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
-import { OK, PENDING } from "../constants";
+import { OK, PENDING, AuthState } from "../constants";
 import prepareProjectToBeSent from "../utils/prepareProjectToBeSent";
 import generateMutationID from "../utils/generateMutationID";
 

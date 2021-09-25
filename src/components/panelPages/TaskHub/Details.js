@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { connect } from "react-redux";
-import { AuthState } from "@aws-amplify/ui-components";
+import { AuthState } from "../../../constants";
 import DateField from "../../DateField";
 import * as tasksActions from "../../../actions/tasks";
 import styledComponents from "styled-components";

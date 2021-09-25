@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as projectsActions from "../../actions/projects";
-import { AuthState } from "@aws-amplify/ui-components";
+import { AuthState } from "../../constants";
 import styledComponents from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';

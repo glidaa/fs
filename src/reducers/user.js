@@ -1,4 +1,4 @@
-import { AuthState } from '@aws-amplify/ui-components';
+import { AuthState } from '../constants';
 import { SET_STATE, SET_DATA } from "../actions/user"
 
 const initState = {

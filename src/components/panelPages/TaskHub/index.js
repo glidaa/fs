@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../../actions/app";
-import { AuthState } from "@aws-amplify/ui-components";
+import { AuthState } from "../../../constants";
 import styledComponents from "styled-components";
 import Comments from "./Comments";
 import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-back-outline.svg";

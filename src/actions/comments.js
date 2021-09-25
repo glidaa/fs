@@ -1,5 +1,5 @@
 import { API, graphqlOperation } from "aws-amplify";
-import { AuthState } from '@aws-amplify/ui-components';
+import { AuthState } from '../constants';
 import { listCommentsForTask } from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
 import * as usersActions from "./users"

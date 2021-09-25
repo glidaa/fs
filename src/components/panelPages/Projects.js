@@ -23,8 +23,7 @@ import { connect } from "react-redux";
 import * as projectsActions from "../../actions/projects"
 import * as appActions from "../../actions/app"
 import ProjectItem from "../ProjectItem"
-import { AuthState } from '@aws-amplify/ui-components';
-import { initProjectState, OK, PENDING } from "../../constants"
+import { initProjectState, OK, PENDING, AuthState } from "../../constants"
 import parseLinkedList from "../../utils/parseLinkedList"
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as AddIcon } from "../../assets/add-outline.svg";

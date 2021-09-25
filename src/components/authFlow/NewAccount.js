@@ -5,7 +5,7 @@ import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
-import { AuthState } from '@aws-amplify/ui-components';
+import { AuthState } from '../../constants';
 import DateField from '../DateField';
 import GenderField from '../GenderField';
 
@@ -204,6 +204,9 @@ const NewAccount = (props) => {
       case "gender":
         setGender(value)
         break
+      case "verificationCode":
+        setVerificationCode(value)
+        break
       default:
         break
     }
@@ -213,7 +216,7 @@ const NewAccount = (props) => {
       <NewAccountFormHeader>
         <span>Create Account</span>
       </NewAccountFormHeader>
-      <NewAccountForm onSubmit={handleNewAccount}>
+      <NewAccountStepOneForm onSubmit={handleNewAccount}>
         <NewAccountFormEntry isError={firstNameError}>
           <label htmlFor="firstName">
             First Name
@@ -306,15 +309,15 @@ const NewAccount = (props) => {
             value={gender}
           />
         </NewAccountFormEntry>
-        <input type="submit" value="Sign Up" disabled={!isSubmissionPossible} />
-      </NewAccountForm>
+        <SubmitBtn type="submit" value="Sign Up" disabled={!isSubmissionPossible} />
+      </NewAccountStepOneForm>
     </NewAccountFormContainer>
   ) : (
     <NewAccountFormContainer>
       <NewAccountFormHeader>
         <span>Create Account</span>
       </NewAccountFormHeader>
-      <NewAccountForm onSubmit={completeNewAccount}>
+      <NewAccountStepTwoForm onSubmit={completeNewAccount}>
         <NewAccountFormEntry>
           <label htmlFor="verificationCode">
             Verification Code
@@ -327,8 +330,8 @@ const NewAccount = (props) => {
             value={verificationCode}
           ></input>
         </NewAccountFormEntry>
-        <input type="submit" value="Submit" />
-      </NewAccountForm>
+        <SubmitBtn type="submit" value="Submit" />
+      </NewAccountStepTwoForm>
     </NewAccountFormContainer>
   )
 }
@@ -366,7 +369,7 @@ const NewAccountFormHeader = styledComponents.div`
   }
 `
 
-const NewAccountForm = styledComponents.form`
+const NewAccountStepOneForm = styledComponents.form`
   display: grid;
   grid-template-areas:
     'firstName lastName'
@@ -402,26 +405,41 @@ const NewAccountForm = styledComponents.form`
   & > *:nth-child(8) {
     grid-area: signUp;
   }
-  & > h2 > span {
-    cursor: pointer;
+`;
+
+const NewAccountStepTwoForm = styledComponents.form`
+  display: grid;
+  grid-template-areas:
+    'code code'
+    'submit submit';
+  gap: 15px;
+  align-items: start;
+  & > *:nth-child(1) {
+    grid-area: code;
   }
-  & > input[type="submit"] {
-    width: 100%;
-    padding: 15px 0;
-    background-color: #006EFF;
-    color: #FFFFFF;
-    border-radius: 8px;
-    outline: none;
-    border: none;
-    transition: background-color 0.3s ease;
-    &:hover {
-      background-color: #0058cc;
-    }
-    &:disabled {
-      background-color: #338bff;
-    }
+  & > *:nth-child(2) {
+    grid-area: submit;
   }
 `;
+
+const SubmitBtn = styledComponents.input`
+  width: 100%;
+  padding: 15px 0;
+  background-color: #006EFF;
+  color: #FFFFFF !important;
+  border-radius: 8px;
+  outline: none;
+  border: none;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  &:hover {
+    background-color: #0058cc;
+  }
+  &:disabled {
+    background-color: #338bff;
+    cursor: default;
+  }
+`
 
 const NewAccountFormEntry = styledComponents.div`
   display: flex;

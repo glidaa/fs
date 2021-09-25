@@ -5,7 +5,7 @@ import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
-import { AuthState } from '@aws-amplify/ui-components';
+import { AuthState } from '../../constants';
 import { useHistory } from 'react-router';
 
 const Login = (props) => {

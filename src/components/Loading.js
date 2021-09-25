@@ -10,9 +10,8 @@ import * as userActions from "../actions/user"
 import * as observersActions from "../actions/observers"
 import * as queries from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
-import { AuthState } from '@aws-amplify/ui-components'
 import { Redirect, useHistory } from "react-router-dom"
-import { panelPages } from '../constants';
+import { panelPages, AuthState } from '../constants';
 
 const Loading = (props) => {
   const { user, route, dispatch } = props

@@ -1,5 +1,4 @@
-import { AuthState } from '@aws-amplify/ui-components';
-import { panelPages } from "../constants"
+import { panelPages, AuthState } from "../constants"
 import * as tasksActions from "./tasks"
 import * as observersActions from "./observers"
 import * as commentsActions from "./comments"

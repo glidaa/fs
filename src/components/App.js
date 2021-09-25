@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Amplify, { API, graphqlOperation } from "aws-amplify";
-import { AuthState, onAuthUIStateChange } from "@aws-amplify/ui-components";
+import { AuthState } from "../constants";
 import * as projectsActions from "../actions/projects";
 import * as tasksActions from "../actions/tasks";
 import * as appActions from "../actions/app";
-import * as userActions from "../actions/user";
 import aws_exports from "../aws-exports";
 import * as queries from "../graphql/queries"
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
@@ -39,25 +38,6 @@ const App = (props) => {
 
   useEffect(() => {
     dispatch(appActions.setHistory(history));
-    onAuthUIStateChange(async (nextAuthState, authData) => {
-      if (nextAuthState === AuthState.SignedIn) {
-        const userData = (await API.graphql(
-          graphqlOperation(
-            queries.getUserByUsername, {
-              username: authData.username
-            }
-          )
-        )).data.getUserByUsername
-        dispatch(userActions.handleSetData(userData))
-        dispatch(userActions.handleSetState(AuthState.SignedIn))
-      } else {
-        dispatch(userActions.handleSetData(null))
-        dispatch(userActions.handleSetState(nextAuthState))
-      }
-      if (nextAuthState === AuthState.SignedIn) {
-        window.removeEventListener("storage", fetchLocalProjects);
-      }
-    })
     if (user.state !== AuthState.SignedIn) {
       window.addEventListener("storage", fetchLocalProjects);
     }

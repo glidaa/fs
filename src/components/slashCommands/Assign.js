@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../../actions/app"
 import * as tasksActions from "../../actions/tasks"
-import { AuthState } from "@aws-amplify/ui-components";
+import { AuthState } from "../../constants";
 
 const Assign = (props) => {
   const {

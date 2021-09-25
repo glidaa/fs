@@ -10,20 +10,7 @@ const awsmobile = {
     "aws_cognito_region": "us-east-1",
     "aws_user_pools_id": "us-east-1_EKzGe7te0",
     "aws_user_pools_web_client_id": "57jf7a2vfc5hvgcpqdl2ambeg3",
-    "oauth": {
-        "domain": "fs-mainn.auth.us-east-1.amazoncognito.com",
-        "scope": [
-            "phone",
-            "email",
-            "openid",
-            "profile",
-            "aws.cognito.signin.user.admin"
-        ],
-        "redirectSignIn": "https://forwardslash.ch/,http://localhost:3000/",
-        "redirectSignOut": "https://forwardslash.ch/,http://localhost:3000/",
-        "responseType": "code"
-    },
-    "federationTarget": "COGNITO_USER_AND_IDENTITY_POOLS",
+    "oauth": {},
     "aws_cloud_logic_custom": []
 };
 

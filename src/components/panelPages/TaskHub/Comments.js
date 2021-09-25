@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useOuterClick } from 'react-outer-click';
 import { useState, useRef } from "react"
 import { connect } from "react-redux";
-import { AuthState } from "@aws-amplify/ui-components";
+import { AuthState } from "../../../constants";
 import styledComponents from "styled-components";
 import { stateToHTML } from 'draft-js-export-html';
 import { Editor, EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';

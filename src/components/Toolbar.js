@@ -1,9 +1,8 @@
 import React from 'react';
 import styledComponents from "styled-components";
 import * as appActions from "../actions/app"
-import { AuthState } from "@aws-amplify/ui-components";
 import { connect } from "react-redux";
-import { panelPages } from "../constants"
+import { panelPages, AuthState } from "../constants"
 import { ReactComponent as ProjectsIcon } from "../assets/albums-outline.svg"
 import { ReactComponent as NotificationIcon } from "../assets/notifications-outline.svg"
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"

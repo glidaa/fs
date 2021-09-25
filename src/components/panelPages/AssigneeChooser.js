@@ -4,8 +4,7 @@ import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../../actions/app";
 import styledComponents from "styled-components";
 import * as tasksActions from "../../actions/tasks"
-import { AuthState } from "@aws-amplify/ui-components";
-import { panelPages } from "../../constants";
+import { panelPages, AuthState } from "../../constants";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
 
