@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styledComponents from "styled-components"
 import { Redirect } from "react-router-dom"
 import { connect } from "react-redux"
-import { Auth, Hub } from "aws-amplify";
-import * as appActions from "../../actions/app"
+import { Auth } from "aws-amplify";
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
 import TasksIllustartion from "../../assets/oleg-chursin-vaPoJZB9Mzg-unsplash.jpg"
 import Login from './Login';
 import NewAccount from './NewAccount';
@@ -22,12 +23,6 @@ const AuthFlow = (props) => {
         //setShouldRedirect(true)
       }
     })
-    Hub.listen("auth", ({ payload: { event } }) => {
-      if (event === "signIn") {
-        dispatch(appActions.setLoading(true))
-        setShouldRedirect(true)
-      }
-    });
   }, [])
   useEffect(() => {
     switch (route.match?.path) {
@@ -49,25 +44,28 @@ const AuthFlow = (props) => {
       {shouldRedirect ? (
         <Redirect to={referrer || "/"} />
       ) : (
-        <LoginContainer>
+        <AuthFlowContainer>
           {React.createElement(currPage, {setShouldRedirect, setCurrPage})}
-        </LoginContainer>
+        </AuthFlowContainer>
       )}
     </>
   )
 }
 
-const LoginContainer = styledComponents.div`
+const AuthFlowContainer = styledComponents(SimpleBar)`
   position: fixed;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: url(${TasksIllustartion});
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  & .simplebar-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+  }
 `
 
 export default connect()(AuthFlow);

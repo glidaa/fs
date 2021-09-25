@@ -74,17 +74,19 @@ const LoginFormContainer = styledComponents.div`
   display: flex;
   flex-direction: column;
   gap: 15px;
+  margin: 40px 0;
   justify-content: center;
   background-color: #FFFFFF;
   border-radius: 25px;
   height: fit-content;
-  max-height: calc(100% - 70px);
   width: 350px;
   padding: 35px;
   @media only screen and (max-width: 768px) {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    width: calc(100% - 70px);
+    height: calc(100% - 70px);
     border-radius: 0;
+    margin: 0;
   }
 `
 
