@@ -63,13 +63,13 @@ const AppSettings = (props) => {
               Sort Tasks By
             </label>
             <SelectField
-                name="tasksSortingCriteria"
-                onChange={handleChange}
-                value={tasksSortingCriteria}
+              name="tasksSortingCriteria"
+              onChange={handleChange}
+              value={tasksSortingCriteria}
             >
-              <option value="default">default</option>
-              <option value="due">due date</option>
-              <option value="status">status</option>
+              <option value="BY_DEFAULT">default</option>
+              <option value="BY_DUE">due date</option>
+              <option value="BY_STATUS">status</option>
             </SelectField>
           </AppSetting>
           <NonPrefixedInputField type="submit" name="submit" value="Submit"></NonPrefixedInputField>
@@ -140,34 +140,6 @@ const SelectField = styledComponents.select`
   }
   &::placeholder {
     color: #C0C0C0;
-  }
-`
-
-const PrefixedInputField = styledComponents.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  width: calc(100% - 20px);
-  padding: 10px 10px;
-  border: 1px solid #C0C0C0;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  & > span {
-    color: #C0C0C0;
-  }
-  background-color: ${({ disabled }) => disabled ? "#FAFAFA" : "transparent"};
-  & > input {
-    border: none;
-    outline: none;
-    padding: 0;
-    &:disabled {
-      background-color: #FAFAFA;
-    }
-    &::placeholder {
-      color: #C0C0C0;
-    }
   }
 `
 

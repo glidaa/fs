@@ -23,7 +23,7 @@ const TaskItem = (props) => {
 		item,
 		tasks,
 		users,
-        user,
+    user,
 		projects,
 		app: {
 			selectedTask,
@@ -34,6 +34,8 @@ const TaskItem = (props) => {
 			lockedTaskField,
 			command
 		},
+    nextTask,
+    prevTask,
 		listeners,
 		isSorting,
 		isDragging,
@@ -122,20 +124,18 @@ const TaskItem = (props) => {
 							initTaskState(
 								selectedProject,
 								selectedTask,
-								tasks[selectedTask].nextTask
+								nextTask
 							)
 						)
 					);
 				}
 			} else if (e.key === "ArrowUp") {
-				const prevTask = tasks[selectedTask].prevTask
 				if (!prevTask) {
 					return dispatch(appActions.handleSetProjectTitle(true))
 				} else {
 					return dispatch(appActions.handleSetTask(prevTask))
 				}
 			} else if (e.key === "ArrowDown") {
-				const nextTask = tasks[selectedTask].nextTask
 				if (nextTask) {
 					return dispatch(appActions.handleSetTask(nextTask))
 				}
