@@ -90,6 +90,9 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
+            "SES_EMAIL": {
+              "Ref": "sesIdentityName"
+            },
             "API_FSCOREAPI_GRAPHQLAPIIDOUTPUT": {
               "Ref": "apifsCoreAPIGraphQLAPIIdOutput"
             },
