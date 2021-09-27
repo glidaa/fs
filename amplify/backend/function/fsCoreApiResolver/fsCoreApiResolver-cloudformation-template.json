@@ -93,6 +93,25 @@
             "SES_EMAIL": {
               "Ref": "sesIdentityName"
             },
+            "SES_IDENTITY_ARN": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:aws:ses:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":identity/",
+                  {
+                    "Ref": "sesIdentityName"
+                  }
+                ]
+              ]
+            },
             "API_FSCOREAPI_GRAPHQLAPIIDOUTPUT": {
               "Ref": "apifsCoreAPIGraphQLAPIIdOutput"
             },

@@ -1,7 +1,9 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
+const ses = new AWS.SESV2()
 const https = require('https');
 const urlParse = require("url").URL;
+const getEmailContent = require("./email/index").getContent
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
@@ -27,6 +29,8 @@ const USERTABLE = process.env.API_FSCOREAPI_USERTABLE_NAME;
 const PROJECTTABLE = process.env.API_FSCOREAPI_PROJECTTABLE_NAME;
 const TASKTABLE = process.env.API_FSCOREAPI_TASKTABLE_NAME;
 const COMMENTTABLE = process.env.API_FSCOREAPI_COMMENTTABLE_NAME;
+const SES_EMAIL = process.env.SES_EMAIL
+const SES_IDENTITY_ARN = process.env.SES_IDENTITY_ARN
 
 const APIURL = process.env.API_FSCOREAPI_GRAPHQLAPIENDPOINTOUTPUT
 
@@ -922,7 +926,7 @@ exports.handler = async function (ctx) {
               ":assignees": [...assignees, assignee],
               ":updatedAt": new Date().toISOString()
             },
-            ReturnValues: "UPDATED_NEW"
+            ReturnValues: "ALL_NEW"
           };
           const userUpdateParams = isUser && {
             TableName: USERTABLE,
@@ -940,6 +944,35 @@ exports.handler = async function (ctx) {
             const updatedTask = await docClient.update(taskUpdateParams).promise();
             if (isUser) {
               const userUpdate = await docClient.update(userUpdateParams).promise();
+              const emailToBeSent = getEmailContent("assignment", {
+                ASSIGNEE_FIRST_NAME: userUpdate.Attributes.firstName,
+                ASSIGNER_USERNAME: client,
+                TASK: updatedTask.Attributes.task,
+                TASK_PERMALINK: `https://forwardslash.ch/${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}`,
+              })
+              await ses.sendEmail({
+                FromEmailAddress: SES_EMAIL,
+                FromEmailAddressIdentityArn: SES_IDENTITY_ARN,
+                Destination: {
+                  ToAddresses: [
+                    userUpdate.Attributes.email
+                  ]
+                },
+                Content: {
+                  Simple: {
+                    Body: {
+                      Html: {
+                        Data: emailToBeSent.body,
+                        Charset: "UTF-8"
+                      }
+                    },
+                    Subject: {
+                      Data: emailToBeSent.subject,
+                      Charset: "UTF-8"
+                    }
+                  }
+                }
+              }).promise()
               await _pushUserUpdate(userUpdate.Attributes)
             }
             return {
