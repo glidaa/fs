@@ -15,6 +15,7 @@ import Login from "./Login";
 import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
+
 Amplify.configure(aws_exports);
 
 const App = (props) => {

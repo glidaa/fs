@@ -50,6 +50,14 @@
         "rules": {
           "import/no-anonymous-default-export": "off"
         }
+      },
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
       }
     ]
   },
@@ -66,9 +74,15 @@
     ]
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^6.3.8",
+    "@storybook/addon-essentials": "^6.3.8",
+    "@storybook/addon-links": "^6.3.8",
+    "@storybook/node-logger": "^6.3.8",
+    "@storybook/preset-create-react-app": "^3.2.0",
+    "@storybook/react": "^6.3.8",
+    "babel-loader": "8.1.0",
     "eslint": "^7.25.0",
     "eslint-config-airbnb": "^18.2.1",
-    "babel-loader": "8.1.0",
     "prettier": "^2.2.1"
   }
 }
