@@ -6,8 +6,8 @@ import { Auth } from "aws-amplify";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
 import { AuthState } from '../../constants';
-import DateField from '../DateField';
-import GenderField from '../GenderField';
+import DateField from '../fields/DateField';
+import GenderField from '../fields/GenderField';
 
 const NewAccount = (props) => {
   const { setShouldRedirect, dispatch } = props
@@ -27,6 +27,8 @@ const NewAccount = (props) => {
   const [emailError, setEmailError] = useState(null)
   const [passwordError, setPasswordError] = useState(null)
   const [dateOfBirthError, setDateOfBirthError] = useState(null)
+  const [verificationCodeError, setVerificationCodeError] = useState(null)
+  const [isBusy, setIsBusy] = useState(false)
   const validateFirstName = (value = firstName) => {
     setFirstNameError(null)
     if (!value.trim()) {
@@ -69,7 +71,7 @@ const NewAccount = (props) => {
       setPasswordError("Password must contain at least 8 characters.")
       return
     }
-    const re = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    const re = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*`~\-<>,./+_=()[\]\\]).{8,}$/;
     const isValid = re.test(value)
     if (!isValid) setPasswordError("Password must contain lowercase, uppercase, numerical and symbolic characters.")
   }
@@ -137,6 +139,7 @@ const NewAccount = (props) => {
   ])
   const handleNewAccount = async (e) => {
     e.preventDefault()
+    setIsBusy(true)
     try {
       await Auth.signUp({
         username: username.trim(),
@@ -152,6 +155,7 @@ const NewAccount = (props) => {
         }
       });
       setCurrStep(1)
+      setIsBusy(false)
     } catch (error) {
       console.log('error signing in', error);
       switch(error.code) {
@@ -161,18 +165,31 @@ const NewAccount = (props) => {
         default:
           break
       }
+      setIsBusy(false)
       dispatch(userActions.handleSetData(null))
       dispatch(userActions.handleSetState(AuthState.SignedOut))
     }
   }
   const completeNewAccount = async (e) => {
     e.preventDefault()
+    setVerificationCodeError(null)
+    setIsBusy(true)
     try {
       await Auth.confirmSignUp(username, verificationCode)
+      await Auth.signIn(username, password);
       dispatch(appActions.setLoading(true))
       setShouldRedirect(true)
     } catch (error) {
       console.log('error signing in', error);
+      switch (error.code) {
+        case "CodeMismatchException":
+          setVerificationCodeError("Code is incorrect. Please check the code sent to your email and try again.")
+          break
+        default:
+          setVerificationCodeError("An unexpected error occured.")
+          break
+      }
+      setIsBusy(false)
     }
   }
   const handleChange = ({ target: { name, value } }) => {
@@ -206,6 +223,7 @@ const NewAccount = (props) => {
         break
       case "verificationCode":
         setVerificationCode(value)
+        setVerificationCodeError(null)
         break
       default:
         break
@@ -297,6 +315,7 @@ const NewAccount = (props) => {
             placeholder="no date selected"
             isError={dateOfBirthError}
             value={dateOfBirth}
+            isClearable
           />
           {dateOfBirthError && <span>{dateOfBirthError}</span>}
         </NewAccountFormEntry>
@@ -309,16 +328,21 @@ const NewAccount = (props) => {
             value={gender}
           />
         </NewAccountFormEntry>
-        <SubmitBtn type="submit" value="Sign Up" disabled={!isSubmissionPossible} />
+        <SubmitBtn
+          type="submit"
+          value={isBusy ? "Signing Up" : "Sign Up"}
+          disabled={!isSubmissionPossible || isBusy}
+        />
       </NewAccountStepOneForm>
     </NewAccountFormContainer>
   ) : (
     <NewAccountFormContainer>
       <NewAccountFormHeader>
-        <span>Create Account</span>
+        <span>Confirm Account</span>
+        <span>Enter code sent to your email.</span>
       </NewAccountFormHeader>
       <NewAccountStepTwoForm onSubmit={completeNewAccount}>
-        <NewAccountFormEntry>
+        <NewAccountFormEntry isError={verificationCodeError}>
           <label htmlFor="verificationCode">
             Verification Code
           </label>
@@ -329,8 +353,13 @@ const NewAccount = (props) => {
             onChange={handleChange}
             value={verificationCode}
           ></input>
+          {verificationCodeError && <span>{verificationCodeError}</span>}
         </NewAccountFormEntry>
-        <SubmitBtn type="submit" value="Submit" />
+        <SubmitBtn
+          type="submit"
+          value={isBusy ? "Processing" : "Submit"}
+          disabled={isBusy || !verificationCode.trim()}
+        />
       </NewAccountStepTwoForm>
     </NewAccountFormContainer>
   )
@@ -359,7 +388,6 @@ const NewAccountFormContainer = styledComponents.div`
 const NewAccountFormHeader = styledComponents.div`
   display: flex;
   flex-direction: column;
-  gap: 5px;
   color: #222222;
   & > span:nth-child(1) {
     font-weight: 600;

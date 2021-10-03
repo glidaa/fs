@@ -18,7 +18,7 @@
     },
     "sesIdentityName": {
       "Type": "String",
-      "Default": "noreply@forwardslash.ch"
+      "Default": "forwardslash.ch"
     },
     "apifsCoreAPIGraphQLAPIIdOutput": {
       "Type": "String",
@@ -91,7 +91,15 @@
               "Ref": "AWS::Region"
             },
             "SES_EMAIL": {
-              "Ref": "sesIdentityName"
+              "Fn::Join": [
+                "",
+                [
+                  "noreply@",
+                  {
+                    "Ref": "sesIdentityName"
+                  }
+                ]
+              ]
             },
             "SES_IDENTITY_ARN": {
               "Fn::Join": [
@@ -340,25 +348,6 @@
                       ":identity/",
                       {
                         "Ref": "sesIdentityName"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:appsync:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":apis/",
-                      {
-                        "Ref": "apifsCoreAPIGraphQLAPIIdOutput"
                       }
                     ]
                   ]

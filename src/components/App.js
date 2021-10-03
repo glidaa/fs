@@ -80,7 +80,7 @@ const App = (props) => {
         if (reqProject) {
           dispatch(appActions.handleSetProject(reqProject.id, false));
           if (taskPermalink) {
-            const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id))
+            const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id, true))
             const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(taskPermalink, 10))[0]
             if (reqTask) {
               dispatch(appActions.handleSetTask(reqTask.id, false));
@@ -97,7 +97,7 @@ const App = (props) => {
       }
     }
     })()
-  }, [routeMatch, app, user]);
+  }, [routeMatch.url, app.isLoading, user]);
   return (
     <div className="App">
       <Route

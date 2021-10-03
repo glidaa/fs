@@ -17,7 +17,7 @@ const PanelTabs = (props) => {
             isSelected={value === x[0]}
             onClick={() => value !== x[0] && onChange(x[0])}
           >
-            {x[0]}
+            {x[1]}
           </PanelTab>
         ))}
       </PanelTabsContainer>

@@ -4,6 +4,7 @@ import styledComponents from "styled-components"
 
 const TagField = (props) => {
   const {
+    name,
     value,
     onChange,
     readOnly
@@ -23,7 +24,7 @@ const TagField = (props) => {
       e.target.value = ""
       onChange({ target: {
         value: Array.from(tagsSet),
-        name: "tags"
+        name: name || "tags"
       }})
     }
 }

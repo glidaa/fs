@@ -4,6 +4,7 @@ import styledComponents from "styled-components";
 const PermissionsField = (props) => {
 
 	const {
+    name,
 		value,
 		onChange,
     readOnly,
@@ -14,7 +15,7 @@ const PermissionsField = (props) => {
     if (!readOnly) {
       onChange({ target: {
         value: permission,
-        name: "permissions"
+        name: name || "permissions"
       }})
     }
 	};
@@ -45,7 +46,7 @@ const PermissionsFieldShell = styledComponents.div`
 	gap: 5px;
   width: 100%;
   opacity: ${({disabled}) => disabled ? "0.6" : "1"};
-  transition: opacity 0.3s linear;
+  transition: opacity 0.3s;
 `
 
 const PermissionSelection = styledComponents.button`

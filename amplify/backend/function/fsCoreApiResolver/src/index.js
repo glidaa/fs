@@ -1,19 +1,19 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
-const ses = new AWS.SESV2()
+const ses = new AWS.SESV2();
 const https = require('https');
 const urlParse = require("url").URL;
-const getEmailContent = require("./email/index").getContent
+const getEmailContent = require("./email/index").getContent;
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
 
 const UNAUTHORIZED = "UNAUTHORIZED";
 const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
-const INVALID_ASSIGNEE = "INVALID_ASSIGNEE"
+const INVALID_ASSIGNEE = "INVALID_ASSIGNEE";
 const USER_NOT_ASSIGNED = "USER_NOT_ASSIGNED";
 const ALREADY_WATCHING = "ALREADY_WATCHING";
-const INVALID_WATCHER = "INVALID_WATCHER"
+const INVALID_WATCHER = "INVALID_WATCHER";
 const USER_NOT_WATCHING = "USER_NOT_WATCHING";
 const USER_NOT_FOUND = "USER_NOT_FOUND";
 const PROJECT_NOT_FOUND = "PROJECT_NOT_FOUND";
@@ -21,29 +21,29 @@ const TASK_NOT_FOUND = "TASK_NOT_FOUND";
 const COMMENT_NOT_FOUND = "COMMENT_NOT_FOUND";
 const PERMALINK_USED = "PERMALINK_USED";
 
-const TODO = "todo"
-const PENDING = "pending"
-const DONE = "done"
+const TODO = "todo";
+const PENDING = "pending";
+const DONE = "done";
 
 const USERTABLE = process.env.API_FSCOREAPI_USERTABLE_NAME;
 const PROJECTTABLE = process.env.API_FSCOREAPI_PROJECTTABLE_NAME;
 const TASKTABLE = process.env.API_FSCOREAPI_TASKTABLE_NAME;
 const COMMENTTABLE = process.env.API_FSCOREAPI_COMMENTTABLE_NAME;
-const SES_EMAIL = process.env.SES_EMAIL
-const SES_IDENTITY_ARN = process.env.SES_IDENTITY_ARN
+const SES_EMAIL = process.env.SES_EMAIL;
+const SES_IDENTITY_ARN = process.env.SES_IDENTITY_ARN;
 
-const APIURL = process.env.API_FSCOREAPI_GRAPHQLAPIENDPOINTOUTPUT
+const APIURL = process.env.API_FSCOREAPI_GRAPHQLAPIENDPOINTOUTPUT;
 
-const USERPOOL = process.env.AUTH_FSCOGNITO_USERPOOLID
+const USERPOOL = process.env.AUTH_FSCOGNITO_USERPOOLID;
 
-const REGION = process.env.REGION
+const REGION = process.env.REGION;
 
 exports.handler = async function (ctx) {
   console.log(ctx);
 
-  const cachedProjects = {}
-  const cachedTasks = {}
-  const cachedComments = {}
+  const cachedProjects = {};
+  const cachedTasks = {};
+  const cachedComments = {};
 
   const resolvers = {
     Mutation: {
@@ -881,6 +881,14 @@ exports.handler = async function (ctx) {
           ...((updateData.lastName && [{
             Name: 'family_name',
             Value: updateData.lastName
+          }]) || []),
+          ...((updateData.lastName && [{
+            Name: 'birthdate',
+            Value: updateData.birthdate
+          }]) || []),
+          ...((updateData.lastName && [{
+            Name: 'gender',
+            Value: updateData.gender
           }]) || [])
         ],
         UserPoolId: USERPOOL,
@@ -944,12 +952,31 @@ exports.handler = async function (ctx) {
             const updatedTask = await docClient.update(taskUpdateParams).promise();
             if (isUser) {
               const userUpdate = await docClient.update(userUpdateParams).promise();
-              const emailToBeSent = getEmailContent("assignment", {
+              const emailToBeSentToAssignee = getEmailContent("assignment", {
                 ASSIGNEE_FIRST_NAME: userUpdate.Attributes.firstName,
                 ASSIGNER_USERNAME: client,
                 TASK: updatedTask.Attributes.task,
                 TASK_PERMALINK: `https://forwardslash.ch/${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}`,
               })
+              const emailToBeSentToWatchers = getEmailContent("assignmentWatching", {
+                ASSIGNEE_USERNAME: userUpdate.Attributes.username,
+                ASSIGNER_USERNAME: client,
+                TASK: updatedTask.Attributes.task,
+                TASK_PERMALINK: `https://forwardslash.ch/${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}`,
+              })
+              let watchersEmails = []
+              for (const watcher of updatedTask.Attributes.watchers) {
+                try {
+                  const watcherEmail = (await getUserByUsername({
+                    arguments: {
+                      username: watcher
+                    }
+                  })).email
+                  watchersEmails.push(watcherEmail)
+                } catch {
+                  continue
+                }
+              }
               await ses.sendEmail({
                 FromEmailAddress: SES_EMAIL,
                 FromEmailAddressIdentityArn: SES_IDENTITY_ARN,
@@ -962,12 +989,35 @@ exports.handler = async function (ctx) {
                   Simple: {
                     Body: {
                       Html: {
-                        Data: emailToBeSent.body,
+                        Data: emailToBeSentToAssignee.body,
                         Charset: "UTF-8"
                       }
                     },
                     Subject: {
-                      Data: emailToBeSent.subject,
+                      Data: emailToBeSentToAssignee.subject,
+                      Charset: "UTF-8"
+                    }
+                  }
+                }
+              }).promise()
+              watchersEmails.length && await ses.sendEmail({
+                FromEmailAddress: SES_EMAIL,
+                FromEmailAddressIdentityArn: SES_IDENTITY_ARN,
+                Destination: {
+                  ToAddresses: [
+                    ...watchersEmails
+                  ]
+                },
+                Content: {
+                  Simple: {
+                    Body: {
+                      Html: {
+                        Data: emailToBeSentToWatchers.body,
+                        Charset: "UTF-8"
+                      }
+                    },
+                    Subject: {
+                      Data: emailToBeSentToWatchers.subject,
                       Charset: "UTF-8"
                     }
                   }
@@ -1066,68 +1116,59 @@ exports.handler = async function (ctx) {
   async function addWatcher(ctx) {
     const { watcher, taskID, mutationID } = ctx.arguments
     const client = ctx.identity.username
-    const isValidWatcher = /^(user|anonymous):(.*)$/.test(watcher)
-    if (isValidWatcher) {
-      const [, watcherType, watcherID] = watcher.match(/(user|anonymous):(.*)/)
-      const isUser = watcherType === "user"
-      const userGetParams = {
-        TableName: USERTABLE,
-        Key: {
-          "username": watcherID
-        }
+    const userGetParams = {
+      TableName: USERTABLE,
+      Key: {
+        "username": watcher
       }
-      const userData = isUser && await docClient.get(userGetParams).promise()
-      const { projectID, watchers } = await getTask(taskID)
-      const taskPath = `${projectID}/${taskID}`
-      if (await isProjectEditableByClient(projectID, client)) {
-        if (!watchers.includes(watcher)) {
-          const taskUpdateParams = {
-            TableName: TASKTABLE,
-            Key: {
-              "id": taskID
-            },
-            UpdateExpression: "set watchers=:watchers, updatedAt = :updatedAt",
-            ExpressionAttributeValues: {
-              ":watchers": [...watchers, watcher],
-              ":updatedAt": new Date().toISOString()
-            },
-            ReturnValues: "UPDATED_NEW"
-          };
-          const userUpdateParams = isUser && {
-            TableName: USERTABLE,
-            Key: {
-              "username": watcherID
-            },
-            UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
-            ExpressionAttributeValues: {
-              ":assignedTasks": [...userData.Item.assignedTasks, taskPath],
-              ":updatedAt": new Date().toISOString()
-            },
-            ReturnValues: "ALL_NEW"
-          };
-          try {
-            const updatedTask = await docClient.update(taskUpdateParams).promise();
-            if (isUser) {
-              const userUpdate = await docClient.update(userUpdateParams).promise();
-              await _pushUserUpdate(userUpdate.Attributes)
-            }
-            return {
-              id: taskID,
-              projectID: cachedTasks[taskID].projectID,
-              mutationID: mutationID,
-              ...updatedTask.Attributes
-            }
-          } catch (err) {
-            throw new Error(err);
+    }
+    const userData = await docClient.get(userGetParams).promise()
+    const { projectID, watchers } = await getTask(taskID)
+    const taskPath = `${projectID}/${taskID}`
+    if (await isProjectEditableByClient(projectID, client)) {
+      if (!watchers.includes(watcher)) {
+        const taskUpdateParams = {
+          TableName: TASKTABLE,
+          Key: {
+            "id": taskID
+          },
+          UpdateExpression: "set watchers=:watchers, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":watchers": [...watchers, watcher],
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "UPDATED_NEW"
+        };
+        const userUpdateParams = {
+          TableName: USERTABLE,
+          Key: {
+            "username": watcher
+          },
+          UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":assignedTasks": [...userData.Item.assignedTasks, taskPath],
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        try {
+          const updatedTask = await docClient.update(taskUpdateParams).promise();
+          const userUpdate = await docClient.update(userUpdateParams).promise();
+          await _pushUserUpdate(userUpdate.Attributes)
+          return {
+            id: taskID,
+            projectID: cachedTasks[taskID].projectID,
+            mutationID: mutationID,
+            ...updatedTask.Attributes
           }
-        } else {
-          throw new Error(ALREADY_WATCHING)
+        } catch (err) {
+          throw new Error(err);
         }
       } else {
-        throw new Error(UNAUTHORIZED)
+        throw new Error(ALREADY_WATCHING)
       }
     } else {
-      throw new Error(INVALID_WATCHER)
+      throw new Error(UNAUTHORIZED)
     }
   }
 

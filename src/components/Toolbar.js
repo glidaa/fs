@@ -67,10 +67,15 @@ const TasksPanel = (props) => {
         </ToolbarAction>
       </TopControls>
       <BottomControls>
-          {user.state === AuthState.SignedIn ? (
-            <LetterAvatar onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
-              {user.data.abbr}
-            </LetterAvatar>
+          {user.state === AuthState.SignedIn ? (user.data.avatar ? (
+              <ToolbarAction onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
+                <ImageAvatar src={user.data.avatar} />
+              </ToolbarAction>
+            ) : (
+              <LetterAvatar onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
+                {user.data.abbr}
+              </LetterAvatar>
+            )
           ) : (
             <UserIndicator onClick={goToLoginPage}>
               <LoginIcon
@@ -162,6 +167,13 @@ const UserIndicator = styledComponents(ToolbarAction)`
   background-color: #006EFF;
   border-radius: 8px;
   padding: 10px;
+`
+
+const ImageAvatar = styledComponents.img`
+  display: block;
+  border-radius: 8px;
+  width: 42px;
+  height: 42px;
 `
 
 const LetterAvatar = styledComponents(ToolbarAction)`

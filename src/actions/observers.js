@@ -7,6 +7,7 @@ import * as userActions from "./user"
 import * as usersActions from "./users"
 import * as subscriptions from "../graphql/subscriptions"
 import filterObj from "../utils/filterObj";
+import updateAssignedTasks from "../pushedUpdates/updateAssignedTasks";
 
 export const SET_USER_OBSERVERS = "SET_USER_OBSERVERS";
 export const CLEAR_USER_OBSERVERS = "CLEAR_USER_OBSERVERS";
@@ -63,6 +64,7 @@ export const handleSetUserObservers = () => (dispatch, getState) => {
     next: e => {
       const incoming = e.value.data.onPushUserUpdate
       dispatch(userActions.handleSetData(incoming))
+      updateAssignedTasks(dispatch, getState, incoming)
     },
     error: error => console.warn(error)
   }))

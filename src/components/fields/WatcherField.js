@@ -1,12 +1,13 @@
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from "react-redux"
 import styledComponents from "styled-components";
-import * as tasksActions from "../actions/tasks"
-import * as appActions from "../actions/app";
-import { ReactComponent as RemoveIcon } from "../assets/close-outline.svg"
-import { panelPages } from "../constants";
+import * as tasksActions from "../../actions/tasks"
+import * as appActions from "../../actions/app";
+import { ReactComponent as RemoveIcon } from "../../assets/close-outline.svg"
+import { panelPages } from "../../constants";
+import ShadowScroll from '../ShadowScroll';
 
-const AssigneeField = (props) => {
+const WatcherField = (props) => {
   const {
     value,
     readOnly,
@@ -17,57 +18,38 @@ const AssigneeField = (props) => {
     dispatch
   } = props
 
-  const assigneeFieldRef = useRef(null)
+  const watcherFieldRef = useRef(null)
 
   useEffect(() => {
-    if (assigneeFieldRef.current) {
-      assigneeFieldRef.current.addEventListener("wheel", (e) => {
+    if (watcherFieldRef.current) {
+      watcherFieldRef.current.addEventListener("wheel", (e) => {
         e.preventDefault();
-        assigneeFieldRef.current.scrollLeft += e.deltaY;
-      }, {passive: true});
+        watcherFieldRef.current.scrollLeft += e.deltaY;
+      });
     }
-  }, [assigneeFieldRef])
+  }, [watcherFieldRef])
 
   const openChooser = () => {
-    return dispatch(appActions.setRightPanelPage(panelPages.ASSIGNEE_CHOOSER))
+    return dispatch(appActions.setRightPanelPage(panelPages.WATCHER_CHOOSER))
   }
 
-  const processValue = (value, users) => {
-    const result = []
-    for (const assignee of value) {
-      const isValidAssignee = /^(user|anonymous):(.*)$/.test(assignee)
-      if (isValidAssignee) {
-        const [, assigneeType, assigneeID] = assignee.match(/(user|anonymous):(.*)/)
-        const isUser = assigneeType === "user"
-        if (isUser) {
-          result.push({...users[assigneeID], raw: assignee, isUser})
-        } else {
-          result.push({ name: assigneeID, raw: assignee, isUser })
-        }
-      }
-    }
-    return result
-  }
-
-  const processedValue = useMemo(() => processValue(value, users), [value, users]);
-
-  const handleUnassignTask = (username) => {
-    dispatch(tasksActions.handleUnassignTask(selectedTask, username))
+  const handleRemoveWatcher = (username) => {
+    dispatch(tasksActions.handleRemoveWatcher(selectedTask, username))
   }
 
   return (
-    <AssigneeFieldShell ref={assigneeFieldRef}>
-      {(processedValue.length) ? (
+    <WatcherFieldShell>
+      {(value.length) ? (
         <> 
           {!readOnly && (
-            <NewAssigneeBtn onClick={openChooser}>
+            <NewWatcherBtn onClick={openChooser}>
               <div>+</div>
-              <span>Assign</span>
-            </NewAssigneeBtn>
+              <span>Add</span>
+            </NewWatcherBtn>
           )}
-          {processedValue.map(x => (
-            <AssigneeItem key={x.raw}>
-              <RemoveBtn onClick={() => handleUnassignTask(x.raw)}>
+          {value.map(x => (
+            <WatcherItem key={x}>
+              <RemoveBtn onClick={() => handleRemoveWatcher(x)}>
                 <RemoveIcon
                   height="16"
                   width="16"
@@ -75,30 +57,32 @@ const AssigneeField = (props) => {
                   color="#006EFF"
                 />
               </RemoveBtn>
-              {x.isUser && (x.avatar ?
-                <ImageAvatar src={x.avatar} /> :
-                <LetterAvatar>{x.abbr}</LetterAvatar>
-              )}
-              {!x.isUser && <LetterAvatar>{x.name[0].toUpperCase()}</LetterAvatar>}
-              <span>{x.firstName || x.name}</span>
-            </AssigneeItem>
+              {users[x].avatar ?
+                <ImageAvatar src={users[x].avatar} /> :
+                <LetterAvatar>{users[x].abbr}</LetterAvatar>
+              }
+              <WatcherDetails>
+                <span>{users[x].firstName}</span>
+                <span>@{x}</span>
+              </WatcherDetails>
+            </WatcherItem>
           ))}
         </>
       ) : (
-        <NoAssignees>
-          <span>No Users Assigned Yet</span>
+        <NoWatchers>
+          <span>No Watchers Added Yet</span>
           {!readOnly && (
             <button onClick={openChooser}>
-              + Add Assignee
+              + Add Watcher
             </button>
           )}
-        </NoAssignees>
+        </NoWatchers>
       )}
-    </AssigneeFieldShell>
+    </WatcherFieldShell>
   )
 }
 
-const AssigneeFieldShell = styledComponents.div`
+const WatcherFieldShell = styledComponents(ShadowScroll)`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -109,7 +93,7 @@ const AssigneeFieldShell = styledComponents.div`
   scroll-behavior: smooth;
 `
 
-const NewAssigneeBtn = styledComponents.button`
+const NewWatcherBtn = styledComponents.button`
   display: flex;
   gap: 5px;
   padding: 10px 15px;
@@ -120,8 +104,8 @@ const NewAssigneeBtn = styledComponents.button`
   font-size: 20px;
   background-color: #FFFFFF;
   outline: none;
-  min-width: 92px;
-  height: 80px;
+  height: 91.8px;
+  min-width: 80px;
   font-weight: 500;
   cursor: pointer;
   border: 1px solid #006EFF;
@@ -145,7 +129,7 @@ const NewAssigneeBtn = styledComponents.button`
   }
 `
 
-const NoAssignees = styledComponents.div`
+const NoWatchers = styledComponents.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -176,35 +160,49 @@ const NoAssignees = styledComponents.div`
   }
 `
 
-const AssigneeItem = styledComponents.span`
+const WatcherItem = styledComponents.span`
   position: relative;
   display: flex;
   gap: 5px;
-  padding: 10px 15px;
+  padding: 10px;
   border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9em;
-  min-width: 60px;
-  max-width: 60px;
+  min-width: 80px;
+  max-width: 80px;
   color: #5D6969;
   border: 1px solid #C0C0C0;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
   background-color: #FFFFFF;
   flex-direction: column;
   align-items: center;
+`
+
+const WatcherDetails = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   & > span {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    max-width: 60px;
+    max-width: 80px;
+    line-height: 1.2;
+  }
+  & > span:nth-child(1) {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & > span:nth-child(2) {
+    font-size: 10px;
+    font-weight: 400;
   }
 `
 
 const ImageAvatar = styledComponents.img`
   display: inline;
   border-radius: 100%;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
 `
 
 const LetterAvatar = styledComponents.div`
@@ -215,11 +213,11 @@ const LetterAvatar = styledComponents.div`
   color: #006EFF;
   background-color: #CCE2FF;
   line-height: 0;
-  font-size: 13.33px;
-  min-width: 32px;
-  min-height: 32px;
-  width: 32px;
-  height: 32px;
+  font-size: calc(36px / 2.4);
+  min-width: 36px;
+  min-height: 36px;
+  width: 36px;
+  height: 36px;
 `
 
 const RemoveBtn = styledComponents.button`
@@ -237,4 +235,4 @@ const RemoveBtn = styledComponents.button`
 export default connect((state) => ({
     app: state.app,
     users: state.users
-  }))(AssigneeField);
+  }))(WatcherField);

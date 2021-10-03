@@ -8,8 +8,8 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
-import PrivacyField from '../PrivacyField';
-import PermissionsField from '../PermissionsField';
+import PrivacyField from '../fields/PrivacyField';
+import PermissionsField from '../fields/PermissionsField';
 
 const ProjectSettings = (props) => {
   const {
@@ -183,6 +183,7 @@ const ProjectSettingsForm = styledComponents(SimpleBar)`
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin-bottom: 25px;
     & > h2 > span {
       cursor: pointer;
     }
@@ -203,14 +204,14 @@ const ProjectSetting = styledComponents.div`
     color: #222222;
     margin-bottom: 0;
     width: max-content;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
   }
 `
 
 const NonPrefixedInputField = styledComponents.input`
   width: calc(100% - 20px);
-  padding: 10px 10px;
+  padding: 5px 10px;
   border: 1px solid #C0C0C0;
   border-radius: 8px;
   font-size: 14px;
@@ -229,7 +230,7 @@ const PrefixedInputField = styledComponents.div`
   align-items: center;
   justify-content: flex-start;
   width: calc(100% - 20px);
-  padding: 10px 10px;
+  padding: 5px 10px;
   border: 1px solid #C0C0C0;
   border-radius: 8px;
   font-size: 14px;

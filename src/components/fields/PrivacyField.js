@@ -4,6 +4,7 @@ import styledComponents from "styled-components";
 const PrivacyField = (props) => {
 
 	const {
+    name,
 		value,
 		onChange,
     readOnly,
@@ -14,7 +15,7 @@ const PrivacyField = (props) => {
     if (!readOnly) {
       onChange({ target: {
         value: privacy,
-        name: "privacy"
+        name: name || "privacy"
       }})
     }
 	};
@@ -45,7 +46,7 @@ const PrivacyFieldShell = styledComponents.div`
 	gap: 5px;
   width: 100%;
   opacity: ${({disabled}) => disabled ? "0.6" : "1"};
-  transition: opacity 0.3s linear;
+  transition: opacity 0.3s;
 `
 
 const PrivacySelection = styledComponents.button`

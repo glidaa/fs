@@ -10,13 +10,14 @@ const getTemplate = (templateID) => {
 }
 
 const templates = {
-    assignment: getTemplate("assignment")
+    assignment: getTemplate("assignment"),
+    assignmentWatching: getTemplate("assignmentWatching")
 }
 
 const getContent = (templateID, entities) => {
     const result = templates[templateID]
     const entitiesKeyValuePairs = Object.entries(entities)
-    for (const entitiesKeyValuePair in entitiesKeyValuePairs) {
+    for (const entitiesKeyValuePair of entitiesKeyValuePairs) {
         const replacementRegex = new RegExp(`\\[${entitiesKeyValuePair[0]}\\]`, "g")
         result.subject = result.subject.replace(replacementRegex, entitiesKeyValuePair[1])
         result.body = result.body.replace(replacementRegex, entitiesKeyValuePair[1])

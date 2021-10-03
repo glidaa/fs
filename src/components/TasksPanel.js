@@ -5,7 +5,7 @@ import parseLinkedList from "../utils/parseLinkedList";
 import ProjectNotSelected from "./ProjectNotSelected";
 import * as appActions from "../actions/app";
 import * as tasksActions from "../actions/tasks";
-import { OK, initTaskState, panelPages, AuthState } from "../constants";
+import { OK, initTaskState, panelPages } from "../constants";
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
 import ProjectTitle from './ProjectTitle';

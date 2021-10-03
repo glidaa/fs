@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../../actions/app";
@@ -7,28 +7,51 @@ import * as tasksActions from "../../actions/tasks"
 import { panelPages, AuthState } from "../../constants";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
+import { ReactComponent as AssigneeSearchIllustartion } from "../../assets/undraw_People_search_re_5rre.svg"
+import { ReactComponent as NoResultsIllustartion } from "../../assets/undraw_not_found_60pq.svg"
 
 const AssigneeChooser = (props) => {
   const {
     app: {
       selectedTask
     },
+    tasks,
     user,
     dispatch
   } = props;
 
   const [keyword, setKeyword] = useState("")
   const [results, setResults] = useState([])
+  const [isBusy, setIsBusy] = useState(false)
+  const [pendingUser, setPendingUser] = useState(null)
 
   const closeChooser = () => {
     return dispatch(appActions.setRightPanelPage(panelPages.TASK_HUB))
   }
   const handleAssignTask = async (username) => {
-    await dispatch(tasksActions.handleAssignTask(selectedTask, username))
-    closeChooser()
+    setPendingUser(username)
+    setIsBusy(true)
+    try {
+      await dispatch(tasksActions.handleAssignTask(selectedTask, username))
+      closeChooser()
+    } catch {
+      setIsBusy(false)
+      setPendingUser(null)
+    }
   }
+  const filterResults = (results, tasks, selectedTask) => {
+    const currAssignees = tasks[selectedTask].assignees.filter(x => /^user:.*$/.test(x) & x !== pendingUser)
+    return results.filter(x => !currAssignees.includes(`user:${x.username}`))
+  }
+  const filteredResults = useMemo(
+    () => filterResults(results, tasks, selectedTask),
+    [results, tasks, selectedTask]
+  )
   const handleChangeKeyword = (e) => {
     const nextKeyword = e.target.value
+    if (!keyword) {
+      setResults([])
+    }
     setKeyword(nextKeyword)
     const firstLastName = nextKeyword.split(/\s+/)
     if (user.state === AuthState.SignedIn && nextKeyword.trim()) {
@@ -70,7 +93,10 @@ const AssigneeChooser = (props) => {
   return (
     <>
       <PanelPageToolbar>
-        <PanelPageToolbarAction onClick={closeChooser}>
+        <PanelPageToolbarAction
+          onClick={closeChooser}
+          disabled={isBusy}
+        >
           <BackArrowIcon
               width="24"
               height="24"
@@ -79,7 +105,10 @@ const AssigneeChooser = (props) => {
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Add Assignee</PanelPageTitle>
-        <PanelPageToolbarAction onClick={shareTask}>
+        <PanelPageToolbarAction
+          onClick={shareTask}
+          disabled={isBusy}
+        >
           <ShareIcon
               width="24"
               height="24"
@@ -93,22 +122,29 @@ const AssigneeChooser = (props) => {
         name="keyword"
         placeholder="Start searching…"
         onChange={handleChangeKeyword}
+        disabled={isBusy}
         value={keyword}
       />
       <SearchResults>
-        {keyword && <AnonymousUserItem
-          key="::anonymous::"
-          onClick={() => handleAssignTask(`anonymous:${keyword}`)}
-        >
-          <LetterAvatar>{keyword[0].toUpperCase()}</LetterAvatar>
-          <div>
-            <span>{keyword}</span>
-            <span>Anonymous Assignee</span>
-          </div>
-        </AnonymousUserItem>}
-        {results.map(x => (
+        {keyword &&
+        (pendingUser === `anonymous:${keyword.trim()}` ||
+        !tasks[selectedTask].assignees.includes(`anonymous:${keyword.trim()}`)) && (
+          <SearchResultsItem
+            key="::anonymous::"
+            disabled={isBusy}
+            onClick={() => handleAssignTask(`anonymous:${keyword.trim()}`)}
+          >
+            <LetterAvatar>{keyword.trim()[0].toUpperCase()}</LetterAvatar>
+            <div>
+              <span>{keyword.trim()}</span>
+              <span>Anonymous Assignee</span>
+            </div>
+          </SearchResultsItem>
+        )}
+        {keyword && filteredResults.map(x => (
           <SearchResultsItem
             key={x.username}
+            disabled={isBusy}
             onClick={() => handleAssignTask(`user:${x.username}`)}
           >
            {x.avatar ?
@@ -117,10 +153,29 @@ const AssigneeChooser = (props) => {
             }
             <div>
               <span>{`${x.firstName} ${x.lastName}`}</span>
-              <span>{x.email}</span>
+              <span>@{x.username}</span>
             </div>
           </SearchResultsItem>
         ))}
+        {!keyword && (
+          <AssigneeChooserIllustartion>
+            <AssigneeSearchIllustartion />
+            <span>
+              Search For A User To Assign
+            </span>
+          </AssigneeChooserIllustartion>
+        )}
+        {keyword &&
+        !filteredResults.length &&
+        pendingUser !== `anonymous:${keyword.trim()}` &&
+        tasks[selectedTask].assignees.includes(`anonymous:${keyword.trim()}`) && (
+          <AssigneeChooserIllustartion>
+            <NoResultsIllustartion />
+            <span>
+              No Results Found
+            </span>
+          </AssigneeChooserIllustartion>
+        )}
       </SearchResults>
     </>
   );
@@ -150,7 +205,12 @@ const PanelPageToolbarAction = styledComponents.button`
   padding: 0;
   margin: 0;
   background-color: transparent;
+  transition: opacity 0.3s;
   cursor: pointer;
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
 `
 
 const KeywordField = styledComponents.input`
@@ -163,20 +223,25 @@ const KeywordField = styledComponents.input`
   margin: 0 25px;
   font-size: 14px;
   font-weight: 400;
+  transition: opacity 0.3s;
   &::placeholder {
     color: #C0C0C0;
+  }
+  &:disabled {
+    opacity: 0.6;
   }
 `
 
 const SearchResults = styledComponents.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   background-color: #FFFFFF;
   border-radius: 4px;
   width: 100%;
 `
 
-const AnonymousUserItem = styledComponents.div`
+const SearchResultsItem = styledComponents.button`
   display: flex;
   flex-direction: row;
   cursor: pointer;
@@ -184,6 +249,10 @@ const AnonymousUserItem = styledComponents.div`
   gap: 10px;
   font-size: 12px;
   padding: 10px 25px;
+  border: none;
+  background-color: transparent;
+  text-align: start;
+  transition: background-color 0.3s, opacity 0.3s;
   & > div:nth-child(2) {
     display: flex;
     flex-direction: column;
@@ -196,33 +265,12 @@ const AnonymousUserItem = styledComponents.div`
       color: grey;
     }
   }
-  &:hover {
+  &:not(:disabled):hover {
     background-color: #E4E4E2;
   }
-`
-
-const SearchResultsItem = styledComponents.div`
-  display: flex;
-  flex-direction: row;
-  cursor: pointer;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  padding: 10px 25px;
-  & > div:nth-child(2) {
-    display: flex;
-    flex-direction: column;
-    & > span:nth-child(1) {
-      font-weight: bold;
-      color: #222222;
-    }
-    & > span:nth-child(2) {
-      font-style: italic;
-      color: grey;
-    }
-  }
-  &:hover {
-    background-color: #E4E4E2;
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
   }
 `
 
@@ -246,6 +294,24 @@ const LetterAvatar = styledComponents.div`
   min-height: 32px;
   width: 32px;
   height: 32px;
+`
+
+const AssigneeChooserIllustartion = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  & > svg {
+    width: 250px;
+    height: auto;
+  }
+  & > span {
+    font-weight: bold;
+    font-size: 18px;
+    color: #222222;
+  }
 `
 
 export default connect((state) => ({

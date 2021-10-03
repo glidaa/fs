@@ -4,6 +4,7 @@ import styledComponents from "styled-components";
 const StatusField = (props) => {
 
 	const {
+    name,
 		value,
 		onChange,
     readOnly
@@ -13,7 +14,7 @@ const StatusField = (props) => {
     if (!readOnly) {
       onChange({ target: {
         value: status,
-        name: "status"
+        name: name || "status"
       }})
     }
 	};

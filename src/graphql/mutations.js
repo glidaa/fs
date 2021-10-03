@@ -219,7 +219,7 @@ export const deleteComment = /* GraphQL */ `
   }
 `;
 export const assignTask = /* GraphQL */ `
-  mutation AssignTask($taskID: ID!, $assignee: String!, $mutationID: String!) {
+  mutation AssignTask($taskID: ID!, $assignee: String!, $mutationID: String) {
     assignTask(taskID: $taskID, assignee: $assignee, mutationID: $mutationID) {
       id
       projectID
@@ -239,11 +239,7 @@ export const assignTask = /* GraphQL */ `
   }
 `;
 export const unassignTask = /* GraphQL */ `
-  mutation UnassignTask(
-    $taskID: ID!
-    $assignee: String!
-    $mutationID: String!
-  ) {
+  mutation UnassignTask($taskID: ID!, $assignee: String!, $mutationID: String) {
     unassignTask(
       taskID: $taskID
       assignee: $assignee
@@ -267,7 +263,7 @@ export const unassignTask = /* GraphQL */ `
   }
 `;
 export const addWatcher = /* GraphQL */ `
-  mutation AddWatcher($taskID: ID!, $watcher: String!, $mutationID: String!) {
+  mutation AddWatcher($taskID: ID!, $watcher: String!, $mutationID: String) {
     addWatcher(taskID: $taskID, watcher: $watcher, mutationID: $mutationID) {
       id
       projectID
@@ -287,11 +283,7 @@ export const addWatcher = /* GraphQL */ `
   }
 `;
 export const removeWatcher = /* GraphQL */ `
-  mutation RemoveWatcher(
-    $taskID: ID!
-    $watcher: String!
-    $mutationID: String!
-  ) {
+  mutation RemoveWatcher($taskID: ID!, $watcher: String!, $mutationID: String) {
     removeWatcher(taskID: $taskID, watcher: $watcher, mutationID: $mutationID) {
       id
       projectID

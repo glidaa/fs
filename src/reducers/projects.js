@@ -23,6 +23,7 @@ export default function (state = {}, action) {
           ...action.projectState,
           isOwned: stateClone[action.projectState.id]?.isOwned || action.scope === "owned",
           isAssigned: stateClone[action.projectState.id]?.isAssigned || action.scope === "assigned",
+          isWatched: stateClone[action.projectState.id]?.isWatched || action.scope === "watched",
           isTemp: stateClone[action.projectState.id]?.isTemp || action.scope === "temp"
         }
       }
@@ -60,9 +61,10 @@ export default function (state = {}, action) {
           "nextProject"
         )
       }
-      if ((action.scope === "owned" && !stateClone[action.id].isAssigned && !stateClone[action.id].isTemp) ||
-          (action.scope === "assigned" && !stateClone[action.id].isOwned && !stateClone[action.id].isTemp) ||
-          (action.scope === "temp" && !stateClone[action.id].isOwned) && !stateClone[action.id].isAssigned)
+      if ((action.scope === "owned" && !stateClone[action.id].isAssigned && !stateClone[action.id].isWatched && !stateClone[action.id].isTemp) ||
+          (action.scope === "assigned" && !stateClone[action.id].isOwned && !stateClone[action.id].isWatched && !stateClone[action.id].isTemp) ||
+          (action.scope === "watched" && !stateClone[action.id].isOwned && !stateClone[action.id].isAssigned && !stateClone[action.id].isTemp) ||
+          (action.scope === "temp" && !stateClone[action.id].isOwned && !stateClone[action.id].isWatched && !stateClone[action.id].isAssigned))
       {
         delete stateClone[action.id]
       } else {
@@ -70,6 +72,7 @@ export default function (state = {}, action) {
           ...stateClone[action.id],
           ...(action.scope === "owned" && {isOwned: false}),
           ...(action.scope === "assigned" && {isAssigned: false}),
+          ...(action.scope === "watched" && {isWatched: false}),
           ...(action.scope === "temp" && {isTemp: false})
         }
       }
@@ -78,16 +81,19 @@ export default function (state = {}, action) {
       return {}
     case FETCH_PROJECTS:
       if (action.scope === "owned") {
-        stateClone = filterObj(stateClone, x => !x.isOwned && (x.isAssigned || x.isTemp))
+        stateClone = filterObj(stateClone, x => !x.isOwned && (x.isAssigned || x.isTemp || x.isWatched))
       } else if (action.scope === "assigned") {
-        stateClone = filterObj(stateClone, x => !x.isAssigned && (x.isOwned || x.isTemp))
+        stateClone = filterObj(stateClone, x => !x.isAssigned && (x.isOwned || x.isTemp || x.isWatched))
+      } else if (action.scope === "watched") {
+        stateClone = filterObj(stateClone, x => !x.isWatched && (x.isOwned || x.isTemp || x.isAssigned))
       }
       for (const project of action.projects) {
         stateClone[project.id] = {
           ...project,
           isTemp: false,
           isOwned: stateClone[project.id]?.isOwned || action.scope === "owned",
-          isAssigned: stateClone[project.id]?.isAssigned || action.scope === "assigned"
+          isAssigned: stateClone[project.id]?.isAssigned || action.scope === "assigned",
+          isWatched: stateClone[project.id]?.isAssigned || action.scope === "watched"
         }
       }
       return stateClone

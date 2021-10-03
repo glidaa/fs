@@ -321,7 +321,7 @@ const TaskItem = (props) => {
 						{item.due ? formatDate(item.due) : "No Due"}
 					</TaskItemDueDate>
 					<AvatarArray
-						max={3}
+						max={4}
 						users={processedAssingees}
 						borderColor="#F8F8F8"
 						size={ width > 768 ? 24 : 18 }
@@ -456,7 +456,7 @@ const TaskItemRightPart = styledComponents.div`
 `
 
 const TaskItemHeader = styledComponents.span`
-	font-size: 1em;
+	font-size: 16px;
 	width: 0px;
 	font-weight: 400;
 	text-overflow: ellipsis;
@@ -472,7 +472,7 @@ const TaskItemInput = styledComponents.div`
 	width: 100%;
 	& > input {
 		background-color: transparent;
-		font-size: 1em;
+		font-size: 16px;
 		width: 100%;
 		padding: 0;
 		margin: 0;
@@ -490,14 +490,14 @@ const TaskItemDueDate = styledComponents.span`
 	width: 64px;
 	color: #FFFFFF;
 	font-weight: 600;
-	font-size: 0.7em;
+	font-size: 11.2px;
 	background-color: #006EFF;
 	white-space: nowrap;
     border-radius: 10px;
     padding: 3px 10px;
 	@media only screen and (max-width: 768px) {
 		width: 48px;
-		font-size: 0.5em;
+		font-size: 8px;
 	}
 `
 

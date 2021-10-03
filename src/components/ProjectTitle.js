@@ -93,7 +93,7 @@ const ProjectTitleHeader = styledComponents.span`
 	font-weight: 600;
 	margin: 4px 0;
 	padding: 8px 12px;
-	font-size: 2em;
+	font-size: 32px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
@@ -115,7 +115,7 @@ const ProjectTitleInput = styledComponents.div`
 	& > input {
 		background-color: transparent;
 		color: #596766;
-		font-size: 2em;
+		font-size: 32px;
 		width: 100%;
 		font-weight: 600;
 		padding: 0;

@@ -242,7 +242,7 @@ export const handleAddWatcher = (taskID, username) => async (dispatch, getState)
       watchers: [...new Set([...prevWatchers, username])]
     }))
     try {
-      await dispatch(usersActions.handleAddUsers(username))
+      await dispatch(usersActions.handleAddUsers([username]))
       const mutationID = generateMutationID(user.data.username)
       dispatch(mutationsActions.addMutation(mutationID))
       await API.graphql(graphqlOperation(mutations.addWatcher, {
@@ -250,7 +250,8 @@ export const handleAddWatcher = (taskID, username) => async (dispatch, getState)
         watcher: username,
         mutationID: mutationID
       }))
-    } catch {
+    } catch (err) {
+      console.error(err)
       dispatch(updateTask({
         id: taskID,
         watchers: prevWatchers
@@ -315,9 +316,11 @@ export const handleRemoveWatcher= (taskID, username) => async (dispatch, getStat
   }
 }
 
-export const handleFetchTasks = (projectID) => async (dispatch, getState) => {
+export const handleFetchTasks = (projectID, isInitial = false) => async (dispatch, getState) => {
   const { user } = getState()
-  dispatch(appActions.handleSetTask(null))
+  if (!isInitial) {
+    dispatch(appActions.handleSetTask(null))
+  }
   if (user.state === AuthState.SignedIn) {
     try {
       const res = await API.graphql(graphqlOperation(listTasksForProject, { projectID }))

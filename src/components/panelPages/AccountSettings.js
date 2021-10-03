@@ -8,6 +8,8 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as LogOutIcon } from "../../assets/log-out-outline.svg"
+import GenderField from '../fields/GenderField';
+import DateField from '../fields/DateField';
 
 const AccountSettings = (props) => {
   const {
@@ -37,23 +39,37 @@ const AccountSettings = (props) => {
   const checkIsChanaged = (
     newFirstName,
     newLastName,
+    newBirthdate,
+    newGender,
     firstName,
-    lastName
+    lastName,
+    birthdate,
+    gender
   ) => (
     !(newFirstName === firstName &&
-    newLastName === lastName)
+    newLastName === lastName &&
+    newBirthdate === birthdate &&
+    newGender === gender)
   )
 
   const isChanged = useMemo(() => checkIsChanaged(
     newFirstName,
     newLastName,
+    newBirthdate,
+    newGender,
     firstName,
-    lastName
+    lastName,
+    birthdate,
+    gender
   ), [
     newFirstName,
     newLastName,
+    newBirthdate,
+    newGender,
     firstName,
-    lastName
+    lastName,
+    birthdate,
+    gender
   ])
   
   const closePanel = () => {
@@ -93,9 +109,10 @@ const AccountSettings = (props) => {
         </PanelPageToolbarAction>
       </PanelPageToolbar>
       <AccountSettingsHeader>
-        <LetterAvatar>
-            {abbr}
-        </LetterAvatar>
+        {avatar ?
+          <ImageAvatar src={avatar} /> :
+          <LetterAvatar>{abbr}</LetterAvatar>
+        }
         <span>{firstName} {lastName}</span>
         <span>@{username}</span>
       </AccountSettingsHeader>
@@ -139,30 +156,24 @@ const AccountSettings = (props) => {
             ></input>
           </AccountSetting>
           <AccountSetting>
+            <label htmlFor="dateOfBirth">
+              Date Of Birth
+            </label>
+            <DateField
+              name="dateOfBirth"
+              onChange={(e) => setNewBirthdate(e.target.value)}
+              placeholder="no date selected"
+              value={newBirthdate}
+            />
+          </AccountSetting>
+          <AccountSetting>
             <label htmlFor="gender">
               Gender
             </label>
-            <input
-              type="text"
-              name="gender"
-              placeholder="gender…"
-              disabled
+            <GenderField
               onChange={(e) => setNewGender(e.target.value)}
               value={newGender}
-            ></input>
-          </AccountSetting>
-          <AccountSetting>
-            <label htmlFor="birthdate">
-              Birthdate
-            </label>
-            <input
-              type="text"
-              name="birthdate"
-              placeholder="birthdate…"
-              disabled
-              onChange={(e) => setNewBirthdate(e.target.value)}
-              value={newBirthdate}
-            ></input>
+            />
           </AccountSetting>
           <input type="submit" name="submit" value="Submit"></input>
         </form>
@@ -186,6 +197,7 @@ const AccountSettingsForm = styledComponents(SimpleBar)`
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin-bottom: 25px;
     & > h2 > span {
       cursor: pointer;
     }
@@ -206,12 +218,12 @@ const AccountSetting = styledComponents.div`
     color: #222222;
     margin-bottom: 0;
     width: max-content;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
   }
   & > input {
     width: calc(100% - 20px);
-    padding: 10px 10px;
+    padding: 5px 10px;
     border: 1px solid #C0C0C0;
     border-radius: 8px;
     font-size: 14px;
@@ -286,6 +298,13 @@ const SaveSettingsBtn = styledComponents.button`
   &:disabled {
     background-color: #338bff;
   }
+`
+
+const ImageAvatar = styledComponents.img`
+  display: block;
+  border-radius: 32px;
+  width: 128px;
+  height: 128px;
 `
 
 const LetterAvatar = styledComponents.div`

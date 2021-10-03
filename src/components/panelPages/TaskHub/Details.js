@@ -1,14 +1,16 @@
 import React, { useMemo } from 'react';
 import { connect } from "react-redux";
 import { AuthState } from "../../../constants";
-import DateField from "../../DateField";
+import DateField from "../../fields/DateField";
 import * as tasksActions from "../../../actions/tasks";
 import styledComponents from "styled-components";
-import StatusField from "../../StatusField";
-import TagField from "../../TagField";
+import StatusField from "../../fields/StatusField";
+import TagField from "../../fields/TagField";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
-import AssigneeField from "../../AssigneeField";
+import AssigneeField from "../../fields/AssigneeField";
+import Textarea from '../../fields/Textarea';
+import WatcherField from '../../fields/WatcherField';
 
 const Details = (props) => {
   const {
@@ -52,6 +54,18 @@ const Details = (props) => {
             readOnly={readOnly}
           />
         </Detail>
+        {AuthState.SignedIn && (
+          <Detail>
+            <label htmlFor="watchers">
+              Watched By
+            </label>
+            <WatcherField
+              name="watchers"
+              value={tasks[selectedTask].watchers}
+              readOnly={readOnly}
+            />
+          </Detail>
+        )}
         <Detail>
           <label htmlFor="task">
             Task
@@ -62,7 +76,6 @@ const Details = (props) => {
             placeholder="task…"
             onChange={handleChange}
             value={tasks[selectedTask].task || ""}
-            contentEditable={false}
             readOnly={readOnly}
           ></input>
         </Detail>
@@ -70,15 +83,14 @@ const Details = (props) => {
           <label htmlFor="description">
             Description
           </label>
-          <input
-            type="text"
+          <Textarea
             name="description"
             placeholder="description…"
             onChange={handleChange}
             value={tasks[selectedTask].description || ""}
-            contentEditable={false}
+            width="calc(100% - 20px)"
             readOnly={readOnly}
-          ></input>
+          ></Textarea>
         </Detail>
         <Detail>
           <label htmlFor="due">
@@ -90,6 +102,7 @@ const Details = (props) => {
             placeholder="no date selected"
             value={tasks[selectedTask].due}
             readOnly={readOnly}
+            isClearable
           />
         </Detail>
         <Detail>
@@ -126,6 +139,7 @@ const DetailsForm = styledComponents(SimpleBar)`
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin-bottom: 25px;
     & > h2 > span {
       cursor: pointer;
     }
@@ -146,7 +160,7 @@ const Detail = styledComponents.div`
     color: #222222;
     margin-bottom: 0;
     width: max-content;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
   }
   & > input {

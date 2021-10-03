@@ -19,7 +19,7 @@ const AvatarArray = (props) => {
                     }
                 </Fragment>
             ))}
-            {users.length <= max && new Array((max + 1) - users.length).fill(0).map((_, i) => (
+            {users.length <= max && new Array(max - users.length).fill(0).map((_, i) => (
                 <DumpAvatar key={i} borderColor={borderColor} size={size} />
             ))}
             {users.length > max && <LetterAvatar borderColor={borderColor} size={size}>+{users.length - max + 1}</LetterAvatar>}

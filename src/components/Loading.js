@@ -98,7 +98,7 @@ const Loading = (props) => {
         if (reqProject) {
           dispatch(appActions.handleSetProject(reqProject.id, false))
           setLoadingMsg("We Are Getting The Requested Tasks")
-          const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id))
+          const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id, true))
           if (params.taskPermalink) {
             const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(params.taskPermalink, 10))[0]
             if (reqTask) {

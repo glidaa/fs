@@ -204,7 +204,8 @@ const Projects = (props) => {
           <PanelTabs
             tabs={[
               ["owned", "Owned"],
-              ["assigned", "Assigned"]
+              ["assigned", "Assigned"],
+              ["watched", "Watched"]
             ]}
             value={scope}
             onChange={(newVal) => setScope(newVal)}
@@ -214,6 +215,17 @@ const Projects = (props) => {
           {scope === "assigned" ? (
             <div>
               {Object.values(projects).filter(x => x.isAssigned).map(project => (
+                <div key={project.id}>
+                  <ProjectItem
+                    project={project}
+                    readOnly={false}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : scope === "watched" ? (
+            <div>
+              {Object.values(projects).filter(x => x.isWatched).map(project => (
                 <div key={project.id}>
                   <ProjectItem
                     project={project}

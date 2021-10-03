@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from "react-dom"
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 import styledComponents from "styled-components"
-import { ReactComponent as RemoveIcon } from "../assets/close-outline.svg"
-import formatDate from '../utils/formatDate';
+import { ReactComponent as RemoveIcon } from "../../assets/close-outline.svg"
+import formatDate from '../../utils/formatDate';
+
+const BodyOverlay = ({ children }) => createPortal(children, window.document.querySelector("body"))
 
 const DateField = (props) => {
   const {
@@ -12,7 +15,8 @@ const DateField = (props) => {
     placeholder,
     onChange,
     readOnly,
-    isError
+    isError,
+    isClearable
   } = props
   const [isPickerOpened, setIsPickerOpened] = useState(false)
   const clearValue = () => {
@@ -59,7 +63,7 @@ const DateField = (props) => {
         onClick={togglePicker}
         readOnly
       />  
-      {value && (
+      {isClearable && value && (
         <ClearBtn onClick={clearValue}>
           <RemoveIcon
             height="16"
@@ -69,17 +73,19 @@ const DateField = (props) => {
           />
         </ClearBtn>
       )}
-      {isPickerOpened && (
-        <PickerContainer onClick={handleOverlayClick}>
-          <Calendar
-            value={pickerValue}
-            onChange={pickValue}
-            colorPrimary="#006EFF"
-            colorPrimaryLight="#338bff"
-            shouldHighlightWeekends
-          />
-        </PickerContainer>
-      )}
+      <BodyOverlay>
+        {isPickerOpened && (
+          <PickerContainer onClick={handleOverlayClick}>
+            <Calendar
+              value={pickerValue}
+              onChange={pickValue}
+              colorPrimary="#006EFF"
+              colorPrimaryLight="#338bff"
+              shouldHighlightWeekends
+            />
+          </PickerContainer>
+        )}
+      </BodyOverlay>
     </DateFieldContainer>
   );
 };

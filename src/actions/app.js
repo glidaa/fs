@@ -92,7 +92,7 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
   const { user, app, projects } = getState()
   if (app.selectedProject !== id) {
     dispatch(observersActions.handleClearTasksObservers())
-    dispatch(handleSetTask(null));
+    dispatch(handleSetTask(null, shouldChangeURL));
     dispatch(tasksActions.emptyTasks());
     if (id) {
       if (projects[id]) {

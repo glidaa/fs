@@ -17,7 +17,7 @@ const ByStatus = (props) => {
   const sortedTasks = useMemo(() => getSortedTasks(tasks), [tasks])
   return (
     <>
-      {sortedTasks.todo.length && (
+      {sortedTasks.todo.length > 0 && (
         <div>
           <StatusHeader>Todo</StatusHeader>
           {sortedTasks.todo.map((value, index) => (
@@ -38,7 +38,7 @@ const ByStatus = (props) => {
           ))}
         </div>
       )}
-      {sortedTasks.pending.length && (
+      {sortedTasks.pending.length > 0 && (
         <div>
           <StatusHeader>Pending</StatusHeader>
           {sortedTasks.pending.map((value, index) => (
@@ -62,7 +62,7 @@ const ByStatus = (props) => {
           ))}
         </div>
       )}
-      {sortedTasks.done.length && (
+      {sortedTasks.done.length > 0 && (
         <div>
           <StatusHeader>Finished</StatusHeader>
           {sortedTasks.done.map((value, index) => (
@@ -90,8 +90,12 @@ const ByStatus = (props) => {
 const StatusHeader = styledComponents.span`
   padding: 0 12px;
   font-weight: 600;
-  font-size: 1.5em;
+  font-size: 24px;
   color: #596766;
+	@media only screen and (max-width: 768px) {
+		padding: 5px 20px 5px 20px;
+		font-size: 16.5px;
+	}
 `
 
 export default connect((state) => ({

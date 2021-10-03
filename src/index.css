@@ -1,5 +1,6 @@
 * {
   -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 body {
@@ -26,10 +27,6 @@ button {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-}
-
-input, select {
-  outline: none;
 }
 
 .mainPage {

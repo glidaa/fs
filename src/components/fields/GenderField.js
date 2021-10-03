@@ -4,6 +4,7 @@ import styledComponents from "styled-components";
 const GenderField = (props) => {
 
 	const {
+    name,
 		value,
 		onChange,
     readOnly
@@ -13,7 +14,7 @@ const GenderField = (props) => {
     if (!readOnly) {
       onChange({ target: {
         value: gender,
-        name: "gender"
+        name: name || "gender"
       }})
     }
 	};

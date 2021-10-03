@@ -10,28 +10,93 @@ import { useHistory } from 'react-router';
 
 const Login = (props) => {
   const { setShouldRedirect, dispatch } = props
+  const [verificationCode, setVerificationCode] = useState("")
+  const [currStep, setCurrStep] = useState(0)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [usernameError, setUsernameError] = useState(null)
+  const [passwordError, setPasswordError] = useState(null)
+  const [verificationCodeError, setVerificationCodeError] = useState(null)
+  const [isBusy, setIsBusy] = useState(false)
   const history = useHistory();
   const handleLogin = async (e) => {
     e.preventDefault()
+    setIsBusy(true)
+    setUsernameError(null)
+    setPasswordError(null)
     try {
       await Auth.signIn(username, password);
       dispatch(appActions.setLoading(true))
       setShouldRedirect(true)
     } catch (error) {
       console.log('error signing in', error);
+      switch(error.code) {
+        case "UserNotFoundException":
+          setUsernameError("User does not exist.")
+          break
+        case "NotAuthorizedException":
+          setPasswordError("Password is incorrect.")
+          break
+        case "UserNotConfirmedException":
+          setCurrStep(1)
+          setIsBusy(false)
+          break
+        default:
+          break
+      }
+      setIsBusy(false)
       dispatch(userActions.handleSetData(null))
       dispatch(userActions.handleSetState(AuthState.SignedOut))
     }
   }
-  return (
+  const handleConfirmAccount = async (e) => {
+    e.preventDefault()
+    setVerificationCodeError(null)
+    setIsBusy(true)
+    try {
+      await Auth.confirmSignUp(username, verificationCode)
+      await Auth.signIn(username, password);
+      dispatch(appActions.setLoading(true))
+      setShouldRedirect(true)
+    } catch (error) {
+      console.log('error signing in', error);
+      switch (error.code) {
+        case "CodeMismatchException":
+          setVerificationCodeError("Code is incorrect. Please check the code sent to your email and try again.")
+          break
+        default:
+          setVerificationCodeError("An unexpected error occured.")
+          break
+      }
+      setIsBusy(false)
+    }
+  }
+  
+  const handleChange = ({ target: { name, value } }) => {
+    switch (name) {
+      case "username":
+        setUsername(value)
+        setUsernameError(null)
+        break
+      case "password":
+        setPassword(value)
+        setPasswordError(null)
+        break
+      case "verificationCode":
+        setVerificationCode(value)
+        setVerificationCodeError(null)
+        break
+      default:
+        break
+    }
+  }
+  return currStep === 0 ? (
     <LoginFormContainer>
       <LoginFormHeader>
         <span>Login</span>
       </LoginFormHeader>
-      <LoginForm onSubmit={handleLogin}>
-        <LoginFormEntry>
+      <LoginStepOneForm onSubmit={handleLogin}>
+        <LoginFormEntry isError={usernameError}>
           <label htmlFor="username">
             Username
           </label>
@@ -40,11 +105,12 @@ const Login = (props) => {
             name="username"
             placeholder="username…"
             autoComplete="username"
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleChange}
             value={username}
           ></input>
+          {usernameError && <span>{usernameError}</span>}
         </LoginFormEntry>
-        <LoginFormEntry>
+        <LoginFormEntry isError={passwordError}>
           <label htmlFor="password">
             Password
           </label>
@@ -53,9 +119,10 @@ const Login = (props) => {
             name="password"
             placeholder="password…"
             autoComplete="current-password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleChange}
             value={password}
           ></input>
+          {passwordError && <span>{passwordError}</span>}
         </LoginFormEntry>
         <NewAccountLink onClick={() => history.push("/signup")}>
           <span>No Account? </span>
@@ -64,8 +131,39 @@ const Login = (props) => {
         <ForgotPasswordLink onClick={() => history.push("/forgot-password")}>
           Forgot Password?
         </ForgotPasswordLink>
-        <input type="submit" value="Sign In" />
-      </LoginForm>
+        <SubmitBtn
+          type="submit"
+          value={isBusy ? "Signing In" : "Sign In"}
+          disabled={isBusy || !username.trim() || !password.trim()}
+        />
+      </LoginStepOneForm>
+    </LoginFormContainer>
+  ) : (
+    <LoginFormContainer>
+      <LoginFormHeader>
+        <span>Confirm Account</span>
+        <span>Enter code sent to your email.</span>
+      </LoginFormHeader>
+      <LoginStepTwoForm onSubmit={handleConfirmAccount}>
+        <LoginFormEntry isError={verificationCodeError}>
+          <label htmlFor="verificationCode">
+            Verification Code
+          </label>
+          <input
+            type="text"
+            name="verificationCode"
+            placeholder="Code…"
+            onChange={handleChange}
+            value={verificationCode}
+          ></input>
+          {verificationCodeError && <span>{verificationCodeError}</span>}
+        </LoginFormEntry>
+        <SubmitBtn
+          type="submit"
+          value={isBusy ? "Processing" : "Submit"}
+          disabled={isBusy || !verificationCode.trim()}
+        />
+      </LoginStepTwoForm>
     </LoginFormContainer>
   )
 }
@@ -93,7 +191,6 @@ const LoginFormContainer = styledComponents.div`
 const LoginFormHeader = styledComponents.div`
   display: flex;
   flex-direction: column;
-  gap: 5px;
   color: #222222;
   & > span:nth-child(1) {
     font-weight: 600;
@@ -105,7 +202,7 @@ const LoginFormHeader = styledComponents.div`
   }
 `
 
-const LoginForm = styledComponents.form`
+const LoginStepOneForm = styledComponents.form`
   display: grid;
   grid-template-areas:
     'username username'
@@ -131,23 +228,41 @@ const LoginForm = styledComponents.form`
   & > h2 > span {
     cursor: pointer;
   }
-  & > input[type="submit"] {
-    width: 100%;
-    padding: 15px 0;
-    background-color: #006EFF;
-    color: #FFFFFF;
-    border-radius: 8px;
-    outline: none;
-    border: none;
-    transition: background-color 0.3s;
-    &:hover {
-      background-color: #0058cc;
-    }
-    &:disabled {
-      background-color: #338bff;
-    }
+`;
+
+const LoginStepTwoForm = styledComponents.form`
+  display: grid;
+  grid-template-areas:
+    'code code'
+    'submit submit';
+  gap: 15px;
+  align-items: start;
+  & > *:nth-child(1) {
+    grid-area: code;
+  }
+  & > *:nth-child(2) {
+    grid-area: submit;
   }
 `;
+
+const SubmitBtn = styledComponents.input`
+  width: 100%;
+  padding: 15px 0;
+  background-color: #006EFF;
+  color: #FFFFFF !important;
+  border-radius: 8px;
+  outline: none;
+  border: none;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  &:hover {
+    background-color: #0058cc;
+  }
+  &:disabled {
+    background-color: #338bff;
+    cursor: default;
+  }
+`
 
 const LoginFormEntry = styledComponents.div`
   display: flex;
@@ -166,7 +281,7 @@ const LoginFormEntry = styledComponents.div`
   & > input {
     width: calc(100% - 20px);
     padding: 5px 10px;
-    border: 1px solid #C0C0C0;
+    border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
     border-radius: 8px;
     font-size: 14px;
     font-weight: 400;
@@ -176,6 +291,10 @@ const LoginFormEntry = styledComponents.div`
     &::placeholder {
       color: #C0C0C0;
     }
+  }
+  & > span {
+    color: #FF0000;
+    font-size: 12px;
   }
 `
 
