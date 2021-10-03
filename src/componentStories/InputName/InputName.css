@@ -1,0 +1,24 @@
+.inputName {
+  font-family: sans-serif;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-color: rgba(135, 129, 129, 0.755);
+  background-color: transparent;
+  box-shadow: none;
+  outline: none;
+  height: 1.7em;
+  width: 16em;
+  font-style: italic;
+  transition: 0.3s;
+}
+
+.inputName:hover {
+  height: 1.9em;
+  width: 19em;
+  transition: 1s;
+}
+
+.inputName::placeholder {
+  color: gray;
+}
