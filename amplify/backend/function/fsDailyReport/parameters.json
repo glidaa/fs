@@ -1,0 +1,4 @@
+{
+  "CloudWatchRule": "cron(0 0 * * ? *)",
+  "sesIdentityName": "forwardslash.ch"
+}

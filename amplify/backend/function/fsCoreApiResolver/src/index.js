@@ -696,8 +696,14 @@ exports.handler = async function (ctx) {
               ":permalink": `${client}/${updateData[item]}`
             }
           }
-          const data = await docClient.query(params).promise();
-          if (!data.Items[0]) {
+          let items = []
+          let lastData = null
+          while (!lastData || lastData.LastEvaluatedKey) {
+            lastData = await docClient.query(params).promise();
+            items = [...items, ...(lastData.Items || [])]
+            params.ExclusiveStartKey = lastData.LastEvaluatedKey
+          }
+          if (!items[0]) {
             expAttrVal[`:${item}`] = `${client}/${updateData[item]}`
             updateExp.push(`${item}=:${item}`)
           } else {
@@ -1252,9 +1258,15 @@ exports.handler = async function (ctx) {
       },
     };
     try {
-      const data = await docClient.query(params).promise();
-      if (data.Items.length > 0) {
-        return data.Items.filter(x => !x.nextProject)[0].id
+      let items = []
+      let lastData = null
+      while (!lastData || lastData.LastEvaluatedKey) {
+        lastData = await docClient.query(params).promise();
+        items = [...items, ...(lastData.Items || [])]
+        params.ExclusiveStartKey = lastData.LastEvaluatedKey
+      }
+      if (items.length) {
+        return items.filter(x => !x.nextProject)[0].id
       } else {
         return null
       }
@@ -1275,9 +1287,15 @@ exports.handler = async function (ctx) {
       },
     };
     try {
-      const data = await docClient.query(params).promise();
-      if (data.Items.length > 0) {
-        return data.Items.filter(x => !x.nextTask)[0].id
+      let items = []
+      let lastData = null
+      while (!lastData || lastData.LastEvaluatedKey) {
+        lastData = await docClient.query(params).promise();
+        items = [...items, ...(lastData.Items || [])]
+        params.ExclusiveStartKey = lastData.LastEvaluatedKey
+      }
+      if (items.length) {
+        return items.filter(x => !x.nextTask)[0].id
       } else {
         return null
       }
@@ -1368,11 +1386,17 @@ exports.handler = async function (ctx) {
       },
     };
     try {
-      const data = await docClient.query(params).promise();
-      if (data.Items[0]) {
-        const { privacy, members, owner } = data.Items[0]
+      let items = []
+      let lastData = null
+      while (!lastData || lastData.LastEvaluatedKey) {
+        lastData = await docClient.query(params).promise();
+        items = [...items, ...(lastData.Items || [])]
+        params.ExclusiveStartKey = lastData.LastEvaluatedKey
+      }
+      if (items[0]) {
+        const { privacy, members, owner } = items[0]
         if ("public" === privacy || members?.includes(client) || client === owner) {
-          return data.Items[0]
+          return items[0]
         } else {
           throw new Error(UNAUTHORIZED)
         }
@@ -1396,9 +1420,15 @@ exports.handler = async function (ctx) {
       },
     };
     try {
-      const data = await docClient.query(params).promise();
+      let items = []
+      let lastData = null
+      while (!lastData || lastData.LastEvaluatedKey) {
+        lastData = await docClient.query(params).promise();
+        items = [...items, ...(lastData.Items || [])]
+        params.ExclusiveStartKey = lastData.LastEvaluatedKey
+      }
       return {
-        items: data.Items
+        items: items
       }
     } catch (err) {
       throw new Error(err);
@@ -1487,9 +1517,15 @@ exports.handler = async function (ctx) {
         },
       };
       try {
-        const data = await docClient.query(params).promise();
+        let items = []
+        let lastData = null
+        while (!lastData || lastData.LastEvaluatedKey) {
+          lastData = await docClient.query(params).promise();
+          items = [...items, ...(lastData.Items || [])]
+          params.ExclusiveStartKey = lastData.LastEvaluatedKey
+        }
         return {
-          items: data.Items
+          items: items
         }
       } catch (err) {
         throw new Error(err);
@@ -1860,8 +1896,14 @@ exports.handler = async function (ctx) {
       },
     };
     try {
-      const data = await docClient.query(params).promise();
-      return data.Items;
+      let items = []
+      let lastData = null
+      while (!lastData || lastData.LastEvaluatedKey) {
+        lastData = await docClient.query(params).promise();
+        items = [...items, ...(lastData.Items || [])]
+        params.ExclusiveStartKey = lastData.LastEvaluatedKey
+      }
+      return items;
     } catch (err) {
       throw new Error(err);
     }
@@ -1877,8 +1919,14 @@ exports.handler = async function (ctx) {
       },
     };
     try {
-      const data = await docClient.query(params).promise();
-      return data.Items;
+      let items = []
+      let lastData = null
+      while (!lastData || lastData.LastEvaluatedKey) {
+        lastData = await docClient.query(params).promise();
+        items = [...items, ...(lastData.Items || [])]
+        params.ExclusiveStartKey = lastData.LastEvaluatedKey
+      }
+      return items;
     } catch (err) {
       throw new Error(err);
     }

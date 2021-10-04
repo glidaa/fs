@@ -97,7 +97,7 @@ const App = (props) => {
       }
     }
     })()
-  }, [routeMatch.url, app.isLoading, user]);
+  }, [routeMatch?.url, app.isLoading, user]);
   return (
     <div className="App">
       <Route
