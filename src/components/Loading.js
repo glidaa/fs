@@ -183,7 +183,7 @@ const LoadingContainer = styled.div`
   & > span:nth-child(3) {
     font-weight: bold;
     font-size: 1.2em;
-    color: #222222;
+    color: #000000;
   }
 `
 

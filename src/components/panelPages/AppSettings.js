@@ -105,7 +105,7 @@ const AppSetting = styled.div`
   margin: 0 25px;
   gap: 5px;
   & > label {
-    color: #222222;
+    color: #000000;
     margin-bottom: 0;
     width: max-content;
     font-size: 16px;

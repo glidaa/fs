@@ -117,7 +117,7 @@ const StatusSuggestion = styled.div`
       font-size: 18px;
     }
     & > span:nth-child(2) {
-      color: #222222;
+      color: #000000;
       font-weight: 600;
       font-size: 14px;
       text-transform: lowercase;

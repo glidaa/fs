@@ -131,12 +131,12 @@ const AssigneeSuggestion = styled.div`
     display: flex;
     flex-direction: column;
     & > span:nth-child(1) {
-      color: #222222;
+      color: #000000;
       font-weight: 600;
       font-size: 14px;
     }
     & > span:nth-child(2) {
-      color: #222222;
+      color: #000000;
       font-weight: 400;
       font-size: 12px;
     }

@@ -1,6 +1,6 @@
 import { PUSH_NOTIFICATION, DISMISS_NOTIFICATION } from "../actions/notifications"
 
-export default function (state = [{id: "1", title: "Title", body:"Body"}], action) {
+export default function (state = [], action) {
   switch(action.type) {
     case PUSH_NOTIFICATION:
       return [...new Set([...state, action.id])]

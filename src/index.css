@@ -4,6 +4,16 @@
 }
 
 body {
+  background-image:  
+  radial-gradient(at 31% 70%, hsla(292,76%,61%,1) 0, transparent 45%),  
+  radial-gradient(at 26% 91%, hsla(245,90%,79%,1) 0, transparent 56%),  
+  radial-gradient(at 38% 79%, hsla(19,72%,68%,1) 0, transparent 59%),  
+  radial-gradient(at 71% 29%, hsla(218,92%,75%,1) 0, transparent 58%),  
+  radial-gradient(at 29% 1%, hsla(211,86%,74%,1) 0, transparent 54%),  
+  radial-gradient(at 54% 79%, hsla(339,90%,75%,1) 0, transparent 46%),  
+  radial-gradient(at 92% 48%, hsla(122,97%,78%,1) 0, transparent 44%);
+  width: 100vw;
+  height: 100vh;
   margin: 0;
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -35,13 +45,12 @@ button {
   width: calc(100vw - 70px);
   display: flex;
   flex-direction: row;
-  background-color: #F8F8F8;
   overflow: hidden;
 }
 
 input:read-only {
   color: transparent;
-  text-shadow: 0 0 0 #222222;
+  text-shadow: 0 0 0 #000000;
 }
 
 @media only screen and (max-width: 768px) {

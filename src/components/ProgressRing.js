@@ -59,7 +59,10 @@ const InnerRing = styled.circle`
   transition: stroke-dashoffset 0.35s;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
-  opacity: 0.25;
+  opacity: 0.5;
+  filter: drop-shadow(0px 2px 8px rgb(99 99 99 / 20%));
+  -webkit-filter: drop-shadow(0px 2px 8px rgb(99 99 99 / 20%));
+  border: none;
 `
 
 export default ProgressRing

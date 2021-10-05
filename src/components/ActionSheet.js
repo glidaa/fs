@@ -123,7 +123,7 @@ const ActionSheet = (props) => {
 						<CopyIcon
 							width={24}
 							height={24}
-							color="#222222"
+							color="#000000"
 							strokeWidth="32"
 						/>
 						<span>Copy</span>
@@ -132,7 +132,7 @@ const ActionSheet = (props) => {
 						<DuplicateIcon
 							width={24}
 							height={24}
-							color="#222222"
+							color="#000000"
 							strokeWidth="32"
 						/>
 						<span>Duplicate</span>
@@ -141,7 +141,7 @@ const ActionSheet = (props) => {
 						<ShareIcon
 							width={24}
 							height={24}
-							color="#222222"
+							color="#000000"
 							strokeWidth="32"
 						/>
 						<span>Share</span>
@@ -150,7 +150,7 @@ const ActionSheet = (props) => {
 						<RemoveIcon
 							width={24}
 							height={24}
-							color="#222222"
+							color="#000000"
 							strokeWidth="32"
 						/>
 						<span>Remove</span>
@@ -159,7 +159,7 @@ const ActionSheet = (props) => {
 						<CheckmarkIcon
 							width={24}
 							height={24}
-							stroke="#222222"
+							stroke="#000000"
 							strokeWidth="32"
 						/>
 						<span>Mark As Done</span>
@@ -168,7 +168,7 @@ const ActionSheet = (props) => {
 						<DetailsIcon
 							width="24"
 							height="24"
-							color="#222222"
+							color="#000000"
 							strokeWidth="32"
 						/>
 						<span>Details</span>
@@ -208,7 +208,7 @@ const ActionSheetHeader = styled.span`
 	width: 100%;
 	text-align: center;
 	font-weight: bold;
-	color: #222222;
+	color: #000000;
 `
 
 const Actions = styled.div`
@@ -227,7 +227,7 @@ const Action = styled.button`
 	border-radius: 10px;
 	gap: 5px;
 	font-size: 14px;
-	color: #222222;
+	color: #000000;
 	font-weight: bold;
 	padding: 15px;
 	background-color: #F0F0F0;

@@ -54,7 +54,7 @@ const SelectShell = styled.div`
   justify-content: center;
   gap: 5px;
   & > label {
-    color: #222222;
+    color: #000000;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -74,7 +74,8 @@ const Selection = styled.button`
   border-radius: 8px;
   outline: none;
   cursor: pointer;
-  background-color: ${({color}) => color};
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   transition: color 0.2s, border-color 0.2s;
   & > span:nth-child(1) {
     font-size: 24px;

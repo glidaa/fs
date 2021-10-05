@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 const Notifications = (props) => {
   const {
-  notifications
+    notifications
   } = props;
   return (
     <NotificationsContainer>

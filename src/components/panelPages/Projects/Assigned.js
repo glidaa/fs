@@ -52,7 +52,7 @@ const NoAssignedProjects = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #222222;
+    color: #000000;
     margin-top: 25px;
   }
 `

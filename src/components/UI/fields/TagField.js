@@ -84,7 +84,7 @@ const TagFieldShell = styled.div`
   justify-content: center;
   gap: 5px;
   & > label {
-    color: #222222;
+    color: #000000;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -110,7 +110,6 @@ const NewTagBtn = styled.button`
   color: #006EFF;
   border-radius: 8px;
   font-size: 20px;
-  background-color: #FFFFFF;
   outline: none;
   width: 33px;
   height: 33px;
@@ -118,7 +117,9 @@ const NewTagBtn = styled.button`
   line-height: 0;
   padding: 0;
   cursor: pointer;
-  border: 1px solid #006EFF;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
 `
 
 const NoTags = styled.span`
@@ -148,9 +149,9 @@ const TagItem = styled.span`
   width: fit-content;
   height: fit-content;
   color: #5D6969;
-  border: 1px solid #C0C0C0;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
-  background-color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
   flex-direction: row;
   align-items: center;
   & > span {
@@ -174,11 +175,11 @@ const TagItem = styled.span`
 const TagInput = styled.span`
   display: inline-flex;
   padding: 5px 10px;
-  border-radius: 4px;
   border-radius: 8px;
   width: 60px;
-  border: 1px solid #7DAAFC;
-  background-color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
   & > input {
     border: none;
     width: 60px;
@@ -186,7 +187,7 @@ const TagInput = styled.span`
     font-size: 14px;
     font-weight: 600;
     padding: 0;
-    background-color: #FFFFFF;
+    background-color: transparent;
     &::placeholder {
       color: #C0C0C0;
     }

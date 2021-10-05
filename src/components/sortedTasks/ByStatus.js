@@ -91,7 +91,7 @@ const StatusHeader = styled.span`
   padding: 0 12px;
   font-weight: 600;
   font-size: 24px;
-  color: #596766;
+  color: #000000;
 	@media only screen and (max-width: 768px) {
 		padding: 5px 20px 5px 20px;
 		font-size: 16.5px;

@@ -201,7 +201,10 @@ const ForgotPasswordFormContainer = styled.div`
   gap: 15px;
   margin: 40px 0;
   justify-content: center;
-  background-color: #FFFFFF;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.75);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border-radius: 25px;
   height: fit-content;
   width: 350px;
@@ -218,7 +221,7 @@ const ForgotPasswordFormContainer = styled.div`
 const ForgotPasswordFormHeader = styled.div`
   display: flex;
   flex-direction: column;
-  color: #222222;
+  color: #000000;
   & > span:nth-child(1) {
     font-weight: 600;
     font-size: 24px;

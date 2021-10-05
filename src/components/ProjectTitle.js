@@ -98,7 +98,7 @@ const ProjectTitleHeader = styled.span`
 	white-space: nowrap;
 	overflow: hidden;
 	cursor: text;
-	color: #596766;
+	color: #000000;
 	&.placeholder {
 		color: #D3D3D3;
 	}
@@ -114,7 +114,7 @@ const ProjectTitleInput = styled.div`
 	padding: 8px 12px;
 	& > input {
 		background-color: transparent;
-		color: #596766;
+		color: #000000;
 		font-size: 32px;
 		width: 100%;
 		font-weight: 600;

@@ -82,6 +82,7 @@ const Container = styled.div`
   gap: 5px;
   overflow: hidden;
   width: 100%;
+  height: 100px;
   scroll-behavior: smooth;
   @media (hover: none) {
     overflow: auto;

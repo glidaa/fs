@@ -75,7 +75,7 @@ const ProjectNotSelectedContainer = styled.div`
     & > span {
       font-weight: bold;
       font-size: 28px;
-      color: #222222;
+      color: #000000;
     }
     & > button {
       color: #006EFF;

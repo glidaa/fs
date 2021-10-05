@@ -27,10 +27,12 @@ const SidePanel = (props) => {
 
 const SidePanelShell = styled.div`
   display: flex;
-  background-color: #FFFFFF;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.6);
+	box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   flex-direction: column;
   height: 100vh;
-  border-radius: ${({ isRight }) => (isRight ? "35px 0 0 35px" : "0 35px 35px 0")};
   gap: 25px;
   flex: 1;
   transition: all 0.2s ease;
@@ -43,7 +45,6 @@ const SidePanelShell = styled.div`
   @media only screen and (max-width: 768px) {
     position: fixed;
     width: 100vw;
-    border-radius: 0;
     max-width: 100vw;
     height: 100%;
     transform: translateX(${({ isOpened, isRight }) => (isOpened ? "0px" : `${isRight ? "100%" : "-100%"}`)});

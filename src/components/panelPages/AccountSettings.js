@@ -226,12 +226,12 @@ const AccountSettingsHeader = styled.div`
   justify-content: center;
   gap: 25px;
   & > span:nth-child(2) {
-    color: #222222;
+    color: #000000;
     font-size: 26px;
     line-height: 0;
   }
   & > span:nth-child(3) {
-    color: #222222;
+    color: #000000;
     font-size: 14px;
     line-height: 0;
   }

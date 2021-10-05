@@ -235,9 +235,16 @@ const CommentUnit = styled.div`
   align-items: flex-end;
   gap: 10px;
   ${CommentBox} {
-    border-radius: ${({isSelf}) => isSelf ? "16px 16px 0 16px" : "16px 16px 16px 0"};
-    background-color: ${({isSelf}) => isSelf ? "#CCE2FF" : "#006EFF"};
-    color: ${({isSelf}) => isSelf ? "#006EFF" : "#FFFFFF"};
+    ${({isSelf}) => isSelf ? `
+      border-radius: 16px 16px 0 16px;
+      background-color: #CCE2FF;
+      color: #006EFF;
+    ` : `
+      border-radius: 16px 16px 16px 0;
+      background-color: rgba(255, 255, 255, 0.5);
+      color: #000000;
+      box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+    `}
   }
 `
 
@@ -251,7 +258,9 @@ const CommentField = styled.div`
   background-color: #FFFFFF;
   width: 100%;
   border-radius: 8px;
-  border: 1px solid #C0C0C0;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
   transition: border 0.3s, box-shadow 0.3s, height 0.3s;
 `
 
@@ -309,7 +318,7 @@ const CommentTime = styled.span`
 const CommentDay = styled.span`
   font-weight: 600;
   font-size: 12px;
-  color: #222222;
+  color: #000000;
   text-align: center;
   width: 100%;
 `
@@ -336,7 +345,7 @@ const NoComments = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #222222;
+    color: #000000;
   }
 `
 

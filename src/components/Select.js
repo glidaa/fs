@@ -56,7 +56,7 @@ const SelectContainer = styled.div`
     padding: 4px 8px;
     width: 100%;
     color: transparent;
-    text-shadow: 0 0 0 #222222;
+    text-shadow: 0 0 0 #000000;
     font-size: 12px;
     cursor: pointer;
     transition: border 0.3s, box-shadow 0.3s;

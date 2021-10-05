@@ -367,7 +367,7 @@ const TaskItemAction = styled.button`
 	height: 28px;
 	border-radius: 6px;
 	&:hover {
-		background-color: #006EFF;
+		background: linear-gradient(135deg,#0029ff 0%,#0092ff 100%);
 		& > svg {
 			color: #FFFFFF;
 		}
@@ -409,7 +409,8 @@ const TaskItemCore = styled.div`
 		opacity: 0.5;
 	` : `
 		&:hover {
-			background-color: #EAEFEF;
+			background-color: rgba(255, 255, 255, 0.5);
+			box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
 			& ${TaskItemActions} {
 				opacity: 1;
 				width: auto;
@@ -465,7 +466,7 @@ const TaskItemHeader = styled.span`
 	cursor: text;
 	flex: 1;
   text-decoration: ${({isDone}) => isDone ? "line-through" : "none"};
-  color: ${({isPlaceholder}) => isPlaceholder ? "#D3D3D3" : "#222222"};
+  color: ${({isPlaceholder}) => isPlaceholder ? "#D3D3D3" : "#000000"};
 `
 
 const TaskItemInput = styled.div`
@@ -491,7 +492,7 @@ const TaskItemDueDate = styled.span`
 	color: #FFFFFF;
 	font-weight: 600;
 	font-size: 11.2px;
-	background-color: #006EFF;
+	background: linear-gradient(135deg,#0029ff 0%,#0092ff 100%);
 	white-space: nowrap;
     border-radius: 10px;
     padding: 3px 10px;
@@ -539,7 +540,7 @@ const TaskItemStatusToggle = styled.button`
 	align-items: center;
 	justify-content: center;
 	outline: none;
-	border: 1px solid ${({ isDone }) => isDone ? "#006EFF" : "#222222"};
+	border: 1px solid ${({ isDone }) => isDone ? "#006EFF" : "#000000"};
 	background-color: ${({ isDone }) => isDone ? "#006EFF" : "transparent"};
 	border-radius: 100%;
 	width: 20px;

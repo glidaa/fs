@@ -75,7 +75,7 @@ const DateField = (props) => {
               height="16"
               width="16"
               strokeWidth="32"
-              color="#222222"
+              color="#000000"
             />
           </ClearBtn>
         )}
@@ -105,7 +105,7 @@ const DateFieldShell = styled.div`
   justify-content: center;
   gap: 5px;
   & > label {
-    color: #222222;
+    color: #000000;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -124,13 +124,16 @@ const DateFieldContainer = styled.div`
   justify-content: space-between;
   width: calc(100% - 20px);
   padding: 5px 10px;
-  border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
+  /* border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"}; */
   border-radius: 8px;
   & > input {
     flex: 1;
     padding: 0;
     border: none;
-    color: #222222;
+    color: #000000;
     background-color: transparent;
     cursor: ${({readOnly}) => readOnly ? "default" : "pointer"};
     transition: border 0.3s, box-shadow 0.3s;
@@ -153,6 +156,13 @@ const PickerContainer = styled.div`
   left: 0;
   background-color: #000000AA;
   z-index: 9999;
+  div.Calendar {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+    border: none;
+  }
 `
 
 const ClearBtn = styled.button`

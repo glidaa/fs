@@ -91,7 +91,9 @@ const TasksPanelContainer = styled.div`
   flex: 2;
   padding: 20px 40px 20px 40px;
   overflow: auto;
-  background-color: #F8F8F8;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.75);
   min-height: calc(100vh - 80px);
   @media only screen and (max-width: 768px) {
 		padding: 0px;
@@ -126,10 +128,11 @@ const ToolbarAction = styled.button`
   line-height: 0;
   width: 80px;
   color: #006EFF;
-  background-color: #CCE2FF;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
   border-radius: 6px;
   outline: none;
-  border: none;
   cursor: pointer;
 `
 

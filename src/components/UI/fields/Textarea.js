@@ -51,7 +51,7 @@ const TextareaContainer = styled.div`
   justify-content: center;
   gap: 5px;
   & > label {
-    color: #222222;
+    color: #000000;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -78,7 +78,10 @@ const TextareaContainer = styled.div`
     & > textarea, &::after {
       width: calc(100% - 20px);
       padding: 5px 10px;
-      border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
+      background-color: rgba(255, 255, 255, 0.5);
+      box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+      border: none;
+      /* border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"}; */
       border-radius: 8px;
       font-size: 14px;
       font-weight: 400;

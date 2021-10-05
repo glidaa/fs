@@ -41,7 +41,7 @@ const TasksPanel = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="#222222"
+              color="#000000"
           />
         </ToolbarAction>
         <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
@@ -51,7 +51,7 @@ const TasksPanel = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.PROJECTS ?
-                "#006EFF" : "#222222"
+                "#006EFF" : "#000000"
               }
           />
         </ToolbarAction>
@@ -62,7 +62,7 @@ const TasksPanel = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.APP_SETTINGS ?
-                "#006EFF" : "#222222"
+                "#006EFF" : "#000000"
               }
           />
         </ToolbarAction>
@@ -94,11 +94,14 @@ const ToolbarContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #FFFFFF;
   flex-direction: column;
   padding: 30px 15px;
   width: 40px;
   height: calc(100vh - 60px);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
 	@media only screen and (max-width: 768px) {
     padding: 15px 20px;
     flex-direction: row;

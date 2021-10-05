@@ -214,8 +214,9 @@ const PanelPageToolbarAction = styled.button`
 const KeywordField = styled.input`
   width: calc(100% - 90px);
   outline: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border: none;
-  background-color: #F8F8F8;
   padding: 10px;
   border-radius: 8px;
   margin: 0 25px;
@@ -234,7 +235,6 @@ const SearchResults = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  background-color: #FFFFFF;
   border-radius: 4px;
   width: 100%;
 `
@@ -256,7 +256,7 @@ const SearchResultsItem = styled.button`
     flex-direction: column;
     & > span:nth-child(1) {
       font-weight: bold;
-      color: #222222;
+      color: #000000;
     }
     & > span:nth-child(2) {
       font-style: italic;
@@ -287,7 +287,7 @@ const AssigneeChooserIllustartion = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #222222;
+    color: #000000;
   }
 `
 

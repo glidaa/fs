@@ -36,7 +36,9 @@ const PanelTabsContainer = styled.div`
   flex-direction: row;
   gap: 5px;
   padding: 5px;
-  background-color: #CCE2FF;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
   border-radius: 24px;
   height: fit-content;
   width: fit-content;
@@ -50,7 +52,7 @@ const PanelTab = styled.span`
   display: flex;
   justify-content: center;
   ${({isSelected}) => isSelected ? `
-    background-color: #006EFF;
+    background: linear-gradient(135deg, #0029ff 0%, #0092ff 100%);
     color: #FFFFFF;
     cursor: default;
   ` : `

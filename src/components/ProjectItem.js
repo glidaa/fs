@@ -88,7 +88,7 @@ const ProjectItem = (props) => {
                 height="20"
                 width="20"
                 strokeWidth="42"
-                color="#FFFFFF"
+                color="#000000"
               />
             </ProjectItemAction>
             <ProjectItemAction>
@@ -97,7 +97,7 @@ const ProjectItem = (props) => {
                 height="20"
                 width="20"
                 strokeWidth="42"
-                color="#FFFFFF"
+                color="#000000"
               />
             </ProjectItemAction>
           </ProjectItemActions>
@@ -109,7 +109,10 @@ const ProjectItem = (props) => {
 
 const ProjectItemShell = styled.div`
   position: relative;
-  background-color: #006EFF;
+  background-origin: border-box!important;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
   padding: 20px;
   margin: 0 25px;
   border-radius: 10px; 
@@ -153,7 +156,7 @@ const ProjectItemHeader = styled.div`
 `
 
 const ProjectItemTitle = styled.span`
-  color: #FFFFFF;
+  color: #000000;
   font-weight: 600;
   font-size: 20px;
   max-width: 197.08px;
@@ -164,7 +167,7 @@ const ProjectItemTitle = styled.span`
 
 const ProjectItemPermalink = styled.span`
   font-size: 12px;
-  color: #FFFFFF;
+  color: #000000;
   font-weight: 500;
   max-width: 197.08px;
   text-overflow: ellipsis;
@@ -233,13 +236,13 @@ const ProjectItemPermission = styled.div`
   height: 150px;
   right: 0;
   bottom: 0;
-  opacity: 0.15;
+  opacity: 0.06;
   z-index: 1;
 `
 
 const ProjectItemDate = styled.span`
   font-size: 12px;
-  color: #FFFFFF;
+  color: #000000;
   font-weight: 500;
   max-width: 100%;
   text-overflow: ellipsis;

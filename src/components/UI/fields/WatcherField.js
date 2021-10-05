@@ -46,44 +46,42 @@ const WatcherField = (props) => {
       <label htmlFor={name}>
         {label}
       </label>
-      <WatcherFieldContainer>
-        {(value.length) ? (
-          <> 
-            {!readOnly && (
-              <NewWatcherBtn onClick={openChooser}>
-                <div>+</div>
-                <span>Add</span>
-              </NewWatcherBtn>
-            )}
-            {value.map(x => (
-              <WatcherItem key={x}>
-                <RemoveBtn onClick={() => handleRemoveWatcher(x)}>
-                  <RemoveIcon
-                    height="16"
-                    width="16"
-                    strokeWidth="32"
-                    color="#006EFF"
-                  />
-                </RemoveBtn>
-                <Avatar user={users[x]} size={32} circular />
-                <WatcherDetails>
-                  <span>{users[x].firstName}</span>
-                  <span>@{x}</span>
-                </WatcherDetails>
-              </WatcherItem>
-            ))}
-          </>
-        ) : (
-          <NoWatchers>
-            <span>No Watchers Added Yet</span>
-            {!readOnly && (
-              <button onClick={openChooser}>
-                + Add Watcher
-              </button>
-            )}
-          </NoWatchers>
-        )}
-      </WatcherFieldContainer>
+      {(value.length) ? (
+        <ShadowScroll>
+          {!readOnly && (
+            <NewWatcherBtn onClick={openChooser}>
+              <div>+</div>
+              <span>Add</span>
+            </NewWatcherBtn>
+          )}
+          {value.map(x => (
+            <WatcherItem key={x}>
+              <RemoveBtn onClick={() => handleRemoveWatcher(x)}>
+                <RemoveIcon
+                  height="16"
+                  width="16"
+                  strokeWidth="32"
+                  color="#006EFF"
+                />
+              </RemoveBtn>
+              <Avatar user={users[x]} size={36} circular />
+              <WatcherDetails>
+                <span>{users[x].firstName}</span>
+                <span>@{x}</span>
+              </WatcherDetails>
+            </WatcherItem>
+          ))}
+        </ShadowScroll>
+      ) : (
+        <NoWatchers>
+          <span>No Watchers Added Yet</span>
+          {!readOnly && (
+            <button onClick={openChooser}>
+              + Add Watcher
+            </button>
+          )}
+        </NoWatchers>
+      )}
     </WatcherFieldShell>
   )
 }
@@ -95,23 +93,12 @@ const WatcherFieldShell = styled.div`
   justify-content: center;
   gap: 5px;
   & > label {
-    color: #222222;
+    color: #000000;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
     font-weight: 600;
   }
-`
-
-const WatcherFieldContainer = styled(ShadowScroll)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 5px;
-  overflow: hidden;
-  width: 100%;
-  scroll-behavior: smooth;
 `
 
 const NewWatcherBtn = styled.button`
@@ -123,13 +110,15 @@ const NewWatcherBtn = styled.button`
   justify-content: center;
   border-radius: 8px;
   font-size: 20px;
-  background-color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
   outline: none;
   height: 91.8px;
   min-width: 80px;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid #006EFF;
+  margin-left: 5px;
   & > div {
     display: flex;
     align-items: center;
@@ -156,22 +145,24 @@ const NoWatchers = styled.div`
   gap: 5px;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: calc(100% - 20px);
   padding: 10px;
   border-radius: 8px;
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  border: none;
   outline: none;
   height: fit-content;
-  border: 1px solid #C0C0C0;
   & > span {
     font-weight: 600;
     font-size: 14px;
-    color: #222222;
+    color: #000000;
   }
   & > button {
     outline: none;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
     border: none;
-    background-color: #CCE2FF;
     color: #006EFF;
     padding: 5px 10px;
     border-radius: 8px;
@@ -190,11 +181,13 @@ const WatcherItem = styled.span`
   min-width: 80px;
   max-width: 80px;
   color: #5D6969;
-  border: 1px solid #C0C0C0;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
-  background-color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   flex-direction: column;
   align-items: center;
+  &:last-child {
+    margin-right: 5px;
+  }
 `
 
 const WatcherDetails = styled.div`
