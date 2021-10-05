@@ -106,6 +106,47 @@ export const onDeleteOwnedProject = /* GraphQL */ `
     }
   }
 `;
+export const onUpdateProject = /* GraphQL */ `
+  subscription OnUpdateProject($id: String!) {
+    onUpdateProject(id: $id) {
+      id
+      prevProject
+      nextProject
+      permalink
+      title
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
+      updatedAt
+      owner
+      mutationID
+    }
+  }
+`;
+export const onDeleteProject = /* GraphQL */ `
+  subscription OnDeleteProject($id: String!) {
+    onDeleteProject(id: $id) {
+      id
+      prevProject
+      nextProject
+      permalink
+      title
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
+      createdAt
+      updatedAt
+      owner
+      members
+    }
+  }
+`;
 export const onCreateTaskByProjectId = /* GraphQL */ `
   subscription OnCreateTaskByProjectId($projectID: ID!) {
     onCreateTaskByProjectID(projectID: $projectID) {

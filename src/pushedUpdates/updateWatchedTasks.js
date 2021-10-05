@@ -1,28 +1,33 @@
 import { API, graphqlOperation } from "aws-amplify";
+import * as observersActions from "../actions/observers";
 import * as projectsActions from "../actions/projects"
 import * as queries from "../graphql/queries"
 
-const updateAssignedTasks = async (dispatch, getState, pushedUpdate) => {
+const updateWatchedTasks = async (dispatch, getState, pushedUpdate) => {
   const { watchedTasks } = pushedUpdate
   const { projects } = getState()
-  const currAssignedProjects = Object.values(projects).filter(x => x.isAssigned).map(x => x.id)
-  const assignedProjects = [...new Set(watchedTasks.map(taskPath => taskPath.match(/(.*)\/.*/)[1]))]
-  const newAssignedProjects = assignedProjects.filter(x => !currAssignedProjects.includes(x))
-  const unassignedProjects = currAssignedProjects.filter(x => !assignedProjects.includes(currAssignedProjects));
-  for (const unassignedProject of unassignedProjects) {
-    dispatch(projectsActions.removeProject(unassignedProject, "assigned"))
+  const currWatchedProjects = Object.values(projects).filter(x => x.isWatched).map(x => x.id)
+  const watchedProjects = [...new Set(watchedTasks.map(taskPath => taskPath.match(/(.*)\/.*/)[1]))]
+  const newWatchedProjects = watchedProjects.filter(x => !currWatchedProjects.includes(x))
+  const unwatchedProjects = currWatchedProjects.filter(x => !watchedProjects.includes(x));
+  for (const unwatchedProject of unwatchedProjects) {
+    if (!(projects[unwatchedProject].isAssigned || projects[unwatchedProject].isTemp)) {
+      dispatch(observersActions.handleClearProjectObservers(unwatchedProject))
+    }
+    dispatch(projectsActions.removeProject(unwatchedProject, "watched"))
   }
-  for (const newAssignedProject of newAssignedProjects) {
+  for (const newWatchedProject of newWatchedProjects) {
     const { projects } = getState()
-    if (Object.keys(projects).includes(newAssignedProject)) {
-      dispatch(projectsActions.createProject(projects[newAssignedProject], "assigned"))
+    if (projects[newWatchedProject]) {
+      dispatch(projectsActions.createProject(projects[newWatchedProject], "watched"))
     } else {
       try {
-        const newAssignedProjectData = (await API.graphql(graphqlOperation(queries.getProjectById, {
-          projectID: newAssignedProject
+        const newWatchedProjectData = (await API.graphql(graphqlOperation(queries.getProjectById, {
+          projectID: newWatchedProject
         }))).data.getProjectByID
-        if (newAssignedProjectData) {
-          dispatch(projectsActions.createProject(newAssignedProjectData, "assigned"))
+        if (newWatchedProjectData) {
+          dispatch(projectsActions.createProject(newWatchedProjectData, "watched"))
+          await dispatch(observersActions.handleSetProjectObservers(newWatchedProject))
         }
       } catch (err) {
         console.error(err)
@@ -31,4 +36,4 @@ const updateAssignedTasks = async (dispatch, getState, pushedUpdate) => {
   }
 }
 
-export default updateAssignedTasks
+export default updateWatchedTasks

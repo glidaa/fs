@@ -7,7 +7,10 @@ const TagField = (props) => {
     name,
     value,
     onChange,
-    readOnly
+    readOnly,
+    label,
+    placeholder,
+    style
   } = props
   const tagFieldRef = useRef(null)
   const tagFieldInputRef = useRef(null)
@@ -24,7 +27,7 @@ const TagField = (props) => {
       e.target.value = ""
       onChange({ target: {
         value: Array.from(tagsSet),
-        name: name || "tags"
+        name: name
       }})
     }
 }
@@ -36,37 +39,60 @@ const TagField = (props) => {
   })
 
   return (
-    <TagFieldShell ref={tagFieldRef}>
-      {!readOnly && <NewTagBtn onClick={() => setIsEntering(true)}>+</NewTagBtn>}
-      {(value.length || isEntering) ? value.map(x => (
-        <TagItem key={x}>
-          <span onClick={handleTagClick}>{x}</span>
-          <span onClick={() => {
-            const tagsSet = new Set(value || [])
-            tagsSet.delete(x)
-            onChange({ target: {
-              value: Array.from(tagsSet),
-              name: "tags"
-            }})
-          }}>
-            ×
-          </span>
-        </TagItem>
-      )) : (
-        <NoTags>No tags added 😢</NoTags>
-      )}
-      {(!readOnly && isEntering) && <TagInput>
-      <input
-        ref={tagFieldInputRef}
-        placeholder="tag…"
-        autoFocus
-        onKeyDown={handleTagInput} />
-    </TagInput>}
+    <TagFieldShell style={style}>
+      <label htmlFor={name}>
+        {label}
+      </label>
+      <TagFieldContainer ref={tagFieldRef}>
+        {!readOnly && <NewTagBtn onClick={() => setIsEntering(true)}>+</NewTagBtn>}
+        {(value.length || isEntering) ? value.map(x => (
+          <TagItem key={x}>
+            <span onClick={handleTagClick}>{x}</span>
+            <span onClick={() => {
+              const tagsSet = new Set(value || [])
+              tagsSet.delete(x)
+              onChange({ target: {
+                value: Array.from(tagsSet),
+                name: name
+              }})
+            }}>
+              ×
+            </span>
+          </TagItem>
+        )) : (
+          <NoTags>No tags added 😢</NoTags>
+        )}
+        {(!readOnly && isEntering) && (
+          <TagInput>
+            <input
+              ref={tagFieldInputRef}
+              placeholder={placeholder}
+              autoFocus
+              onKeyDown={handleTagInput}
+            />
+          </TagInput>
+        )}
+      </TagFieldContainer>
     </TagFieldShell>
   )
 }
 
 const TagFieldShell = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  & > label {
+    color: #222222;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+`
+
+const TagFieldContainer = styledComponents.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;

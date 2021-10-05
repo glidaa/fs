@@ -15,7 +15,7 @@ import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
 import Specials from "./Specials";
 import { OK, initTaskState, AuthState } from "../constants";
-import AvatarArray from "./AvatarArray";
+import AvatarArray from "./UI/AvatarArray";
 
 const TaskItem = (props) => {
 

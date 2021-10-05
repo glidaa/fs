@@ -7,6 +7,7 @@ import { ReactComponent as ProjectsIcon } from "../assets/albums-outline.svg"
 import { ReactComponent as NotificationIcon } from "../assets/notifications-outline.svg"
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
 import { ReactComponent as LoginIcon } from "../assets/log-in-outline.svg"
+import Avatar from './UI/Avatar';
 
 const TasksPanel = (props) => {
   const {
@@ -67,15 +68,10 @@ const TasksPanel = (props) => {
         </ToolbarAction>
       </TopControls>
       <BottomControls>
-          {user.state === AuthState.SignedIn ? (user.data.avatar ? (
+          {user.state === AuthState.SignedIn ? (
               <ToolbarAction onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
-                <ImageAvatar src={user.data.avatar} />
+                <Avatar user={user.data} size={42} />
               </ToolbarAction>
-            ) : (
-              <LetterAvatar onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
-                {user.data.abbr}
-              </LetterAvatar>
-            )
           ) : (
             <UserIndicator onClick={goToLoginPage}>
               <LoginIcon
@@ -167,25 +163,6 @@ const UserIndicator = styledComponents(ToolbarAction)`
   background-color: #006EFF;
   border-radius: 8px;
   padding: 10px;
-`
-
-const ImageAvatar = styledComponents.img`
-  display: block;
-  border-radius: 8px;
-  width: 42px;
-  height: 42px;
-`
-
-const LetterAvatar = styledComponents(ToolbarAction)`
-  border-radius: 8px;
-  color: #006EFF;
-  background-color: #CCE2FF;
-  line-height: 0;
-  font-size: 14px;
-  min-width: 42px;
-  min-height: 42px;
-  width: 42px;
-  height: 42px;
 `
 
 export default connect((state) => ({

@@ -1,7 +1,8 @@
 import { API, graphqlOperation } from "aws-amplify";
-import { listOwnedProjects, listAssignedProjects } from "../graphql/queries"
+import { listOwnedProjects, listAssignedProjects, listWatchedProjects } from "../graphql/queries"
 import * as appActions from "./app"
 import * as mutationsActions from "./mutations"
+import * as observersActions from "./observers"
 import * as mutations from "../graphql/mutations"
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
@@ -17,6 +18,7 @@ export const FETCH_PROJECTS = "FETCH_PROJECTS";
 
 const OWNED = "owned"
 const ASSIGNED = "assigned"
+const WATCHED = "watched"
 
 export const createProject = (projectState, scope) => ({
   type: CREATE_PROJECT,
@@ -185,13 +187,38 @@ export const handleFetchAssignedProjects = () => async (dispatch, getState) => {
   if (user.state === AuthState.SignedIn) {
     try {
       const res = await API.graphql(graphqlOperation(listAssignedProjects))
-      dispatch(fetchProjects(res.data.listAssignedProjects.items, ASSIGNED))
+      const fetchedAssignedProjects = res.data.listAssignedProjects.items
+      dispatch(fetchProjects(fetchedAssignedProjects, ASSIGNED))
+      for (const fetchedAssignedProject of fetchedAssignedProjects) {
+        await dispatch(observersActions.handleSetProjectObservers(fetchedAssignedProject.id))
+      }
       return getState().projects
     } catch(err) {
       console.error(err)
     }
   } else {
     dispatch(fetchProjects([], ASSIGNED))
+    return getState().projects
+  }
+}
+
+export const handleFetchWatchedProjects = () => async (dispatch, getState) => {
+  const { user } = getState()
+  dispatch(appActions.handleSetProject(null))
+  if (user.state === AuthState.SignedIn) {
+    try {
+      const res = await API.graphql(graphqlOperation(listWatchedProjects))
+      const fetchedWatchedProjects = res.data.listWatchedProjects.items
+      dispatch(fetchProjects(fetchedWatchedProjects, WATCHED))
+      for (const fetchedWatchedProject of fetchedWatchedProjects) {
+        await dispatch(observersActions.handleSetProjectObservers(fetchedWatchedProject.id))
+      }
+      return getState().projects
+    } catch(err) {
+      console.error(err)
+    }
+  } else {
+    dispatch(fetchProjects([], WATCHED))
     return getState().projects
   }
 }

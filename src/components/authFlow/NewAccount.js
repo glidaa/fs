@@ -6,8 +6,10 @@ import { Auth } from "aws-amplify";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
 import { AuthState } from '../../constants';
-import DateField from '../fields/DateField';
-import GenderField from '../fields/GenderField';
+import DateField from '../UI/fields/DateField';
+import SubmitBtn from '../UI/fields/SubmitBtn';
+import Select from '../UI/fields/Select';
+import TextField from '../UI/fields/TextField';
 
 const NewAccount = (props) => {
   const { setShouldRedirect, dispatch } = props
@@ -235,99 +237,74 @@ const NewAccount = (props) => {
         <span>Create Account</span>
       </NewAccountFormHeader>
       <NewAccountStepOneForm onSubmit={handleNewAccount}>
-        <NewAccountFormEntry isError={firstNameError}>
-          <label htmlFor="firstName">
-            First Name
-          </label>
-          <input
-            type="text"
-            name="firstName"
-            placeholder="first name…"
-            autoComplete="given-name"
-            onChange={handleChange}
-            value={firstName}
-          ></input>
-          {firstNameError && <span>{firstNameError}</span>}
-        </NewAccountFormEntry>
-        <NewAccountFormEntry isError={lastNameError}>
-          <label htmlFor="lastName">
-            Last Name
-          </label>
-          <input
-            type="text"
-            name="lastName"
-            placeholder="last name…"
-            autoComplete="family-name"
-            onChange={handleChange}
-            value={lastName}
-          ></input>
-          {lastNameError && <span>{lastNameError}</span>}
-        </NewAccountFormEntry>
-        <NewAccountFormEntry isError={usernameError}>
-          <label htmlFor="username">
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            placeholder="username…"
-            autoComplete="username"
-            onChange={handleChange}
-            value={username}
-          ></input>
-          {usernameError && <span>{usernameError}</span>}
-        </NewAccountFormEntry>
-        <NewAccountFormEntry isError={emailError}>
-          <label htmlFor="email">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            placeholder="email…"
-            autoComplete="email"
-            onChange={handleChange}
-            value={email}
-          ></input>
-          {emailError && <span>{emailError}</span>}
-        </NewAccountFormEntry>
-        <NewAccountFormEntry isError={passwordError}>
-          <label htmlFor="password">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="password…"
-            autoComplete="new-password"
-            onChange={handleChange}
-            value={password}
-          ></input>
-          {passwordError && <span>{passwordError}</span>}
-        </NewAccountFormEntry>
-        <NewAccountFormEntry>
-          <label htmlFor="dateOfBirth">
-            Date Of Birth
-          </label>
-          <DateField
-            name="dateOfBirth"
-            onChange={handleChange}
-            placeholder="no date selected"
-            isError={dateOfBirthError}
-            value={dateOfBirth}
-            isClearable
-          />
-          {dateOfBirthError && <span>{dateOfBirthError}</span>}
-        </NewAccountFormEntry>
-        <NewAccountFormEntry>
-          <label htmlFor="gender">
-            Gender
-          </label>
-          <GenderField
-            onChange={handleChange}
-            value={gender}
-          />
-        </NewAccountFormEntry>
+        <TextField
+          type="text"
+          label="First Name"
+          name="firstName"
+          placeholder="first name…"
+          autoComplete="given-name"
+          onChange={handleChange}
+          error={firstNameError}
+          value={firstName}
+        />
+        <TextField
+          type="text"
+          label="Last Name"
+          name="lastName"
+          placeholder="last name…"
+          autoComplete="family-name"
+          onChange={handleChange}
+          error={lastNameError}
+          value={lastName}
+        />
+        <TextField
+          type="text"
+          label="Username"
+          name="username"
+          placeholder="username…"
+          autoComplete="username"
+          onChange={handleChange}
+          error={usernameError}
+          value={username}
+        />
+        <TextField
+          type="email"
+          label="Email"
+          name="email"
+          placeholder="email…"
+          autoComplete="email"
+          onChange={handleChange}
+          error={emailError}
+          value={email}
+        />
+        <TextField
+          type="password"
+          label="Password"
+          name="password"
+          placeholder="password…"
+          autoComplete="new-password"
+          onChange={handleChange}
+          error={passwordError}
+          value={password}
+        />
+        <DateField
+          name="dateOfBirth"
+          label="Date Of Birth"
+          onChange={handleChange}
+          placeholder="no date selected"
+          error={dateOfBirthError}
+          value={dateOfBirth}
+          clearable
+        />
+        <Select
+          name="gender"
+          label="Gender"
+          values={["male", "female"]}
+          options={["Male", "Female"]}
+          colors={["#FFEBE5", "#FDF1DB"]}
+          onChange={handleChange}
+          value={gender}
+        />
         <SubmitBtn
           type="submit"
           value={isBusy ? "Signing Up" : "Sign Up"}
@@ -342,21 +319,18 @@ const NewAccount = (props) => {
         <span>Enter code sent to your email.</span>
       </NewAccountFormHeader>
       <NewAccountStepTwoForm onSubmit={completeNewAccount}>
-        <NewAccountFormEntry isError={verificationCodeError}>
-          <label htmlFor="verificationCode">
-            Verification Code
-          </label>
-          <input
-            type="text"
-            name="verificationCode"
-            placeholder="Code…"
-            onChange={handleChange}
-            value={verificationCode}
-          ></input>
-          {verificationCodeError && <span>{verificationCodeError}</span>}
-        </NewAccountFormEntry>
+        <TextField
+          type="text"
+          label="Verification Code"
+          name="verificationCode"
+          placeholder="Code…"
+          onChange={handleChange}
+          error={verificationCodeError}
+          value={verificationCode}
+        />
         <SubmitBtn
           type="submit"
+          style={{width: "100%"}}
           value={isBusy ? "Processing" : "Submit"}
           disabled={isBusy || !verificationCode.trim()}
         />
@@ -451,58 +425,5 @@ const NewAccountStepTwoForm = styledComponents.form`
     grid-area: submit;
   }
 `;
-
-const SubmitBtn = styledComponents.input`
-  width: 100%;
-  padding: 15px 0;
-  background-color: #006EFF;
-  color: #FFFFFF !important;
-  border-radius: 8px;
-  outline: none;
-  border: none;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-  &:hover {
-    background-color: #0058cc;
-  }
-  &:disabled {
-    background-color: #338bff;
-    cursor: default;
-  }
-`
-
-const NewAccountFormEntry = styledComponents.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 0 0;
-  gap: 5px;
-  & > label {
-    color: #222222;
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  & > input {
-    width: calc(100% - 20px);
-    padding: 5px 10px;
-    border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 400;
-    &:disabled {
-      background-color: #FAFAFA;
-    }
-    &::placeholder {
-      color: #C0C0C0;
-    }
-  }
-  & > span {
-    color: #FF0000;
-    font-size: 12px;
-  }
-`
 
 export default connect()(NewAccount);

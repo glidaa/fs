@@ -5,6 +5,7 @@ import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../../actions/app"
 import * as tasksActions from "../../actions/tasks"
 import { AuthState } from "../../constants";
+import Avatar from '../UI/Avatar';
 
 const Assign = (props) => {
   const {
@@ -93,7 +94,7 @@ const Assign = (props) => {
         onMouseEnter={() => setSelection(0)}
         onClick={() => handleAssignTask(`anonymous:${commandParam}`)}
       >
-        <LetterAvatar>{commandParam[0].toUpperCase()}</LetterAvatar>
+        <Avatar user={{name: commandParam[0]}} size={32} circular />
         <div>
           <span>{commandParam}</span>
           <span>Anonymous Assignee</span>
@@ -106,10 +107,7 @@ const Assign = (props) => {
           onMouseEnter={() => setSelection(i + 1)}
           onClick={() => handleAssignTask(`user:${x.username}`)}
         >
-          {x.avatar ?
-            <ImageAvatar src={x.avatar} /> :
-            <LetterAvatar>{(x.firstName[0] + x.lastName[0]).toUpperCase()}</LetterAvatar>
-          }
+          <Avatar user={x} size={32} circular />
           <div>
             <span>{`${x.firstName} ${x.lastName}`}</span>
             <span>{x.email}</span>
@@ -143,28 +141,6 @@ const AssigneeSuggestion = styledComponents.div`
       font-size: 12px;
     }
   }
-`
-
-const ImageAvatar = styledComponents.img`
-  display: inline;
-  border-radius: 100%;
-  width: 32px;
-  height: 32px;
-`
-
-const LetterAvatar = styledComponents.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  color: #006EFF;
-  background-color: #CCE2FF;
-  line-height: 0;
-  font-size: 13.33px;
-  min-width: 32px;
-  min-height: 32px;
-  width: 32px;
-  height: 32px;
 `
 
 const NoKeyword = styledComponents.span`

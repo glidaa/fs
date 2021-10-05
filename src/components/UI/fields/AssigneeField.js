@@ -1,16 +1,20 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { connect } from "react-redux"
 import styledComponents from "styled-components";
-import * as tasksActions from "../../actions/tasks"
-import * as appActions from "../../actions/app";
-import { ReactComponent as RemoveIcon } from "../../assets/close-outline.svg"
-import { panelPages } from "../../constants";
-import ShadowScroll from '../ShadowScroll';
+import * as tasksActions from "../../../actions/tasks"
+import * as appActions from "../../../actions/app";
+import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
+import { panelPages } from "../../../constants";
+import ShadowScroll from '../../ShadowScroll';
+import Avatar from '../Avatar';
 
 const AssigneeField = (props) => {
   const {
+    label,
+    name,
     value,
     readOnly,
+    style,
     app: {
       selectedTask
     },
@@ -57,52 +61,68 @@ const AssigneeField = (props) => {
   }
 
   return (
-    <AssigneeFieldShell>
-      {(processedValue.length) ? (
-        <> 
-          {!readOnly && (
-            <NewAssigneeBtn onClick={openChooser}>
-              <div>+</div>
-              <span>Assign</span>
-            </NewAssigneeBtn>
-          )}
-          {processedValue.map(x => (
-            <AssigneeItem key={x.raw}>
-              <RemoveBtn onClick={() => handleUnassignTask(x.raw)}>
-                <RemoveIcon
-                  height="16"
-                  width="16"
-                  strokeWidth="32"
-                  color="#006EFF"
-                />
-              </RemoveBtn>
-              {x.isUser && (x.avatar ?
-                <ImageAvatar src={x.avatar} /> :
-                <LetterAvatar>{x.abbr}</LetterAvatar>
-              )}
-              {!x.isUser && <LetterAvatar>{x.name[0].toUpperCase()}</LetterAvatar>}
-              <AssigneeDetails>
-                <span>{x.firstName || x.name}</span>
-                <span>{x.username ? `@${x.username}` : "Anonymous"}</span>
-              </AssigneeDetails>
-            </AssigneeItem>
-          ))}
-        </>
-      ) : (
-        <NoAssignees>
-          <span>No Users Assigned Yet</span>
-          {!readOnly && (
-            <button onClick={openChooser}>
-              + Add Assignee
-            </button>
-          )}
-        </NoAssignees>
-      )}
+    <AssigneeFieldShell style={style}>
+      <label htmlFor={name}>
+        {label}
+      </label>
+      <AssigneeFieldContainer>
+        {(processedValue.length) ? (
+          <> 
+            {!readOnly && (
+              <NewAssigneeBtn onClick={openChooser}>
+                <div>+</div>
+                <span>Assign</span>
+              </NewAssigneeBtn>
+            )}
+            {processedValue.map(x => (
+              <AssigneeItem key={x.raw}>
+                <RemoveBtn onClick={() => handleUnassignTask(x.raw)}>
+                  <RemoveIcon
+                    height="16"
+                    width="16"
+                    strokeWidth="32"
+                    color="#006EFF"
+                  />
+                </RemoveBtn>
+                <Avatar user={x} size={36} circular />
+                <AssigneeDetails>
+                  <span>{x.firstName || x.name}</span>
+                  <span>{x.username ? `@${x.username}` : "Anonymous"}</span>
+                </AssigneeDetails>
+              </AssigneeItem>
+            ))}
+          </>
+        ) : (
+          <NoAssignees>
+            <span>No Users Assigned Yet</span>
+            {!readOnly && (
+              <button onClick={openChooser}>
+                + Add Assignee
+              </button>
+            )}
+          </NoAssignees>
+        )}
+      </AssigneeFieldContainer>
     </AssigneeFieldShell>
   )
 }
 
-const AssigneeFieldShell = styledComponents(ShadowScroll)`
+const AssigneeFieldShell = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  & > label {
+    color: #222222;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+`
+
+const AssigneeFieldContainer = styledComponents(ShadowScroll)`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -216,28 +236,6 @@ const AssigneeDetails = styledComponents.div`
     font-size: 10px;
     font-weight: 400;
   }
-`
-
-const ImageAvatar = styledComponents.img`
-  display: inline;
-  border-radius: 100%;
-  width: 36px;
-  height: 36px;
-`
-
-const LetterAvatar = styledComponents.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  color: #006EFF;
-  background-color: #CCE2FF;
-  line-height: 0;
-  font-size: calc(36px / 2.4);
-  min-width: 36px;
-  min-height: 36px;
-  width: 36px;
-  height: 36px;
 `
 
 const RemoveBtn = styledComponents.button`

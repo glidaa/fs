@@ -9,6 +9,7 @@ import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outli
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
 import { ReactComponent as AssigneeSearchIllustartion } from "../../assets/undraw_People_search_re_5rre.svg"
 import { ReactComponent as NoResultsIllustartion } from "../../assets/undraw_not_found_60pq.svg"
+import Avatar from '../UI/Avatar';
 
 const AssigneeChooser = (props) => {
   const {
@@ -134,7 +135,7 @@ const AssigneeChooser = (props) => {
             disabled={isBusy}
             onClick={() => handleAssignTask(`anonymous:${keyword.trim()}`)}
           >
-            <LetterAvatar>{keyword.trim()[0].toUpperCase()}</LetterAvatar>
+            <Avatar user={{name: keyword}} size={32} circular />
             <div>
               <span>{keyword.trim()}</span>
               <span>Anonymous Assignee</span>
@@ -147,10 +148,7 @@ const AssigneeChooser = (props) => {
             disabled={isBusy}
             onClick={() => handleAssignTask(`user:${x.username}`)}
           >
-           {x.avatar ?
-              <ImageAvatar src={x.avatar} /> :
-              <LetterAvatar>{(x.firstName[0] + x.lastName[0]).toUpperCase()}</LetterAvatar>
-            }
+            <Avatar user={x} size={32} circular />
             <div>
               <span>{`${x.firstName} ${x.lastName}`}</span>
               <span>@{x.username}</span>
@@ -274,34 +272,13 @@ const SearchResultsItem = styledComponents.button`
   }
 `
 
-const ImageAvatar = styledComponents.img`
-  display: inline;
-  border-radius: 100%;
-  width: 32px;
-  height: 32px;
-`
-
-const LetterAvatar = styledComponents.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  color: #006EFF;
-  background-color: #CCE2FF;
-  line-height: 0;
-  font-size: 13.33px;
-  min-width: 32px;
-  min-height: 32px;
-  width: 32px;
-  height: 32px;
-`
-
 const AssigneeChooserIllustartion = styledComponents.div`
   display: flex;
   flex-direction: column;
   flex: 1;
   align-items: center;
   justify-content: center;
+  margin-top: -25px;
   gap: 40px;
   & > svg {
     width: 250px;

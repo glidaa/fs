@@ -3,8 +3,8 @@ import { createPortal } from "react-dom"
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 import styledComponents from "styled-components"
-import { ReactComponent as RemoveIcon } from "../../assets/close-outline.svg"
-import formatDate from '../../utils/formatDate';
+import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
+import formatDate from '../../../utils/formatDate';
 
 const BodyOverlay = ({ children }) => createPortal(children, window.document.querySelector("body"))
 
@@ -15,8 +15,10 @@ const DateField = (props) => {
     placeholder,
     onChange,
     readOnly,
-    isError,
-    isClearable
+    error,
+    label,
+    style,
+    clearable
   } = props
   const [isPickerOpened, setIsPickerOpened] = useState(false)
   const clearValue = () => {
@@ -54,41 +56,66 @@ const DateField = (props) => {
     }
   }, [readOnly, isPickerOpened, setIsPickerOpened])
   return (
-    <DateFieldContainer readOnly={readOnly} isError={isError}>
-      <input
-        name={name}
-        value={value ? formatDate(value) : ""}
-        placeholder={placeholder}
-        contentEditable={false}
-        onClick={togglePicker}
-        readOnly
-      />  
-      {isClearable && value && (
-        <ClearBtn onClick={clearValue}>
-          <RemoveIcon
-            height="16"
-            width="16"
-            strokeWidth="32"
-            color="#222222"
-          />
-        </ClearBtn>
-      )}
-      <BodyOverlay>
-        {isPickerOpened && (
-          <PickerContainer onClick={handleOverlayClick}>
-            <Calendar
-              value={pickerValue}
-              onChange={pickValue}
-              colorPrimary="#006EFF"
-              colorPrimaryLight="#338bff"
-              shouldHighlightWeekends
+    <DateFieldShell style={style}>
+      <label htmlFor={name}>
+        {label}
+      </label>
+      <DateFieldContainer readOnly={readOnly} isError={error}>
+        <input
+          name={name}
+          value={value ? formatDate(value) : ""}
+          placeholder={placeholder}
+          contentEditable={false}
+          onClick={togglePicker}
+          readOnly
+        />  
+        {clearable && value && (
+          <ClearBtn onClick={clearValue}>
+            <RemoveIcon
+              height="16"
+              width="16"
+              strokeWidth="32"
+              color="#222222"
             />
-          </PickerContainer>
+          </ClearBtn>
         )}
-      </BodyOverlay>
-    </DateFieldContainer>
+        <BodyOverlay>
+          {isPickerOpened && (
+            <PickerContainer onClick={handleOverlayClick}>
+              <Calendar
+                value={pickerValue}
+                onChange={pickValue}
+                colorPrimary="#006EFF"
+                colorPrimaryLight="#338bff"
+                shouldHighlightWeekends
+              />
+            </PickerContainer>
+          )}
+        </BodyOverlay>
+      </DateFieldContainer>
+      {error && <span>{error}</span>}
+    </DateFieldShell>
   );
 };
+
+const DateFieldShell = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  & > label {
+    color: #222222;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & > span {
+    color: #FF0000;
+    font-size: 12px;
+  }
+`
 
 const DateFieldContainer = styledComponents.div`
   display: flex;

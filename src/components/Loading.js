@@ -33,7 +33,7 @@ const Loading = (props) => {
       )).data.getUserByUsername
       dispatch(userActions.handleSetData(userData))
       dispatch(userActions.handleSetState(AuthState.SignedIn))
-      dispatch(observersActions.handleSetProjectsObservers())
+      await dispatch(observersActions.handleSetOwnedProjectsObservers())
       currUser = {
         state: AuthState.SignedIn,
         data:userData
@@ -79,8 +79,10 @@ const Loading = (props) => {
         setLoadingMsg("We Are Fetching Your Own Projects")
         await dispatch(projectsActions.handleFetchOwnedProjects())
         setLoadingMsg("We Are Fetching Projects Assigned To You")
-        const projects = await dispatch(projectsActions.handleFetchAssignedProjects())
-        dispatch(observersActions.handleSetProjectsObservers())
+        await dispatch(projectsActions.handleFetchAssignedProjects())
+        setLoadingMsg("We Are Fetching Projects Watched By You")
+        const projects = await dispatch(projectsActions.handleFetchWatchedProjects())
+        await dispatch(observersActions.handleSetOwnedProjectsObservers())
         let reqProject = Object.values(projects).filter(x => x.permalink === `${params.username}/${params.projectPermalink}`)[0]
         if (!reqProject) {
           try {
@@ -115,8 +117,10 @@ const Loading = (props) => {
           setLoadingMsg("We Are Fetching Your Own Projects")
           await dispatch(projectsActions.handleFetchOwnedProjects())
           setLoadingMsg("We Are Fetching Projects Assigned To You")
-          const projects = await dispatch(projectsActions.handleFetchAssignedProjects())
-          dispatch(observersActions.handleSetProjectsObservers())
+          await dispatch(projectsActions.handleFetchAssignedProjects())
+          setLoadingMsg("We Are Fetching Projects Watched By You")
+          const projects = await dispatch(projectsActions.handleFetchWatchedProjects())
+          await dispatch(observersActions.handleSetOwnedProjectsObservers())
           const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
           if (firstProject) {
             dispatch(appActions.handleSetProject(firstProject.id, false))

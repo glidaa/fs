@@ -64,7 +64,8 @@ export default function (state = {}, action) {
       if ((action.scope === "owned" && !stateClone[action.id].isAssigned && !stateClone[action.id].isWatched && !stateClone[action.id].isTemp) ||
           (action.scope === "assigned" && !stateClone[action.id].isOwned && !stateClone[action.id].isWatched && !stateClone[action.id].isTemp) ||
           (action.scope === "watched" && !stateClone[action.id].isOwned && !stateClone[action.id].isAssigned && !stateClone[action.id].isTemp) ||
-          (action.scope === "temp" && !stateClone[action.id].isOwned && !stateClone[action.id].isWatched && !stateClone[action.id].isAssigned))
+          (action.scope === "temp" && !stateClone[action.id].isOwned && !stateClone[action.id].isWatched && !stateClone[action.id].isAssigned) ||
+          !action.scope)
       {
         delete stateClone[action.id]
       } else {

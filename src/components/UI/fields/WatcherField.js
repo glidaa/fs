@@ -1,16 +1,20 @@
 import React, { useEffect, useRef } from 'react';
 import { connect } from "react-redux"
 import styledComponents from "styled-components";
-import * as tasksActions from "../../actions/tasks"
-import * as appActions from "../../actions/app";
-import { ReactComponent as RemoveIcon } from "../../assets/close-outline.svg"
-import { panelPages } from "../../constants";
-import ShadowScroll from '../ShadowScroll';
+import * as tasksActions from "../../../actions/tasks"
+import * as appActions from "../../../actions/app";
+import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
+import { panelPages } from "../../../constants";
+import ShadowScroll from '../../ShadowScroll';
+import Avatar from '../Avatar';
 
 const WatcherField = (props) => {
   const {
+    label,
+    name,
     value,
     readOnly,
+    style,
     app: {
       selectedTask
     },
@@ -38,51 +42,68 @@ const WatcherField = (props) => {
   }
 
   return (
-    <WatcherFieldShell>
-      {(value.length) ? (
-        <> 
-          {!readOnly && (
-            <NewWatcherBtn onClick={openChooser}>
-              <div>+</div>
-              <span>Add</span>
-            </NewWatcherBtn>
-          )}
-          {value.map(x => (
-            <WatcherItem key={x}>
-              <RemoveBtn onClick={() => handleRemoveWatcher(x)}>
-                <RemoveIcon
-                  height="16"
-                  width="16"
-                  strokeWidth="32"
-                  color="#006EFF"
-                />
-              </RemoveBtn>
-              {users[x].avatar ?
-                <ImageAvatar src={users[x].avatar} /> :
-                <LetterAvatar>{users[x].abbr}</LetterAvatar>
-              }
-              <WatcherDetails>
-                <span>{users[x].firstName}</span>
-                <span>@{x}</span>
-              </WatcherDetails>
-            </WatcherItem>
-          ))}
-        </>
-      ) : (
-        <NoWatchers>
-          <span>No Watchers Added Yet</span>
-          {!readOnly && (
-            <button onClick={openChooser}>
-              + Add Watcher
-            </button>
-          )}
-        </NoWatchers>
-      )}
+    <WatcherFieldShell style={style}>
+      <label htmlFor={name}>
+        {label}
+      </label>
+      <WatcherFieldContainer>
+        {(value.length) ? (
+          <> 
+            {!readOnly && (
+              <NewWatcherBtn onClick={openChooser}>
+                <div>+</div>
+                <span>Add</span>
+              </NewWatcherBtn>
+            )}
+            {value.map(x => (
+              <WatcherItem key={x}>
+                <RemoveBtn onClick={() => handleRemoveWatcher(x)}>
+                  <RemoveIcon
+                    height="16"
+                    width="16"
+                    strokeWidth="32"
+                    color="#006EFF"
+                  />
+                </RemoveBtn>
+                <Avatar user={users[x]} size={32} circular />
+                <WatcherDetails>
+                  <span>{users[x].firstName}</span>
+                  <span>@{x}</span>
+                </WatcherDetails>
+              </WatcherItem>
+            ))}
+          </>
+        ) : (
+          <NoWatchers>
+            <span>No Watchers Added Yet</span>
+            {!readOnly && (
+              <button onClick={openChooser}>
+                + Add Watcher
+              </button>
+            )}
+          </NoWatchers>
+        )}
+      </WatcherFieldContainer>
     </WatcherFieldShell>
   )
 }
 
-const WatcherFieldShell = styledComponents(ShadowScroll)`
+const WatcherFieldShell = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  & > label {
+    color: #222222;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+`
+
+const WatcherFieldContainer = styledComponents(ShadowScroll)`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -196,28 +217,6 @@ const WatcherDetails = styledComponents.div`
     font-size: 10px;
     font-weight: 400;
   }
-`
-
-const ImageAvatar = styledComponents.img`
-  display: inline;
-  border-radius: 100%;
-  width: 36px;
-  height: 36px;
-`
-
-const LetterAvatar = styledComponents.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  color: #006EFF;
-  background-color: #CCE2FF;
-  line-height: 0;
-  font-size: calc(36px / 2.4);
-  min-width: 36px;
-  min-height: 36px;
-  width: 36px;
-  height: 36px;
 `
 
 const RemoveBtn = styledComponents.button`

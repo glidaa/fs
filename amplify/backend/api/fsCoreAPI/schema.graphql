@@ -47,7 +47,8 @@ type Task
 	@aws_iam
 	@aws_cognito_user_pools
 	@key(name: "byOwner", fields: ["owner"])
-	@key(name: "byProject", fields: ["projectID"]) {
+	@key(name: "byProject", fields: ["projectID"])
+    @key(name: "byDue", fields: ["due"]) {
 	id: ID!
 	projectID: ID!
 	prevTask: ID
@@ -183,6 +184,14 @@ type Subscription {
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	onDeleteOwnedProject(owner: String!): Project
+		@aws_subscribe(mutations: ["deleteProjectAndTasks"])
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_cognito_user_pools
+	onUpdateProject(id: String!): ProjectUpdate
+		@aws_subscribe(mutations: ["updateProject", "pushProjectUpdate"])
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_cognito_user_pools
+	onDeleteProject(id: String!): Project
 		@aws_subscribe(mutations: ["deleteProjectAndTasks"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools

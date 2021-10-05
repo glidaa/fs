@@ -8,11 +8,14 @@ import * as usersActions from "./users"
 import * as subscriptions from "../graphql/subscriptions"
 import filterObj from "../utils/filterObj";
 import updateAssignedTasks from "../pushedUpdates/updateAssignedTasks";
+import updateWatchedTasks from "../pushedUpdates/updateWatchedTasks";
 
 export const SET_USER_OBSERVERS = "SET_USER_OBSERVERS";
 export const CLEAR_USER_OBSERVERS = "CLEAR_USER_OBSERVERS";
-export const SET_PROJECTS_OBSERVERS = "SET_PROJECTS_OBSERVERS";
-export const CLEAR_PROJECTS_OBSERVERS = "CLEAR_PROJECTS_OBSERVERS";
+export const SET_OWNED_PROJECTS_OBSERVERS = "SET_OWNED_PROJECTS_OBSERVERS";
+export const CLEAR_OWNED_PROJECTS_OBSERVERS = "CLEAR_OWNED_PROJECTS_OBSERVERS";
+export const SET_PROJECT_OBSERVERS = "SET_PROJECT_OBSERVERS";
+export const CLEAR_PROJECT_OBSERVERS = "CLEAR_PROJECT_OBSERVERS";
 export const SET_TASKS_OBSERVERS = "SET_TASKS_OBSERVERS";
 export const CLEAR_TASKS_OBSERVERS = "CLEAR_TASKS_OBSERVERS";
 export const SET_COMMENTS_OBSERVERS = "SET_COMMENTS_OBSERVERS";
@@ -27,13 +30,24 @@ const clearUserObservers = () => ({
   type: CLEAR_USER_OBSERVERS
 });
 
-const setProjectsObservers = (observers) => ({
-  type: SET_PROJECTS_OBSERVERS,
+const setOwnedProjectsObservers = (observers) => ({
+  type: SET_OWNED_PROJECTS_OBSERVERS,
   observers
 });
 
-const clearProjectsObservers = () => ({
-  type: CLEAR_PROJECTS_OBSERVERS
+const clearOwnedProjectsObservers = () => ({
+  type: CLEAR_OWNED_PROJECTS_OBSERVERS
+});
+
+const setProjectObservers = (id, observers) => ({
+  type: SET_OWNED_PROJECTS_OBSERVERS,
+  observers,
+  id
+});
+
+const clearProjectObservers = (id) => ({
+  type: CLEAR_OWNED_PROJECTS_OBSERVERS,
+  id
 });
 
 const setTasksObservers = (observers) => ({
@@ -54,17 +68,18 @@ const clearCommentsObservers = () => ({
   type: CLEAR_COMMENTS_OBSERVERS
 });
 
-export const handleSetUserObservers = () => (dispatch, getState) => {
+export const handleSetUserObservers = () => async (dispatch, getState) => {
   const { user } = getState()
   const observers = [];
   const data = {
     username: user.data.username
   }
-  observers.push(API.graphql(graphqlOperation(subscriptions.onPushUserUpdate, data)).subscribe({
+  observers.push(await API.graphql(graphqlOperation(subscriptions.onPushUserUpdate, data)).subscribe({
     next: e => {
       const incoming = e.value.data.onPushUserUpdate
       dispatch(userActions.handleSetData(incoming))
       updateAssignedTasks(dispatch, getState, incoming)
+      updateWatchedTasks(dispatch, getState, incoming)
     },
     error: error => console.warn(error)
   }))
@@ -81,13 +96,13 @@ export const handleClearUserObservers = () => (dispatch, getState) => {
   return dispatch(clearUserObservers())
 }
 
-export const handleSetProjectsObservers = () => (dispatch, getState) => {
+export const handleSetOwnedProjectsObservers = () => async (dispatch, getState) => {
   const { user } = getState()
   const observers = [];
   const data = {
     owner: user.data.username
   }
-  observers.push(API.graphql(graphqlOperation(subscriptions.onCreateOwnedProject, data)).subscribe({
+  observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateOwnedProject, data)).subscribe({
     next: e => {
       const { projects } = getState()
       const ownedProjects = filterObj(projects, x => x.isOwned)
@@ -98,7 +113,7 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
     },
     error: error => console.warn(error)
   }))
-  observers.push(API.graphql(graphqlOperation(subscriptions.onImportOwnedProjects, data)).subscribe({
+  observers.push(await API.graphql(graphqlOperation(subscriptions.onImportOwnedProjects, data)).subscribe({
     next: e => {
       const { projects } = getState()
       const ownedProjects = filterObj(projects, x => x.isOwned)
@@ -111,7 +126,7 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
     },
     error: error => console.warn(error)
   }))
-  observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateOwnedProject, data)).subscribe({
+  observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateOwnedProject, data)).subscribe({
     next: e => {
       const { projects, mutations } = getState()
       const ownedProjects = filterObj(projects, x => x.isOwned)
@@ -131,7 +146,7 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
     },
     error: error => console.warn(error)
   }))
-  observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteOwnedProject, data)).subscribe({
+  observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteOwnedProject, data)).subscribe({
     next: e => {
       const { app, projects } = getState()
       const ownedProjects = filterObj(projects, x => x.isOwned)
@@ -145,24 +160,76 @@ export const handleSetProjectsObservers = () => (dispatch, getState) => {
     },
     error: error => console.warn(error)
   }))
-  return dispatch(setProjectsObservers(observers))
+  return dispatch(setOwnedProjectsObservers(observers))
 }
 
-export const handleClearProjectsObservers = () => (dispatch, getState) => {
+export const handleClearOwnedProjectsObservers = () => (dispatch, getState) => {
   const { observers } = getState()
-  if (observers.projects) {
-    for (const observer of observers.projects) {
+  if (observers.projects.owned) {
+    for (const observer of observers.projects.owned) {
       observer.unsubscribe()
     }
   }
-  return dispatch(clearProjectsObservers())
+  return dispatch(clearOwnedProjectsObservers())
 }
 
-export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
+export const handleSetProjectObservers = (projectID) => async (dispatch, getState) => {
+  const { projects, observers } = getState()
+  if (!projects[projectID]?.isAssigned && !observers.projects.others[projectID]) {
+    const observers = [];
+    const data = { id: projectID }
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateProject, data)).subscribe({
+      next: e => {
+        const { projects, mutations } = getState()
+        const incoming = e.value.data.onUpdateProject
+        if (!mutations.includes(incoming.mutationID)) {
+          if (projects[incoming.id]) {
+            const lastMutationDate = projects[incoming.id].mutatedAt || null
+            const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
+            if (!mutationDate || (mutationDate && lastMutationDate < mutationDate)) {
+              dispatch(projectsActions.updateProject({
+                ...incoming,
+                mutatedAt: mutationDate
+              }))
+            }
+          }
+        }
+      },
+      error: error => console.warn(error)
+    }))
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteProject, data)).subscribe({
+      next: e => {
+        const { app, projects } = getState()
+        const removedItemID = e.value.data.onDeleteProject.id;
+        if (projects[removedItemID]) {
+          dispatch(handleClearProjectObservers(removedItemID))
+          if (app.selectedProject === removedItemID) {
+            dispatch(appActions.handleSetTask(null))
+          }
+          dispatch(projectsActions.removeProject(removedItemID))
+        }
+      },
+      error: error => console.warn(error)
+    }))
+    return dispatch(setProjectObservers(projectID, observers))
+  }
+}
+
+export const handleClearProjectObservers = (projectID) => (dispatch, getState) => {
+  const { observers } = getState()
+  if (observers.projects.others[projectID]) {
+    for (const observer of observers.projects.others[projectID]) {
+      observer.unsubscribe()
+    }
+  }
+  return dispatch(clearProjectObservers(projectID))
+}
+
+export const handleSetTasksObservers = (projectID) => async (dispatch, getState) => {
   const { app } = getState()
   if (app.selectedProject === projectID) {
     const observers = [];
-    observers.push(API.graphql(graphqlOperation(subscriptions.onCreateTaskByProjectId, { projectID })).subscribe({
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateTaskByProjectId, { projectID })).subscribe({
       next: async (e) => {
         const { tasks } = getState()
         const incoming = e.value.data.onCreateTaskByProjectID
@@ -177,7 +244,7 @@ export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
       },
       error: error => console.warn(error)
     }))
-    observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateTaskByProjectId, { projectID })).subscribe({
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateTaskByProjectId, { projectID })).subscribe({
       next: async (e) => {
         const { tasks, mutations } = getState()
         const incoming = e.value.data.onUpdateTaskByProjectID
@@ -201,7 +268,7 @@ export const handleSetTasksObservers = (projectID) => (dispatch, getState) => {
       },
       error: error => console.warn(error)
     }))
-    observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteTaskByProjectId, { projectID })).subscribe({
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteTaskByProjectId, { projectID })).subscribe({
       next: e => {
         const { tasks, app } = getState()
         const removedItemID = e.value.data.onDeleteTaskByProjectID.id;
@@ -228,11 +295,11 @@ export const handleClearTasksObservers = () => (dispatch, getState) => {
   return dispatch(clearTasksObservers())
 }
 
-export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
+export const handleSetCommentsObservers = (taskID) => async (dispatch, getState) => {
   const { app } = getState()
     if (app.selectedTask === taskID) {
     const observers = [];
-    observers.push(API.graphql(graphqlOperation(subscriptions.onCreateCommentByTaskId, { taskID })).subscribe({
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateCommentByTaskId, { taskID })).subscribe({
       next: async (e) => {
         const { comments } = getState()
         const incoming = e.value.data.onCreateCommentByTaskID
@@ -243,7 +310,7 @@ export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
       },
       error: error => console.warn(error)
     }))
-    observers.push(API.graphql(graphqlOperation(subscriptions.onUpdateCommentByTaskId, { taskID })).subscribe({
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateCommentByTaskId, { taskID })).subscribe({
       next: e => {
         const { comments, mutations } = getState()
         const incoming = e.value.data.onUpdateCommentByTaskID
@@ -262,7 +329,7 @@ export const handleSetCommentsObservers = (taskID) => (dispatch, getState) => {
       },
       error: error => console.warn(error)
     }))
-    observers.push(API.graphql(graphqlOperation(subscriptions.onDeleteCommentByTaskId, { taskID })).subscribe({
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteCommentByTaskId, { taskID })).subscribe({
       next: e => {
         const { comments } = getState()
         const removedItemID = e.value.data.onDeleteCommentByTaskID.id;

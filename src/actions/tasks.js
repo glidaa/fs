@@ -302,7 +302,7 @@ export const handleRemoveWatcher= (taskID, username) => async (dispatch, getStat
     try {
       const mutationID = generateMutationID(user.data.username)
       dispatch(mutationsActions.addMutation(mutationID))
-      await API.graphql(graphqlOperation(mutations.unassignTask, {
+      await API.graphql(graphqlOperation(mutations.removeWatcher, {
         taskID: taskID,
         watcher: username,
         mutationID: mutationID

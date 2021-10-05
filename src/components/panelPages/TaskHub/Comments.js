@@ -9,6 +9,7 @@ import { Editor, EditorState, ContentState, convertToRaw, convertFromRaw } from 
 import { ReactComponent as CommentsIllustartion } from "../../../assets/undraw_Public_discussion_re_w9up.svg"
 import { ReactComponent as RemoveIcon } from "../../../assets/trash-outline.svg"
 import * as commentsActions from "../../../actions/comments";
+import Avatar from '../../UI/Avatar';
 
 const Comments = (props) => {
   const {
@@ -89,9 +90,8 @@ const Comments = (props) => {
         {processedComments && processedComments.map(x => (
           typeof x === "object" ? (
             <CommentUnit key={x.id} isSelf={x.owner === user.data.username}>
-              {x.owner !== user.data.username && (users[x.owner].avatar ? 
-                <ImageAvatar src={users[x.owner].avatar} /> :
-                <LetterAvatar>{users[x.owner].abbr}</LetterAvatar>
+              {x.owner !== user.data.username && (
+                <Avatar user={users[x.owner]} size={32} circular />
               )}
               <CommentContent>
                 <CommentBox>
@@ -141,10 +141,7 @@ const Comments = (props) => {
         </CommentNotAllowed>
       ) : (
         <NewComment>
-          {user.data.avatar ? 
-            <ImageAvatar src={user.data.avatar} /> :
-            <LetterAvatar>{user.data.abbr}</LetterAvatar>
-          }
+          <Avatar user={user.data} size={32} circular />
           <CommentField onClick={openNewComment} ref={newCommentRef}>
             <CommentInput>
               <Editor
@@ -323,28 +320,6 @@ const CommentNotAllowed = styledComponents.span`
   color: #C0C0C0;
   text-align: center;
   width: 100%;
-`
-
-const ImageAvatar = styledComponents.img`
-  display: inline;
-  border-radius: 100%;
-  width: 32px;
-  height: 32px;
-`
-
-const LetterAvatar = styledComponents.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  color: #006EFF;
-  background-color: #CCE2FF;
-  line-height: 0;
-  font-size: 13.33px;
-  min-width: 32px;
-  min-height: 32px;
-  width: 32px;
-  height: 32px;
 `
 
 const NoComments = styledComponents.div`

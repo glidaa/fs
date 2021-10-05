@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import styledComponents from "styled-components"
 
 const PanelTabs = (props) => {
@@ -24,8 +24,6 @@ const PanelTabs = (props) => {
     </PanelTabsShell>
   )
 }
-
-
 
 const PanelTabsShell = styledComponents.div`
 	display: flex;

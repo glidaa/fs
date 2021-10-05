@@ -13,7 +13,6 @@ const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
 const INVALID_ASSIGNEE = "INVALID_ASSIGNEE";
 const USER_NOT_ASSIGNED = "USER_NOT_ASSIGNED";
 const ALREADY_WATCHING = "ALREADY_WATCHING";
-const INVALID_WATCHER = "INVALID_WATCHER";
 const USER_NOT_WATCHING = "USER_NOT_WATCHING";
 const USER_NOT_FOUND = "USER_NOT_FOUND";
 const PROJECT_NOT_FOUND = "PROJECT_NOT_FOUND";
@@ -143,6 +142,12 @@ exports.handler = async function (ctx) {
       },
       onDeleteOwnedProject: (ctx) => {
         return onDeleteOwnedProject(ctx);
+      },
+      onUpdateProject: (ctx) => {
+        return onUpdateProject(ctx);
+      },
+      onDeleteProject: (ctx) => {
+        return onDeleteProject(ctx);
       },
       onCreateTaskByProjectID: (ctx) => {
         return onCreateTaskByProjectID(ctx);
@@ -1150,9 +1155,9 @@ exports.handler = async function (ctx) {
           Key: {
             "username": watcher
           },
-          UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
+          UpdateExpression: "set watchedTasks=:watchedTasks, updatedAt = :updatedAt",
           ExpressionAttributeValues: {
-            ":assignedTasks": [...userData.Item.assignedTasks, taskPath],
+            ":watchedTasks": [...userData.Item.watchedTasks, taskPath],
             ":updatedAt": new Date().toISOString()
           },
           ReturnValues: "ALL_NEW"
@@ -1181,68 +1186,59 @@ exports.handler = async function (ctx) {
   async function removeWatcher(ctx) {
     const { watcher, taskID, mutationID } = ctx.arguments
     const client = ctx.identity.username
-    const isValidWatcher = /^(user|anonymous):(.*)$/.test(watcher)
-    if (isValidWatcher) {
-      const [, watcherType, watcherID] = watcher.match(/(user|anonymous):(.*)/)
-      const isUser = watcherType === "user"
-      const userGetParams = {
-        TableName: USERTABLE,
-        Key: {
-          "username": watcherID
-        }
+    const userGetParams = {
+      TableName: USERTABLE,
+      Key: {
+        "username": watcher
       }
-      const userData = isUser && await docClient.get(userGetParams).promise()
-      const { projectID, watchers } = await getTask(taskID)
-      const taskPath = `${projectID}/${taskID}`
-      if (await isProjectEditableByClient(projectID, client)) {
-        if (watchers.includes(watcher)) {
-          const taskUpdateParams = {
-            TableName: TASKTABLE,
-            Key: {
-              "id": taskID
-            },
-            UpdateExpression: "set watchers=:watchers, updatedAt = :updatedAt",
-            ExpressionAttributeValues: {
-              ":watchers": watchers.filter(x => x !== watcher),
-              ":updatedAt": new Date().toISOString()
-            },
-            ReturnValues: "UPDATED_NEW"
-          };
-          const userUpdateParams = isUser && {
-            TableName: USERTABLE,
-            Key: {
-              "username": watcherID
-            },
-            UpdateExpression: "set assignedTasks=:assignedTasks, updatedAt = :updatedAt",
-            ExpressionAttributeValues: {
-              ":assignedTasks": userData.Item.assignedTasks.filter(x => x !== taskPath),
-              ":updatedAt": new Date().toISOString()
-            },
-            ReturnValues: "ALL_NEW"
-          };
-          try {
-            const updatedTask = await docClient.update(taskUpdateParams).promise();
-            if (isUser) {
-              const userUpdate = await docClient.update(userUpdateParams).promise();
-              await _pushUserUpdate(userUpdate.Attributes)
-            }
-            return {
-              id: taskID,
-              projectID: cachedTasks[taskID].projectID,
-              mutationID: mutationID,
-              ...updatedTask.Attributes
-            }
-          } catch (err) {
-            throw new Error(err);
+    }
+    const userData = await docClient.get(userGetParams).promise()
+    const { projectID, watchers } = await getTask(taskID)
+    const taskPath = `${projectID}/${taskID}`
+    if (await isProjectEditableByClient(projectID, client)) {
+      if (watchers.includes(watcher)) {
+        const taskUpdateParams = {
+          TableName: TASKTABLE,
+          Key: {
+            "id": taskID
+          },
+          UpdateExpression: "set watchers=:watchers, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":watchers": watchers.filter(x => x !== watcher),
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "UPDATED_NEW"
+        };
+        const userUpdateParams = {
+          TableName: USERTABLE,
+          Key: {
+            "username": watcher
+          },
+          UpdateExpression: "set watchedTasks=:watchedTasks, updatedAt = :updatedAt",
+          ExpressionAttributeValues: {
+            ":watchedTasks": userData.Item.watchedTasks.filter(x => x !== taskPath),
+            ":updatedAt": new Date().toISOString()
+          },
+          ReturnValues: "ALL_NEW"
+        };
+        try {
+          const updatedTask = await docClient.update(taskUpdateParams).promise();
+          const userUpdate = await docClient.update(userUpdateParams).promise();
+          await _pushUserUpdate(userUpdate.Attributes)
+          return {
+            id: taskID,
+            projectID: cachedTasks[taskID].projectID,
+            mutationID: mutationID,
+            ...updatedTask.Attributes
           }
-        } else {
-          throw new Error(USER_NOT_WATCHING)
+        } catch (err) {
+          throw new Error(err);
         }
       } else {
-        throw new Error(UNAUTHORIZED)
+        throw new Error(USER_NOT_WATCHING)
       }
     } else {
-      throw new Error(INVALID_WATCHER)
+      throw new Error(UNAUTHORIZED)
     }
   }
 
@@ -1736,6 +1732,34 @@ exports.handler = async function (ctx) {
       }
     } else {
       throw new Error(UNAUTHORIZED)
+    }
+  }
+
+  async function onUpdateProject(ctx) {
+    const client = ctx.identity.username
+    const projectID = ctx.arguments.id
+    try {
+      if (await isProjectSharedWithClient(projectID, client)) {
+        return cachedProjects[projectID]
+      } else {
+        throw new Error(UNAUTHORIZED)
+      }
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+
+  async function onDeleteProject(ctx) {
+    const client = ctx.identity.username
+    const projectID = ctx.arguments.id
+    try {
+      if (await isProjectSharedWithClient(projectID, client)) {
+        return cachedProjects[projectID]
+      } else {
+        throw new Error(UNAUTHORIZED)
+      }
+    } catch (err) {
+      throw new Error(err)
     }
   }
 

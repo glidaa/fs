@@ -83,6 +83,9 @@ const Container = styled.div`
   overflow: hidden;
   width: 100%;
   scroll-behavior: smooth;
+  @media (hover: none) {
+    overflow: auto;
+  }
 `;
 
 export default ShadowScroll;

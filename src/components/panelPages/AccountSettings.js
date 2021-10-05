@@ -8,8 +8,11 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as LogOutIcon } from "../../assets/log-out-outline.svg"
-import GenderField from '../fields/GenderField';
-import DateField from '../fields/DateField';
+import DateField from '../UI/fields/DateField';
+import Button from '../UI/Button';
+import Select from '../UI/fields/Select';
+import TextField from '../UI/fields/TextField';
+import Avatar from '../UI/Avatar';
 
 const AccountSettings = (props) => {
   const {
@@ -109,81 +112,63 @@ const AccountSettings = (props) => {
         </PanelPageToolbarAction>
       </PanelPageToolbar>
       <AccountSettingsHeader>
-        {avatar ?
-          <ImageAvatar src={avatar} /> :
-          <LetterAvatar>{abbr}</LetterAvatar>
-        }
+        <Avatar user={props.user.data} size={128} />
         <span>{firstName} {lastName}</span>
         <span>@{username}</span>
       </AccountSettingsHeader>
       <AccountSettingsForm>
         <form onSubmit={(e) => e.preventDefault()}>
-          <AccountSetting>
-            <label htmlFor="firstName">
-              First Name
-            </label>
-            <input
-              type="text"
-              name="firstName"
-              placeholder="first name…"
-              onChange={(e) => setNewFirstName(e.target.value)}
-              value={newFirstName}
-            ></input>
-          </AccountSetting>
-          <AccountSetting>
-            <label htmlFor="lastName">
-              Last Name
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              placeholder="last name…"
-              onChange={(e) => setNewLastName(e.target.value)}
-              value={newLastName}
-            ></input>
-          </AccountSetting>
-          <AccountSetting>
-            <label htmlFor="email">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="email…"
-              disabled
-              onChange={(e) => setNewEmail(e.target.value)}
-              value={newEmail}
-            ></input>
-          </AccountSetting>
-          <AccountSetting>
-            <label htmlFor="dateOfBirth">
-              Date Of Birth
-            </label>
-            <DateField
-              name="dateOfBirth"
-              onChange={(e) => setNewBirthdate(e.target.value)}
-              placeholder="no date selected"
-              value={newBirthdate}
-            />
-          </AccountSetting>
-          <AccountSetting>
-            <label htmlFor="gender">
-              Gender
-            </label>
-            <GenderField
-              onChange={(e) => setNewGender(e.target.value)}
-              value={newGender}
-            />
-          </AccountSetting>
+          <TextField
+            type="text"
+            name="firstName"
+            label="First Name"
+            placeholder="first name…"
+            onChange={(e) => setNewFirstName(e.target.value)}
+            value={newFirstName}
+          />
+          <TextField
+            type="text"
+            name="lastName"
+            label="Last Name"
+            placeholder="last name…"
+            onChange={(e) => setNewLastName(e.target.value)}
+            value={newLastName}
+          />
+          <TextField
+            type="email"
+            name="email"
+            label="Email"
+            placeholder="email…"
+            disabled
+            onChange={(e) => setNewEmail(e.target.value)}
+            value={newEmail}
+          />
+          <DateField
+            name="dateOfBirth"
+            label="Date Of Birth"
+            onChange={(e) => setNewBirthdate(e.target.value)}
+            placeholder="no date selected"
+            value={newBirthdate}
+          />
+          <Select
+            name="gender"
+            label="Gender"
+            values={["male", "female"]}
+            options={["Male", "Female"]}
+            colors={["#FFEBE5", "#FDF1DB"]}
+            onChange={(e) => setNewGender(e.target.value)}
+            value={newGender}
+          />
           <input type="submit" name="submit" value="Submit"></input>
         </form>
       </AccountSettingsForm>
-      <SaveSettingsBtn
+      <Button
+        style={{ margin: "0 25px 25px 25px" }}
         onClick={saveChanges}
         disabled={!isChanged}
       >
         Save Changes
-      </SaveSettingsBtn>
+      </Button>
     </>
   );
 };
@@ -197,7 +182,7 @@ const AccountSettingsForm = styledComponents(SimpleBar)`
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin-bottom: 25px;
+    margin: 0 25px 25px 25px;
     & > h2 > span {
       cursor: pointer;
     }
@@ -206,36 +191,6 @@ const AccountSettingsForm = styledComponents(SimpleBar)`
     }
   }
 `;
-
-const AccountSetting = styledComponents.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 0 25px;
-  gap: 5px;
-  & > label {
-    color: #222222;
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  & > input {
-    width: calc(100% - 20px);
-    padding: 5px 10px;
-    border: 1px solid #C0C0C0;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 400;
-    &:disabled {
-      background-color: #FAFAFA;
-    }
-    &::placeholder {
-      color: #C0C0C0;
-    }
-  }
-`
 
 const PanelPageToolbar = styledComponents.div`
   display: flex;
@@ -280,46 +235,6 @@ const AccountSettingsHeader = styledComponents.div`
     font-size: 14px;
     line-height: 0;
   }
-`
-
-const SaveSettingsBtn = styledComponents.button`
-  padding: 15px 0;
-  margin: 0 25px 25px 25px;
-  background-color: #006EFF;
-  color: #FFFFFF;
-  border-radius: 8px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  &:hover {
-    background-color: #0058cc;
-  }
-  &:disabled {
-    background-color: #338bff;
-  }
-`
-
-const ImageAvatar = styledComponents.img`
-  display: block;
-  border-radius: 32px;
-  width: 128px;
-  height: 128px;
-`
-
-const LetterAvatar = styledComponents.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 32px;
-  color: #006EFF;
-  background-color: #CCE2FF;
-  line-height: 0;
-  font-size: 64px;
-  min-width: 128px;
-  min-height: 128px;
-  width: 128px;
-  height: 128px;
 `
 
 export default connect((state) => ({

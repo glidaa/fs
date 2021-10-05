@@ -7,6 +7,8 @@ import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
 import { AuthState } from '../../constants';
 import { useHistory } from 'react-router';
+import SubmitBtn from '../UI/fields/SubmitBtn';
+import TextField from '../UI/fields/TextField';
 
 const Login = (props) => {
   const { setShouldRedirect, dispatch } = props
@@ -96,34 +98,26 @@ const Login = (props) => {
         <span>Login</span>
       </LoginFormHeader>
       <LoginStepOneForm onSubmit={handleLogin}>
-        <LoginFormEntry isError={usernameError}>
-          <label htmlFor="username">
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            placeholder="username…"
-            autoComplete="username"
-            onChange={handleChange}
-            value={username}
-          ></input>
-          {usernameError && <span>{usernameError}</span>}
-        </LoginFormEntry>
-        <LoginFormEntry isError={passwordError}>
-          <label htmlFor="password">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="password…"
-            autoComplete="current-password"
-            onChange={handleChange}
-            value={password}
-          ></input>
-          {passwordError && <span>{passwordError}</span>}
-        </LoginFormEntry>
+        <TextField
+          type="text"
+          name="username"
+          label="Username"
+          placeholder="username…"
+          autoComplete="username"
+          onChange={handleChange}
+          error={usernameError}
+          value={username}
+        />
+        <TextField
+          type="password"
+          label="Password"
+          name="password"
+          placeholder="password…"
+          autoComplete="current-password"
+          onChange={handleChange}
+          error={passwordError}
+          value={password}
+        />
         <NewAccountLink onClick={() => history.push("/signup")}>
           <span>No Account? </span>
           <span>Create One</span>
@@ -145,21 +139,18 @@ const Login = (props) => {
         <span>Enter code sent to your email.</span>
       </LoginFormHeader>
       <LoginStepTwoForm onSubmit={handleConfirmAccount}>
-        <LoginFormEntry isError={verificationCodeError}>
-          <label htmlFor="verificationCode">
-            Verification Code
-          </label>
-          <input
-            type="text"
-            name="verificationCode"
-            placeholder="Code…"
-            onChange={handleChange}
-            value={verificationCode}
-          ></input>
-          {verificationCodeError && <span>{verificationCodeError}</span>}
-        </LoginFormEntry>
+        <TextField
+          type="text"
+          label="Verification Code"
+          name="verificationCode"
+          placeholder="Code…"
+          onChange={handleChange}
+          error={verificationCodeError}
+          value={verificationCode}
+        />
         <SubmitBtn
           type="submit"
+          style={{width: "100%"}}
           value={isBusy ? "Processing" : "Submit"}
           disabled={isBusy || !verificationCode.trim()}
         />
@@ -244,59 +235,6 @@ const LoginStepTwoForm = styledComponents.form`
     grid-area: submit;
   }
 `;
-
-const SubmitBtn = styledComponents.input`
-  width: 100%;
-  padding: 15px 0;
-  background-color: #006EFF;
-  color: #FFFFFF !important;
-  border-radius: 8px;
-  outline: none;
-  border: none;
-  transition: background-color 0.3s;
-  cursor: pointer;
-  &:hover {
-    background-color: #0058cc;
-  }
-  &:disabled {
-    background-color: #338bff;
-    cursor: default;
-  }
-`
-
-const LoginFormEntry = styledComponents.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 0 0;
-  gap: 5px;
-  & > label {
-    color: #222222;
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  & > input {
-    width: calc(100% - 20px);
-    padding: 5px 10px;
-    border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 400;
-    &:disabled {
-      background-color: #FAFAFA;
-    }
-    &::placeholder {
-      color: #C0C0C0;
-    }
-  }
-  & > span {
-    color: #FF0000;
-    font-size: 12px;
-  }
-`
 
 const NewAccountLink = styledComponents.div`
   font-size: 14px;

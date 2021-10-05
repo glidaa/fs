@@ -4,6 +4,8 @@ import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
 import * as appActions from "../../actions/app"
+import SubmitBtn from '../UI/fields/SubmitBtn';
+import TextField from '../UI/fields/TextField';
 
 const ForgotPassword = (props) => {
   const { setShouldRedirect, dispatch } = props
@@ -117,20 +119,16 @@ const ForgotPassword = (props) => {
         <span>Forgot Password?</span>
       </ForgotPasswordFormHeader>
       <ForgotPasswordForm onSubmit={initiatePasswordRecovery}>
-        <ForgotPasswordFormEntry isError={usernameError}>
-          <label htmlFor="username">
-            Username
-          </label>
-          <input
-            type="test"
-            name="username"
-            placeholder="username…"
-            autoComplete="username"
-            onChange={handleChange}
-            value={username}
-          ></input>
-          {usernameError && <span>{usernameError}</span>}
-        </ForgotPasswordFormEntry>
+        <TextField
+          type="test"
+          label="Username"
+          name="username"
+          placeholder="username…"
+          autoComplete="username"
+          onChange={handleChange}
+          error={usernameError}
+          value={username}
+        />
         <SubmitBtn
           type="submit"
           value={isBusy ? "Processing" : "Next"}
@@ -145,19 +143,15 @@ const ForgotPassword = (props) => {
         <span>Enter code sent to your email.</span>
       </ForgotPasswordFormHeader>
       <ForgotPasswordForm onSubmit={confirmAccount}>
-        <ForgotPasswordFormEntry isError={verificationCodeError}>
-          <label htmlFor="verificationCode">
-            Verification Code
-          </label>
-          <input
-            type="text"
-            name="verificationCode"
-            placeholder="Code…"
-            onChange={handleChange}
-            value={verificationCode}
-          ></input>
-          {verificationCodeError && <span>{verificationCodeError}</span>}
-        </ForgotPasswordFormEntry>
+        <TextField
+          type="text"
+          label="Verification Code"
+          name="verificationCode"
+          placeholder="Code…"
+          onChange={handleChange}
+          error={verificationCodeError}
+          value={verificationCode}
+        />
         <SubmitBtn
           type="submit"
           value={isBusy ? "Processing" : "Next"}
@@ -171,35 +165,28 @@ const ForgotPassword = (props) => {
         <span>Forgot Password?</span>
       </ForgotPasswordFormHeader>
       <ForgotPasswordForm onSubmit={completePasswordRecovery}>
-        <ForgotPasswordFormEntry isError={verificationCodeError}>
-          <label htmlFor="verificationCode">
-            Verification Code
-          </label>
-          <input
-            type="text"
-            name="verificationCode"
-            placeholder="Code…"
-            onChange={handleChange}
-            value={verificationCode}
-          ></input>
-          {verificationCodeError && <span>{verificationCodeError}</span>}
-        </ForgotPasswordFormEntry>
-        <ForgotPasswordFormEntry isError={newPasswordError}>
-          <label htmlFor="newPassword">
-            New Password
-          </label>
-          <input
-            type="password"
-            name="newPassword"
-            placeholder="Password…"
-            autoComplete="new-password"
-            onChange={handleChange}
-            value={newPassword}
-          ></input>
-          {newPasswordError && <span>{newPasswordError}</span>}
-        </ForgotPasswordFormEntry>
+        <TextField
+          type="text"
+          label="Verification Code"
+          name="verificationCode"
+          placeholder="Code…"
+          onChange={handleChange}
+          error={verificationCodeError}
+          value={verificationCode}
+        />
+        <TextField
+          type="password"
+          name="newPassword"
+          label="New Password"
+          placeholder="Password…"
+          autoComplete="new-password"
+          onChange={handleChange}
+          error={newPasswordError}
+          value={newPassword}
+        />
         <SubmitBtn
           type="submit"
+          style={{width: "100%"}}
           value={isBusy ? "Processing" : "Submit"}
           disabled={isBusy || !verificationCode.trim() || !newPassword.trim() || newPasswordError}
         />
@@ -250,58 +237,5 @@ const ForgotPasswordForm = styledComponents.form`
     cursor: pointer;
   }
 `;
-
-const SubmitBtn = styledComponents.input`
-  width: 100%;
-  padding: 15px 0;
-  background-color: #006EFF;
-  color: #FFFFFF !important;
-  border-radius: 8px;
-  outline: none;
-  border: none;
-  transition: background-color 0.3s;
-  cursor: pointer;
-  &:hover {
-    background-color: #0058cc;
-  }
-  &:disabled {
-    background-color: #338bff;
-    cursor: default;
-  }
-`
-
-const ForgotPasswordFormEntry = styledComponents.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 0 0;
-  gap: 5px;
-  & > label {
-    color: #222222;
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  & > input {
-    width: calc(100% - 20px);
-    padding: 5px 10px;
-    border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 400;
-    &:disabled {
-      background-color: #FAFAFA;
-    }
-    &::placeholder {
-      color: #C0C0C0;
-    }
-  }
-  & > span {
-    color: #FF0000;
-    font-size: 12px;
-  }
-`
 
 export default connect()(ForgotPassword);

@@ -24,7 +24,7 @@
         },
         "fsCoreApiResolver": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsCoreApiResolver-4467302f65766355614d-build.zip"
+          "s3Key": "amplify-builds/fsCoreApiResolver-616d6d55444935724877-build.zip"
         },
         "fsCognitoPostConfirmationInvoker": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",

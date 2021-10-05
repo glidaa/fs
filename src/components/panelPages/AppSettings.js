@@ -170,24 +170,6 @@ const PanelPageToolbarAction = styledComponents.button`
   cursor: pointer;
 `
 
-const SaveSettingsBtn = styledComponents.button`
-  padding: 15px 0;
-  margin: 0 25px 25px 25px;
-  background-color: #006EFF;
-  color: #FFFFFF;
-  border-radius: 8px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  &:hover {
-    background-color: #0058cc;
-  }
-  &:disabled {
-    background-color: #338bff;
-  }
-`
-
 export default connect((state) => ({
   appSettings: state.appSettings
 }))(AppSettings);
