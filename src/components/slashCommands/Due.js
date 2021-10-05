@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
@@ -80,7 +80,7 @@ const Due = (props) => {
   );
 };
 
-const DueSuggestion = styledComponents.div`
+const DueSuggestion = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -93,7 +93,7 @@ const DueSuggestion = styledComponents.div`
   cursor: pointer;
 `
 
-const NoDue = styledComponents.span`
+const NoDue = styled.span`
   display: flex;
   width: 100%;
   font-size: 14px;

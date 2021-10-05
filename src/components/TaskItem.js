@@ -1,5 +1,5 @@
 import React, { useRef, useMemo } from "react"
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import useWindowSize from "../utils/useWindowSize";
 import formatDate from "../utils/formatDate"
@@ -15,7 +15,7 @@ import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
 import Specials from "./Specials";
 import { OK, initTaskState, AuthState } from "../constants";
-import AvatarArray from "./UI/AvatarArray";
+import AvatarGroup from "./UI/AvatarGroup";
 
 const TaskItem = (props) => {
 
@@ -320,7 +320,7 @@ const TaskItem = (props) => {
 					<TaskItemDueDate>
 						{item.due ? formatDate(item.due) : "No Due"}
 					</TaskItemDueDate>
-					<AvatarArray
+					<AvatarGroup
 						max={4}
 						users={processedAssingees}
 						borderColor="#F8F8F8"
@@ -339,7 +339,7 @@ const TaskItem = (props) => {
 };
 
 
-const TaskItemActions = styledComponents.div`
+const TaskItemActions = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -353,7 +353,7 @@ const TaskItemActions = styledComponents.div`
 	}
 `
 
-const TaskItemAction = styledComponents.button`
+const TaskItemAction = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -374,7 +374,7 @@ const TaskItemAction = styledComponents.button`
 	}
 `
 
-const TaskItemShell = styledComponents.div`
+const TaskItemShell = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
@@ -385,7 +385,7 @@ const TaskItemShell = styledComponents.div`
 	` : ``}
 `
 
-const TaskItemCore = styledComponents.div`
+const TaskItemCore = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -426,7 +426,7 @@ const TaskItemCore = styledComponents.div`
 	}
 `;
 
-const TaskItemLeftPart = styledComponents.div`
+const TaskItemLeftPart = styled.div`
 	display: flex;
 	flex: 1;
 	width: 100%;
@@ -439,7 +439,7 @@ const TaskItemLeftPart = styledComponents.div`
 	}
 `
 
-const TaskItemRightPart = styledComponents.div`
+const TaskItemRightPart = styled.div`
 	display: flex;
 	flex-direction: row;
 	gap: 5px;
@@ -455,7 +455,7 @@ const TaskItemRightPart = styledComponents.div`
 	}
 `
 
-const TaskItemHeader = styledComponents.span`
+const TaskItemHeader = styled.span`
 	font-size: 16px;
 	width: 0px;
 	font-weight: 400;
@@ -468,7 +468,7 @@ const TaskItemHeader = styledComponents.span`
   color: ${({isPlaceholder}) => isPlaceholder ? "#D3D3D3" : "#222222"};
 `
 
-const TaskItemInput = styledComponents.div`
+const TaskItemInput = styled.div`
 	width: 100%;
 	& > input {
 		background-color: transparent;
@@ -483,7 +483,7 @@ const TaskItemInput = styledComponents.div`
 	}
 `
 
-const TaskItemDueDate = styledComponents.span`
+const TaskItemDueDate = styled.span`
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -501,7 +501,7 @@ const TaskItemDueDate = styledComponents.span`
 	}
 `
 
-const TaskItemOptsBtn = styledComponents.button`
+const TaskItemOptsBtn = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -515,7 +515,7 @@ const TaskItemOptsBtn = styledComponents.button`
 	height: 30px;
 `
 
-const TaskItemLeftLeftPart = styledComponents.div`
+const TaskItemLeftLeftPart = styled.div`
 	display: flex;
 	align-items: center;
 	flex: 1;
@@ -525,7 +525,7 @@ const TaskItemLeftLeftPart = styledComponents.div`
 	}
 `
 
-const TaskItemLeftRightPart = styledComponents.div`
+const TaskItemLeftRightPart = styled.div`
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -534,7 +534,7 @@ const TaskItemLeftRightPart = styledComponents.div`
 	}
 `
 
-const TaskItemStatusToggle = styledComponents.button`
+const TaskItemStatusToggle = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;

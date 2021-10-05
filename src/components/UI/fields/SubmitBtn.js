@@ -1,6 +1,6 @@
-import styledComponents from "styled-components";
+import styled from "styled-components";
 
-const SubmitBtn = styledComponents.input`
+const SubmitBtn = styled.input`
   padding: 15px 0;
   background-color: #006EFF;
   color: #FFFFFF !important;

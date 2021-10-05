@@ -1,5 +1,5 @@
 import React from "react"
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { connect } from "react-redux";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects";
@@ -107,7 +107,7 @@ const ProjectItem = (props) => {
   );
 };
 
-const ProjectItemShell = styledComponents.div`
+const ProjectItemShell = styled.div`
   position: relative;
   background-color: #006EFF;
   padding: 20px;
@@ -121,7 +121,7 @@ const ProjectItemShell = styledComponents.div`
   `}
 `
 
-const ProjectItemContainer = styledComponents.div`
+const ProjectItemContainer = styled.div`
   display: flex;
   flex-direction: row;
   transition: background-color 0.3s;
@@ -130,7 +130,7 @@ const ProjectItemContainer = styledComponents.div`
   }
 `;
 
-const ProjectItemLeftPart = styledComponents.div`
+const ProjectItemLeftPart = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -139,7 +139,7 @@ const ProjectItemLeftPart = styledComponents.div`
   gap: 10px;
 `
 
-const ProjectItemRightPart = styledComponents.div`
+const ProjectItemRightPart = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -147,12 +147,12 @@ const ProjectItemRightPart = styledComponents.div`
   flex: 1;
 `
 
-const ProjectItemHeader = styledComponents.div`
+const ProjectItemHeader = styled.div`
   display: flex;
   flex-direction: column;
 `
 
-const ProjectItemTitle = styledComponents.span`
+const ProjectItemTitle = styled.span`
   color: #FFFFFF;
   font-weight: 600;
   font-size: 20px;
@@ -162,7 +162,7 @@ const ProjectItemTitle = styledComponents.span`
   overflow: hidden;
 `
 
-const ProjectItemPermalink = styledComponents.span`
+const ProjectItemPermalink = styled.span`
   font-size: 12px;
   color: #FFFFFF;
   font-weight: 500;
@@ -172,7 +172,7 @@ const ProjectItemPermalink = styledComponents.span`
   overflow: hidden;
 `
 
-const TasksCount = styledComponents.div`
+const TasksCount = styled.div`
   display: flex;
   flex-direction: row;
   gap: 5px;
@@ -180,7 +180,7 @@ const TasksCount = styledComponents.div`
   font-size: 14px;
 `
 
-const TasksCountItem = styledComponents.span`
+const TasksCountItem = styled.span`
   padding: 1px 10px;
   border-radius: 10px;
   &::before {
@@ -189,34 +189,34 @@ const TasksCountItem = styledComponents.span`
   }
 `
 
-const TodoTasksCount = styledComponents(TasksCountItem)`
+const TodoTasksCount = styled(TasksCountItem)`
   background-color: #FFEBE5;
   &::before {
     color: #FF1744;
   }
 `
 
-const PendingTasksCount = styledComponents(TasksCountItem)`
+const PendingTasksCount = styled(TasksCountItem)`
   background-color: #FDF1DB;
   &::before {
     color: #FF9100;
   }
 `
 
-const DoneTasksCount = styledComponents(TasksCountItem)`
+const DoneTasksCount = styled(TasksCountItem)`
   background-color: #DAF6F4;
   &::before {
     color: #00E676;
   }
 `
 
-const ProjectItemActions = styledComponents.div`
+const ProjectItemActions = styled.div`
   display: flex;
   flex-direction: row;
   gap: 5px;
 `
 
-const ProjectItemAction = styledComponents.button`
+const ProjectItemAction = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -227,7 +227,7 @@ const ProjectItemAction = styledComponents.button`
   padding: 1px 6px;
 `
 
-const ProjectItemPermission = styledComponents.div`
+const ProjectItemPermission = styled.div`
   position: absolute;
   width: 150px;
   height: 150px;
@@ -237,7 +237,7 @@ const ProjectItemPermission = styledComponents.div`
   z-index: 1;
 `
 
-const ProjectItemDate = styledComponents.span`
+const ProjectItemDate = styled.span`
   font-size: 12px;
   color: #FFFFFF;
   font-weight: 500;

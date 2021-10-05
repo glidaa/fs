@@ -11,7 +11,7 @@ import { ReactComponent as DuplicateIcon } from "../assets/duplicate-outline.svg
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
 import { ReactComponent as CheckmarkIcon } from "../assets/checkmark-circle-outline.svg";
-import styledComponents from "styled-components";
+import styled from "styled-components";
 
 const ActionSheet = (props) => {
 	
@@ -182,7 +182,7 @@ const ActionSheet = (props) => {
 	)
 }
 
-const ActionSheetShell = styledComponents(animated.div)`
+const ActionSheetShell = styled(animated.div)`
 	display: block;
 	position: fixed;
 	width: 100vw;
@@ -191,7 +191,7 @@ const ActionSheetShell = styledComponents(animated.div)`
 	z-index: 99999;
 `
 
-const ActionSheetContainer = styledComponents(animated.div)`
+const ActionSheetContainer = styled(animated.div)`
 	position: fixed;
 	display: flex;
 	touch-action: none;
@@ -204,14 +204,14 @@ const ActionSheetContainer = styledComponents(animated.div)`
 	border-radius: 20px 20px 0 0;
 `
 
-const ActionSheetHeader = styledComponents.span`
+const ActionSheetHeader = styled.span`
 	width: 100%;
 	text-align: center;
 	font-weight: bold;
 	color: #222222;
 `
 
-const Actions = styledComponents.div`
+const Actions = styled.div`
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	grid-template-rows: repeat(2, 1fr);
@@ -219,7 +219,7 @@ const Actions = styledComponents.div`
 	grid-row-gap: 10px;
 `
 
-const Action = styledComponents.button`
+const Action = styled.button`
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
@@ -236,7 +236,7 @@ const Action = styledComponents.button`
 	border: none;
 `
 
-const CloseBtn = styledComponents.button`
+const CloseBtn = styled.button`
 	outline: none;
 	border: none;
 	color: #FFFFFF;

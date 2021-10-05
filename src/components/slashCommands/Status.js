@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
@@ -100,7 +100,7 @@ const Status = (props) => {
   );
 };
 
-const StatusSuggestion = styledComponents.div`
+const StatusSuggestion = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;

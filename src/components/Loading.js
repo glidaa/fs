@@ -1,7 +1,7 @@
 import React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
@@ -165,7 +165,7 @@ const Loading = (props) => {
   )
 }
 
-const LoadingContainer = styledComponents.div`
+const LoadingContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -187,7 +187,7 @@ const LoadingContainer = styledComponents.div`
   }
 `
 
-const Logo = styledComponents.div`
+const Logo = styled.div`
   margin: 35px;
   border-radius: 50px;
   background: #e0e0e0;

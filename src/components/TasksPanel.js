@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import parseLinkedList from "../utils/parseLinkedList";
 import ProjectNotSelected from "./ProjectNotSelected";
@@ -87,7 +87,7 @@ const TasksPanel = (props) => {
   )
 }
 
-const TasksPanelContainer = styledComponents.div`
+const TasksPanelContainer = styled.div`
   flex: 2;
   padding: 20px 40px 20px 40px;
   overflow: auto;
@@ -101,7 +101,7 @@ const TasksPanelContainer = styledComponents.div`
   }
 `
 
-const TasksToolbar = styledComponents.div`
+const TasksToolbar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -115,7 +115,7 @@ const TasksToolbar = styledComponents.div`
 	}
 `
 
-const ToolbarAction = styledComponents.button`
+const ToolbarAction = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components";
+import styled from "styled-components";
 
 const Avatar = (props) => {
   const { 
@@ -16,14 +16,14 @@ const Avatar = (props) => {
     <LetterAvatar size={size} isCircular={circular}>{abbr || name[0]}</LetterAvatar>
 }
 
-const ImageAvatar = styledComponents.img`
+const ImageAvatar = styled.img`
 	display: inline;
   border-radius: ${({isCircular, size}) => isCircular ? "100%" : `${0.315 * size}px`};
 	width: ${({ size }) => size}px;
 	height: ${({ size }) => size}px;
 `
 
-const LetterAvatar = styledComponents.div`
+const LetterAvatar = styled.div`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;

@@ -1,6 +1,6 @@
-import styledComponents from "styled-components";
+import styled from "styled-components";
 
-const Button = styledComponents.button`
+const Button = styled.button`
   padding: 15px 0;
   background-color: #006EFF;
   color: #FFFFFF !important;

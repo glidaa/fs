@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import * as projectsActions from "../../../actions/projects"
 import * as appActions from "../../../actions/app"
@@ -90,14 +90,14 @@ const Projects = (props) => {
   );  
 }
 
-const PanelPageContainer = styledComponents.div`
+const PanelPageContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 25px;
   height: 100vh;
 `;
 
-const PanelPageToolbar = styledComponents.div`
+const PanelPageToolbar = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -106,13 +106,13 @@ const PanelPageToolbar = styledComponents.div`
   padding-top: 25px;
 `
 
-const PanelPageTitle = styledComponents.span`
+const PanelPageTitle = styled.span`
   color: #000000;
   font-size: 18px;
   font-weight: 600;
 `
 
-const ProjectItems = styledComponents(SimpleBar)`
+const ProjectItems = styled(SimpleBar)`
   flex: 1;
   overflow: auto;
   height: 0;
@@ -126,7 +126,7 @@ const ProjectItems = styledComponents(SimpleBar)`
   }
 `;
 
-const PanelPageToolbarAction = styledComponents.button`
+const PanelPageToolbarAction = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { connect } from "react-redux";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
@@ -54,7 +54,7 @@ const ProjectNotSelected = (props) => {
   )
 }
 
-const ProjectNotSelectedContainer = styledComponents.div`
+const ProjectNotSelectedContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;

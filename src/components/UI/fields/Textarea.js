@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react"
-import styledComponents from "styled-components"
+import styled from "styled-components"
 
 const Textarea = (props) => {
   const {
@@ -44,7 +44,7 @@ const Textarea = (props) => {
   )
 }
 
-const TextareaContainer = styledComponents.div`
+const TextareaContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;

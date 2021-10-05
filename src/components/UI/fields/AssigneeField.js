@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { connect } from "react-redux"
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import * as tasksActions from "../../../actions/tasks"
 import * as appActions from "../../../actions/app";
 import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
@@ -107,7 +107,7 @@ const AssigneeField = (props) => {
   )
 }
 
-const AssigneeFieldShell = styledComponents.div`
+const AssigneeFieldShell = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -122,7 +122,7 @@ const AssigneeFieldShell = styledComponents.div`
   }
 `
 
-const AssigneeFieldContainer = styledComponents(ShadowScroll)`
+const AssigneeFieldContainer = styled(ShadowScroll)`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -133,7 +133,7 @@ const AssigneeFieldContainer = styledComponents(ShadowScroll)`
   scroll-behavior: smooth;
 `
 
-const NewAssigneeBtn = styledComponents.button`
+const NewAssigneeBtn = styled.button`
   display: flex;
   gap: 5px;
   padding: 10px 15px;
@@ -169,7 +169,7 @@ const NewAssigneeBtn = styledComponents.button`
   }
 `
 
-const NoAssignees = styledComponents.div`
+const NoAssignees = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -200,7 +200,7 @@ const NoAssignees = styledComponents.div`
   }
 `
 
-const AssigneeItem = styledComponents.span`
+const AssigneeItem = styled.span`
   position: relative;
   display: flex;
   gap: 5px;
@@ -216,7 +216,7 @@ const AssigneeItem = styledComponents.span`
   align-items: center;
 `
 
-const AssigneeDetails = styledComponents.div`
+const AssigneeDetails = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -238,7 +238,7 @@ const AssigneeDetails = styledComponents.div`
   }
 `
 
-const RemoveBtn = styledComponents.button`
+const RemoveBtn = styled.button`
   position: absolute;
   top: 5px;
   right: 5px;

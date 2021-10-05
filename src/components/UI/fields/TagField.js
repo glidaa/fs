@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useOuterClick } from 'react-outer-click';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 
 const TagField = (props) => {
   const {
@@ -77,7 +77,7 @@ const TagField = (props) => {
   )
 }
 
-const TagFieldShell = styledComponents.div`
+const TagFieldShell = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -92,7 +92,7 @@ const TagFieldShell = styledComponents.div`
   }
 `
 
-const TagFieldContainer = styledComponents.div`
+const TagFieldContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
@@ -102,7 +102,7 @@ const TagFieldContainer = styledComponents.div`
   width: 100%;
 `
 
-const NewTagBtn = styledComponents.button`
+const NewTagBtn = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -121,7 +121,7 @@ const NewTagBtn = styledComponents.button`
   border: 1px solid #006EFF;
 `
 
-const NoTags = styledComponents.span`
+const NoTags = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -138,7 +138,7 @@ const NoTags = styledComponents.span`
   border: 1px solid #006EFF;
 `
 
-const TagItem = styledComponents.span`
+const TagItem = styled.span`
   display: inline-flex;
   gap: 5px;
   padding: 5px 10px;
@@ -171,7 +171,7 @@ const TagItem = styledComponents.span`
   }
 `
 
-const TagInput = styledComponents.span`
+const TagInput = styled.span`
   display: inline-flex;
   padding: 5px 10px;
   border-radius: 4px;

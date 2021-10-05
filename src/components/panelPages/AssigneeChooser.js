@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../../actions/app";
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import * as tasksActions from "../../actions/tasks"
 import { panelPages, AuthState } from "../../constants";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -179,7 +179,7 @@ const AssigneeChooser = (props) => {
   );
 };
 
-const PanelPageToolbar = styledComponents.div`
+const PanelPageToolbar = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -188,13 +188,13 @@ const PanelPageToolbar = styledComponents.div`
   padding-top: 25px;
 `
 
-const PanelPageTitle = styledComponents.span`
+const PanelPageTitle = styled.span`
   color: #000000;
   font-size: 18px;
   font-weight: 600;
 `
 
-const PanelPageToolbarAction = styledComponents.button`
+const PanelPageToolbarAction = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -211,7 +211,7 @@ const PanelPageToolbarAction = styledComponents.button`
   }
 `
 
-const KeywordField = styledComponents.input`
+const KeywordField = styled.input`
   width: calc(100% - 90px);
   outline: none;
   border: none;
@@ -230,7 +230,7 @@ const KeywordField = styledComponents.input`
   }
 `
 
-const SearchResults = styledComponents.div`
+const SearchResults = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -239,7 +239,7 @@ const SearchResults = styledComponents.div`
   width: 100%;
 `
 
-const SearchResultsItem = styledComponents.button`
+const SearchResultsItem = styled.button`
   display: flex;
   flex-direction: row;
   cursor: pointer;
@@ -272,7 +272,7 @@ const SearchResultsItem = styledComponents.button`
   }
 `
 
-const AssigneeChooserIllustartion = styledComponents.div`
+const AssigneeChooserIllustartion = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;

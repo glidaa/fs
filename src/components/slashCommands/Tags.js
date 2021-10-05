@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
@@ -51,7 +51,7 @@ const Tags = (props) => {
   );
 };
 
-const TagsSuggestion = styledComponents.div`
+const TagsSuggestion = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -64,7 +64,7 @@ const TagsSuggestion = styledComponents.div`
   cursor: pointer;
 `
 
-const TagItem = styledComponents.span`
+const TagItem = styled.span`
   display: inline-flex;
   padding: 5px 10px;
   border-radius: 9999px;
@@ -78,7 +78,7 @@ const TagItem = styledComponents.span`
   align-items: center;
 `
 
-const NoTags = styledComponents.span`
+const NoTags = styled.span`
   display: flex;
   width: 100%;
   font-size: 14px;

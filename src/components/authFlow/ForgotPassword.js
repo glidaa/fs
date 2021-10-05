@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
@@ -195,7 +195,7 @@ const ForgotPassword = (props) => {
   )
 }
 
-const ForgotPasswordFormContainer = styledComponents.div`
+const ForgotPasswordFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -215,7 +215,7 @@ const ForgotPasswordFormContainer = styledComponents.div`
   }
 `
 
-const ForgotPasswordFormHeader = styledComponents.div`
+const ForgotPasswordFormHeader = styled.div`
   display: flex;
   flex-direction: column;
   color: #222222;
@@ -229,7 +229,7 @@ const ForgotPasswordFormHeader = styledComponents.div`
   }
 `
 
-const ForgotPasswordForm = styledComponents.form`
+const ForgotPasswordForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: 15px;

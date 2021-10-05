@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
@@ -339,7 +339,7 @@ const NewAccount = (props) => {
   )
 }
 
-const NewAccountFormContainer = styledComponents.div`
+const NewAccountFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -359,7 +359,7 @@ const NewAccountFormContainer = styledComponents.div`
   }
 `
 
-const NewAccountFormHeader = styledComponents.div`
+const NewAccountFormHeader = styled.div`
   display: flex;
   flex-direction: column;
   color: #222222;
@@ -373,7 +373,7 @@ const NewAccountFormHeader = styledComponents.div`
   }
 `
 
-const NewAccountStepOneForm = styledComponents.form`
+const NewAccountStepOneForm = styled.form`
   display: grid;
   grid-template-areas:
     'firstName lastName'
@@ -411,7 +411,7 @@ const NewAccountStepOneForm = styledComponents.form`
   }
 `;
 
-const NewAccountStepTwoForm = styledComponents.form`
+const NewAccountStepTwoForm = styled.form`
   display: grid;
   grid-template-areas:
     'code code'

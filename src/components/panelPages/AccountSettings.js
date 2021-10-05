@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { API, graphqlOperation } from "aws-amplify";
 import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -173,7 +173,7 @@ const AccountSettings = (props) => {
   );
 };
 
-const AccountSettingsForm = styledComponents(SimpleBar)`
+const AccountSettingsForm = styled(SimpleBar)`
   flex: 1;
   overflow: auto;
   height: 0;
@@ -192,7 +192,7 @@ const AccountSettingsForm = styledComponents(SimpleBar)`
   }
 `;
 
-const PanelPageToolbar = styledComponents.div`
+const PanelPageToolbar = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -201,13 +201,13 @@ const PanelPageToolbar = styledComponents.div`
   padding-top: 25px;
 `
 
-const PanelPageTitle = styledComponents.span`
+const PanelPageTitle = styled.span`
   color: #000000;
   font-size: 18px;
   font-weight: 600;
 `
 
-const PanelPageToolbarAction = styledComponents.button`
+const PanelPageToolbarAction = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -219,7 +219,7 @@ const PanelPageToolbarAction = styledComponents.button`
   cursor: pointer;
 `
 
-const AccountSettingsHeader = styledComponents.div`
+const AccountSettingsHeader = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
@@ -51,7 +51,7 @@ const Description = (props) => {
   );
 };
 
-const DescriptionSuggestion = styledComponents.div`
+const DescriptionSuggestion = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -65,7 +65,7 @@ const DescriptionSuggestion = styledComponents.div`
   cursor: pointer;
 `
 
-const NoDescription = styledComponents.span`
+const NoDescription = styled.span`
   display: flex;
   width: 100%;
   font-size: 14px;

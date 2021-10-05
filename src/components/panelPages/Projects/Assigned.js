@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 import { connect } from "react-redux"
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import ProjectItem from "../../ProjectItem"
 import { ReactComponent as NoAssignedIllustartion } from "../../../assets/undraw_accept_tasks_po1c.svg"
 
@@ -33,15 +33,17 @@ const Projects = (props) => {
   );  
 }
 
-const NoAssignedProjects = styledComponents.div`
+const NoAssignedProjects = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
   align-items: center;
   justify-content: center;
   gap: 40px;
-  height: calc(100vh - 141px);
+  height: calc(100% - 141px);
   margin-top: -25px;
+  position: fixed;
+  width: 100%;
   & > svg {
     width: 250px;
     height: auto;

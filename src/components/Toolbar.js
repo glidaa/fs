@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import * as appActions from "../actions/app"
 import { connect } from "react-redux";
 import { panelPages, AuthState } from "../constants"
@@ -87,7 +87,7 @@ const TasksPanel = (props) => {
   );
 };
 
-const ToolbarContainer = styledComponents.div`
+const ToolbarContainer = styled.div`
   position: fixed;
   left: 0;
   top: 0;
@@ -111,7 +111,7 @@ const ToolbarContainer = styledComponents.div`
 	}
 `;
 
-const TopControls = styledComponents.div`
+const TopControls = styled.div`
   display: flex;
   gap: 20px;
   flex-direction: column;
@@ -122,7 +122,7 @@ const TopControls = styledComponents.div`
   }
 `;
 
-const BottomControls = styledComponents.div`
+const BottomControls = styled.div`
   display: flex;
   gap: 15px;
   flex-direction: column;
@@ -136,7 +136,7 @@ const BottomControls = styledComponents.div`
   }
 `;
 
-const ToolbarAction = styledComponents.button`
+const ToolbarAction = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,18 +148,18 @@ const ToolbarAction = styledComponents.button`
   cursor: pointer;
 `
 
-const Spacer = styledComponents.div`
+const Spacer = styled.div`
   border-top: 1px solid ${({ color }) => color};
   width: 100%;
 `
 
-const Logo = styledComponents.span`
+const Logo = styled.span`
   color: #006EFF;
   font-weight: 900;
   font-size: 22px;
 `
 
-const UserIndicator = styledComponents(ToolbarAction)`
+const UserIndicator = styled(ToolbarAction)`
   background-color: #006EFF;
   border-radius: 8px;
   padding: 10px;

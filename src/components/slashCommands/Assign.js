@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../../actions/app"
@@ -118,7 +118,7 @@ const Assign = (props) => {
   );
 };
 
-const AssigneeSuggestion = styledComponents.div`
+const AssigneeSuggestion = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -143,7 +143,7 @@ const AssigneeSuggestion = styledComponents.div`
   }
 `
 
-const NoKeyword = styledComponents.span`
+const NoKeyword = styled.span`
   display: flex;
   width: 100%;
   font-size: 14px;

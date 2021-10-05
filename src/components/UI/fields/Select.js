@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components";
+import styled from "styled-components";
 
 const Select = (props) => {
 
@@ -45,7 +45,7 @@ const Select = (props) => {
 	)
 }
 
-const SelectShell = styledComponents.div`
+const SelectShell = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -60,7 +60,7 @@ const SelectShell = styledComponents.div`
   }
 `
 
-const Selection = styledComponents.button`
+const Selection = styled.button`
   padding: 5px 10px;
   border: 2px solid transparent;
   border-radius: 8px;
@@ -78,7 +78,7 @@ const Selection = styledComponents.button`
   `}
 `
 
-const SelectContainer = styledComponents.div`
+const SelectContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	gap: 5px;

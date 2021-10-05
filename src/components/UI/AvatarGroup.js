@@ -1,7 +1,7 @@
 import React, { Fragment } from "react"
-import styledComponents from "styled-components"
+import styled from "styled-components"
 
-const AvatarArray = (props) => {
+const AvatarGroup = (props) => {
 	const {
 		max,
 		users,
@@ -10,7 +10,7 @@ const AvatarArray = (props) => {
 	} = props
 
 	return (
-		<AvatarArrayContainer max={max} size={size}>
+		<AvatarGroupContainer max={max} size={size}>
 			{users.slice(0, users.length > max ? max - 1 : max).map(({ avatar, abbr, name }, i) => (
 				<Fragment key={i}>
 					{avatar ?
@@ -23,18 +23,18 @@ const AvatarArray = (props) => {
 				<DumpAvatar key={i} borderColor={borderColor} size={size} />
 			))}
 			{users.length > max && <LetterAvatar borderColor={borderColor} size={size}>+{users.length - max + 1}</LetterAvatar>}
-		</AvatarArrayContainer>
+		</AvatarGroupContainer>
 	)
 }
 
-const AvatarArrayContainer = styledComponents.div`
+const AvatarGroupContainer = styled.div`
 	display: flex;
 	align-items: center;
 	min-height: ${({ size }) => size}px;
 	min-width: ${({ max, size }) => size + max * (size - size * 0.42)}px;
 `
 
-const ImageAvatar = styledComponents.img`
+const ImageAvatar = styled.img`
 	display: inline;
 	border-radius: 100%;
 	width: ${({ size }) => size}px;
@@ -45,7 +45,7 @@ const ImageAvatar = styledComponents.img`
 	}
 `
 
-const LetterAvatar = styledComponents.div`
+const LetterAvatar = styled.div`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -64,7 +64,7 @@ const LetterAvatar = styledComponents.div`
 	}
 `
 
-const DumpAvatar = styledComponents.div`
+const DumpAvatar = styled.div`
 	display: inline-flex;
 	border-radius: 100%;
 	background-color: #CCE2FF;
@@ -78,4 +78,4 @@ const DumpAvatar = styledComponents.div`
 	}
 `
 
-export default AvatarArray
+export default AvatarGroup

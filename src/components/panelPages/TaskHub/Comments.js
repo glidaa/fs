@@ -3,7 +3,7 @@ import { useOuterClick } from 'react-outer-click';
 import { useState, useRef } from "react"
 import { connect } from "react-redux";
 import { AuthState } from "../../../constants";
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import { stateToHTML } from 'draft-js-export-html';
 import { Editor, EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';
 import { ReactComponent as CommentsIllustartion } from "../../../assets/undraw_Public_discussion_re_w9up.svg"
@@ -166,7 +166,7 @@ const Comments = (props) => {
   )
 }
 
-const CommentsContainer = styledComponents.div`
+const CommentsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -175,20 +175,20 @@ const CommentsContainer = styledComponents.div`
   padding: 0 25px 25px 25px;
 `
 
-const CommentContent = styledComponents.div`
+const CommentContent = styled.div`
   display: flex;
   flex-direction: column;
   width: calc(100% - 42px);
 `
 
-const CommentHeader = styledComponents.div`
+const CommentHeader = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `
 
-const RemoveBtn = styledComponents.button`
+const RemoveBtn = styled.button`
   outline: none;
   border: none;
   line-height: 0;
@@ -197,11 +197,11 @@ const RemoveBtn = styledComponents.button`
   cursor: pointer;
 `
 
-const CommenterName = styledComponents.span`
+const CommenterName = styled.span`
   font-weight: 600;
 `
 
-const CommentBox = styledComponents.div`
+const CommentBox = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -211,7 +211,7 @@ const CommentBox = styledComponents.div`
   padding: 10px;
 `
 
-const CommentBody = styledComponents.div`
+const CommentBody = styled.div`
   width: 100%;
   & > *:first-child {
     margin-block-start: 0;
@@ -221,7 +221,7 @@ const CommentBody = styledComponents.div`
   }
 `
 
-const CommentUnits = styledComponents.div`
+const CommentUnits = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -229,7 +229,7 @@ const CommentUnits = styledComponents.div`
   flex: 1;
 `
 
-const CommentUnit = styledComponents.div`
+const CommentUnit = styled.div`
   display: flex;
   flex-direction: ${({isSelf}) => isSelf ? "row-reverse" : "row"};
   align-items: flex-end;
@@ -241,13 +241,13 @@ const CommentUnit = styledComponents.div`
   }
 `
 
-const NewComment = styledComponents.div`
+const NewComment = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
 `
 
-const CommentField = styledComponents.div`
+const CommentField = styled.div`
   background-color: #FFFFFF;
   width: 100%;
   border-radius: 8px;
@@ -255,7 +255,7 @@ const CommentField = styledComponents.div`
   transition: border 0.3s, box-shadow 0.3s, height 0.3s;
 `
 
-const CommentInput = styledComponents.div`
+const CommentInput = styled.div`
   min-height: ${props => props.expanded ? "50px" : "16px"};
   max-height: 100px;
   outline: none;
@@ -265,7 +265,7 @@ const CommentInput = styledComponents.div`
   overflow: auto;
 `
 
-const CommentControls = styledComponents.div`
+const CommentControls = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -297,7 +297,7 @@ const CommentControls = styledComponents.div`
   }
 `
 
-const CommentTime = styledComponents.span`
+const CommentTime = styled.span`
   position: absolute;
   bottom: 5px;
   right: 10px;
@@ -306,7 +306,7 @@ const CommentTime = styledComponents.span`
   width: fit-content;
 `
 
-const CommentDay = styledComponents.span`
+const CommentDay = styled.span`
   font-weight: 600;
   font-size: 12px;
   color: #222222;
@@ -314,7 +314,7 @@ const CommentDay = styledComponents.span`
   width: 100%;
 `
 
-const CommentNotAllowed = styledComponents.span`
+const CommentNotAllowed = styled.span`
   font-weight: 600;
   font-size: 12px;
   color: #C0C0C0;
@@ -322,7 +322,7 @@ const CommentNotAllowed = styledComponents.span`
   width: 100%;
 `
 
-const NoComments = styledComponents.div`
+const NoComments = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;

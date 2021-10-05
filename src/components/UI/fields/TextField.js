@@ -1,5 +1,5 @@
 import React from "react"
-import styledComponents from "styled-components"
+import styled from "styled-components"
 
 const TextField = (props) => {
   const {
@@ -41,7 +41,7 @@ const TextField = (props) => {
   )
 }
 
-const TextFieldShell = styledComponents.div`
+const TextFieldShell = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -60,7 +60,7 @@ const TextFieldShell = styledComponents.div`
   }
 `
 
-const TextFieldContainer = styledComponents.div`
+const TextFieldContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;

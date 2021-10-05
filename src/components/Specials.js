@@ -1,5 +1,5 @@
 import React, { useMemo, createRef } from 'react';
-import styledComponents, { keyframes } from "styled-components"
+import styled, { keyframes } from "styled-components"
 import { connect } from "react-redux";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
@@ -46,7 +46,7 @@ const openAnim = keyframes`
   }
 `;
 
-const DropdownContainer = styledComponents(SimpleBar)`
+const DropdownContainer = styled(SimpleBar)`
   position: fixed;
   top: ${({ $posInfo }) => $posInfo.top}px;
   left: ${({ $posInfo }) => $posInfo.left}px;

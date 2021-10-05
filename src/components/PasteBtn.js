@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { connect } from "react-redux"
 import * as tasksActions from "../actions/tasks"
 import { ReactComponent as pasteIcon } from "../assets/clipboard-outline.svg"
@@ -41,7 +41,7 @@ const PasteBtn = (props) => {
   )
 }
 
-const PasteBtnCore = styledComponents(pasteIcon)`
+const PasteBtnCore = styled(pasteIcon)`
   float: right;
   border-radius: 100%;
   padding: 10px;

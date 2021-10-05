@@ -1,5 +1,5 @@
 import React from "react"
-import styledComponents from "styled-components"
+import styled from "styled-components"
 
 const PanelTabs = (props) => {
   const {
@@ -25,13 +25,13 @@ const PanelTabs = (props) => {
   )
 }
 
-const PanelTabsShell = styledComponents.div`
+const PanelTabsShell = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
 `;
 
-const PanelTabsContainer = styledComponents.div`
+const PanelTabsContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 5px;
@@ -42,7 +42,7 @@ const PanelTabsContainer = styledComponents.div`
   width: fit-content;
 `
 
-const PanelTab = styledComponents.span`
+const PanelTab = styled.span`
   border-radius: 24px;
   padding: 4px 15px;
   font-weight: 600;

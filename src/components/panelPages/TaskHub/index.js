@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../../actions/app";
 import { AuthState } from "../../../constants";
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import Comments from "./Comments";
 import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-back-outline.svg";
 import { ReactComponent as ShareIcon } from "../../../assets/share-outline.svg"
@@ -76,7 +76,7 @@ const TaskHub = (props) => {
   );
 };
 
-const PanelPageToolbar = styledComponents.div`
+const PanelPageToolbar = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -85,13 +85,13 @@ const PanelPageToolbar = styledComponents.div`
   padding-top: 25px;
 `
 
-const PanelPageTitle = styledComponents.span`
+const PanelPageTitle = styled.span`
   color: #000000;
   font-size: 18px;
   font-weight: 600;
 `
 
-const PanelPageToolbarAction = styledComponents.button`
+const PanelPageToolbarAction = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;

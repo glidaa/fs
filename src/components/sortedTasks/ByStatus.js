@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { connect } from "react-redux";
 import parseLinkedList from "../../utils/parseLinkedList";
 import TaskItem from "../TaskItem";
-import styledComponents from "styled-components";
+import styled from "styled-components";
 
 const ByStatus = (props) => {
   const { tasks } = props;
@@ -87,7 +87,7 @@ const ByStatus = (props) => {
   )
 }
 
-const StatusHeader = styledComponents.span`
+const StatusHeader = styled.span`
   padding: 0 12px;
   font-weight: 600;
   font-size: 24px;

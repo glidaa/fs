@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { AuthState } from "../../../constants";
 import DateField from "../../UI/fields/DateField";
 import * as tasksActions from "../../../actions/tasks";
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import TagField from "../../UI/fields/TagField";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
@@ -108,7 +108,7 @@ const Details = (props) => {
   )
 }
 
-const DetailsForm = styledComponents(SimpleBar)`
+const DetailsForm = styled(SimpleBar)`
   flex: 1;
   overflow: auto;
   height: 0;

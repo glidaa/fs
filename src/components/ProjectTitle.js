@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
@@ -83,13 +83,13 @@ const ProjectTitle = (props) => {
 	);
 };
 
-const ProjectTitleShell = styledComponents.div`
+const ProjectTitleShell = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 `
 
-const ProjectTitleHeader = styledComponents.span`
+const ProjectTitleHeader = styled.span`
 	font-weight: 600;
 	margin: 4px 0;
 	padding: 8px 12px;
@@ -108,7 +108,7 @@ const ProjectTitleHeader = styledComponents.span`
 	}
 `
 
-const ProjectTitleInput = styledComponents.div`
+const ProjectTitleInput = styled.div`
 	width: 100%;
 	margin: 4px 0;
 	padding: 8px 12px;

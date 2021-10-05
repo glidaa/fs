@@ -15,6 +15,7 @@ import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
 import AuthFlow from "./authFlow";
+import Notifications from "./Notifications";
 Amplify.configure(aws_exports);
 
 const App = (props) => {
@@ -100,6 +101,7 @@ const App = (props) => {
   }, [routeMatch?.url, app.isLoading, user]);
   return (
     <div className="App">
+      <Notifications />
       <Route
         exact
         sensitive

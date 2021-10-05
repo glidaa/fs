@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { Redirect } from "react-router-dom"
 import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
@@ -52,7 +52,7 @@ const AuthFlow = (props) => {
   )
 }
 
-const AuthFlowContainer = styledComponents(SimpleBar)`
+const AuthFlowContainer = styled(SimpleBar)`
   position: fixed;
   width: 100%;
   height: 100%;

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from "react-dom"
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
 import formatDate from '../../../utils/formatDate';
 
@@ -98,7 +98,7 @@ const DateField = (props) => {
   );
 };
 
-const DateFieldShell = styledComponents.div`
+const DateFieldShell = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -117,7 +117,7 @@ const DateFieldShell = styledComponents.div`
   }
 `
 
-const DateFieldContainer = styledComponents.div`
+const DateFieldContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -142,7 +142,7 @@ const DateFieldContainer = styledComponents.div`
   }
 `
 
-const PickerContainer = styledComponents.div`
+const PickerContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -155,7 +155,7 @@ const PickerContainer = styledComponents.div`
   z-index: 9999;
 `
 
-const ClearBtn = styledComponents.button`
+const ClearBtn = styled.button`
   outline: none;
   border: none;
   background-color: transparent;

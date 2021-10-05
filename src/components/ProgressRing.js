@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import styledComponents from "styled-components"
+import styled from "styled-components"
 
 const ProgressRing = (props) => {
   const { radius, stroke } = props;
@@ -48,14 +48,14 @@ const ProgressRing = (props) => {
     );
 }
 
-const OuterRing = styledComponents.circle`
+const OuterRing = styled.circle`
   transition: stroke-dashoffset 0.35s;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
   stroke-linecap: round;
 `
 
-const InnerRing = styledComponents.circle`
+const InnerRing = styled.circle`
   transition: stroke-dashoffset 0.35s;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;

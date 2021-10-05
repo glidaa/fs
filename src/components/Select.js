@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useOuterClick } from 'react-outer-click';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 
 export const Select = (props) => {
   const { readOnly } = props
@@ -47,7 +47,7 @@ export const Select = (props) => {
   );
 };
 
-const SelectContainer = styledComponents.div`
+const SelectContainer = styled.div`
   width: 120px;
   height: 28px;
   & > input {
@@ -69,7 +69,7 @@ const SelectContainer = styledComponents.div`
     }
   }
 `
-const Options = styledComponents.div`
+const Options = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;

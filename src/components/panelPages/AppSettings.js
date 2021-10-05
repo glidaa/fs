@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -79,7 +79,7 @@ const AppSettings = (props) => {
   );
 };
 
-const AppSettingsForm = styledComponents(SimpleBar)`
+const AppSettingsForm = styled(SimpleBar)`
   flex: 1;
   overflow: auto;
   height: 0;
@@ -97,7 +97,7 @@ const AppSettingsForm = styledComponents(SimpleBar)`
   }
 `;
 
-const AppSetting = styledComponents.div`
+const AppSetting = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -113,7 +113,7 @@ const AppSetting = styledComponents.div`
   }
 `
 
-const NonPrefixedInputField = styledComponents.input`
+const NonPrefixedInputField = styled.input`
   width: calc(100% - 20px);
   padding: 10px 10px;
   border: 1px solid #C0C0C0;
@@ -128,7 +128,7 @@ const NonPrefixedInputField = styledComponents.input`
   }
 `
 
-const SelectField = styledComponents.select`
+const SelectField = styled.select`
   width: calc(100% - 20px);
   padding: 10px 10px;
   border: 1px solid #C0C0C0;
@@ -143,7 +143,7 @@ const SelectField = styledComponents.select`
   }
 `
 
-const PanelPageToolbar = styledComponents.div`
+const PanelPageToolbar = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -152,13 +152,13 @@ const PanelPageToolbar = styledComponents.div`
   padding-top: 25px;
 `
 
-const PanelPageTitle = styledComponents.span`
+const PanelPageTitle = styled.span`
   color: #000000;
   font-size: 18px;
   font-weight: 600;
 `
 
-const PanelPageToolbarAction = styledComponents.button`
+const PanelPageToolbarAction = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;

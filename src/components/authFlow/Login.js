@@ -1,5 +1,5 @@
 import React from 'react';
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
@@ -159,7 +159,7 @@ const Login = (props) => {
   )
 }
 
-const LoginFormContainer = styledComponents.div`
+const LoginFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -179,7 +179,7 @@ const LoginFormContainer = styledComponents.div`
   }
 `
 
-const LoginFormHeader = styledComponents.div`
+const LoginFormHeader = styled.div`
   display: flex;
   flex-direction: column;
   color: #222222;
@@ -193,7 +193,7 @@ const LoginFormHeader = styledComponents.div`
   }
 `
 
-const LoginStepOneForm = styledComponents.form`
+const LoginStepOneForm = styled.form`
   display: grid;
   grid-template-areas:
     'username username'
@@ -221,7 +221,7 @@ const LoginStepOneForm = styledComponents.form`
   }
 `;
 
-const LoginStepTwoForm = styledComponents.form`
+const LoginStepTwoForm = styled.form`
   display: grid;
   grid-template-areas:
     'code code'
@@ -236,7 +236,7 @@ const LoginStepTwoForm = styledComponents.form`
   }
 `;
 
-const NewAccountLink = styledComponents.div`
+const NewAccountLink = styled.div`
   font-size: 14px;
   justify-self: flex-start;
   cursor: pointer;
@@ -245,7 +245,7 @@ const NewAccountLink = styledComponents.div`
   }
 `
 
-const ForgotPasswordLink = styledComponents.span`
+const ForgotPasswordLink = styled.span`
   font-size: 14px;
   justify-self: flex-end;
   color: #006EFF;

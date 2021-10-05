@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { connect } from "react-redux"
-import styledComponents from "styled-components";
+import styled from "styled-components";
 import * as tasksActions from "../../../actions/tasks"
 import * as appActions from "../../../actions/app";
 import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
@@ -88,7 +88,7 @@ const WatcherField = (props) => {
   )
 }
 
-const WatcherFieldShell = styledComponents.div`
+const WatcherFieldShell = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -103,7 +103,7 @@ const WatcherFieldShell = styledComponents.div`
   }
 `
 
-const WatcherFieldContainer = styledComponents(ShadowScroll)`
+const WatcherFieldContainer = styled(ShadowScroll)`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -114,7 +114,7 @@ const WatcherFieldContainer = styledComponents(ShadowScroll)`
   scroll-behavior: smooth;
 `
 
-const NewWatcherBtn = styledComponents.button`
+const NewWatcherBtn = styled.button`
   display: flex;
   gap: 5px;
   padding: 10px 15px;
@@ -150,7 +150,7 @@ const NewWatcherBtn = styledComponents.button`
   }
 `
 
-const NoWatchers = styledComponents.div`
+const NoWatchers = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -181,7 +181,7 @@ const NoWatchers = styledComponents.div`
   }
 `
 
-const WatcherItem = styledComponents.span`
+const WatcherItem = styled.span`
   position: relative;
   display: flex;
   gap: 5px;
@@ -197,7 +197,7 @@ const WatcherItem = styledComponents.span`
   align-items: center;
 `
 
-const WatcherDetails = styledComponents.div`
+const WatcherDetails = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -219,7 +219,7 @@ const WatcherDetails = styledComponents.div`
   }
 `
 
-const RemoveBtn = styledComponents.button`
+const RemoveBtn = styled.button`
   position: absolute;
   top: 5px;
   right: 5px;

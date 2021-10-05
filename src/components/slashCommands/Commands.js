@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import styledComponents from "styled-components"
+import styled from "styled-components"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import copyTask from "../../utils/copyTask"
@@ -136,7 +136,7 @@ const Commands = (props) => {
   )) : (<NoIntent>No Commands Found</NoIntent>)
 };
 
-const CommandSuggestion = styledComponents.div`
+const CommandSuggestion = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -187,7 +187,7 @@ const CommandSuggestion = styledComponents.div`
   }
 `
 
-const NoIntent = styledComponents.span`
+const NoIntent = styled.span`
   display: flex;
   width: 100%;
   font-size: 14px;
