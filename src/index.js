@@ -8,8 +8,6 @@ import App from './components/App';
 import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';
 
-import Header from './componentStories/Header/Header';
-
 Amplify.configure(awsconfig);
 ReactDOM.render(
   <Provider store={store}>
