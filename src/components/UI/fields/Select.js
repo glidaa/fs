@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from "styled-components";
+import { glassmorphism } from '../../../styles';
 
 const Select = (props) => {
 
@@ -63,18 +64,16 @@ const SelectShell = styled.div`
 const Selection = styled.button`
   padding: 5px 10px;
   border: 2px solid transparent;
-  border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
-  outline: none;
-  background-color: ${({color}) => color};
+  ${glassmorphism(8, 0.75)}
   transition: color 0.2s, border-color 0.2s;
   ${({ isSelected }) => isSelected ? `
-    color: #5D6969;
-    border-color: #7DAAFC;
+    color: var(--primary);
+    border-color: var(--primary);
     cursor: default;
   ` : `
-    color: #AAA8AC;
+    color: #000000;
   `}
 `
 

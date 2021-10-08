@@ -47,7 +47,7 @@ const TaskHub = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Task Hub</PanelPageTitle>
@@ -56,7 +56,7 @@ const TaskHub = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>

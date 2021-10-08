@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from "styled-components";
+import { glassmorphism } from '../../../styles';
 
 const CardSelect = (props) => {
 
@@ -9,7 +10,6 @@ const CardSelect = (props) => {
     values,
     options,
     descriptions,
-    colors,
 		onChange,
     label,
     readOnly,
@@ -35,7 +35,6 @@ const CardSelect = (props) => {
           <Selection
             key={x}
             isSelected={value === x}
-            color={colors[i]}
             onClick={() => onSelect(x)}
           >
             <span>{options[i]}</span>
@@ -71,11 +70,9 @@ const Selection = styled.button`
   text-align: left;
   padding: 12px;
   border: 2px solid transparent;
-  border-radius: 8px;
   outline: none;
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  ${glassmorphism(8)}
   transition: color 0.2s, border-color 0.2s;
   & > span:nth-child(1) {
     font-size: 24px;
@@ -86,10 +83,20 @@ const Selection = styled.button`
     font-weight: 400;
   }
   ${({ isSelected }) => isSelected ? `
-    color: #5D6969;
-    border-color: #7DAAFC;
+    border-color: var(--primary);
+    & > span:nth-child(1) {
+      color: var(--primary);
+    }
+    & > span:nth-child(2) {
+      color: #5D6969;
+    }
   ` : `
-    color: #AAA8AC;
+    & > span:nth-child(1) {
+      color: var(--primary-disabled);
+    }
+    & > span:nth-child(2) {
+      color: #AAA8AC;
+    }
   `}
 `
 

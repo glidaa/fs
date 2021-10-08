@@ -7,6 +7,7 @@ import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
 import { panelPages } from "../../../constants";
 import ShadowScroll from '../../ShadowScroll';
 import Avatar from '../Avatar';
+import { glassmorphism } from '../../../styles';
 
 const WatcherField = (props) => {
   const {
@@ -61,7 +62,7 @@ const WatcherField = (props) => {
                   height="16"
                   width="16"
                   strokeWidth="32"
-                  color="#006EFF"
+                  color="var(--primary)"
                 />
               </RemoveBtn>
               <Avatar user={users[x]} size={36} circular />
@@ -108,10 +109,7 @@ const NewWatcherBtn = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
   font-size: 20px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border: none;
   outline: none;
   height: 91.8px;
@@ -119,6 +117,7 @@ const NewWatcherBtn = styled.button`
   font-weight: 500;
   cursor: pointer;
   margin-left: 5px;
+  ${glassmorphism(8)}
   & > div {
     display: flex;
     align-items: center;
@@ -126,14 +125,14 @@ const NewWatcherBtn = styled.button`
     line-height: 0;
     border-radius: 100%;
     color: #FFFFFF;
-    background-color: #006EFF;
+    background-color: var(--primary);
     min-width: 32px;
     min-height: 32px;
     width: 32px;
     height: 32px;
   }
   & > span {
-    color: #006EFF;
+    color: var(--primary);
     font-weight: 600;
     font-size: 14px;
   }
@@ -147,9 +146,7 @@ const NoWatchers = styled.div`
   justify-content: center;
   width: calc(100% - 20px);
   padding: 10px;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  ${glassmorphism(8)}
   border: none;
   outline: none;
   height: fit-content;
@@ -160,12 +157,10 @@ const NoWatchers = styled.div`
   }
   & > button {
     outline: none;
-    background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+    ${glassmorphism(8)}
     border: none;
-    color: #006EFF;
+    color: var(--primary);
     padding: 5px 10px;
-    border-radius: 8px;
     font-weight: 600;
     font-size: 12px;
     cursor: pointer;
@@ -177,12 +172,10 @@ const WatcherItem = styled.span`
   display: flex;
   gap: 5px;
   padding: 10px;
-  border-radius: 8px;
   min-width: 80px;
   max-width: 80px;
   color: #5D6969;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  ${glassmorphism(8)}
   flex-direction: column;
   align-items: center;
   &:last-child {

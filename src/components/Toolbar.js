@@ -8,6 +8,7 @@ import { ReactComponent as NotificationIcon } from "../assets/notifications-outl
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
 import { ReactComponent as LoginIcon } from "../assets/log-in-outline.svg"
 import Avatar from './UI/Avatar';
+import { glassmorphism } from '../styles';
 
 const TasksPanel = (props) => {
   const {
@@ -51,7 +52,7 @@ const TasksPanel = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.PROJECTS ?
-                "#006EFF" : "#000000"
+                "var(--primary)" : "#000000"
               }
           />
         </ToolbarAction>
@@ -62,25 +63,25 @@ const TasksPanel = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.APP_SETTINGS ?
-                "#006EFF" : "#000000"
+                "var(--primary)" : "#000000"
               }
           />
         </ToolbarAction>
       </TopControls>
       <BottomControls>
           {user.state === AuthState.SignedIn ? (
-              <ToolbarAction onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
+              <ToolbarAction style={{padding: 0}} onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
                 <Avatar user={user.data} size={42} />
               </ToolbarAction>
           ) : (
-            <UserIndicator onClick={goToLoginPage}>
+            <ToolbarAction onClick={goToLoginPage}>
               <LoginIcon
                 width="24"
                 height="24"
                 strokeWidth="32"
-                color="#FFFFFF"
+                color="var(--primary)"
               />
-            </UserIndicator>
+            </ToolbarAction>
           )}
       </BottomControls>
     </ToolbarContainer>
@@ -88,6 +89,7 @@ const TasksPanel = (props) => {
 };
 
 const ToolbarContainer = styled.div`
+  ${glassmorphism(0)}
   position: fixed;
   left: 0;
   top: 0;
@@ -98,10 +100,6 @@ const ToolbarContainer = styled.div`
   padding: 30px 15px;
   width: 40px;
   height: calc(100vh - 60px);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  background-color: rgba(255, 255, 255, 0.4);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
 	@media only screen and (max-width: 768px) {
     padding: 15px 20px;
     flex-direction: row;
@@ -111,6 +109,24 @@ const ToolbarContainer = styled.div`
     width: calc(100vw - 40px - 20px);
     height: 40px;
     border-radius: 16px;
+    ::before {
+      border-radius: 16px;
+    }
+    ::after {
+      content: "";
+      background: black;
+      position: absolute;
+      z-index: -2;
+      width: 100vw;
+      height: 100px;
+      left: -10px;
+      top: -10px;
+      bottom: 0;
+      right: 0;
+      background-color: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
 	}
 `;
 
@@ -140,12 +156,13 @@ const BottomControls = styled.div`
 `;
 
 const ToolbarAction = styled.button`
+  ${glassmorphism(8, 0.2, 0.8)}
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   outline: none;
-  padding: 0;
+  padding: 10px;
   margin: 0;
   background-color: transparent;
   cursor: pointer;
@@ -157,15 +174,9 @@ const Spacer = styled.div`
 `
 
 const Logo = styled.span`
-  color: #006EFF;
+  color: var(--primary);
   font-weight: 900;
   font-size: 22px;
-`
-
-const UserIndicator = styled(ToolbarAction)`
-  background-color: #006EFF;
-  border-radius: 8px;
-  padding: 10px;
 `
 
 export default connect((state) => ({

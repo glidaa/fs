@@ -5,6 +5,7 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { supportedCommands } from "../constants"
 import slashCommands from "./slashCommands"
+import { glassmorphism } from '../styles';
 
 const Specials = (props) => {
   const {
@@ -47,18 +48,17 @@ const openAnim = keyframes`
 `;
 
 const DropdownContainer = styled(SimpleBar)`
+  ${glassmorphism(10)}
   position: fixed;
   top: ${({ $posInfo }) => $posInfo.top}px;
   left: ${({ $posInfo }) => $posInfo.left}px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background-color: #FFFFFF;
   z-index: 999;
   border-radius: 10px;
   border: none;
   padding: 15px 0;
-  box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
   width: 320px;
   max-height: 300px;
   animation: ${openAnim} 0.3s ease;

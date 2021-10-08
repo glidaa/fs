@@ -51,7 +51,7 @@ const Details = (props) => {
           value={tasks[selectedTask].assignees}
           readOnly={readOnly}
         />
-        {AuthState.SignedIn && (
+        {user.state === AuthState.SignedIn && (
           <WatcherField
             name="watchers"
             label="Watched By"

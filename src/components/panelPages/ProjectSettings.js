@@ -96,7 +96,7 @@ const ProjectSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Project Settings</PanelPageTitle>
@@ -105,7 +105,7 @@ const ProjectSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -144,7 +144,6 @@ const ProjectSettings = (props) => {
                   "Make this project accessible to others via its unique permalink.",
                   "Make this project not visible to anyone other than you."
                 ]}
-                colors={["#FFEBE5", "#FDF1DB"]}
                 onChange={(e) => setNewPrivacy(e.target.value)}
               />
               <CardSelect
@@ -157,7 +156,6 @@ const ProjectSettings = (props) => {
                   "Make this project writable by other users who have the permission to access its tasks.",
                   "Prevent other users who have the permission to access this project from modifying its contents."
                 ]}
-                colors={["#FFEBE5", "#FDF1DB"]}
                 onChange={(e) => setNewPermissions(e.target.value)}
               />
             </>
@@ -198,7 +196,7 @@ const ProjectSettingsForm = styled(SimpleBar)`
 const NonPrefixedInputField = styled.input`
   width: calc(100% - 20px);
   padding: 5px 10px;
-  border: 1px solid #C0C0C0;
+  border: 1px solid #939393;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
@@ -206,7 +204,7 @@ const NonPrefixedInputField = styled.input`
     background-color: #FAFAFA;
   }
   &::placeholder {
-    color: #C0C0C0;
+    color: #939393;
   }
 `
 

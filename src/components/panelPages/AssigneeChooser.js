@@ -102,7 +102,7 @@ const AssigneeChooser = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Add Assignee</PanelPageTitle>
@@ -114,7 +114,7 @@ const AssigneeChooser = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -224,7 +224,7 @@ const KeywordField = styled.input`
   font-weight: 400;
   transition: opacity 0.3s;
   &::placeholder {
-    color: #C0C0C0;
+    color: #939393;
   }
   &:disabled {
     opacity: 0.6;

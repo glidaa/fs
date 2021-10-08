@@ -245,7 +245,7 @@ const TaskItem = (props) => {
 									ref={inputRef}
 									className="task"
 									placeholder="Task…"
-									value={tasks[selectedTask].task + command}
+									value={(tasks[selectedTask].task || "") + (command || "")}
 									onKeyUp={handleKeyUp}
 									onKeyDown={handleKeyDown}
 									onChange={onChange}
@@ -271,7 +271,7 @@ const TaskItem = (props) => {
 								<CopyIcon
 									height="18"
 									strokeWidth="34"
-									color="#006EFF"
+									color="var(--primary)"
 								/>
 							</TaskItemAction>
 							{!readOnly && (
@@ -279,7 +279,7 @@ const TaskItem = (props) => {
                   <DuplicateIcon
                     height="18"
                     strokeWidth="34"
-                    color="#006EFF"
+                    color="var(--primary)"
                   />
                 </TaskItemAction>
               )}
@@ -287,7 +287,7 @@ const TaskItem = (props) => {
 								<ShareIcon
 									height="18"
 									strokeWidth="34"
-									color="#006EFF"
+									color="var(--primary)"
 								/>
 							</TaskItemAction>
 							{!readOnly && (
@@ -295,7 +295,7 @@ const TaskItem = (props) => {
                   <RemoveIcon
                     height="18"
                     strokeWidth="34"
-                    color="#006EFF"
+                    color="var(--primary)"
                   />
 							  </TaskItemAction>
               )}
@@ -303,7 +303,7 @@ const TaskItem = (props) => {
 								<DetailsIcon
 									height="18"
 									strokeWidth="34"
-									color="#006EFF"
+									color="var(--primary)"
 								/>
 							</TaskItemAction>
 						</TaskItemActions> :
@@ -367,7 +367,7 @@ const TaskItemAction = styled.button`
 	height: 28px;
 	border-radius: 6px;
 	&:hover {
-		background: linear-gradient(135deg,#0029ff 0%,#0092ff 100%);
+		background: var(--primary-gradient);
 		& > svg {
 			color: #FFFFFF;
 		}
@@ -390,7 +390,7 @@ const TaskItemCore = styled.div`
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	border: 1px solid ${({ isFocused }) => isFocused ? "#006EFF" : "transparent"};
+	border: 1px solid ${({ isFocused }) => isFocused ? "var(--primary)" : "transparent"};
 	border-radius: 10px;
 	padding: 8px 12px;
 	margin: 4px 0;
@@ -423,7 +423,12 @@ const TaskItemCore = styled.div`
 		border: none;
 		border-radius: 0;
 		gap: 2px;
-		background-color: ${({ isFocused }) => isFocused ? "#FFFFFF" : "transparent"};
+		${({ isFocused }) => isFocused ? `
+			background-color: rgba(255, 255, 255, 0.5);
+			box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+		` : `
+			background-color: transparent;
+		`}
 	}
 `;
 
@@ -466,7 +471,7 @@ const TaskItemHeader = styled.span`
 	cursor: text;
 	flex: 1;
   text-decoration: ${({isDone}) => isDone ? "line-through" : "none"};
-  color: ${({isPlaceholder}) => isPlaceholder ? "#D3D3D3" : "#000000"};
+  color: ${({isPlaceholder}) => isPlaceholder ? "#939393" : "#000000"};
 `
 
 const TaskItemInput = styled.div`
@@ -479,7 +484,7 @@ const TaskItemInput = styled.div`
 		margin: 0;
 		font-weight: 400;
 		&::placeholder {
-			color: #C0C0C0;
+			color: #939393;
 		}
 	}
 `
@@ -492,7 +497,7 @@ const TaskItemDueDate = styled.span`
 	color: #FFFFFF;
 	font-weight: 600;
 	font-size: 11.2px;
-	background: linear-gradient(135deg,#0029ff 0%,#0092ff 100%);
+	background: var(--primary-gradient);
 	white-space: nowrap;
     border-radius: 10px;
     padding: 3px 10px;
@@ -540,8 +545,8 @@ const TaskItemStatusToggle = styled.button`
 	align-items: center;
 	justify-content: center;
 	outline: none;
-	border: 1px solid ${({ isDone }) => isDone ? "#006EFF" : "#000000"};
-	background-color: ${({ isDone }) => isDone ? "#006EFF" : "transparent"};
+	border: 1px solid ${({ isDone }) => isDone ? "var(--primary)" : "#000000"};
+	background-color: ${({ isDone }) => isDone ? "var(--primary)" : "transparent"};
 	border-radius: 100%;
 	width: 20px;
 	height: 20px;

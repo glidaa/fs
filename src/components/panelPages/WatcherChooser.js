@@ -10,6 +10,7 @@ import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
 import { ReactComponent as WatcherSearchIllustartion } from "../../assets/undraw_People_search_re_5rre.svg"
 import { ReactComponent as NoResultsIllustartion } from "../../assets/undraw_not_found_60pq.svg"
 import Avatar from '../UI/Avatar';
+import { glassmorphism } from '../../styles';
 
 const WatcherChooser = (props) => {
   const {
@@ -102,7 +103,7 @@ const WatcherChooser = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Add Watcher</PanelPageTitle>
@@ -114,7 +115,7 @@ const WatcherChooser = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -197,17 +198,15 @@ const PanelPageToolbarAction = styled.button`
 const KeywordField = styled.input`
   width: calc(100% - 90px);
   outline: none;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border: none;
   padding: 10px;
-  border-radius: 8px;
   margin: 0 25px;
   font-size: 14px;
   font-weight: 400;
   transition: opacity 0.3s;
+  ${glassmorphism(8)}
   &::placeholder {
-    color: #C0C0C0;
+    color: #939393;
   }
   &:disabled {
     opacity: 0.6;

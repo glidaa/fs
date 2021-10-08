@@ -7,6 +7,7 @@ import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
 import { panelPages } from "../../../constants";
 import ShadowScroll from '../../ShadowScroll';
 import Avatar from '../Avatar';
+import { glassmorphism } from '../../../styles';
 
 const AssigneeField = (props) => {
   const {
@@ -80,7 +81,7 @@ const AssigneeField = (props) => {
                   height="16"
                   width="16"
                   strokeWidth="32"
-                  color="#006EFF"
+                  color="var(--primary)"
                 />
               </RemoveBtn>
               <Avatar user={x} size={36} circular />
@@ -127,10 +128,7 @@ const NewAssigneeBtn = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
   font-size: 20px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border: none;
   outline: none;
   height: 91.8px;
@@ -138,6 +136,7 @@ const NewAssigneeBtn = styled.button`
   font-weight: 500;
   cursor: pointer;
   margin-left: 5px;
+  ${glassmorphism(8)}
   & > div {
     display: flex;
     align-items: center;
@@ -145,14 +144,14 @@ const NewAssigneeBtn = styled.button`
     line-height: 0;
     border-radius: 100%;
     color: #FFFFFF;
-    background-color: #006EFF;
+    background-color: var(--primary);
     min-width: 32px;
     min-height: 32px;
     width: 32px;
     height: 32px;
   }
   & > span {
-    color: #006EFF;
+    color: var(--primary);
     font-weight: 600;
     font-size: 14px;
   }
@@ -166,9 +165,7 @@ const NoAssignees = styled.div`
   justify-content: center;
   width: calc(100% - 20px);
   padding: 10px;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  ${glassmorphism(8)}
   border: none;
   outline: none;
   height: fit-content;
@@ -179,15 +176,13 @@ const NoAssignees = styled.div`
   }
   & > button {
     outline: none;
-    background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
     border: none;
-    color: #006EFF;
+    color: var(--primary);
     padding: 5px 10px;
-    border-radius: 8px;
     font-weight: 600;
     font-size: 12px;
     cursor: pointer;
+    ${glassmorphism(8)}
   }
 `
 
@@ -196,14 +191,12 @@ const AssigneeItem = styled.span`
   display: flex;
   gap: 5px;
   padding: 10px;
-  border-radius: 8px;
   min-width: 80px;
   max-width: 80px;
   color: #5D6969;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   flex-direction: column;
   align-items: center;
+  ${glassmorphism(8)}
   &:last-child {
     margin-right: 5px;
   }

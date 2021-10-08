@@ -1,17 +1,19 @@
+:root {
+  --primary: hotpink;
+  --primary-hover: deeppink;
+  --primary-disabled: lightpink;
+  --primary-gradient: linear-gradient(0deg,hotpink 0%,lightpink 100%);
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
 
 body {
-  background-image:  
-  radial-gradient(at 31% 70%, hsla(292,76%,61%,1) 0, transparent 45%),  
-  radial-gradient(at 26% 91%, hsla(245,90%,79%,1) 0, transparent 56%),  
-  radial-gradient(at 38% 79%, hsla(19,72%,68%,1) 0, transparent 59%),  
-  radial-gradient(at 71% 29%, hsla(218,92%,75%,1) 0, transparent 58%),  
-  radial-gradient(at 29% 1%, hsla(211,86%,74%,1) 0, transparent 54%),  
-  radial-gradient(at 54% 79%, hsla(339,90%,75%,1) 0, transparent 46%),  
-  radial-gradient(at 92% 48%, hsla(122,97%,78%,1) 0, transparent 44%);
+  background-image: url(./assets/bg/regular/opera-neon-wallpaper.jpg);
+  background-size: cover;
+  background-attachment: fixed;
   width: 100vw;
   height: 100vh;
   margin: 0;
@@ -54,12 +56,8 @@ input:read-only {
 }
 
 @media only screen and (max-width: 768px) {
-  body {
-    background-color: #F4F7FF;
-  }
   .mainPage {
     top: 0;
-    background-color: #F4F7FF;
     width: 100vw;
     height: calc(100% - 90px)
   }

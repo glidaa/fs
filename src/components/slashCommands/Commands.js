@@ -117,14 +117,14 @@ const Commands = (props) => {
       onMouseEnter={() => setSelection(i)}
       onClick={() => chooseCommand(x)}
     >
-      {x === "ASSIGN" && <AssignIcon color="#006EFF" strokeWidth="32" height={24} />}
-      {x === "DUE" && <CalenderIcon color="#006EFF" fill="#006EFF" strokeWidth="32" height={24} />}
-      {x === "TAGS" && <TagsIcon color="#006EFF" strokeWidth="32" height={24} />}
-      {x === "DESCRIPTION" && <DescriptionIcon color="#006EFF" strokeWidth="32" height={24} />}
-      {x === "STATUS" && <StatusIcon color="#006EFF" strokeWidth="32" height={24} />}
-      {x === "DELETE" && <RemoveIcon color="#006EFF" strokeWidth="32" height={24} />}
-      {x === "COPY" && <CopyIcon color="#006EFF" strokeWidth="32" height={24} />}
-      {x === "DUPLICATE" && <DuplicateIcon color="#006EFF" strokeWidth="32" height={24} />}
+      {x === "ASSIGN" && <AssignIcon color="var(--primary)" strokeWidth="32" height={24} />}
+      {x === "DUE" && <CalenderIcon color="var(--primary)" fill="var(--primary)" strokeWidth="32" height={24} />}
+      {x === "TAGS" && <TagsIcon color="var(--primary)" strokeWidth="32" height={24} />}
+      {x === "DESCRIPTION" && <DescriptionIcon color="var(--primary)" strokeWidth="32" height={24} />}
+      {x === "STATUS" && <StatusIcon color="var(--primary)" strokeWidth="32" height={24} />}
+      {x === "DELETE" && <RemoveIcon color="var(--primary)" strokeWidth="32" height={24} />}
+      {x === "COPY" && <CopyIcon color="var(--primary)" strokeWidth="32" height={24} />}
+      {x === "DUPLICATE" && <DuplicateIcon color="var(--primary)" strokeWidth="32" height={24} />}
       <div>
         <div>
           <span>{x}</span>
@@ -170,7 +170,7 @@ const CommandSuggestion = styled.div`
         align-items: center;
         justify-content: center;
         width: 14px;
-        color: #006EFF;
+        color: var(--primary);
         background-color: #CCE2FF;
         font-weight: 600;
         padding: 2px;

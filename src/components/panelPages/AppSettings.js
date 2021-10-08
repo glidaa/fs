@@ -43,7 +43,7 @@ const AppSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>App Settings</PanelPageTitle>
@@ -52,7 +52,7 @@ const AppSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -116,7 +116,7 @@ const AppSetting = styled.div`
 const NonPrefixedInputField = styled.input`
   width: calc(100% - 20px);
   padding: 10px 10px;
-  border: 1px solid #C0C0C0;
+  border: 1px solid #939393;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
@@ -124,14 +124,14 @@ const NonPrefixedInputField = styled.input`
     background-color: #FAFAFA;
   }
   &::placeholder {
-    color: #C0C0C0;
+    color: #939393;
   }
 `
 
 const SelectField = styled.select`
   width: calc(100% - 20px);
   padding: 10px 10px;
-  border: 1px solid #C0C0C0;
+  border: 1px solid #939393;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
@@ -139,7 +139,7 @@ const SelectField = styled.select`
     background-color: #FAFAFA;
   }
   &::placeholder {
-    color: #C0C0C0;
+    color: #939393;
   }
 `
 

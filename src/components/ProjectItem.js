@@ -9,6 +9,7 @@ import { ReactComponent as GlobeIcon } from "../assets/earth-outline.svg"
 import { ReactComponent as DocumentLockIcon } from "../assets/document-lock-outline.svg"
 import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
+import { glassmorphism } from "../styles";
 
 const ProjectItem = (props) => {
   const {
@@ -108,15 +109,12 @@ const ProjectItem = (props) => {
 };
 
 const ProjectItemShell = styled.div`
-  position: relative;
   background-origin: border-box!important;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border: none;
   padding: 20px;
   margin: 0 25px;
-  border-radius: 10px; 
   overflow: hidden;
+  ${glassmorphism(10)}
   ${({ isSelected }) => isSelected ? `
     border: 4px solid #F778BA;
   ` : `

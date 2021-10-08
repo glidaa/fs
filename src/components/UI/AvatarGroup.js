@@ -50,7 +50,7 @@ const LetterAvatar = styled.div`
 	align-items: center;
 	justify-content: center;
 	border-radius: 100%;
-	color: #006EFF;
+	color: var(--primary);
 	background-color: #CCE2FF;
 	line-height: 0;
 	font-size: ${({ size }) => size / 2.4}px;

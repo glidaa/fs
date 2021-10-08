@@ -218,6 +218,18 @@ export const deleteComment = /* GraphQL */ `
     }
   }
 `;
+export const dismissNotification = /* GraphQL */ `
+  mutation DismissNotification($notificationID: ID!) {
+    dismissNotification(notificationID: $notificationID) {
+      id
+      taskID
+      content
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
 export const assignTask = /* GraphQL */ `
   mutation AssignTask($taskID: ID!, $assignee: String!, $mutationID: String) {
     assignTask(taskID: $taskID, assignee: $assignee, mutationID: $mutationID) {

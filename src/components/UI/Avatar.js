@@ -27,7 +27,7 @@ const LetterAvatar = styled.div`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	color: #006EFF;
+	color: var(--primary);
 	background-color: #CCE2FF;
 	line-height: 0;
   border-radius: ${({isCircular, size}) => isCircular ? "100%" : `${0.315 * size}px`};

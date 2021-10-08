@@ -107,7 +107,7 @@ const Comments = (props) => {
                         height="16"
                         width="16"
                         strokeWidth="32"
-                        color="#006EFF"
+                        color="var(--primary)"
                       />
                     </RemoveBtn>
                   </CommentHeader>
@@ -238,7 +238,7 @@ const CommentUnit = styled.div`
     ${({isSelf}) => isSelf ? `
       border-radius: 16px 16px 0 16px;
       background-color: #CCE2FF;
-      color: #006EFF;
+      color: var(--primary);
     ` : `
       border-radius: 16px 16px 16px 0;
       background-color: rgba(255, 255, 255, 0.5);
@@ -289,17 +289,17 @@ const CommentControls = styled.div`
         padding: 8px 12px;
         font-size: 14px;
         border-radius: 8px;
-        background-color: #006EFF;
+        background-color: var(--primary);
         cursor: pointer;
         color: #FFFFFF;
         border: none;
         outline: none;
         transition: background-color 0.3s;
         &:hover {
-          background-color: #0058cc;
+          background-color: var(--primary-hover);
         }
         &:disabled {
-          background-color: #338bff;
+          background-color: var(--primary-disabled);
         }
       }
     }
@@ -326,7 +326,7 @@ const CommentDay = styled.span`
 const CommentNotAllowed = styled.span`
   font-weight: 600;
   font-size: 12px;
-  color: #C0C0C0;
+  color: #939393;
   text-align: center;
   width: 100%;
 `

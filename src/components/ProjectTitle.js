@@ -100,7 +100,7 @@ const ProjectTitleHeader = styled.span`
 	cursor: text;
 	color: #000000;
 	&.placeholder {
-		color: #D3D3D3;
+		color: #939393;
 	}
 	@media only screen and (max-width: 768px) {
 		padding: 5px 20px 5px 20px;
@@ -123,7 +123,7 @@ const ProjectTitleInput = styled.div`
 		border: none;
 		outline: none;
 		&::placeholder {
-			color: #C0C0C0;
+			color: #939393;
 		}
 	}
 	@media only screen and (max-width: 768px) {

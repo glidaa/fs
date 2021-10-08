@@ -32,7 +32,7 @@ const NotificationsContainer = styled.div`
 
 const NotificationShell = styled.div`
   display: flex;
-  color: #006EFF;
+  color: var(--primary);
   backdrop-filter: blur(10px);
   padding: 15px;
   border-radius: 8px;

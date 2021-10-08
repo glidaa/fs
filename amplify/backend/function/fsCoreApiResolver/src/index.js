@@ -28,6 +28,7 @@ const USERTABLE = process.env.API_FSCOREAPI_USERTABLE_NAME;
 const PROJECTTABLE = process.env.API_FSCOREAPI_PROJECTTABLE_NAME;
 const TASKTABLE = process.env.API_FSCOREAPI_TASKTABLE_NAME;
 const COMMENTTABLE = process.env.API_FSCOREAPI_COMMENTTABLE_NAME;
+const NOTIFICATIONTABLE = process.env.API_FSCOREAPI_NOTIFICATIONTABLE_NAME;
 const SES_EMAIL = process.env.SES_EMAIL;
 const SES_IDENTITY_ARN = process.env.SES_IDENTITY_ARN;
 
@@ -445,6 +446,11 @@ exports.handler = async function (ctx) {
 
   async function createProject(ctx) {
     const client = ctx.identity.username
+    for (const incomingAttr in ctx.arguments.input) {
+      if (!ctx.arguments.input[incomingAttr]) {
+        delete ctx.arguments.input[incomingAttr]
+      }
+    }
     if (client) {
       const projectData = {
         ...ctx.arguments.input,
@@ -594,6 +600,11 @@ exports.handler = async function (ctx) {
   async function createTask(ctx) {
     const projectID = ctx.arguments.input.projectID
     const client = ctx.identity.username
+    for (const incomingAttr in ctx.arguments.input) {
+      if (!ctx.arguments.input[incomingAttr]) {
+        delete ctx.arguments.input[incomingAttr]
+      }
+    }
     if (await isProjectEditableByClient(projectID, client)) {
       const projectData = await getProject(projectID)
       const taskData = {
@@ -656,6 +667,11 @@ exports.handler = async function (ctx) {
   async function createComment(ctx) {
     const taskID = ctx.arguments.input.taskID
     const client = ctx.identity.username
+    for (const incomingAttr in ctx.arguments.input) {
+      if (!ctx.arguments.input[incomingAttr]) {
+        delete ctx.arguments.input[incomingAttr]
+      }
+    }
     if (await isTaskSharedWithClient(taskID, client)) {
       const commentData = {
         ...ctx.arguments.input,
@@ -690,6 +706,7 @@ exports.handler = async function (ctx) {
       delete updateData.mutationID
       const expAttrVal = {}
       const expAttrNames = {}
+      const nullAttrs = []
       let updateExp = []
       for (const item in updateData) {
         if (item === "permalink") {
@@ -715,18 +732,30 @@ exports.handler = async function (ctx) {
             throw new Error(PERMALINK_USED)
           }
         } else {
-          expAttrVal[`:${item}`] = updateData[item]
           if (item === "permissions") {
-            updateExp.push(`#${item}=:${item}`)
+            if (updateData[item]) {
+              expAttrVal[`:${item}`] = updateData[item]
+              updateExp.push(`#${item}=:${item}`)
+            } else {
+              nullAttrs.push(`#${item}`)
+            }
             expAttrNames[`#${item}`] = item
           } else {
-            updateExp.push(`${item}=:${item}`)
+            if (updateData[item]) {
+              expAttrVal[`:${item}`] = updateData[item]
+              updateExp.push(`${item}=:${item}`)
+            } else {
+              nullAttrs.push(item)
+            }
           }
         }
       }
       expAttrVal[":updatedAt"] = new Date().toISOString()
       updateExp.push("updatedAt=:updatedAt")
-      updateExp = `set ${updateExp.join(", ")}`
+      updateExp = `SET ${updateExp.join(", ")}`
+      if (nullAttrs.length) {
+        updateExp += ` REMOVE ${nullAttrs.join(", ")}`
+      }
       const params = {
         TableName: PROJECTTABLE,
         Key: {
@@ -769,19 +798,32 @@ exports.handler = async function (ctx) {
       delete updateData.mutationID
       const expAttrVal = {}
       const expAttrNames = {}
+      const nullAttrs = []
       let updateExp = []
       for (const item in updateData) {
-        expAttrVal[`:${item}`] = updateData[item]
         if (item === "status") {
-          updateExp.push(`#${item}=:${item}`)
+          if (updateData[item]) {
+            expAttrVal[`:${item}`] = updateData[item]
+            updateExp.push(`#${item}=:${item}`)
+          } else {
+            nullAttrs.push(`#${item}`)
+          }
           expAttrNames[`#${item}`] = item
         } else {
-          updateExp.push(`${item}=:${item}`)
+          if (updateData[item]) {
+            expAttrVal[`:${item}`] = updateData[item]
+            updateExp.push(`${item}=:${item}`)
+          } else {
+            nullAttrs.push(item)
+          }
         }
       }
       expAttrVal[":updatedAt"] = new Date().toISOString()
       updateExp.push("updatedAt=:updatedAt")
-      updateExp = `set ${updateExp.join(", ")}`
+      updateExp = `SET ${updateExp.join(", ")}`
+      if (nullAttrs.length) {
+        updateExp += ` REMOVE ${nullAttrs.join(", ")}`
+      }
       const taskUpdateParams = {
         TableName: TASKTABLE,
         Key: {
@@ -826,14 +868,22 @@ exports.handler = async function (ctx) {
       delete updateData.id
       delete updateData.mutationID
       const expAttrVal = {}
+      const nullAttrs = []
       let updateExp = []
       for (const item in updateData) {
-        expAttrVal[`:${item}`] = updateData[item]
-        updateExp.push(`${item}=:${item}`)
+        if (updateData[item]) {
+          expAttrVal[`:${item}`] = updateData[item]
+          updateExp.push(`${item}=:${item}`)
+        } else {
+          nullAttrs.push(item)
+        }
       }
       expAttrVal[":updatedAt"] = new Date().toISOString()
       updateExp.push("updatedAt=:updatedAt")
-      updateExp = `set ${updateExp.join(", ")}`
+      updateExp = `SET ${updateExp.join(", ")}`
+      if (nullAttrs.length) {
+        updateExp += ` REMOVE ${nullAttrs.join(", ")}`
+      }
       const params = {
         TableName: COMMENTTABLE,
         Key: {

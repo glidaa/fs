@@ -34,15 +34,15 @@ const Projects = (props) => {
 }
 
 const NoAssignedProjects = styled.div`
+  position: absolute;
   display: flex;
   flex-direction: column;
   flex: 1;
   align-items: center;
   justify-content: center;
   gap: 40px;
-  height: calc(100% - 141px);
+  height: 100%;
   margin-top: -25px;
-  position: fixed;
   width: 100%;
   & > svg {
     width: 250px;

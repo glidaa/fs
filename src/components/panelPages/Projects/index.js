@@ -53,7 +53,7 @@ const Projects = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
             />
           </PanelPageToolbarAction>
           <PanelPageTitle>Projects</PanelPageTitle>
@@ -65,7 +65,7 @@ const Projects = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
             />
           </PanelPageToolbarAction>
         </PanelPageToolbar>
@@ -117,6 +117,9 @@ const ProjectItems = styled(SimpleBar)`
   overflow: auto;
   height: 0;
   min-height: 0;
+  & .simplebar-content-wrapper {
+    min-height: 100%;
+  }
   & .simplebar-content > div > div {
     display: flex;
     flex-direction: column;

@@ -98,7 +98,7 @@ const AccountSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Account Settings</PanelPageTitle>
@@ -107,7 +107,7 @@ const AccountSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="#006EFF"
+              color="var(--primary)"
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>

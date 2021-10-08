@@ -54,7 +54,7 @@ type Task
 	prevTask: ID
 	nextTask: ID
 	permalink: Int!
-	task: String!
+	task: String
 	description: String
 	due: AWSTimestamp
 	tags: [String!]
@@ -78,6 +78,21 @@ type Comment
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
 	owner: String!
+}
+
+type Notification
+	@model(queries: null, mutations: null, subscriptions: null)
+	@aws_iam
+	@aws_cognito_user_pools
+	@key(name: "byOwner", fields: ["owner"])
+	@key(name: "bySender", fields: ["sender"]) {
+	id: ID!
+	type: NotificationType!
+	payload: AWSJSON!
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	sender: String!
 }
 
 type Mutation {
@@ -117,6 +132,9 @@ type Mutation {
 	deleteComment(commentID: ID!): Comment
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
+	dismissNotification(notificationID: ID!): Comment
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_cognito_user_pools
 	assignTask(taskID: ID!, assignee: String!, mutationID: String): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -147,6 +165,9 @@ type Query {
 	getProjectByPermalink(permalink: String!): Project
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
+	getNotificationByID(notificationID: String!): Notification
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_cognito_user_pools
 	listOwnedProjects: ProjectsList
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -155,6 +176,10 @@ type Query {
 		@aws_iam
 		@aws_cognito_user_pools
 	listWatchedProjects: ProjectsList
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_iam
+		@aws_cognito_user_pools
+	listNotifications: NotificationsList
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 		@aws_cognito_user_pools
@@ -269,7 +294,7 @@ input CreateTaskInput {
 	projectID: ID!
 	prevTask: ID
 	nextTask: ID
-	task: String!
+	task: String
 	description: String
 	due: AWSTimestamp
 	tags: [String!]
@@ -415,6 +440,12 @@ type CommentsList
 	items: [Comment!]
 }
 
+type NotificationsList
+	@aws_iam
+	@aws_cognito_user_pools {
+	items: [Notification!]
+}
+
 enum TaskStatus {
 	todo
 	pending
@@ -439,4 +470,10 @@ enum Plan {
 enum Gender {
 	male
 	female
+}
+
+enum NotificationType {
+	assigment
+	addingWatcher
+	comment
 }

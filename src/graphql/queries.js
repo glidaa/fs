@@ -83,6 +83,19 @@ export const getProjectByPermalink = /* GraphQL */ `
     }
   }
 `;
+export const getNotificationById = /* GraphQL */ `
+  query GetNotificationById($notificationID: String!) {
+    getNotificationByID(notificationID: $notificationID) {
+      id
+      type
+      payload
+      createdAt
+      updatedAt
+      owner
+      sender
+    }
+  }
+`;
 export const listOwnedProjects = /* GraphQL */ `
   query ListOwnedProjects {
     listOwnedProjects {
@@ -148,6 +161,21 @@ export const listWatchedProjects = /* GraphQL */ `
         updatedAt
         owner
         members
+      }
+    }
+  }
+`;
+export const listNotifications = /* GraphQL */ `
+  query ListNotifications {
+    listNotifications {
+      items {
+        id
+        type
+        payload
+        createdAt
+        updatedAt
+        owner
+        sender
       }
     }
   }

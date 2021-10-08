@@ -5,7 +5,6 @@ import { connect } from "react-redux"
 import { Auth } from "aws-amplify";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
-import TasksIllustartion from "../../assets/oleg-chursin-vaPoJZB9Mzg-unsplash.jpg"
 import Login from './Login';
 import NewAccount from './NewAccount';
 import ForgotPassword from './ForgotPassword';
@@ -56,10 +55,6 @@ const AuthFlowContainer = styled(SimpleBar)`
   position: fixed;
   width: 100%;
   height: 100%;
-  background: url(${TasksIllustartion});
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
   & .simplebar-content {
     display: flex;
     align-items: center;

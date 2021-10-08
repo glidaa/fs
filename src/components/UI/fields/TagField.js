@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { useOuterClick } from 'react-outer-click';
 import styled from "styled-components"
+import { glassmorphism } from '../../../styles';
 
 const TagField = (props) => {
   const {
     name,
-    value,
+    value = [],
     onChange,
     readOnly,
     label,
@@ -107,8 +108,7 @@ const NewTagBtn = styled.button`
   align-items: center;
   justify-content: center;
   width: 100%;
-  color: #006EFF;
-  border-radius: 8px;
+  color: var(--primary);
   font-size: 20px;
   outline: none;
   width: 33px;
@@ -117,8 +117,7 @@ const NewTagBtn = styled.button`
   line-height: 0;
   padding: 0;
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  ${glassmorphism(8)}
   border: none;
 `
 
@@ -132,25 +131,23 @@ const NoTags = styled.span`
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
-  background-color: #006EFF;
+  background-color: var(--primary);
   outline: none;
   width: fit-content;
   height: fit-content;
-  border: 1px solid #006EFF;
+  border: 1px solid var(--primary);
 `
 
 const TagItem = styled.span`
   display: inline-flex;
   gap: 5px;
   padding: 5px 10px;
-  border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
   width: fit-content;
   height: fit-content;
   color: #5D6969;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  ${glassmorphism(8)}
   border: none;
   flex-direction: row;
   align-items: center;
@@ -175,11 +172,9 @@ const TagItem = styled.span`
 const TagInput = styled.span`
   display: inline-flex;
   padding: 5px 10px;
-  border-radius: 8px;
   width: 60px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border: none;
+  ${glassmorphism(8)}
   & > input {
     border: none;
     width: 60px;
@@ -189,7 +184,7 @@ const TagInput = styled.span`
     padding: 0;
     background-color: transparent;
     &::placeholder {
-      color: #C0C0C0;
+      color: #939393;
     }
   }
 `

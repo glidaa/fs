@@ -244,14 +244,14 @@ const NewAccountLink = styled.div`
   justify-self: flex-start;
   cursor: pointer;
   & > span:nth-child(2) {
-    color: #006EFF;
+    color: var(--primary);
   }
 `
 
 const ForgotPasswordLink = styled.span`
   font-size: 14px;
   justify-self: flex-end;
-  color: #006EFF;
+  color: var(--primary);
   cursor: pointer;
   &:hover {
 

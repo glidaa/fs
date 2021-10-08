@@ -10,6 +10,7 @@ import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
 import ProjectTitle from './ProjectTitle';
 import sortedTasks from './sortedTasks';
+import { glassmorphism } from '../styles';
 
 const TasksPanel = (props) => {
   const {
@@ -62,7 +63,7 @@ const TasksPanel = (props) => {
                 width={14}
                 height={14}
                 strokeWidth={32}
-                color="#006EFF"
+                color="var(--primary)"
               />
               <span>Share</span>
             </ToolbarAction>
@@ -74,7 +75,7 @@ const TasksPanel = (props) => {
                 width={14}
                 height={14}
                 strokeWidth={32}
-                color="#006EFF"
+                color="var(--primary)"
               />
               <span>Settings</span>
             </ToolbarAction>
@@ -88,16 +89,14 @@ const TasksPanel = (props) => {
 }
 
 const TasksPanelContainer = styled.div`
+  position: relative;
   flex: 2;
   padding: 20px 40px 20px 40px;
   overflow: auto;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  background-color: rgba(255, 255, 255, 0.75);
   min-height: calc(100vh - 80px);
+  ${glassmorphism()}
   @media only screen and (max-width: 768px) {
 		padding: 0px;
-    background-color: #F4F7FF;
     width: 100%;
     height: 100%;
   }
@@ -127,13 +126,11 @@ const ToolbarAction = styled.button`
   padding: 5px;
   line-height: 0;
   width: 80px;
-  color: #006EFF;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  color: var(--primary);
   border: none;
-  border-radius: 6px;
   outline: none;
   cursor: pointer;
+  ${glassmorphism(6)}
 `
 
 export default connect((state) => ({

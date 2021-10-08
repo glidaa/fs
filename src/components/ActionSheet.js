@@ -240,7 +240,7 @@ const CloseBtn = styled.button`
 	outline: none;
 	border: none;
 	color: #FFFFFF;
-	background-color: #006EFF;
+	background-color: var(--primary);
 	width: 100%;
 	font-weight: bold;
 	padding: 10px 0;

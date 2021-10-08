@@ -1,9 +1,10 @@
 import React from "react"
 import styled from "styled-components"
+import { glassmorphism } from "../../../styles"
 
 const TextField = (props) => {
   const {
-    value,
+    value = "",
     onChange,
     autoComplete,
     placeholder,
@@ -67,14 +68,13 @@ const TextFieldContainer = styled.div`
   justify-content: flex-start;
   width: calc(100% - 20px);
   padding: 5px 10px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border: none;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
+  ${glassmorphism(8)}
   & > span {
-    color: #C0C0C0;
+    color: #939393;
   }
   /* background-color: ${({ disabled }) => disabled ? "#FAFAFA" : "transparent"}; */
   & > input {
@@ -87,11 +87,11 @@ const TextFieldContainer = styled.div`
       background-color: #FAFAFA;
     }
     &::placeholder {
-      color: #C0C0C0;
+      color: #939393;
     }
   }
   & *:not(input) {
-    color: #C0C0C0!important;
+    color: #939393!important;
   }
 `
 

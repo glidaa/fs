@@ -5,13 +5,14 @@ import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 import styled from "styled-components"
 import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
 import formatDate from '../../../utils/formatDate';
+import { glassmorphism } from '../../../styles';
 
 const BodyOverlay = ({ children }) => createPortal(children, window.document.querySelector("body"))
 
 const DateField = (props) => {
   const {
     name,
-    value,
+    value = null,
     placeholder,
     onChange,
     readOnly,
@@ -85,8 +86,8 @@ const DateField = (props) => {
               <Calendar
                 value={pickerValue}
                 onChange={pickValue}
-                colorPrimary="#006EFF"
-                colorPrimaryLight="#338bff"
+                colorPrimary="var(--primary)"
+                colorPrimaryLight="var(--primary-disabled)"
                 shouldHighlightWeekends
               />
             </PickerContainer>
@@ -124,11 +125,9 @@ const DateFieldContainer = styled.div`
   justify-content: space-between;
   width: calc(100% - 20px);
   padding: 5px 10px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
   border: none;
-  /* border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"}; */
-  border-radius: 8px;
+  ${glassmorphism(8)}
+  /* border: 1px solid ${({isError}) => isError ? "#FF0000" : "#939393"}; */
   & > input {
     flex: 1;
     padding: 0;
@@ -140,7 +139,7 @@ const DateFieldContainer = styled.div`
     font-size: 14px;
     font-weight: 400;
     &::placeholder {
-      color: #C0C0C0;
+      color: #939393;
     }
   }
 `

@@ -78,7 +78,7 @@ const ProjectNotSelectedContainer = styled.div`
       color: #000000;
     }
     & > button {
-      color: #006EFF;
+      color: var(--primary);
       background-color: #CCE2FF;
       border-radius: 8px;
       max-width: fit-content;
