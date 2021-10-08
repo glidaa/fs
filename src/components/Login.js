@@ -9,6 +9,8 @@ import * as queries from "../graphql/queries"
 import * as observersActions from "../actions/observers"
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 import { AmplifyAuthenticator, AmplifyContainer, AmplifySignUp } from "@aws-amplify/ui-react";
+import Signup from "../componentStories/Signup/Signup"
+import "../assets/styles/loginContainer.css";
 
 const Login = (props) => {
   const { dispatch } = props
@@ -41,49 +43,11 @@ const Login = (props) => {
       {shouldRedirect ? (
         <Redirect to={referrer || "/"} />
       ) : (
-        <AmplifyContainer>
-          <AmplifyAuthenticator>
-            <AmplifySignUp headerText="Create a new account" formFields={[
-              {
-                label: "First Name",
-                placeholder: "First Name",
-                required: true,
-                type: "given_name",
-                custom: false
-              },
-              {
-                label: "Last Name",
-                placeholder: "Last Name",
-                required: true,
-                type: "family_name"
-              },
-              {
-                label: "Username",
-                placeholder: "Username",
-                required: true,
-                type: "username"
-              },
-              {
-                label: "Password",
-                placeholder: "Password",
-                required: true,
-                type: "password"
-              },
-              {
-                label: "Email Address",
-                placeholder: "Email Address",
-                required: true,
-                type: "email"
-              },
-              {
-                label: "Phone Number",
-                placeholder: "Phone Number",
-                required: true,
-                type: "phone_number"
-              }
-            ]} slot="sign-up" />
-          </AmplifyAuthenticator>
-        </AmplifyContainer>
+        <div className="loginContainer">
+          <Signup signup="signup" login="Log in to account" email="Enter your email address" password="Create your password" passwordTwo="Confirm your password">
+          Signup for Forwardslash
+          </Signup>
+        </div>
       )}
     </>
   )

@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
+.ButtonLogin {
+  font-family: "Roboto", sans-serif;
+  border-radius: 0.7em;
+  font-size: 12px;
+  font-weight: bolder;
+  border-color: transparent;
+  border-width: 0.1em;
+  background-color: transparent;
+  width: 10.5em;
+  height: 2.5em;
+  margin-top: 2.3em;
+  margin-right: 3em;
+  margin-left: 2em;
+  transition: 0.5s;
+}
+
+.ButtonLogin:hover {
+  margin-right: 2.5em;
+  margin-left: 2.5em;
+  transition: 1s;
+}

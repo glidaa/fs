@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
+.header {
+  background-color: white;
+}
+
+.signup {
+  width: 331px;
+  height: 253px;
+  background-color: white;
+  box-shadow: -8px 5px 20px gray;
+}
+
+h1 {
+  font-family: "Roboto", sans-serif;
+  margin-left: 33px;
+  margin-top: 18px;
+  font-size: 18px;
+  font-weight: normal;
+  text-align: left;
+}

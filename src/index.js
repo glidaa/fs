@@ -14,7 +14,6 @@ Amplify.configure(awsconfig);
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
-      <Header>Hellou world</Header>
       <App />
     </BrowserRouter>
   </Provider>,

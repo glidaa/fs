@@ -3,8 +3,15 @@
   border-radius: 0.7em;
   font-weight: bolder;
   border-color: black;
-  border-width: 0.2em;
-  background-color: white;
-  width: 7.5em;
-  height: 3em;
+  border-width: 0.1em;
+  background-color: transparent;
+  width: 7.8em;
+  height: 2.8em;
+  margin-top: 1em;
+  transition: 0.5s;
+}
+
+.Button:hover {
+  transition: 1s;
+  margin-left: 5px;
 }

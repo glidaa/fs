@@ -1,9 +1,9 @@
 import React from 'react';
 import './InputName.css';
 
-const InputName = ({children}) => {
+const InputName = ({childrenInput, type}) => {
     return (
-        <input className="inputName" placeholder="PUTO EL QUE LO LEA"/>
+        <input className="inputName" placeholder={childrenInput} type={type}/>
     )
 }
 

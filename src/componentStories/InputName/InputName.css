@@ -1,24 +1,34 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
 .inputName {
+  font-family: "Roboto", sans-serif;
+  font-style: italic;
   font-family: sans-serif;
+  padding: 0.5em;
   border-top: 0px;
+  padding: 0px;
   border-left: 0px;
   border-right: 0px;
-  border-color: rgba(135, 129, 129, 0.755);
+  border-color: transparent;
   background-color: transparent;
   box-shadow: none;
   outline: none;
   height: 1.7em;
   width: 16em;
-  font-style: italic;
+  display: block;
+  margin-left: 33px;
+  font-style: normal;
+  margin-top: 1em;
   transition: 0.3s;
 }
 
-.inputName:hover {
-  height: 1.9em;
+.inputName:focus {
+  border-color: rgba(135, 129, 129, 0.755);
   width: 19em;
-  transition: 1s;
+  transition: 1.2s;
 }
 
 .inputName::placeholder {
   color: gray;
+  font-style: italic;
 }
