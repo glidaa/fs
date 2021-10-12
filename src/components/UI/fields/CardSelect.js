@@ -92,7 +92,7 @@ const Selection = styled.button`
     }
   ` : `
     & > span:nth-child(1) {
-      color: var(--primary-disabled);
+      color: var(--primary-dark);
     }
     & > span:nth-child(2) {
       color: #AAA8AC;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { startTransition } from 'react';
 import styled from "styled-components";
 import * as appActions from "../actions/app"
 import { connect } from "react-redux";
@@ -9,23 +9,28 @@ import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
 import { ReactComponent as LoginIcon } from "../assets/log-in-outline.svg"
 import Avatar from './UI/Avatar';
 import { glassmorphism } from '../styles';
+import { useHistory } from 'react-router-dom';
 
 const TasksPanel = (props) => {
   const {
     app: {
       isLeftPanelOpened,
-      leftPanelPage,
-      history
+      leftPanelPage
     },
     user,
     dispatch
   } = props;
+  const history = useHistory();
   const openLeftPanel = (page) => {
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== page)) {
       dispatch(appActions.setLeftPanelPage(page))
-      dispatch(appActions.handleSetLeftPanel(true))
+      startTransition(() => {
+        dispatch(appActions.handleSetLeftPanel(true))
+      })
     } else {
-      dispatch(appActions.handleSetLeftPanel(false))
+      startTransition(() => {
+        dispatch(appActions.handleSetLeftPanel(false))
+      })
     }
   }
   const goToLoginPage = () => {
@@ -37,7 +42,7 @@ const TasksPanel = (props) => {
       <TopControls>
         <Logo>/.</Logo>
         <Spacer color="transparent" />
-        <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
+        <ToolbarAction onClick={() => openLeftPanel(panelPages.NOTIFICATIONS)}>
           <NotificationIcon
               width="24"
               height="24"

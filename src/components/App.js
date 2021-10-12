@@ -59,7 +59,7 @@ const App = (props) => {
 
   useEffect(() => {
     (async () => {
-    if (routeMatch && history.action === "POP" && !app.isLoading) {
+    if (routeMatch && (history.action === "POP" || history.action === "PUSH") && !app.isLoading) {
       const {
         params: { username, projectPermalink, taskPermalink },
       } = routeMatch;

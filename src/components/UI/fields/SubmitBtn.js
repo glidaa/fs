@@ -10,10 +10,10 @@ const SubmitBtn = styled.input`
   cursor: pointer;
   transition: background-color 0.3s;
   &:hover {
-    background-color: var(--primary-hover);
+    background-color: var(--primary-dark);
   }
   &:disabled {
-    background-color: var(--primary-disabled);
+    background-color: var(--primary-light);
     cursor: default;
   }
 `

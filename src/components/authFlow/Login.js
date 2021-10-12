@@ -6,7 +6,7 @@ import { Auth } from "aws-amplify";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
 import { AuthState } from '../../constants';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import SubmitBtn from '../UI/fields/SubmitBtn';
 import TextField from '../UI/fields/TextField';
 

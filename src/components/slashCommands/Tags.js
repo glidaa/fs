@@ -73,7 +73,7 @@ const TagItem = styled.span`
   width: fit-content;
   height: fit-content;
   color: var(--primary);
-  background-color: #cce2ff;
+  background-color: var(--primary-light);
   flex-direction: row;
   align-items: center;
 `

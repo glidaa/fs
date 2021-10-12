@@ -171,7 +171,7 @@ const CommandSuggestion = styled.div`
         justify-content: center;
         width: 14px;
         color: var(--primary);
-        background-color: #CCE2FF;
+        background-color: var(--primary-light);
         font-weight: 600;
         padding: 2px;
         border-radius: 4px;

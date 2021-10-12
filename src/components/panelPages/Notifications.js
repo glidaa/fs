@@ -1,0 +1,159 @@
+import React, { useState, useEffect } from 'react';
+import { connect } from "react-redux";
+import * as appActions from "../../actions/app";
+import * as appSettingsActions from "../../actions/appSettings";
+import styled from "styled-components";
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
+import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
+import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
+
+const Notifications = (props) => {
+  const {
+    appSettings: {
+      tasksSortingCriteria
+    },
+    dispatch
+  } = props;
+
+  const handleChange = (e) => {
+    switch (e.target.name) {
+      case "theme":
+        dispatch(appSettingsActions.handleSetTheme(e.target.value))
+        break
+      case "tasksSortingCriteria":
+        dispatch(appSettingsActions.handleSetTasksSortingCriteria(e.target.value))
+        break
+      default:
+        break
+    }
+  }
+
+  const closePanel = () => {
+    return dispatch(appActions.handleSetLeftPanel(false))
+  }
+  const removeProject = () => {
+    
+  }
+  return (
+    <>
+      <PanelPageToolbar>
+        <PanelPageToolbarAction onClick={closePanel}>
+          <BackArrowIcon
+              width={24}
+              height={24}
+              strokeWidth={32}
+              color="var(--primary)"
+          />
+        </PanelPageToolbarAction>
+        <PanelPageTitle>Notifications</PanelPageTitle>
+        <PanelPageToolbarAction onClick={removeProject}>
+          <RemoveIcon
+              width={24}
+              height={24}
+              strokeWidth={32}
+              color="var(--primary)"
+          />
+        </PanelPageToolbarAction>
+      </PanelPageToolbar>
+      <NotificationsForm>
+        
+      </NotificationsForm>
+    </>
+  );
+};
+
+const NotificationsForm = styled(SimpleBar)`
+  flex: 1;
+  overflow: auto;
+  height: 0;
+  min-height: 0;
+  & .simplebar-content > form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    & > h2 > span {
+      cursor: pointer;
+    }
+    & > input[type="submit"] {
+      display: none;
+    }
+  }
+`;
+
+const AppSetting = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 0 25px;
+  gap: 5px;
+  & > label {
+    color: #000000;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 16px;
+    font-weight: 600;
+  }
+`
+
+const NonPrefixedInputField = styled.input`
+  width: calc(100% - 20px);
+  padding: 10px 10px;
+  border: 1px solid #939393;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  &:disabled {
+    background-color: #FAFAFA;
+  }
+  &::placeholder {
+    color: #939393;
+  }
+`
+
+const SelectField = styled.select`
+  width: calc(100% - 20px);
+  padding: 10px 10px;
+  border: 1px solid #939393;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  &:disabled {
+    background-color: #FAFAFA;
+  }
+  &::placeholder {
+    color: #939393;
+  }
+`
+
+const PanelPageToolbar = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 25px;
+  padding-top: 25px;
+`
+
+const PanelPageTitle = styled.span`
+  color: #000000;
+  font-size: 18px;
+  font-weight: 600;
+`
+
+const PanelPageToolbarAction = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  cursor: pointer;
+`
+
+export default connect((state) => ({
+  appSettings: state.appSettings
+}))(Notifications);

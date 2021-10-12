@@ -87,7 +87,7 @@ const DateField = (props) => {
                 value={pickerValue}
                 onChange={pickValue}
                 colorPrimary="var(--primary)"
-                colorPrimaryLight="var(--primary-disabled)"
+                colorPrimaryLight="var(--primary-light)"
                 shouldHighlightWeekends
               />
             </PickerContainer>

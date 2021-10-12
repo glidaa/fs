@@ -237,7 +237,7 @@ const CommentUnit = styled.div`
   ${CommentBox} {
     ${({isSelf}) => isSelf ? `
       border-radius: 16px 16px 0 16px;
-      background-color: #CCE2FF;
+      background-color: var(--primary-light);
       color: var(--primary);
     ` : `
       border-radius: 16px 16px 16px 0;
@@ -296,10 +296,10 @@ const CommentControls = styled.div`
         outline: none;
         transition: background-color 0.3s;
         &:hover {
-          background-color: var(--primary-hover);
+          background-color: var(--primary-dark);
         }
         &:disabled {
-          background-color: var(--primary-disabled);
+          background-color: var(--primary-light);
         }
       }
     }

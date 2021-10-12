@@ -1,7 +1,7 @@
 :root {
   --primary: hotpink;
-  --primary-hover: deeppink;
-  --primary-disabled: lightpink;
+  --primary-dark: deeppink;
+  --primary-light: lightpink;
   --primary-gradient: linear-gradient(0deg,hotpink 0%,lightpink 100%);
 }
 

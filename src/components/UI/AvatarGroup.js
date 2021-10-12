@@ -51,7 +51,7 @@ const LetterAvatar = styled.div`
 	justify-content: center;
 	border-radius: 100%;
 	color: var(--primary);
-	background-color: #CCE2FF;
+	background-color: var(--primary-light);
 	line-height: 0;
 	font-size: ${({ size }) => size / 2.4}px;
 	min-width: ${({ size }) => size}px;
@@ -67,7 +67,7 @@ const LetterAvatar = styled.div`
 const DumpAvatar = styled.div`
 	display: inline-flex;
 	border-radius: 100%;
-	background-color: #CCE2FF;
+	background-color: var(--primary-light);
 	min-width: ${({ size }) => size}px;
 	min-height: ${({ size }) => size}px;
 	width: ${({ size }) => size}px;
