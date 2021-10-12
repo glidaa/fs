@@ -10,12 +10,14 @@ import * as observersActions from "../actions/observers"
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 import { AmplifyAuthenticator, AmplifyContainer, AmplifySignUp } from "@aws-amplify/ui-react";
 import Signup from "../componentStories/Signup/Signup"
+import LoginAccount from "../componentStories/Login/Login"
 import "../assets/styles/loginContainer.css";
 
 const Login = (props) => {
   const { dispatch } = props
   const [shouldRedirect, setShouldRedirect] = useState(false)
   const [referrer, setReferrer] = useState(null)
+  const [isLogin, setOnLogin] = useState(false);
   useEffect(() => {
     setReferrer(props.route.location.state?.referrer)
     onAuthUIStateChange(async (nextAuthState, authData) => {
@@ -43,14 +45,30 @@ const Login = (props) => {
       {shouldRedirect ? (
         <Redirect to={referrer || "/"} />
       ) : (
-        <div className="loginContainer">
-          <Signup signup="signup" login="Log in to account" email="Enter your email address" password="Create your password" passwordTwo="Confirm your password">
-          Signup for Forwardslash
-          </Signup>
+        isLogin?
+          <div className="loginContainer">
+            <LoginAccount login="Login" resetPassword="Reset password" email="Enter your email address" password="Create your     password" createAccount="Create account" onClick={() => setOnLogin(false)}>
+                Log in to your Account
+              </LoginAccount>
+          </div>
+          :
+          <div className="loginContainer">
+            <Signup signup="signup" login="Log in to account" email="Enter your email address" password="Create your password" passwordTwo="Confirm your password" onClick={() => setOnLogin(true)}>
+              Signup for Forwardslash
+            </Signup>
         </div>
-      )}
+        )
+      }
     </>
   )
 }
 
 export default connect()(Login);
+
+/*
+        <div className="loginContainer">
+          <Signup signup="signup" login="Log in to account" email="Enter your email address" password="Create your password" passwordTwo="Confirm your password">
+          Signup for Forwardslash
+          </Signup>
+        </div>
+*/

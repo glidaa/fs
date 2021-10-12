@@ -1,20 +1,20 @@
 import React from 'react';
-import './Signup.css';
+import './Login.css';
 import InputName from '../InputName/InputName';
 import Button from '../Button/Button';
 import ButtonLogin from '../Button-LogIn/ButtonLogin';
 
-const Signup = ({children, signup, login, email, password, passwordTwo, onClick}) => {
+const Login = ({children, email, password, resetPassword, createAccount, login, onClick}) => {
     return (
-        <div className="signup">
+        <div className="loginAccount">
             <h1>{children}</h1>
             <InputName childrenInput={email} type="email"/>
             <InputName childrenInput={password} type="password"/>
-            <InputName childrenInput={passwordTwo} type="password"/>
-            <ButtonLogin onClick={onClick}>{login}</ButtonLogin>
-            <Button>{signup}</Button>
+            <ButtonLogin>{resetPassword}</ButtonLogin>
+            <ButtonLogin onClick={onClick}>{createAccount}</ButtonLogin>
+            <Button>{login}</Button>
         </div>
     )
 }
 
-export default Signup;
+export default Login;
