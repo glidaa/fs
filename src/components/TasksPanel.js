@@ -94,7 +94,7 @@ const TasksPanelContainer = styled.div`
   padding: 20px 40px 20px 40px;
   overflow: auto;
   min-height: calc(100vh - 80px);
-  ${glassmorphism()}
+  ${glassmorphism(0, 0.8)}
   @media only screen and (max-width: 768px) {
 		padding: 0px;
     width: 100%;
