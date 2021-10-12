@@ -9,7 +9,6 @@ import { ReactComponent as GlobeIcon } from "../assets/earth-outline.svg"
 import { ReactComponent as DocumentLockIcon } from "../assets/document-lock-outline.svg"
 import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
-import { glassmorphism } from "../styles";
 
 const ProjectItem = (props) => {
   const {
@@ -89,7 +88,7 @@ const ProjectItem = (props) => {
                 height="20"
                 width="20"
                 strokeWidth="42"
-                color="#000000"
+                color="#FFFFFF"
               />
             </ProjectItemAction>
             <ProjectItemAction>
@@ -98,7 +97,7 @@ const ProjectItem = (props) => {
                 height="20"
                 width="20"
                 strokeWidth="42"
-                color="#000000"
+                color="#FFFFFF"
               />
             </ProjectItemAction>
           </ProjectItemActions>
@@ -114,7 +113,9 @@ const ProjectItemShell = styled.div`
   padding: 20px;
   margin: 0 25px;
   overflow: hidden;
-  ${glassmorphism(10)}
+  border-radius: 10px;
+  position: relative;
+  background-color: var(--primary);
   ${({ isSelected }) => isSelected ? `
     border: 4px solid #F778BA;
   ` : `
@@ -154,7 +155,7 @@ const ProjectItemHeader = styled.div`
 `
 
 const ProjectItemTitle = styled.span`
-  color: #000000;
+  color: #FFFFFF;
   font-weight: 600;
   font-size: 20px;
   max-width: 197.08px;
@@ -165,7 +166,7 @@ const ProjectItemTitle = styled.span`
 
 const ProjectItemPermalink = styled.span`
   font-size: 12px;
-  color: #000000;
+  color: #FFFFFF;
   font-weight: 500;
   max-width: 197.08px;
   text-overflow: ellipsis;
@@ -234,13 +235,13 @@ const ProjectItemPermission = styled.div`
   height: 150px;
   right: 0;
   bottom: 0;
-  opacity: 0.06;
+  opacity: 0.15;
   z-index: 1;
 `
 
 const ProjectItemDate = styled.span`
   font-size: 12px;
-  color: #000000;
+  color: #FFFFFF;
   font-weight: 500;
   max-width: 100%;
   text-overflow: ellipsis;

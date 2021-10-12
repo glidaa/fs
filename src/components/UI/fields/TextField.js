@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "styled-components"
-import { glassmorphism } from "../../../styles"
 
 const TextField = (props) => {
   const {
@@ -62,6 +61,7 @@ const TextFieldShell = styled.div`
 `
 
 const TextFieldContainer = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -72,11 +72,11 @@ const TextFieldContainer = styled.div`
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
-  ${glassmorphism(8)}
   & > span {
-    color: #939393;
+    color: #C0C0C0;
   }
-  /* background-color: ${({ disabled }) => disabled ? "#FAFAFA" : "transparent"}; */
+  border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
+  background-color: ${({ disabled }) => disabled ? "#FAFAFA" : "transparent"};
   & > input {
     border: none;
     outline: none;
@@ -87,11 +87,11 @@ const TextFieldContainer = styled.div`
       background-color: #FAFAFA;
     }
     &::placeholder {
-      color: #939393;
+      color: #C0C0C0;
     }
   }
   & *:not(input) {
-    color: #939393!important;
+    color: #C0C0C0!important;
   }
 `
 

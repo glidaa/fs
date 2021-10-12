@@ -224,7 +224,7 @@ const KeywordField = styled.input`
   font-weight: 400;
   transition: opacity 0.3s;
   &::placeholder {
-    color: #939393;
+    color: #C0C0C0;
   }
   &:disabled {
     opacity: 0.6;

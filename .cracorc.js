@@ -1,14 +1,12 @@
-const CracoWorkboxPlugin = require('craco-workbox');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   reactScriptsVersion: "react-scripts",
-  plugins: [
-    {
-      plugin: CracoWorkboxPlugin,
-    },
-  ],
   webpack: {
     configure: {
+      plugins: [
+        new BundleAnalyzerPlugin()
+      ],
       resolve: {
         fallback: {
           crypto: require.resolve("crypto-browserify"),

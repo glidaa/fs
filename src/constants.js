@@ -1,5 +1,5 @@
-import { rword } from 'rword';
 import { v4 as uuidv4 } from 'uuid';
+import generateRandomWords from './utils/generateRandomWords';
 
 export const PENDING = "PENDING"
 export const OK = "OK"
@@ -68,7 +68,7 @@ export const initProjectState = (prevProject = null, nextProject = null) => {
   return {
     id: uuidv4(),
     title: null,
-    permalink: rword.generate(2).join("-"),
+    permalink: generateRandomWords().join("-"),
     prevProject: prevProject,
     nextProject: nextProject,
     todoCount: 0,

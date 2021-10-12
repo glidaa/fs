@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "styled-components"
-import { glassmorphism } from "../styles"
 
 const PanelTabs = (props) => {
   const {
@@ -40,7 +39,8 @@ const PanelTabsContainer = styled.div`
   border: none;
   height: fit-content;
   width: fit-content;
-  ${glassmorphism(24)}
+  border-radius: 24px;
+  position: relative;
 `
 
 const PanelTab = styled.span`
@@ -51,7 +51,7 @@ const PanelTab = styled.span`
   display: flex;
   justify-content: center;
   ${({isSelected}) => isSelected ? `
-    background: var(--primary-gradient);
+    background: var(--primary);
     color: #FFFFFF;
     cursor: default;
   ` : `

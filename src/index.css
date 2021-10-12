@@ -1,8 +1,7 @@
 :root {
-  --primary: hotpink;
-  --primary-dark: deeppink;
-  --primary-light: lightpink;
-  --primary-gradient: linear-gradient(0deg,hotpink 0%,lightpink 100%);
+  --primary: #006EFF;
+  --primary-dark: #0058CC;
+  --primary-light: #CCE2FF;
 }
 
 * {
@@ -11,7 +10,7 @@
 }
 
 body {
-  background-image: url(./assets/bg/regular/opera-neon-wallpaper.jpg);
+  background-color: #FFFFFF;
   background-size: cover;
   background-attachment: fixed;
   width: 100vw;

@@ -10,7 +10,6 @@ import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
 import { ReactComponent as WatcherSearchIllustartion } from "../../assets/undraw_People_search_re_5rre.svg"
 import { ReactComponent as NoResultsIllustartion } from "../../assets/undraw_not_found_60pq.svg"
 import Avatar from '../UI/Avatar';
-import { glassmorphism } from '../../styles';
 
 const WatcherChooser = (props) => {
   const {
@@ -196,6 +195,7 @@ const PanelPageToolbarAction = styled.button`
 `
 
 const KeywordField = styled.input`
+  position: relative;
   width: calc(100% - 90px);
   outline: none;
   border: none;
@@ -204,9 +204,9 @@ const KeywordField = styled.input`
   font-size: 14px;
   font-weight: 400;
   transition: opacity 0.3s;
-  ${glassmorphism(8)}
+  border-radius: 8px;
   &::placeholder {
-    color: #939393;
+    color: #C0C0C0;
   }
   &:disabled {
     opacity: 0.6;

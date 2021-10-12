@@ -326,7 +326,7 @@ const CommentDay = styled.span`
 const CommentNotAllowed = styled.span`
   font-weight: 600;
   font-size: 12px;
-  color: #939393;
+  color: #C0C0C0;
   text-align: center;
   width: 100%;
 `

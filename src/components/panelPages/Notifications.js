@@ -5,14 +5,15 @@ import * as appSettingsActions from "../../actions/appSettings";
 import styled from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
+import { ReactComponent as CloseIcon } from "../../assets/close-outline.svg"
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
+import Avatar from '../UI/Avatar';
 
 const Notifications = (props) => {
   const {
-    appSettings: {
-      tasksSortingCriteria
-    },
+    notifications,
+    users,
     dispatch
   } = props;
 
@@ -57,7 +58,34 @@ const Notifications = (props) => {
         </PanelPageToolbarAction>
       </PanelPageToolbar>
       <NotificationsForm>
-        
+        {Object.values(notifications.stored).map(x => (
+          <NotificationShell
+            key={x.id}
+            isClickable={x.payload.link}
+          >
+            <NotificationContainer>
+              <NotificationContent>
+                <Avatar user={users.GeeekyBoy} size={32} />
+                <div>
+                  <span>
+                    <b>@{x.payload.assigner} </b>
+                    has assigned a task to you. 
+                    Tap here to review it.
+                  </span>
+                  <span>05:30pm</span>
+                </div>
+              </NotificationContent>
+              <NotificationCloseBtn>
+                <CloseIcon
+                  height="16"
+                  width="16"
+                  strokeWidth="32"
+                  color="var(--primary)"
+                />
+              </NotificationCloseBtn>
+            </NotificationContainer>
+          </NotificationShell>
+        ))}
       </NotificationsForm>
     </>
   );
@@ -68,64 +96,13 @@ const NotificationsForm = styled(SimpleBar)`
   overflow: auto;
   height: 0;
   min-height: 0;
-  & .simplebar-content > form {
+  & .simplebar-content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    & > h2 > span {
-      cursor: pointer;
-    }
-    & > input[type="submit"] {
-      display: none;
-    }
+    gap: 15px;
+    align-items: center;
   }
 `;
-
-const AppSetting = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 0 25px;
-  gap: 5px;
-  & > label {
-    color: #000000;
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 16px;
-    font-weight: 600;
-  }
-`
-
-const NonPrefixedInputField = styled.input`
-  width: calc(100% - 20px);
-  padding: 10px 10px;
-  border: 1px solid #939393;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  &:disabled {
-    background-color: #FAFAFA;
-  }
-  &::placeholder {
-    color: #939393;
-  }
-`
-
-const SelectField = styled.select`
-  width: calc(100% - 20px);
-  padding: 10px 10px;
-  border: 1px solid #939393;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  &:disabled {
-    background-color: #FAFAFA;
-  }
-  &::placeholder {
-    color: #939393;
-  }
-`
 
 const PanelPageToolbar = styled.div`
   display: flex;
@@ -154,6 +131,61 @@ const PanelPageToolbarAction = styled.button`
   cursor: pointer;
 `
 
+const NotificationShell = styled.div`
+  position: relative;
+  display: flex;
+  color: var(--primary);
+  padding: 15px;
+  width: calc(100% - 80px);
+  margin: 0 25px;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  ${({isClickable}) => isClickable ? `
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.90);
+    }
+  `: ``}
+`
+
+const NotificationContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+`
+
+const NotificationContent = styled.div`
+	display: flex;
+	flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  div {
+    display: flex;
+    flex-direction: column;
+    span:nth-child(1) {
+      font-size: 12px;
+    }
+    span:nth-child(2) {
+      font-size: 10px;
+    }
+  }
+`
+
+const NotificationCloseBtn = styled.button`
+	display: flex;
+	flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  border: none;
+  background-color: transparent;
+`
+
 export default connect((state) => ({
-  appSettings: state.appSettings
+  notifications: state.notifications,
+  users: state.users
 }))(Notifications);

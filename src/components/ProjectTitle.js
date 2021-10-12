@@ -98,9 +98,9 @@ const ProjectTitleHeader = styled.span`
 	white-space: nowrap;
 	overflow: hidden;
 	cursor: text;
-	color: #000000;
+	color: #596766;
 	&.placeholder {
-		color: #939393;
+		color: #C0C0C0;
 	}
 	@media only screen and (max-width: 768px) {
 		padding: 5px 20px 5px 20px;
@@ -114,7 +114,7 @@ const ProjectTitleInput = styled.div`
 	padding: 8px 12px;
 	& > input {
 		background-color: transparent;
-		color: #000000;
+		color: #596766;
 		font-size: 32px;
 		width: 100%;
 		font-weight: 600;
@@ -123,7 +123,7 @@ const ProjectTitleInput = styled.div`
 		border: none;
 		outline: none;
 		&::placeholder {
-			color: #939393;
+			color: #C0C0C0;
 		}
 	}
 	@media only screen and (max-width: 768px) {

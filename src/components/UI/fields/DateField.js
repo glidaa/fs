@@ -5,7 +5,6 @@ import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 import styled from "styled-components"
 import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
 import formatDate from '../../../utils/formatDate';
-import { glassmorphism } from '../../../styles';
 
 const BodyOverlay = ({ children }) => createPortal(children, window.document.querySelector("body"))
 
@@ -119,6 +118,7 @@ const DateFieldShell = styled.div`
 `
 
 const DateFieldContainer = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -126,8 +126,8 @@ const DateFieldContainer = styled.div`
   width: calc(100% - 20px);
   padding: 5px 10px;
   border: none;
-  ${glassmorphism(8)}
-  /* border: 1px solid ${({isError}) => isError ? "#FF0000" : "#939393"}; */
+  border-radius: 8px;
+  border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
   & > input {
     flex: 1;
     padding: 0;
@@ -139,7 +139,7 @@ const DateFieldContainer = styled.div`
     font-size: 14px;
     font-weight: 400;
     &::placeholder {
-      color: #939393;
+      color: #C0C0C0;
     }
   }
 `

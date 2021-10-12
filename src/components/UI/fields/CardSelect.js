@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from "styled-components";
-import { glassmorphism } from '../../../styles';
 
 const CardSelect = (props) => {
 
@@ -62,6 +61,7 @@ const SelectShell = styled.div`
 `
 
 const Selection = styled.button`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -72,7 +72,7 @@ const Selection = styled.button`
   border: 2px solid transparent;
   outline: none;
   cursor: pointer;
-  ${glassmorphism(8)}
+  border-radius: 8px;
   transition: color 0.2s, border-color 0.2s;
   & > span:nth-child(1) {
     font-size: 24px;

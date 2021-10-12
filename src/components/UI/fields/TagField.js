@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useOuterClick } from 'react-outer-click';
 import styled from "styled-components"
-import { glassmorphism } from '../../../styles';
 
 const TagField = (props) => {
   const {
@@ -104,6 +103,7 @@ const TagFieldContainer = styled.div`
 `
 
 const NewTagBtn = styled.button`
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -117,8 +117,9 @@ const NewTagBtn = styled.button`
   line-height: 0;
   padding: 0;
   cursor: pointer;
-  ${glassmorphism(8)}
-  border: none;
+  border-radius: 8px;
+  border: 1px solid var(--primary);
+  background-color: #FFFFFF;
 `
 
 const NoTags = styled.span`
@@ -139,6 +140,7 @@ const NoTags = styled.span`
 `
 
 const TagItem = styled.span`
+  position: relative;
   display: inline-flex;
   gap: 5px;
   padding: 5px 10px;
@@ -147,7 +149,7 @@ const TagItem = styled.span`
   width: fit-content;
   height: fit-content;
   color: #5D6969;
-  ${glassmorphism(8)}
+  border-radius: 8px;
   border: none;
   flex-direction: row;
   align-items: center;
@@ -170,11 +172,12 @@ const TagItem = styled.span`
 `
 
 const TagInput = styled.span`
+  position: relative;
   display: inline-flex;
   padding: 5px 10px;
   width: 60px;
   border: none;
-  ${glassmorphism(8)}
+  border-radius: 8px;
   & > input {
     border: none;
     width: 60px;
@@ -184,7 +187,7 @@ const TagInput = styled.span`
     padding: 0;
     background-color: transparent;
     &::placeholder {
-      color: #939393;
+      color: #C0C0C0;
     }
   }
 `

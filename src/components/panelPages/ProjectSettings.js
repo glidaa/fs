@@ -196,7 +196,7 @@ const ProjectSettingsForm = styled(SimpleBar)`
 const NonPrefixedInputField = styled.input`
   width: calc(100% - 20px);
   padding: 5px 10px;
-  border: 1px solid #939393;
+  border: 1px solid #C0C0C0;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
@@ -204,7 +204,7 @@ const NonPrefixedInputField = styled.input`
     background-color: #FAFAFA;
   }
   &::placeholder {
-    color: #939393;
+    color: #C0C0C0;
   }
 `
 

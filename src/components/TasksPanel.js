@@ -10,7 +10,6 @@ import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
 import ProjectTitle from './ProjectTitle';
 import sortedTasks from './sortedTasks';
-import { glassmorphism } from '../styles';
 
 const TasksPanel = (props) => {
   const {
@@ -94,7 +93,7 @@ const TasksPanelContainer = styled.div`
   padding: 20px 40px 20px 40px;
   overflow: auto;
   min-height: calc(100vh - 80px);
-  ${glassmorphism(0, 0.8)}
+  background-color: #F8F8F8;
   @media only screen and (max-width: 768px) {
 		padding: 0px;
     width: 100%;
@@ -130,7 +129,8 @@ const ToolbarAction = styled.button`
   border: none;
   outline: none;
   cursor: pointer;
-  ${glassmorphism(6)}
+  border-radius: 6px;
+  background-color: var(--primary-light);
 `
 
 export default connect((state) => ({

@@ -367,7 +367,7 @@ const TaskItemAction = styled.button`
   height: 28px;
   border-radius: 6px;
   &:hover {
-    background: var(--primary-gradient);
+    background: var(--primary);
     & > svg {
       color: #FFFFFF;
     }
@@ -471,7 +471,7 @@ const TaskItemHeader = styled.span`
   cursor: text;
   flex: 1;
   text-decoration: ${({isDone}) => isDone ? "line-through" : "none"};
-  color: ${({isPlaceholder}) => isPlaceholder ? "#939393" : "#000000"};
+  color: ${({isPlaceholder}) => isPlaceholder ? "#C0C0C0" : "#000000"};
 `
 
 const TaskItemInput = styled.div`
@@ -484,7 +484,7 @@ const TaskItemInput = styled.div`
     margin: 0;
     font-weight: 400;
     &::placeholder {
-      color: #939393;
+      color: #C0C0C0;
     }
   }
 `
@@ -497,7 +497,7 @@ const TaskItemDueDate = styled.span`
   color: #FFFFFF;
   font-weight: 600;
   font-size: 11.2px;
-  background: var(--primary-gradient);
+  background: var(--primary);
   white-space: nowrap;
     border-radius: 10px;
     padding: 3px 10px;

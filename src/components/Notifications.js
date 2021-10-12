@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { useHistory } from 'react-router-dom';
 import styled, { keyframes, css } from "styled-components";
-import { glassmorphism } from '../styles';
 import * as notificationsActions from "../actions/notifications"
 import { ReactComponent as CloseIcon } from "../assets/close-outline.svg"
 import Avatar from './UI/Avatar';
@@ -23,31 +22,35 @@ const Notifications = (props) => {
     clearTimeout(dismissTimer.current)
     setAnim(1)
     notificationElem.current.addEventListener("animationend", () => {
-      dispatch(notificationsActions.dismiss(notifications[0].id))
+      dispatch(notificationsActions.dismiss(notifications.pushed[0]))
       setAnim(0)
     })
   }
   useEffect(() => {
     clearTimeout(dismissTimer.current)
-    if (notifications[0]?.id) {
+    if (notifications.pushed[0]) {
       dismissTimer.current = setTimeout(dismissNotification, 5000)
     }
-  }, [notifications[0]?.id])
+  }, [notifications.pushed[0]])
   return (
     <NotificationsContainer>
-      {notifications[0] && (
+      {notifications.pushed[0] && (
         <NotificationShell
-          key={notifications[0].id}
+          key={notifications.pushed[0]}
           ref={notificationElem}
           anim={anim}
-          isClickable={notifications[0].payload.link}
-          onClick={() => openLink(notifications[0].payload.link)}
+          isClickable={notifications.stored[notifications.pushed[0]].payload.link}
+          onClick={() => openLink(notifications.stored[notifications.pushed[0]].payload.link)}
         >
           <NotificationContainer>
             <NotificationContent>
               {/* <Avatar user={users.GeeekyBoy} size={32} /> */}
               <div>
-                <span>@{notifications[0].payload.assigner} has assigned a task to you</span>
+                  <span>
+                    <b>@{notifications.stored[notifications.pushed[0]].payload.assigner}</b>
+                    has assigned a task to you. 
+                    Tap here to review it.
+                  </span>
               </div>
             </NotificationContent>
             <NotificationCloseBtn onClick={dismissNotification}>
@@ -124,8 +127,9 @@ const NotificationShell = styled.div`
   padding: 15px;
   width: 300px;
   margin: 10px 10px 10px 0;
+  border-radius: 8px;
+  position: relative;
   animation: ${({anim}) => anim === 0 ? enteringAnim : exitingAnim} 0.4s ease-in-out forwards;
-  ${glassmorphism(8)}
   ${({isClickable}) => isClickable ? `
     cursor: pointer;
     &:hover {

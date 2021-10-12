@@ -8,7 +8,6 @@ import { ReactComponent as NotificationIcon } from "../assets/notifications-outl
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
 import { ReactComponent as LoginIcon } from "../assets/log-in-outline.svg"
 import Avatar from './UI/Avatar';
-import { glassmorphism } from '../styles';
 import { useHistory } from 'react-router-dom';
 
 const TasksPanel = (props) => {
@@ -79,14 +78,14 @@ const TasksPanel = (props) => {
                 <Avatar user={user.data} size={42} />
               </ToolbarAction>
           ) : (
-            <ToolbarAction onClick={goToLoginPage}>
+            <LoginBtn onClick={goToLoginPage}>
               <LoginIcon
                 width="24"
                 height="24"
                 strokeWidth="32"
-                color="var(--primary)"
+                color="#FFFFFF"
               />
-            </ToolbarAction>
+            </LoginBtn>
           )}
       </BottomControls>
     </ToolbarContainer>
@@ -94,7 +93,6 @@ const TasksPanel = (props) => {
 };
 
 const ToolbarContainer = styled.div`
-  ${glassmorphism(0)}
   position: fixed;
   left: 0;
   top: 0;
@@ -105,6 +103,7 @@ const ToolbarContainer = styled.div`
   padding: 30px 15px;
   width: 40px;
   height: calc(100vh - 60px);
+  background-color: #FFFFFF;
 	@media only screen and (max-width: 768px) {
     padding: 15px 20px;
     flex-direction: row;
@@ -114,24 +113,6 @@ const ToolbarContainer = styled.div`
     width: calc(100vw - 40px - 20px);
     height: 40px;
     border-radius: 16px;
-    ::before {
-      border-radius: 16px;
-    }
-    ::after {
-      content: "";
-      background: black;
-      position: absolute;
-      z-index: -2;
-      width: 100vw;
-      height: 100px;
-      left: -10px;
-      top: -10px;
-      bottom: 0;
-      right: 0;
-      background-color: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
 	}
 `;
 
@@ -161,16 +142,21 @@ const BottomControls = styled.div`
 `;
 
 const ToolbarAction = styled.button`
-  ${glassmorphism(8, 0.2, 0.8)}
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   outline: none;
-  padding: 10px;
   margin: 0;
   background-color: transparent;
   cursor: pointer;
+`
+
+const LoginBtn = styled(ToolbarAction)`
+  padding: 10px;
+  border-radius: 8px;
+  background-color: var(--primary);
 `
 
 const Spacer = styled.div`

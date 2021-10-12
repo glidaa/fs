@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react"
 import styled from "styled-components"
-import { glassmorphism } from "../../../styles"
 
 const Textarea = (props) => {
   const {
@@ -59,9 +58,10 @@ const TextareaContainer = styled.div`
     font-weight: 600;
   }
   & > div {
+    position: relative;
     display: grid;
     width: 100%;
-    ${glassmorphism(8)}
+    border-radius: 8px;
     &::after {
       content: attr(data-replicated-value) " ";
       white-space: pre-wrap;
@@ -74,7 +74,7 @@ const TextareaContainer = styled.div`
         background-color: #FAFAFA;
       }
       &::placeholder {
-        color: #939393;
+        color: #C0C0C0;
       }
     }
     & > textarea, &::after {
@@ -83,7 +83,7 @@ const TextareaContainer = styled.div`
       background-color: transparent;
       border-radius: 8px;
       border: none;
-      /* border: 1px solid ${({isError}) => isError ? "#FF0000" : "#939393"}; */
+      border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
       font-size: 14px;
       font-weight: 400;
       grid-area: 1 / 1 / 2 / 2;

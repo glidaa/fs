@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import "draft-js/dist/Draft.css";
 import panelPages from "./panelPages"
-import { glassmorphism } from '../styles';
 
 const SidePanel = (props) => {
   const {
@@ -27,6 +26,7 @@ const SidePanel = (props) => {
 };
 
 const SidePanelShell = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -39,7 +39,6 @@ const SidePanelShell = styled.div`
   transform: translateX(${({ isOpened, isRight }) => (isOpened ? "initial" : `${isRight ? "365px" : "-365px"}`)});
   margin: ${({ isOpened, isRight }) => (isOpened ? "0px" : `${isRight ? "0 0 0 -365px" : "0 -365px 0 0"}`)};
   overflow: ${({ isOpened }) => (isOpened ? "auto" : "hidden")};
-  ${glassmorphism(0, 0.6)}
   @media only screen and (max-width: 768px) {
     position: fixed;
     width: 100vw;

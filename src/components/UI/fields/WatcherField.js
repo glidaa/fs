@@ -7,7 +7,6 @@ import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
 import { panelPages } from "../../../constants";
 import ShadowScroll from '../../ShadowScroll';
 import Avatar from '../Avatar';
-import { glassmorphism } from '../../../styles';
 
 const WatcherField = (props) => {
   const {
@@ -103,6 +102,7 @@ const WatcherFieldShell = styled.div`
 `
 
 const NewWatcherBtn = styled.button`
+  position: relative;
   display: flex;
   gap: 5px;
   padding: 10px 15px;
@@ -117,7 +117,7 @@ const NewWatcherBtn = styled.button`
   font-weight: 500;
   cursor: pointer;
   margin-left: 5px;
-  ${glassmorphism(8)}
+  border-radius: 8px;
   & > div {
     display: flex;
     align-items: center;
@@ -139,6 +139,7 @@ const NewWatcherBtn = styled.button`
 `
 
 const NoWatchers = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -146,8 +147,8 @@ const NoWatchers = styled.div`
   justify-content: center;
   width: calc(100% - 20px);
   padding: 10px;
-  ${glassmorphism(8)}
-  border: none;
+  border-radius: 8px;
+  border: 1px solid #C0C0C0;
   outline: none;
   height: fit-content;
   & > span {
@@ -156,14 +157,16 @@ const NoWatchers = styled.div`
     color: #000000;
   }
   & > button {
+    position: relative;
     outline: none;
-    ${glassmorphism(8)}
+    border-radius: 8px;
     border: none;
     color: var(--primary);
     padding: 5px 10px;
     font-weight: 600;
     font-size: 12px;
     cursor: pointer;
+    background-color: var(--primary-light);
   }
 `
 
@@ -175,7 +178,7 @@ const WatcherItem = styled.span`
   min-width: 80px;
   max-width: 80px;
   color: #5D6969;
-  ${glassmorphism(8)}
+  border-radius: 8px;
   flex-direction: column;
   align-items: center;
   &:last-child {
