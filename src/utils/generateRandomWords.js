@@ -30,7 +30,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-------------------------------------------------------------------
 
-import crypto from 'crypto'
+import crypto from 'crypto-browserify'
 let shasum = crypto.createHash('sha1')
 
 // A SHA-1 hash generated on the server which is unique for each visit:
