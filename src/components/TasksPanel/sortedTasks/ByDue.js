@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { connect } from "react-redux";
-import parseLinkedList from "../../utils/parseLinkedList";
+import parseLinkedList from "../../../utils/parseLinkedList";
 import TaskItem from "../TaskItem";
 
 const ByDue = (props) => {

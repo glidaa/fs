@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { connect } from "react-redux";
-import parseLinkedList from "../../utils/parseLinkedList";
+import parseLinkedList from "../../../utils/parseLinkedList";
 import TaskItem from "../TaskItem";
 import styled from "styled-components";
 
@@ -91,7 +91,7 @@ const StatusHeader = styled.span`
   padding: 0 12px;
   font-weight: 600;
   font-size: 24px;
-  color: #000000;
+  color: #596766;
 	@media only screen and (max-width: 768px) {
 		padding: 5px 20px 5px 20px;
 		font-size: 16.5px;

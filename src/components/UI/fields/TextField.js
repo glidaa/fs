@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 
 const TextField = (props) => {
@@ -17,12 +17,17 @@ const TextField = (props) => {
     disabled,
     style
   } = props
+  const [isFocused, setIsFocused] = useState(false)
   return (
     <TextFieldShell style={style}>
       <label htmlFor={name}>
         {label}
       </label>
-      <TextFieldContainer disabled={disabled}>
+      <TextFieldContainer
+        disabled={disabled}
+        isError={error}
+        isFocused={isFocused}
+      >
         {prefix && React.createElement(prefix)}
         <input
           type={type}
@@ -31,6 +36,8 @@ const TextField = (props) => {
           autoComplete={autoComplete}
           onChange={onChange}
           value={value}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           readOnly={readOnly}
           disabled={disabled}
         />
@@ -46,9 +53,11 @@ const TextFieldShell = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 5px;
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
   & > label {
-    color: #000000;
+    color: #222222;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -75,7 +84,8 @@ const TextFieldContainer = styled.div`
   & > span {
     color: #C0C0C0;
   }
-  border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
+  border: 1px solid ${({isError, isFocused, theme}) => 
+    isError ? "#FF0000" : isFocused ? theme.primary : "#C0C0C0"};
   background-color: ${({ disabled }) => disabled ? "#FAFAFA" : "transparent"};
   & > input {
     border: none;

@@ -87,10 +87,12 @@ const DueSuggestion = styled.div`
   justify-content: flex-start;
   flex-direction: row;
   align-items: center;
-  gap: 5px;
   background-color: ${({ isActive }) => isActive ? "#F5F5F5" : "transparent"};
   padding: 10px 20px;
   cursor: pointer;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
 `
 
 const NoDue = styled.span`

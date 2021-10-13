@@ -41,7 +41,7 @@ const ImageAvatar = styled.img`
 	height: ${({ size }) => size}px;
 	border: 2px solid ${({ borderColor }) => borderColor};
 	&:not(:last-child) {
-		margin-inline-end: -${({ size }) => size * 0.42}px;
+		margin-right: -${({ size }) => size * 0.42}px;
 	}
 `
 
@@ -50,8 +50,8 @@ const LetterAvatar = styled.div`
 	align-items: center;
 	justify-content: center;
 	border-radius: 100%;
-	color: var(--primary);
-	background-color: var(--primary-light);
+	color: ${({theme})=> theme.primary};
+	background-color: ${({theme})=> theme.primaryLight};
 	line-height: 0;
 	font-size: ${({ size }) => size / 2.4}px;
 	min-width: ${({ size }) => size}px;
@@ -60,21 +60,21 @@ const LetterAvatar = styled.div`
 	height: ${({ size }) => size}px;
 	border: 2px solid ${({ borderColor }) => borderColor};
 	&:not(:last-child) {
-		margin-inline-end: -${({ size }) => size * 0.42}px;
+		margin-right: -${({ size }) => size * 0.42}px;
 	}
 `
 
 const DumpAvatar = styled.div`
 	display: inline-flex;
 	border-radius: 100%;
-	background-color: var(--primary-light);
+	background-color: ${({theme})=> theme.primaryLight};
 	min-width: ${({ size }) => size}px;
 	min-height: ${({ size }) => size}px;
 	width: ${({ size }) => size}px;
 	height: ${({ size }) => size}px;
 	border: 2px solid ${({ borderColor }) => borderColor};
 	&:not(:last-child) {
-		margin-inline-end: -${({ size }) => size * 0.42}px;
+		margin-right: -${({ size }) => size * 0.42}px;
 	}
 `
 

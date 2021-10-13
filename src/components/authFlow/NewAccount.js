@@ -342,17 +342,17 @@ const NewAccount = (props) => {
 const NewAccountFormContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 15px;
   margin: 40px 0;
   justify-content: center;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  background-color: rgba(255, 255, 255, 0.75);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  background-color: #FFFFFF;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   border-radius: 25px;
   height: fit-content;
   width: 350px;
   padding: 35px;
+  & > *:not(:last-child) {
+    margin-bottom: 15px;
+  }
   @media only screen and (max-width: 768px) {
     position: absolute;
     width: calc(100% - 70px);
@@ -365,7 +365,7 @@ const NewAccountFormContainer = styled.div`
 const NewAccountFormHeader = styled.div`
   display: flex;
   flex-direction: column;
-  color: #000000;
+  color: #222222;
   & > span:nth-child(1) {
     font-weight: 600;
     font-size: 24px;

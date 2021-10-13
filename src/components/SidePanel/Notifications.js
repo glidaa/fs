@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as CloseIcon } from "../../assets/close-outline.svg"
@@ -17,18 +17,7 @@ const Notifications = (props) => {
     dispatch
   } = props;
 
-  const handleChange = (e) => {
-    switch (e.target.name) {
-      case "theme":
-        dispatch(appSettingsActions.handleSetTheme(e.target.value))
-        break
-      case "tasksSortingCriteria":
-        dispatch(appSettingsActions.handleSetTasksSortingCriteria(e.target.value))
-        break
-      default:
-        break
-    }
-  }
+  const themeContext = useContext(ThemeContext);
 
   const closePanel = () => {
     return dispatch(appActions.handleSetLeftPanel(false))
@@ -44,7 +33,7 @@ const Notifications = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Notifications</PanelPageTitle>
@@ -53,7 +42,7 @@ const Notifications = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -80,7 +69,7 @@ const Notifications = (props) => {
                   height="16"
                   width="16"
                   strokeWidth="32"
-                  color="var(--primary)"
+                  color={themeContext.primary}
                 />
               </NotificationCloseBtn>
             </NotificationContainer>
@@ -99,8 +88,10 @@ const NotificationsForm = styled(SimpleBar)`
   & .simplebar-content {
     display: flex;
     flex-direction: column;
-    gap: 15px;
     align-items: center;
+    & > *:not(:last-child) {
+      margin-bottom: 15px;
+    }
   }
 `;
 
@@ -114,7 +105,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #000000;
+  color: #222222;
   font-size: 18px;
   font-weight: 600;
 `
@@ -134,7 +125,7 @@ const PanelPageToolbarAction = styled.button`
 const NotificationShell = styled.div`
   position: relative;
   display: flex;
-  color: var(--primary);
+  color: ${({theme})=> theme.primary};
   padding: 15px;
   width: calc(100% - 80px);
   margin: 0 25px;
@@ -153,8 +144,10 @@ const NotificationContainer = styled.div`
 	flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
   width: 100%;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 const NotificationContent = styled.div`
@@ -162,7 +155,6 @@ const NotificationContent = styled.div`
 	flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
   div {
     display: flex;
     flex-direction: column;
@@ -173,6 +165,9 @@ const NotificationContent = styled.div`
       font-size: 10px;
     }
   }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 const NotificationCloseBtn = styled.button`
@@ -180,9 +175,11 @@ const NotificationCloseBtn = styled.button`
 	flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
   border: none;
   background-color: transparent;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 export default connect((state) => ({

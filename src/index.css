@@ -1,22 +1,13 @@
-:root {
-  --primary: #006EFF;
-  --primary-dark: #0058CC;
-  --primary-light: #CCE2FF;
-}
-
 * {
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
 
 body {
-  background-color: #FFFFFF;
-  background-size: cover;
-  background-attachment: fixed;
+  background-color: #F8F8F8;
   width: 100vw;
   height: 100vh;
   margin: 0;
-  font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -51,7 +42,7 @@ button {
 
 input:read-only {
   color: transparent;
-  text-shadow: 0 0 0 #000000;
+  text-shadow: 0 0 0 #222222;
 }
 
 @media only screen and (max-width: 768px) {

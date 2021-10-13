@@ -104,7 +104,6 @@ const StatusSuggestion = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
   background-color: ${({ isSelected }) => isSelected ? "#F5F5F5" : "transparent"};
   padding: 10px 20px;
   transition: background-color 0.2s;
@@ -117,7 +116,7 @@ const StatusSuggestion = styled.div`
       font-size: 18px;
     }
     & > span:nth-child(2) {
-      color: #000000;
+      color: #222222;
       font-weight: 600;
       font-size: 14px;
       text-transform: lowercase;
@@ -125,6 +124,9 @@ const StatusSuggestion = styled.div`
         text-transform: capitalize;
       }
     }
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
   }
 `
 

@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useContext } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../../actions/app";
 import { AuthState } from "../../../constants";
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 import Comments from "./Comments";
 import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-back-outline.svg";
 import { ReactComponent as ShareIcon } from "../../../assets/share-outline.svg"
@@ -18,6 +18,7 @@ const TaskHub = (props) => {
     dispatch
   } = props;
 
+  const themeContext = useContext(ThemeContext);
   const idleTrigger = useRef(null)
 	
 	const forceIdle = () => {
@@ -47,7 +48,7 @@ const TaskHub = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Task Hub</PanelPageTitle>
@@ -56,7 +57,7 @@ const TaskHub = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -86,7 +87,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #000000;
+  color: #222222;
   font-size: 18px;
   font-weight: 600;
 `

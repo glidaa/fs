@@ -116,13 +116,15 @@ const DetailsForm = styled(SimpleBar)`
   & .simplebar-content > form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     margin: 0 25px 25px 25px;
     & > h2 > span {
       cursor: pointer;
     }
     & > input[type="submit"] {
       display: none;
+    }
+    & > *:not(:last-child) {
+      margin-bottom: 20px;
     }
   }
 `;

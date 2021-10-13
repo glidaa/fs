@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "aws-amplify";
 import * as appActions from "../../actions/app";
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 import * as tasksActions from "../../actions/tasks"
 import { panelPages, AuthState } from "../../constants";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -20,6 +20,8 @@ const WatcherChooser = (props) => {
     user,
     dispatch
   } = props;
+
+  const themeContext = useContext(ThemeContext);
 
   const [keyword, setKeyword] = useState("")
   const [results, setResults] = useState([])
@@ -102,7 +104,7 @@ const WatcherChooser = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Add Watcher</PanelPageTitle>
@@ -114,7 +116,7 @@ const WatcherChooser = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -172,7 +174,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #000000;
+  color: #222222;
   font-size: 18px;
   font-weight: 600;
 `
@@ -226,7 +228,6 @@ const SearchResultsItem = styled.button`
   flex-direction: row;
   cursor: pointer;
   align-items: center;
-  gap: 10px;
   font-size: 12px;
   padding: 10px 25px;
   border: none;
@@ -238,7 +239,7 @@ const SearchResultsItem = styled.button`
     flex-direction: column;
     & > span:nth-child(1) {
       font-weight: bold;
-      color: #000000;
+      color: #222222;
     }
     & > span:nth-child(2) {
       font-style: italic;
@@ -252,6 +253,9 @@ const SearchResultsItem = styled.button`
     cursor: default;
     opacity: 0.6;
   }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 const WatcherChooserIllustartion = styled.div`
@@ -261,7 +265,6 @@ const WatcherChooserIllustartion = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: -25px;
-  gap: 40px;
   & > svg {
     width: 250px;
     height: auto;
@@ -269,7 +272,10 @@ const WatcherChooserIllustartion = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #000000;
+    color: #222222;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 40px;
   }
 `
 

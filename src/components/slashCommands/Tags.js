@@ -58,10 +58,12 @@ const TagsSuggestion = styled.div`
   justify-content: flex-start;
   flex-direction: row;
   align-items: center;
-  gap: 5px;
   background-color: ${({ isActive }) => isActive ? "#F5F5F5" : "transparent"};
   padding: 10px 20px;
   cursor: pointer;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
 `
 
 const TagItem = styled.span`
@@ -72,8 +74,8 @@ const TagItem = styled.span`
   font-size: 14px;
   width: fit-content;
   height: fit-content;
-  color: var(--primary);
-  background-color: var(--primary-light);
+  color: ${({theme})=> theme.primary};
+  background-color: ${({theme})=> theme.primaryLight};
   flex-direction: row;
   align-items: center;
 `

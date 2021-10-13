@@ -16,6 +16,7 @@
     "draft-js": "0.11.7",
     "draft-js-export-html": "1.4.1",
     "react": "^18.0.0-alpha-55d75005b-20211011",
+    "react-app-polyfill": "^3.0.0-next.91",
     "react-dom": "^18.0.0-alpha-55d75005b-20211011",
     "react-outer-click": "3.7.0",
     "react-redux": "^8.0.0-alpha.0",
@@ -73,12 +74,14 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "ie 11"
     ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 safari version",
+      "ie 11"
     ]
   },
   "devDependencies": {

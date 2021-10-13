@@ -14,7 +14,7 @@ import Loading from "./Loading";
 import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
-import AuthFlow from "./authFlow";
+import AuthFlow from "./AuthFlow";
 import Notifications from "./Notifications";
 Amplify.configure(aws_exports);
 

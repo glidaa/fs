@@ -50,13 +50,15 @@ const SelectShell = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 5px;
   & > label {
-    color: #000000;
+    color: #222222;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
     font-weight: 600;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 
@@ -81,9 +83,11 @@ const Selection = styled.button`
 const SelectContainer = styled.div`
 	display: flex;
 	flex-direction: row;
-	gap: 5px;
   ${Selection} {
     cursor: ${({readOnly}) => readOnly ? "default" : "pointer"};
+  }
+  & > *:not(:last-child) {
+    margin-right: 5px;
   }
 `
 

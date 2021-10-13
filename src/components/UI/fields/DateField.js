@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { createPortal } from "react-dom"
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
-import styled from "styled-components"
+import styled, { ThemeContext } from "styled-components"
 import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
 import formatDate from '../../../utils/formatDate';
 
@@ -20,6 +20,7 @@ const DateField = (props) => {
     style,
     clearable
   } = props
+  const themeContext = useContext(ThemeContext);
   const [isPickerOpened, setIsPickerOpened] = useState(false)
   const clearValue = () => {
     if (!readOnly) onChange({ target: { value: null, name: name }})
@@ -75,7 +76,7 @@ const DateField = (props) => {
               height="16"
               width="16"
               strokeWidth="32"
-              color="#000000"
+              color="#222222"
             />
           </ClearBtn>
         )}
@@ -85,8 +86,8 @@ const DateField = (props) => {
               <Calendar
                 value={pickerValue}
                 onChange={pickValue}
-                colorPrimary="var(--primary)"
-                colorPrimaryLight="var(--primary-light)"
+                colorPrimary={themeContext.primary}
+                colorPrimaryLight={themeContext.primaryLight}
                 shouldHighlightWeekends
               />
             </PickerContainer>
@@ -103,9 +104,8 @@ const DateFieldShell = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 5px;
   & > label {
-    color: #000000;
+    color: #222222;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -114,6 +114,9 @@ const DateFieldShell = styled.div`
   & > span {
     color: #FF0000;
     font-size: 12px;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 
@@ -132,7 +135,7 @@ const DateFieldContainer = styled.div`
     flex: 1;
     padding: 0;
     border: none;
-    color: #000000;
+    color: #222222;
     background-color: transparent;
     cursor: ${({readOnly}) => readOnly ? "default" : "pointer"};
     transition: border 0.3s, box-shadow 0.3s;
@@ -153,13 +156,11 @@ const PickerContainer = styled.div`
   height: 100%;
   top: 0;
   left: 0;
-  background-color: #000000AA;
+  background-color: #222222AA;
   z-index: 9999;
   div.Calendar {
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background-color: rgba(255, 255, 255, 0.75);
-    box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+    background-color: #FFFFFF;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border: none;
   }
 `

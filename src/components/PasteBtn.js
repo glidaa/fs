@@ -13,7 +13,7 @@ const PasteBtn = (props) => {
       width="20"
       height="20"
       strokeWidth="32"
-      color="#000000"
+      color="#222222"
       onClick={() => {
         const tasksClipboardData = window.localStorage.getItem("tasksClipboard")
         if (tasksClipboardData) {

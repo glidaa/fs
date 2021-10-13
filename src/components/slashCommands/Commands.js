@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import styled from "styled-components"
+import React, { useState, useEffect, useMemo, useContext } from 'react'
+import styled, { ThemeContext } from "styled-components"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import copyTask from "../../utils/copyTask"
@@ -26,6 +26,8 @@ const Commands = (props) => {
     tasks,
     dispatch
   } = props
+
+  const themeContext = useContext(ThemeContext);
 
   const supportedIntents = Object.keys(supportedCommands)
   const supportedAlias = Object.fromEntries(Object.entries(supportedCommands).map(x => [x[1].alias, x[0]]).filter(x => x[0]))
@@ -117,14 +119,14 @@ const Commands = (props) => {
       onMouseEnter={() => setSelection(i)}
       onClick={() => chooseCommand(x)}
     >
-      {x === "ASSIGN" && <AssignIcon color="var(--primary)" strokeWidth="32" height={24} />}
-      {x === "DUE" && <CalenderIcon color="var(--primary)" fill="var(--primary)" strokeWidth="32" height={24} />}
-      {x === "TAGS" && <TagsIcon color="var(--primary)" strokeWidth="32" height={24} />}
-      {x === "DESCRIPTION" && <DescriptionIcon color="var(--primary)" strokeWidth="32" height={24} />}
-      {x === "STATUS" && <StatusIcon color="var(--primary)" strokeWidth="32" height={24} />}
-      {x === "DELETE" && <RemoveIcon color="var(--primary)" strokeWidth="32" height={24} />}
-      {x === "COPY" && <CopyIcon color="var(--primary)" strokeWidth="32" height={24} />}
-      {x === "DUPLICATE" && <DuplicateIcon color="var(--primary)" strokeWidth="32" height={24} />}
+      {x === "ASSIGN" && <AssignIcon color={themeContext.primary} strokeWidth="32" height={24} />}
+      {x === "DUE" && <CalenderIcon color={themeContext.primary} fill={themeContext.primary} strokeWidth="32" height={24} />}
+      {x === "TAGS" && <TagsIcon color={themeContext.primary} strokeWidth="32" height={24} />}
+      {x === "DESCRIPTION" && <DescriptionIcon color={themeContext.primary} strokeWidth="32" height={24} />}
+      {x === "STATUS" && <StatusIcon color={themeContext.primary} strokeWidth="32" height={24} />}
+      {x === "DELETE" && <RemoveIcon color={themeContext.primary} strokeWidth="32" height={24} />}
+      {x === "COPY" && <CopyIcon color={themeContext.primary} strokeWidth="32" height={24} />}
+      {x === "DUPLICATE" && <DuplicateIcon color={themeContext.primary} strokeWidth="32" height={24} />}
       <div>
         <div>
           <span>{x}</span>
@@ -140,7 +142,6 @@ const CommandSuggestion = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
   background-color: ${({ isSelected }) => isSelected ? "#F5F5F5" : "transparent"};
   padding: 10px 20px;
   transition: background-color 0.2s;
@@ -153,9 +154,8 @@ const CommandSuggestion = styled.div`
       flex-direction: row;
       align-items: center;
       justify-content: flex-start;
-      gap: 5px;
       & > span:nth-child(1) {
-        color: #000000;
+        color: #222222;
         font-weight: 600;
         font-size: 14px;
         text-transform: lowercase;
@@ -170,20 +170,26 @@ const CommandSuggestion = styled.div`
         align-items: center;
         justify-content: center;
         width: 14px;
-        color: var(--primary);
-        background-color: var(--primary-light);
+        color: ${({theme})=> theme.primary};
+        background-color: ${({theme})=> theme.primaryLight};
         font-weight: 600;
         padding: 2px;
         border-radius: 4px;
         font-size: 12px;
         text-transform: lowercase;
       }
+      & > *:not(:last-child) {
+        margin-right: 5px;
+      }
     }
     & > span:nth-child(2) {
-      color: #000000;
+      color: #222222;
       font-weight: 400;
       font-size: 12px;
     }
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
   }
 `
 

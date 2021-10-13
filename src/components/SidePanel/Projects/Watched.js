@@ -40,7 +40,6 @@ const NoWatchedProjects = styled.div`
   flex: 1;
   align-items: center;
   justify-content: center;
-  gap: 40px;
   height: 100%;
   margin-top: -25px;
   width: 100%;
@@ -52,8 +51,11 @@ const NoWatchedProjects = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #000000;
+    color: #222222;
     margin-top: 25px;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 40px;
   }
 `
 

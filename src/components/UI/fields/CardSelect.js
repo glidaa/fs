@@ -50,13 +50,15 @@ const SelectShell = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 5px;
   & > label {
-    color: #000000;
+    color: #222222;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
     font-weight: 600;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 
@@ -83,16 +85,16 @@ const Selection = styled.button`
     font-weight: 400;
   }
   ${({ isSelected }) => isSelected ? `
-    border-color: var(--primary);
+    border-color: ${({theme})=> theme.primary};
     & > span:nth-child(1) {
-      color: var(--primary);
+      color: ${({theme})=> theme.primary};
     }
     & > span:nth-child(2) {
       color: #5D6969;
     }
   ` : `
     & > span:nth-child(1) {
-      color: var(--primary-dark);
+      color: ${({theme})=> theme.primaryDark};
     }
     & > span:nth-child(2) {
       color: #AAA8AC;
@@ -103,10 +105,12 @@ const Selection = styled.button`
 const SelectContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 5px;
   width: 100%;
   opacity: ${({disabled}) => disabled ? "0.6" : "1"};
   transition: opacity 0.3s;
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
 `
 
 export default CardSelect

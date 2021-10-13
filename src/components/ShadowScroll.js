@@ -79,11 +79,13 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 5px;
   overflow: hidden;
   width: 100%;
   height: 100px;
   scroll-behavior: smooth;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
   @media (hover: none) {
     overflow: auto;
   }

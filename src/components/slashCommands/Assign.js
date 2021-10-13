@@ -122,7 +122,6 @@ const AssigneeSuggestion = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
   padding: 10px 20px;
   background-color: ${({ isSelected }) => isSelected ? "#F5F5F5" : "transparent"};
   transition: background-color 0.2s;
@@ -131,15 +130,18 @@ const AssigneeSuggestion = styled.div`
     display: flex;
     flex-direction: column;
     & > span:nth-child(1) {
-      color: #000000;
+      color: #222222;
       font-weight: 600;
       font-size: 14px;
     }
     & > span:nth-child(2) {
-      color: #000000;
+      color: #222222;
       font-weight: 400;
       font-size: 12px;
     }
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
   }
 `
 

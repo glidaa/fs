@@ -1,21 +1,21 @@
-import React, { useRef, useMemo } from "react"
-import styled from "styled-components";
+import React, { useRef, useMemo, useContext } from "react"
+import styled, { ThemeContext } from "styled-components";
 import { connect } from "react-redux";
-import useWindowSize from "../utils/useWindowSize";
-import formatDate from "../utils/formatDate"
-import copyTaskCore from "../utils/copyTask"
-import * as appActions from "../actions/app";
-import * as tasksActions from "../actions/tasks";
-import { ReactComponent as CheckmarkIcon } from "../assets/checkmark-outline.svg";
-import { ReactComponent as OptionsIcon } from "../assets/ellipsis-vertical.svg";
-import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
-import { ReactComponent as CopyIcon } from "../assets/copy-outline.svg"
-import { ReactComponent as DuplicateIcon } from "../assets/duplicate-outline.svg"
-import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
-import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
-import Specials from "./Specials";
-import { OK, initTaskState, AuthState } from "../constants";
-import AvatarGroup from "./UI/AvatarGroup";
+import useWindowSize from "../../utils/useWindowSize";
+import formatDate from "../../utils/formatDate"
+import copyTaskCore from "../../utils/copyTask"
+import * as appActions from "../../actions/app";
+import * as tasksActions from "../../actions/tasks";
+import { ReactComponent as CheckmarkIcon } from "../../assets/checkmark-outline.svg";
+import { ReactComponent as OptionsIcon } from "../../assets/ellipsis-vertical.svg";
+import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
+import { ReactComponent as CopyIcon } from "../../assets/copy-outline.svg"
+import { ReactComponent as DuplicateIcon } from "../../assets/duplicate-outline.svg"
+import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
+import { ReactComponent as DetailsIcon } from "../../assets/info_black_24dp.svg";
+import SlashCommands from "../SlashCommands";
+import { OK, initTaskState, AuthState } from "../../constants";
+import AvatarGroup from "../UI/AvatarGroup";
 
 const TaskItem = (props) => {
 
@@ -45,6 +45,7 @@ const TaskItem = (props) => {
   const { width } = useWindowSize();
 
   const inputRef = useRef(null)
+  const themeContext = useContext(ThemeContext);
 
   const processAssingees = (value, users) => {
     const result = []
@@ -73,7 +74,7 @@ const TaskItem = (props) => {
   
   const processedAssingees = useMemo(() => processAssingees(item.assignees, users), [item.assignees, users]);
 
-  const getSpecialsPos = (inputRef) => {
+  const getSlashCommandsPos = (inputRef) => {
     if (inputRef.current) {
       const inputPos = inputRef.current.getBoundingClientRect()
       const cursorPos = 
@@ -92,7 +93,7 @@ const TaskItem = (props) => {
     }
   }
 
-  const specialsPos = useMemo(() => getSpecialsPos(inputRef), [tasks])
+  const slashCommandsPos = useMemo(() => getSlashCommandsPos(inputRef), [tasks])
 
   const onChange = (e) => {
     if (lockedTaskField !== "task") {
@@ -271,7 +272,7 @@ const TaskItem = (props) => {
                 <CopyIcon
                   height="18"
                   strokeWidth="34"
-                  color="var(--primary)"
+                  color={themeContext.primary}
                 />
               </TaskItemAction>
               {!readOnly && (
@@ -279,7 +280,7 @@ const TaskItem = (props) => {
                   <DuplicateIcon
                     height="18"
                     strokeWidth="34"
-                    color="var(--primary)"
+                    color={themeContext.primary}
                   />
                 </TaskItemAction>
               )}
@@ -287,7 +288,7 @@ const TaskItem = (props) => {
                 <ShareIcon
                   height="18"
                   strokeWidth="34"
-                  color="var(--primary)"
+                  color={themeContext.primary}
                 />
               </TaskItemAction>
               {!readOnly && (
@@ -295,7 +296,7 @@ const TaskItem = (props) => {
                   <RemoveIcon
                     height="18"
                     strokeWidth="34"
-                    color="var(--primary)"
+                    color={themeContext.primary}
                   />
                 </TaskItemAction>
               )}
@@ -303,13 +304,13 @@ const TaskItem = (props) => {
                 <DetailsIcon
                   height="18"
                   strokeWidth="34"
-                  color="var(--primary)"
+                  color={themeContext.primary}
                 />
               </TaskItemAction>
             </TaskItemActions> :
             <TaskItemOptsBtn onClick={() => openActionSheet(item)}>
               <OptionsIcon
-                stroke="#000000"
+                stroke="#222222"
                 strokeWidth="32"
                 width="18"
               />
@@ -329,9 +330,9 @@ const TaskItem = (props) => {
         </TaskItemRightPart>
       </TaskItemCore>
       {(command && selectedTask === item.id) && (
-        <Specials
+        <SlashCommands
           onChooseSuggestion={onChooseSuggestion}
-          posInfo={specialsPos}
+          posInfo={slashCommandsPos}
         />
       )}
     </TaskItemShell>
@@ -344,12 +345,14 @@ const TaskItemActions = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 5px;
   opacity: 0;
   width: 0;
   background-color: transparent;
   &:hover {
     transition: opacity 0.2s;
+  }
+  & > *:not(:last-child) {
+    margin-right: 5px;
   }
 `
 
@@ -367,7 +370,7 @@ const TaskItemAction = styled.button`
   height: 28px;
   border-radius: 6px;
   &:hover {
-    background: var(--primary);
+    background: ${({theme})=> theme.primary};
     & > svg {
       color: #FFFFFF;
     }
@@ -377,7 +380,9 @@ const TaskItemAction = styled.button`
 const TaskItemShell = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  & > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
   ${({ isSorting, isDragging }) => isDragging ? `
     z-index: 99;
   ` : isSorting ? `
@@ -390,13 +395,15 @@ const TaskItemCore = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid ${({ isFocused }) => isFocused ? "var(--primary)" : "transparent"};
+  border: 1px solid ${({isFocused, theme}) => isFocused ? theme.primary : "transparent"};
   border-radius: 10px;
   padding: 8px 12px;
   margin: 4px 0;
   overflow: hidden;
-  gap: 10px;
   transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
   ${({ isFocused, isSorting, isDragging }) => isFocused ? `
     & ${TaskItemActions} {
       opacity: 1;
@@ -410,7 +417,7 @@ const TaskItemCore = styled.div`
   ` : `
     &:hover {
       background-color: rgba(255, 255, 255, 0.5);
-      box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
       & ${TaskItemActions} {
         opacity: 1;
         width: auto;
@@ -422,10 +429,12 @@ const TaskItemCore = styled.div`
     padding: 6px 20px;
     border: none;
     border-radius: 0;
-    gap: 2px;
+    & > *:not(:last-child) {
+      margin-right: 2px;
+    }
     ${({ isFocused }) => isFocused ? `
       background-color: rgba(255, 255, 255, 0.5);
-      box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     ` : `
       background-color: transparent;
     `}
@@ -439,25 +448,33 @@ const TaskItemLeftPart = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
   @media only screen and (max-width: 768px) {
-    gap: 2px;
+    & > *:not(:last-child) {
+      margin-right: 2px;
+    }
   }
 `
 
 const TaskItemRightPart = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 5px;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   width: ${({ isFocused }) => isFocused ? "0px" : "170px"};
   transition: width 0.3s ease-in-out;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
   @media only screen and (max-width: 768px) {
     flex-direction: column;
-    gap: 2px;
     width: ${({ isFocused }) => isFocused ? "0px" : "68px"};
+    & > *:not(:last-child) {
+      margin-right: 2px;
+    }
   }
 `
 
@@ -471,7 +488,7 @@ const TaskItemHeader = styled.span`
   cursor: text;
   flex: 1;
   text-decoration: ${({isDone}) => isDone ? "line-through" : "none"};
-  color: ${({isPlaceholder}) => isPlaceholder ? "#C0C0C0" : "#000000"};
+  color: ${({isPlaceholder}) => isPlaceholder ? "#C0C0C0" : "#222222"};
 `
 
 const TaskItemInput = styled.div`
@@ -497,7 +514,7 @@ const TaskItemDueDate = styled.span`
   color: #FFFFFF;
   font-weight: 600;
   font-size: 11.2px;
-  background: var(--primary);
+  background: ${({theme})=> theme.primary};
   white-space: nowrap;
     border-radius: 10px;
     padding: 3px 10px;
@@ -523,9 +540,12 @@ const TaskItemOptsBtn = styled.button`
 
 const TaskItemLeftLeftPart = styled.div`
   display: flex;
+  flex-direction: row;
   align-items: center;
   flex: 1;
-  gap: 10px;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
   @media only screen and (max-width: 768px) {
     justify-content: flex-start;
   }
@@ -533,8 +553,11 @@ const TaskItemLeftLeftPart = styled.div`
 
 const TaskItemLeftRightPart = styled.div`
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 10px;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
   @media only screen and (max-width: 768px) {
     justify-content: flex-start;
   }
@@ -545,8 +568,8 @@ const TaskItemStatusToggle = styled.button`
   align-items: center;
   justify-content: center;
   outline: none;
-  border: 1px solid ${({ isDone }) => isDone ? "var(--primary)" : "#000000"};
-  background-color: ${({ isDone }) => isDone ? "var(--primary)" : "transparent"};
+  border: 1px solid ${({isDone, theme}) => isDone ? theme.primary : "#222222"};
+  background-color: ${({isDone, theme}) => isDone ? theme.primary : "transparent"};
   border-radius: 100%;
   width: 20px;
   height: 20px;

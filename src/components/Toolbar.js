@@ -1,5 +1,5 @@
-import React, { startTransition } from 'react';
-import styled from "styled-components";
+import React, { startTransition, useContext  } from 'react';
+import styled, { ThemeContext } from "styled-components";
 import * as appActions from "../actions/app"
 import { connect } from "react-redux";
 import { panelPages, AuthState } from "../constants"
@@ -20,6 +20,7 @@ const TasksPanel = (props) => {
     dispatch
   } = props;
   const history = useHistory();
+  const themeContext = useContext(ThemeContext);
   const openLeftPanel = (page) => {
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== page)) {
       dispatch(appActions.setLeftPanelPage(page))
@@ -46,7 +47,7 @@ const TasksPanel = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="#000000"
+              color="#222222"
           />
         </ToolbarAction>
         <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
@@ -56,7 +57,7 @@ const TasksPanel = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.PROJECTS ?
-                "var(--primary)" : "#000000"
+                themeContext.primary : "#222222"
               }
           />
         </ToolbarAction>
@@ -67,7 +68,7 @@ const TasksPanel = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.APP_SETTINGS ?
-                "var(--primary)" : "#000000"
+                themeContext.primary : "#222222"
               }
           />
         </ToolbarAction>
@@ -118,25 +119,35 @@ const ToolbarContainer = styled.div`
 
 const TopControls = styled.div`
   display: flex;
-  gap: 20px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  & > *:not(:last-child) {
+    margin-bottom: 20px;
+  }
 	@media only screen and (max-width: 768px) {
     flex-direction: row;
+    & > *:not(:last-child) {
+      margin-bottom: 0px;
+      margin-right: 20px;
+    }
   }
 `;
 
 const BottomControls = styled.div`
   display: flex;
-  gap: 15px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  & > *:not(:last-child) {
+    margin-bottom: 15px;
+  }
 	@media only screen and (max-width: 768px) {
     flex-direction: row;
     & > *:not(:last-child) {
       display: none;
+      margin-bottom: 0px;
+      margin-right: 15px;
     }
   }
 `;
@@ -156,7 +167,7 @@ const ToolbarAction = styled.button`
 const LoginBtn = styled(ToolbarAction)`
   padding: 10px;
   border-radius: 8px;
-  background-color: var(--primary);
+  background-color: ${({theme})=> theme.primary};
 `
 
 const Spacer = styled.div`
@@ -165,7 +176,7 @@ const Spacer = styled.div`
 `
 
 const Logo = styled.span`
-  color: var(--primary);
+  color: ${({theme})=> theme.primary};
   font-weight: 900;
   font-size: 22px;
 `

@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const Button = styled.button`
   padding: 15px 0;
-  background-color: var(--primary);
+  background-color: ${({theme})=> theme.primary};
   color: #FFFFFF !important;
   border-radius: 8px;
   outline: none;
@@ -10,10 +10,10 @@ const Button = styled.button`
   cursor: pointer;
   transition: background-color 0.3s;
   &:hover {
-    background-color: var(--primary-dark);
+    background-color: ${({theme})=> theme.primaryDark};
   }
   &:disabled {
-    background-color: var(--primary-light);
+    background-color: ${({theme})=> theme.primaryLight};
     cursor: default;
   }
 `

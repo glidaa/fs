@@ -19,10 +19,10 @@ import {
 } from '@dnd-kit/modifiers';
 import {CSS} from '@dnd-kit/utilities';
 import { connect } from "react-redux";
-import parseLinkedList from "../../utils/parseLinkedList";
+import parseLinkedList from "../../../utils/parseLinkedList";
 import TaskItem from "../TaskItem";
-import * as tasksActions from "../../actions/tasks";
-import { AuthState } from "../../constants";
+import * as tasksActions from "../../../actions/tasks";
+import { AuthState } from "../../../constants";
 
 const Sortable = (props) => {
 

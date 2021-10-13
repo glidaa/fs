@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects";
 import formatDate from "../utils/formatDate";
-import ProgressRing from "./ProgressRing";
+import ProgressRing from "./UI/ProgressRing";
 import { ReactComponent as GlobeIcon } from "../assets/earth-outline.svg"
 import { ReactComponent as DocumentLockIcon } from "../assets/document-lock-outline.svg"
 import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
@@ -46,7 +46,7 @@ const ProjectItem = (props) => {
             height="200"
             width="200"
             strokeWidth="24"
-            color="#000000"
+            color="#222222"
           />
         )}
         {project.privacy === "private" && (
@@ -54,7 +54,7 @@ const ProjectItem = (props) => {
             height="200"
             width="200"
             strokeWidth="24"
-            color="#000000"
+            color="#222222"
           />
         )}
       </ProjectItemPermission>
@@ -115,7 +115,7 @@ const ProjectItemShell = styled.div`
   overflow: hidden;
   border-radius: 10px;
   position: relative;
-  background-color: var(--primary);
+  background-color: ${({theme})=> theme.primary};
   ${({ isSelected }) => isSelected ? `
     border: 4px solid #F778BA;
   ` : `
@@ -138,7 +138,9 @@ const ProjectItemLeftPart = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   flex: 2;
-  gap: 10px;
+  & > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
 `
 
 const ProjectItemRightPart = styled.div`
@@ -177,9 +179,11 @@ const ProjectItemPermalink = styled.span`
 const TasksCount = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 5px;
   color: #5D6969;
   font-size: 14px;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
 `
 
 const TasksCountItem = styled.span`
@@ -215,7 +219,9 @@ const DoneTasksCount = styled(TasksCountItem)`
 const ProjectItemActions = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 5px;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
 `
 
 const ProjectItemAction = styled.button`

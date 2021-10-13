@@ -34,13 +34,16 @@ const PanelTabsShell = styled.div`
 const PanelTabsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 5px;
   padding: 5px;
   border: none;
   height: fit-content;
   width: fit-content;
   border-radius: 24px;
+  background-color: #CCE2FF;
   position: relative;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
 `
 
 const PanelTab = styled.span`
@@ -51,12 +54,12 @@ const PanelTab = styled.span`
   display: flex;
   justify-content: center;
   ${({isSelected}) => isSelected ? `
-    background: var(--primary);
+    background: ${({theme})=> theme.primary};
     color: #FFFFFF;
     cursor: default;
   ` : `
     background-color: transparent;
-    color: var(--primary);
+    color: ${({theme})=> theme.primary};
     cursor: pointer;
   `}
 `

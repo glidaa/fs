@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import { connect } from "react-redux";
 import { useHistory } from 'react-router-dom';
-import styled, { keyframes, css } from "styled-components";
+import styled, { keyframes, ThemeContext } from "styled-components";
 import * as notificationsActions from "../actions/notifications"
 import { ReactComponent as CloseIcon } from "../assets/close-outline.svg"
 import Avatar from './UI/Avatar';
@@ -12,6 +12,7 @@ const Notifications = (props) => {
     notifications,
     dispatch
   } = props;
+  const themeContext = useContext(ThemeContext);
   const history = useHistory();
   const notificationElem = useRef(null)
   const dismissTimer = useRef(null)
@@ -47,7 +48,7 @@ const Notifications = (props) => {
               {/* <Avatar user={users.GeeekyBoy} size={32} /> */}
               <div>
                   <span>
-                    <b>@{notifications.stored[notifications.pushed[0]].payload.assigner}</b>
+                    <b>@{notifications.stored[notifications.pushed[0]].payload.assigner} </b>
                     has assigned a task to you. 
                     Tap here to review it.
                   </span>
@@ -58,7 +59,7 @@ const Notifications = (props) => {
                 height="16"
                 width="16"
                 strokeWidth="32"
-                color="var(--primary)"
+                color={themeContext.primary}
               />
             </NotificationCloseBtn>
           </NotificationContainer>
@@ -123,17 +124,19 @@ const NotificationsContainer = styled.div`
 
 const NotificationShell = styled.div`
   display: flex;
-  color: var(--primary);
+  color: ${({theme})=> theme.primary};
   padding: 15px;
   width: 300px;
   margin: 10px 10px 10px 0;
   border-radius: 8px;
   position: relative;
+  background-color: #FFFFFF;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   animation: ${({anim}) => anim === 0 ? enteringAnim : exitingAnim} 0.4s ease-in-out forwards;
   ${({isClickable}) => isClickable ? `
     cursor: pointer;
     &:hover {
-      background-color: rgba(255, 255, 255, 0.90);
+      background-color: #F2F2F2;
     }
   `: ``}
 	@media only screen and (max-width: 768px) {
@@ -148,8 +151,10 @@ const NotificationContainer = styled.div`
 	flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
   width: 100%;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 const NotificationContent = styled.div`
@@ -157,7 +162,6 @@ const NotificationContent = styled.div`
 	flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
   div {
     display: flex;
     flex-direction: column;
@@ -168,6 +172,9 @@ const NotificationContent = styled.div`
       font-size: 14px;
     }
   }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 const NotificationCloseBtn = styled.button`
@@ -175,9 +182,11 @@ const NotificationCloseBtn = styled.button`
 	flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
   border: none;
   background-color: transparent;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 export default connect((state) => ({

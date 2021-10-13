@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { connect } from "react-redux"
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 import * as tasksActions from "../../../actions/tasks"
 import * as appActions from "../../../actions/app";
 import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
@@ -22,6 +22,7 @@ const WatcherField = (props) => {
     dispatch
   } = props
 
+  const themeContext = useContext(ThemeContext);
   const watcherFieldRef = useRef(null)
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const WatcherField = (props) => {
                   height="16"
                   width="16"
                   strokeWidth="32"
-                  color="var(--primary)"
+                  color={themeContext.primary}
                 />
               </RemoveBtn>
               <Avatar user={users[x]} size={36} circular />
@@ -91,20 +92,21 @@ const WatcherFieldShell = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 5px;
   & > label {
-    color: #000000;
+    color: #222222;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
     font-weight: 600;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 
 const NewWatcherBtn = styled.button`
   position: relative;
   display: flex;
-  gap: 5px;
   padding: 10px 15px;
   flex-direction: column;
   align-items: center;
@@ -125,16 +127,19 @@ const NewWatcherBtn = styled.button`
     line-height: 0;
     border-radius: 100%;
     color: #FFFFFF;
-    background-color: var(--primary);
+    background-color: ${({theme})=> theme.primary};
     min-width: 32px;
     min-height: 32px;
     width: 32px;
     height: 32px;
   }
   & > span {
-    color: var(--primary);
+    color: ${({theme})=> theme.primary};
     font-weight: 600;
     font-size: 14px;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 
@@ -142,7 +147,6 @@ const NoWatchers = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 5px;
   align-items: center;
   justify-content: center;
   width: calc(100% - 20px);
@@ -154,26 +158,28 @@ const NoWatchers = styled.div`
   & > span {
     font-weight: 600;
     font-size: 14px;
-    color: #000000;
+    color: #222222;
   }
   & > button {
     position: relative;
     outline: none;
     border-radius: 8px;
     border: none;
-    color: var(--primary);
+    color: ${({theme})=> theme.primary};
     padding: 5px 10px;
     font-weight: 600;
     font-size: 12px;
     cursor: pointer;
-    background-color: var(--primary-light);
+    background-color: ${({theme})=> theme.primaryLight};
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 
 const WatcherItem = styled.span`
   position: relative;
   display: flex;
-  gap: 5px;
   padding: 10px;
   min-width: 80px;
   max-width: 80px;
@@ -183,6 +189,9 @@ const WatcherItem = styled.span`
   align-items: center;
   &:last-child {
     margin-right: 5px;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 

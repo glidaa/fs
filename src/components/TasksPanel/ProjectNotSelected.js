@@ -1,15 +1,14 @@
 import React from 'react';
 import styled from "styled-components"
 import { connect } from "react-redux";
-import * as appActions from "../actions/app"
-import * as projectsActions from "../actions/projects"
-import { initProjectState, OK } from "../constants"
-import parseLinkedList from "../utils/parseLinkedList"
-import { ReactComponent as NotFoundIllustartion } from "../assets/undraw_empty_xct9.svg"
-import { ReactComponent as TasksIllustartion} from "../assets/undraw_Add_notes_re_ln36.svg"
-import filterObj from '../utils/filterObj';
+import * as appActions from "../../actions/app"
+import * as projectsActions from "../../actions/projects"
+import { panelPages, initProjectState, OK } from "../../constants"
+import parseLinkedList from "../../utils/parseLinkedList"
+import { ReactComponent as NotFoundIllustartion } from "../../assets/undraw_empty_xct9.svg"
+import { ReactComponent as TasksIllustartion} from "../../assets/undraw_Add_notes_re_ln36.svg"
+import filterObj from '../../utils/filterObj';
 import { useParams } from "react-router-dom"
-import { panelPages } from "../constants"
 
 const ProjectNotSelected = (props) => {
   const {
@@ -61,7 +60,6 @@ const ProjectNotSelectedContainer = styled.div`
   height: 100%;
   align-items: center;
   justify-content: center;
-  gap: 40px;
   & > svg {
     width: 360px;
     height: auto;
@@ -71,15 +69,14 @@ const ProjectNotSelectedContainer = styled.div`
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 10px;
     & > span {
       font-weight: bold;
       font-size: 28px;
-      color: #000000;
+      color: #222222;
     }
     & > button {
-      color: var(--primary);
-      background-color: var(--primary-light);
+      color: ${({theme})=> theme.primary};
+      background-color: ${({theme})=> theme.primaryLight};
       border-radius: 8px;
       max-width: fit-content;
       outline: none;
@@ -88,6 +85,12 @@ const ProjectNotSelectedContainer = styled.div`
       padding: 5px 10px;
       font-weight: 600;
       font-size: 18px;
+    }
+    & > *:not(:last-child) {
+      margin-bottom: 40px;
+    }
+    & > *:not(:last-child) {
+      margin-bottom: 10px;
     }
   }
   @media only screen and (max-width: 768px) {

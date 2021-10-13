@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import styled from "styled-components"
 
 const Textarea = (props) => {
@@ -13,6 +13,7 @@ const Textarea = (props) => {
     disabled,
     style
   } = props
+  const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef(null)
   const adjustSize = ({ target }) => {
     target.parentNode.dataset.replicatedValue = target.value
@@ -23,7 +24,11 @@ const Textarea = (props) => {
     }
   }, [])
   return (
-    <TextareaContainer isError={error} style={style}>
+    <TextareaContainer
+      style={style}
+      isError={error}
+      isFocused={isFocused}
+    >
       <label htmlFor={name}>
         {label}
       </label>
@@ -36,6 +41,8 @@ const Textarea = (props) => {
           onChange={onChange}
           readOnly={readOnly}
           onInput={adjustSize}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           disabled={disabled}
         ></textarea>
       </div>
@@ -49,9 +56,11 @@ const TextareaContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 5px;
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
   & > label {
-    color: #000000;
+    color: #222222;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -83,7 +92,8 @@ const TextareaContainer = styled.div`
       background-color: transparent;
       border-radius: 8px;
       border: none;
-      border: 1px solid ${({isError}) => isError ? "#FF0000" : "#C0C0C0"};
+      border: 1px solid ${({isError, isFocused, theme}) => 
+        isError ? "#FF0000" : isFocused ? theme.primary : "#C0C0C0"};
       font-size: 14px;
       font-weight: 400;
       grid-area: 1 / 1 / 2 / 2;

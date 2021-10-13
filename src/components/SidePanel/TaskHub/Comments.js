@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { useOuterClick } from 'react-outer-click';
 import { useState, useRef } from "react"
 import { connect } from "react-redux";
 import { AuthState } from "../../../constants";
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 import { stateToHTML } from 'draft-js-export-html';
 import { Editor, EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';
 import { ReactComponent as CommentsIllustartion } from "../../../assets/undraw_Public_discussion_re_w9up.svg"
@@ -23,6 +23,7 @@ const Comments = (props) => {
     projects,
     dispatch
   } = props
+  const themeContext = useContext(ThemeContext);
   const newCommentRef = useRef(null)
   const [isNewCommentOpened, setIsNewCommentOpened] = useState(false)
   const [editorState, setEditorState] = useState(
@@ -107,7 +108,7 @@ const Comments = (props) => {
                         height="16"
                         width="16"
                         strokeWidth="32"
-                        color="var(--primary)"
+                        color={themeContext.primary}
                       />
                     </RemoveBtn>
                   </CommentHeader>
@@ -169,10 +170,12 @@ const Comments = (props) => {
 const CommentsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
   flex: 1;
   overflow: auto;
   padding: 0 25px 25px 25px;
+  & > *:not(:last-child) {
+    margin-bottom: 16px;
+  }
 `
 
 const CommentContent = styled.div`
@@ -225,25 +228,29 @@ const CommentUnits = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 8px;
   flex: 1;
+  & > *:not(:last-child) {
+    margin-bottom: 8px;
+  }
 `
 
 const CommentUnit = styled.div`
   display: flex;
   flex-direction: ${({isSelf}) => isSelf ? "row-reverse" : "row"};
   align-items: flex-end;
-  gap: 10px;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
   ${CommentBox} {
     ${({isSelf}) => isSelf ? `
       border-radius: 16px 16px 0 16px;
-      background-color: var(--primary-light);
-      color: var(--primary);
+      background-color: ${({theme})=> theme.primaryLight};
+      color: ${({theme})=> theme.primary};
     ` : `
       border-radius: 16px 16px 16px 0;
       background-color: rgba(255, 255, 255, 0.5);
-      color: #000000;
-      box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+      color: #222222;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     `}
   }
 `
@@ -251,7 +258,9 @@ const CommentUnit = styled.div`
 const NewComment = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 const CommentField = styled.div`
@@ -259,7 +268,7 @@ const CommentField = styled.div`
   width: 100%;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   border: none;
   transition: border 0.3s, box-shadow 0.3s, height 0.3s;
 `
@@ -283,25 +292,27 @@ const CommentControls = styled.div`
   & > div {
     display: flex;
     flex-direction: row;
-    gap: 10px;
     &:nth-child(2) {
       & > button {
         padding: 8px 12px;
         font-size: 14px;
         border-radius: 8px;
-        background-color: var(--primary);
+        background-color: ${({theme})=> theme.primary};
         cursor: pointer;
         color: #FFFFFF;
         border: none;
         outline: none;
         transition: background-color 0.3s;
         &:hover {
-          background-color: var(--primary-dark);
+          background-color: ${({theme})=> theme.primaryDark};
         }
         &:disabled {
-          background-color: var(--primary-light);
+          background-color: ${({theme})=> theme.primaryLight};
         }
       }
+    }
+    & > *:not(:last-child) {
+      margin-right: 10px;
     }
   }
 `
@@ -318,7 +329,7 @@ const CommentTime = styled.span`
 const CommentDay = styled.span`
   font-weight: 600;
   font-size: 12px;
-  color: #000000;
+  color: #222222;
   text-align: center;
   width: 100%;
 `
@@ -337,7 +348,6 @@ const NoComments = styled.div`
   flex: 1;
   align-items: center;
   justify-content: center;
-  gap: 40px;
   & > svg {
     width: 250px;
     height: auto;
@@ -345,7 +355,10 @@ const NoComments = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #000000;
+    color: #222222;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 40px;
   }
 `
 

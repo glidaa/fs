@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -15,6 +15,8 @@ const AppSettings = (props) => {
     },
     dispatch
   } = props;
+
+  const themeContext = useContext(ThemeContext);
 
   const handleChange = (e) => {
     switch (e.target.name) {
@@ -43,7 +45,7 @@ const AppSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>App Settings</PanelPageTitle>
@@ -52,7 +54,7 @@ const AppSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -87,12 +89,14 @@ const AppSettingsForm = styled(SimpleBar)`
   & .simplebar-content > form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     & > h2 > span {
       cursor: pointer;
     }
     & > input[type="submit"] {
       display: none;
+    }
+    & > *:not(:last-child) {
+      margin-bottom: 20px;
     }
   }
 `;
@@ -103,13 +107,15 @@ const AppSetting = styled.div`
   align-items: flex-start;
   justify-content: center;
   margin: 0 25px;
-  gap: 5px;
   & > label {
-    color: #000000;
+    color: #222222;
     margin-bottom: 0;
     width: max-content;
     font-size: 16px;
     font-weight: 600;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 
@@ -153,7 +159,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #000000;
+  color: #222222;
   font-size: 18px;
   font-weight: 600;
 `

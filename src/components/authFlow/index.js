@@ -57,6 +57,7 @@ const AuthFlowContainer = styled(SimpleBar)`
   height: 100%;
   & .simplebar-content {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     min-height: 100%;

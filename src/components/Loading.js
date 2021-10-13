@@ -174,7 +174,6 @@ const LoadingContainer = styled.div`
   background-color: #E0E0E0;
   align-items: center;
   justify-content: center;
-  gap: 30px;
   & > span:nth-child(2) {
     font-weight: bold;
     font-size: 2.5em;
@@ -183,7 +182,10 @@ const LoadingContainer = styled.div`
   & > span:nth-child(3) {
     font-weight: bold;
     font-size: 1.2em;
-    color: #000000;
+    color: #222222;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 30px;
   }
 `
 
@@ -199,7 +201,6 @@ const Logo = styled.div`
   & > div {
     display: flex;
     flex-direction: column;
-    gap: 25px;
     & > * {
       width: 200px;
       height: 35px;
@@ -207,6 +208,9 @@ const Logo = styled.div`
       background: #e0e0e0;
       box-shadow: inset 20px 20px 60px #bebebe,
                   inset -20px -20px 60px #ffffff;
+    }
+    & > *:not(:last-child) {
+      margin-bottom: 25px;
     }
   }
 `

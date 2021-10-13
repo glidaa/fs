@@ -123,7 +123,7 @@ const ActionSheet = (props) => {
             <CopyIcon
               width={24}
               height={24}
-              color="#000000"
+              color="#222222"
               strokeWidth="32"
             />
             <span>Copy</span>
@@ -132,7 +132,7 @@ const ActionSheet = (props) => {
             <DuplicateIcon
               width={24}
               height={24}
-              color="#000000"
+              color="#222222"
               strokeWidth="32"
             />
             <span>Duplicate</span>
@@ -141,7 +141,7 @@ const ActionSheet = (props) => {
             <ShareIcon
               width={24}
               height={24}
-              color="#000000"
+              color="#222222"
               strokeWidth="32"
             />
             <span>Share</span>
@@ -150,7 +150,7 @@ const ActionSheet = (props) => {
             <RemoveIcon
               width={24}
               height={24}
-              color="#000000"
+              color="#222222"
               strokeWidth="32"
             />
             <span>Remove</span>
@@ -159,7 +159,7 @@ const ActionSheet = (props) => {
             <CheckmarkIcon
               width={24}
               height={24}
-              stroke="#000000"
+              stroke="#222222"
               strokeWidth="32"
             />
             <span>Mark As Done</span>
@@ -168,7 +168,7 @@ const ActionSheet = (props) => {
             <DetailsIcon
               width="24"
               height="24"
-              color="#000000"
+              color="#222222"
               strokeWidth="32"
             />
             <span>Details</span>
@@ -187,7 +187,7 @@ const ActionSheetShell = styled(animated.div)`
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background-color: #000000AA;
+  background-color: #222222AA;
   z-index: 99999;
 `
 
@@ -196,19 +196,21 @@ const ActionSheetContainer = styled(animated.div)`
   display: flex;
   touch-action: none;
   flex-direction: column;
-  gap: 10px;
   bottom: 0;
   width: calc(100% - 40px);
   background-color: #FFFFFF;
   padding: 20px;
   border-radius: 20px 20px 0 0;
+  & > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
 `
 
 const ActionSheetHeader = styled.span`
   width: 100%;
   text-align: center;
   font-weight: bold;
-  color: #000000;
+  color: #222222;
 `
 
 const Actions = styled.div`
@@ -225,22 +227,24 @@ const Action = styled.button`
   justify-content: flex-start;
   align-items: center;
   border-radius: 10px;
-  gap: 5px;
   font-size: 14px;
-  color: #000000;
+  color: #222222;
   font-weight: bold;
   padding: 15px;
   background-color: #F0F0F0;
   cursor: pointer;
   outline: none;
   border: none;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
 `
 
 const CloseBtn = styled.button`
   outline: none;
   border: none;
   color: #FFFFFF;
-  background-color: var(--primary);
+  background-color: ${({theme})=> theme.primary};
   width: 100%;
   font-weight: bold;
   padding: 10px 0;

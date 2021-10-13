@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from "styled-components";
 import { connect } from "react-redux";
-import * as appActions from "../actions/app"
-import * as projectsActions from "../actions/projects"
-import * as tasksActions from "../actions/tasks"
-import { initTaskState, OK } from '../constants';
-import parseLinkedList from '../utils/parseLinkedList';
+import * as appActions from "../../actions/app"
+import * as projectsActions from "../../actions/projects"
+import * as tasksActions from "../../actions/tasks"
+import { initTaskState, OK } from '../../constants';
+import parseLinkedList from '../../utils/parseLinkedList';
 
 const ProjectTitle = (props) => {
 
@@ -86,7 +86,9 @@ const ProjectTitle = (props) => {
 const ProjectTitleShell = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	& > *:not(:last-child) {
+		margin-bottom: 10px;
+	}
 `
 
 const ProjectTitleHeader = styled.span`

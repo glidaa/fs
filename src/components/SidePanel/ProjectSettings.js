@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as projectsActions from "../../actions/projects";
 import { AuthState } from "../../constants";
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -31,6 +31,8 @@ const ProjectSettings = (props) => {
       permissions
     }
   } = projects
+
+  const themeContext = useContext(ThemeContext);
 
   const [newTitle, setNewTitle] = useState(title || "")
   const [newPermalink, setNewPermalink] = useState(/\w+\/(.*)/.exec(permalink)?.[1] || permalink)
@@ -96,7 +98,7 @@ const ProjectSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
         <PanelPageTitle>Project Settings</PanelPageTitle>
@@ -105,7 +107,7 @@ const ProjectSettings = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
           />
         </PanelPageToolbarAction>
       </PanelPageToolbar>
@@ -182,13 +184,15 @@ const ProjectSettingsForm = styled(SimpleBar)`
   & .simplebar-content > form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     margin: 0 25px 25px 25px;
     & > h2 > span {
       cursor: pointer;
     }
     & > input[type="submit"] {
       display: none;
+    }
+    & > *:not(:last-child) {
+      margin-bottom: 20px;
     }
   }
 `;
@@ -218,7 +222,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #000000;
+  color: #222222;
   font-size: 18px;
   font-weight: 600;
 `

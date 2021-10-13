@@ -19,7 +19,7 @@ const initState = {
       }
     }
   },
-  pushed: [1, 2]
+  pushed: []
 }
 
 export default function (state = initState, action) {

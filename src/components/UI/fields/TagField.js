@@ -82,13 +82,15 @@ const TagFieldShell = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 5px;
   & > label {
-    color: #000000;
+    color: #222222;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
     font-weight: 600;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
   }
 `
 
@@ -98,8 +100,10 @@ const TagFieldContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 5px;
   width: 100%;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
 `
 
 const NewTagBtn = styled.button`
@@ -108,7 +112,7 @@ const NewTagBtn = styled.button`
   align-items: center;
   justify-content: center;
   width: 100%;
-  color: var(--primary);
+  color: ${({theme})=> theme.primary};
   font-size: 20px;
   outline: none;
   width: 33px;
@@ -118,7 +122,7 @@ const NewTagBtn = styled.button`
   padding: 0;
   cursor: pointer;
   border-radius: 8px;
-  border: 1px solid var(--primary);
+  border: 1px solid ${({theme})=> theme.primary};
   background-color: #FFFFFF;
 `
 
@@ -132,17 +136,16 @@ const NoTags = styled.span`
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
-  background-color: var(--primary);
+  background-color: ${({theme})=> theme.primary};
   outline: none;
   width: fit-content;
   height: fit-content;
-  border: 1px solid var(--primary);
+  border: 1px solid ${({theme})=> theme.primary};
 `
 
 const TagItem = styled.span`
   position: relative;
   display: inline-flex;
-  gap: 5px;
   padding: 5px 10px;
   font-weight: 600;
   font-size: 14px;
@@ -153,6 +156,7 @@ const TagItem = styled.span`
   border: none;
   flex-direction: row;
   align-items: center;
+  border: 1px solid #C0C0C0;
   & > span {
     cursor: pointer;
     &:nth-child(1) {
@@ -169,6 +173,9 @@ const TagItem = styled.span`
       justify-content: center;
     }
   }
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
 `
 
 const TagInput = styled.span`
@@ -178,6 +185,7 @@ const TagInput = styled.span`
   width: 60px;
   border: none;
   border-radius: 8px;
+  border: 1px solid #C0C0C0;
   & > input {
     border: none;
     width: 60px;

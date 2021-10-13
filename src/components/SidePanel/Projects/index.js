@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import styled from "styled-components";
+import React, { useState, useContext } from "react"
+import styled, { ThemeContext } from "styled-components";
 import { connect } from "react-redux";
 import * as projectsActions from "../../../actions/projects"
 import * as appActions from "../../../actions/app"
@@ -24,6 +24,7 @@ const Projects = (props) => {
     projects,
     dispatch
   } = props
+  const themeContext = useContext(ThemeContext);
   const [scope, setScope] = useState("owned")
   const createNewProject = () => {
     if (projectAddingStatus === OK) {
@@ -53,7 +54,7 @@ const Projects = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
             />
           </PanelPageToolbarAction>
           <PanelPageTitle>Projects</PanelPageTitle>
@@ -65,7 +66,7 @@ const Projects = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color="var(--primary)"
+              color={themeContext.primary}
             />
           </PanelPageToolbarAction>
         </PanelPageToolbar>
@@ -93,8 +94,10 @@ const Projects = (props) => {
 const PanelPageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 25px;
   height: 100vh;
+  & > *:not(:last-child) {
+    margin-bottom: 25px;
+  }
 `;
 
 const PanelPageToolbar = styled.div`
@@ -107,7 +110,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #000000;
+  color: #222222;
   font-size: 18px;
   font-weight: 600;
 `
@@ -123,9 +126,11 @@ const ProjectItems = styled(SimpleBar)`
   & .simplebar-content > div > div {
     display: flex;
     flex-direction: column;
-    gap: 10px;
     overflow-y: auto;
     padding-bottom: 25px;
+    & > *:not(:last-child) {
+      margin-bottom: 10px;
+    }
   }
 `;
 
