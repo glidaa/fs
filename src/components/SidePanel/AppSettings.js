@@ -74,7 +74,7 @@ const AppSettings = (props) => {
               <option value="BY_STATUS">status</option>
             </SelectField>
           </AppSetting>
-          <NonPrefixedInputField type="submit" name="submit" value="Submit"></NonPrefixedInputField>
+          <input type="submit" name="submit" value="Submit"></input>
         </form>
       </AppSettingsForm>
     </>
@@ -116,21 +116,6 @@ const AppSetting = styled.div`
   }
   & > *:not(:last-child) {
     margin-bottom: 5px;
-  }
-`
-
-const NonPrefixedInputField = styled.input`
-  width: calc(100% - 20px);
-  padding: 10px 10px;
-  border: 1px solid #C0C0C0;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  &:disabled {
-    background-color: #FAFAFA;
-  }
-  &::placeholder {
-    color: #C0C0C0;
   }
 `
 

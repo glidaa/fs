@@ -200,7 +200,7 @@ const ActionSheetContainer = styled(animated.div)`
   flex-direction: column;
   bottom: 0;
   width: calc(100% - 40px);
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
   padding: 20px;
   border-radius: 20px 20px 0 0;
   & > *:not(:last-child) {

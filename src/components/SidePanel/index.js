@@ -53,7 +53,7 @@ const SidePanelShell = styled.div`
   width: 365px;
   max-width: 365px;
   min-width: 365px;
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
   transform: translateX(${({ isOpened, isRight }) => (isOpened ? "initial" : `${isRight ? "365px" : "-365px"}`)});
   margin: ${({ isOpened, isRight }) => (isOpened ? "0px" : `${isRight ? "0 0 0 -365px" : "0 -365px 0 0"}`)};
   overflow: ${({ isOpened }) => (isOpened ? "auto" : "hidden")};

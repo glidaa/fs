@@ -264,13 +264,12 @@ const NewComment = styled.div`
 `
 
 const CommentField = styled.div`
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
+  color: ${({theme})=> theme.txtColor};
   width: 100%;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  border: none;
-  transition: border 0.3s, box-shadow 0.3s, height 0.3s;
+  border: 1px solid #C0C0C0;
+  transition: border 0.3s, height 0.3s;
 `
 
 const CommentInput = styled.div`

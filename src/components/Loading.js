@@ -12,10 +12,13 @@ import * as queries from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
 import { Redirect, useHistory } from "react-router-dom"
 import { panelPages, AuthState } from '../constants';
+import ProgressBar from "./UI/ProgressBar";
 
 const Loading = (props) => {
   const { user, route, dispatch } = props
   const [shouldLogin, setShouldLogin] = useState(false)
+  const [progressMax, setProgressMax] = useState(100)
+  const [progressValue, setProgressValue] = useState(0)
   const [loadingMsg, setLoadingMsg] = useState("Please Wait A Moment")
   const history = useHistory()
   useEffect(() => {
@@ -59,15 +62,18 @@ const Loading = (props) => {
     if (params.projectPermalink &&
         !params.username &&
         currUser.state === AuthState.SignedOut) {
+      setProgressMax(2)
       setLoadingMsg("We Are Fetching Your Own Projects")
       const projects = await dispatch(projectsActions.handleFetchOwnedProjects())
       const reqProject = Object.values(projects)
         .filter(x => x.permalink === `${params.username}/${params.projectPermalink}`)[0]
       if (reqProject) {
         dispatch(appActions.handleSetProject(reqProject.id, false))
+        setProgressValue(progressValue + 1)
         setLoadingMsg("We Are Getting The Requested Tasks")
         await dispatch(tasksActions.handleFetchTasks(reqProject.id))
       }
+      setProgressValue(progressValue + 2)
     } else if (params.projectPermalink &&
       params.username &&
       currUser.state === AuthState.SignedOut) {
@@ -76,12 +82,17 @@ const Loading = (props) => {
     } else if (params.projectPermalink &&
       params.username &&
       currUser.state === AuthState.SignedIn) {
+        setProgressMax(5)
+        setProgressValue(progressValue + 1)
         setLoadingMsg("We Are Fetching Your Own Projects")
         await dispatch(projectsActions.handleFetchOwnedProjects())
+        setProgressValue(progressValue + 2)
         setLoadingMsg("We Are Fetching Projects Assigned To You")
         await dispatch(projectsActions.handleFetchAssignedProjects())
+        setProgressValue(progressValue + 3)
         setLoadingMsg("We Are Fetching Projects Watched By You")
         const projects = await dispatch(projectsActions.handleFetchWatchedProjects())
+        setProgressValue(progressValue + 4)
         await dispatch(observersActions.handleSetOwnedProjectsObservers())
         let reqProject = Object.values(projects).filter(x => x.permalink === `${params.username}/${params.projectPermalink}`)[0]
         if (!reqProject) {
@@ -112,14 +123,19 @@ const Loading = (props) => {
             history.replace(`/${params.username}/${params.projectPermalink}`)
           }
         }
+        setProgressValue(progressValue + 5)
       } else {
         if (currUser.state === AuthState.SignedIn) {
+          setProgressMax(3)
           setLoadingMsg("We Are Fetching Your Own Projects")
           await dispatch(projectsActions.handleFetchOwnedProjects())
+          setProgressValue(progressValue + 1)
           setLoadingMsg("We Are Fetching Projects Assigned To You")
           await dispatch(projectsActions.handleFetchAssignedProjects())
+          setProgressValue(progressValue + 2)
           setLoadingMsg("We Are Fetching Projects Watched By You")
           const projects = await dispatch(projectsActions.handleFetchWatchedProjects())
+          setProgressValue(progressValue + 3)
           await dispatch(observersActions.handleSetOwnedProjectsObservers())
           const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
           if (firstProject) {
@@ -127,8 +143,10 @@ const Loading = (props) => {
             history.replace(`/${firstProject.permalink}`)
           }
         } else {
+          setProgressMax(1)
           setLoadingMsg("We Are Fetching Your Own Projects")
           const projects = await dispatch(projectsActions.handleFetchOwnedProjects())
+          setProgressValue(progressValue + 1)
           const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
           if (firstProject) {
             dispatch(appActions.handleSetProject(firstProject.id, false))
@@ -150,14 +168,11 @@ const Loading = (props) => {
         />
       ) : (
         <LoadingContainer>
-          <Logo>
-            <div>
-              <div />
-              <div />
-              <div />
-            </div>
-          </Logo>
           <span>Forward Slash</span>
+          <ProgressBar
+            max={progressMax}
+            value={progressValue}
+          />
           <span>{loadingMsg}</span>
         </LoadingContainer>
       )}
@@ -171,46 +186,34 @@ const LoadingContainer = styled.div`
   width: 100%;
   height: 100%;
   position: fixed;
-  background-color: #E0E0E0;
+  background-color: ${({theme})=> theme.primaryBg};
   align-items: center;
   justify-content: center;
-  & > span:nth-child(2) {
+  & > span:nth-child(1) {
     font-weight: bold;
-    font-size: 2.5em;
+    font-size: 42px;
     color: grey;
   }
   & > span:nth-child(3) {
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 18px;
     color: ${({theme})=> theme.txtColor};
+  }
+  & > div {
+    width: 250px;
   }
   & > *:not(:last-child) {
     margin-bottom: 30px;
   }
-`
-
-const Logo = styled.div`
-  margin: 35px;
-  border-radius: 50px;
-  background: #e0e0e0;
-  box-shadow:  20px 20px 60px #bebebe,
-              -20px -20px 60px #ffffff;
-  width: 250px;
-  height: 250px;
-  padding: 50px;
-  & > div {
-    display: flex;
-    flex-direction: column;
-    & > * {
-      width: 200px;
-      height: 35px;
-      border-radius: 10px;
-      background: #e0e0e0;
-      box-shadow: inset 20px 20px 60px #bebebe,
-                  inset -20px -20px 60px #ffffff;
+	@media only screen and (max-width: 768px) {
+    & > span:nth-child(1) {
+      font-size: 36px;
     }
-    & > *:not(:last-child) {
-      margin-bottom: 25px;
+    & > span:nth-child(3) {
+      font-size: 16px;
+    }
+    & > div {
+      width: 200px;
     }
   }
 `

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components";
 import { connect } from "react-redux";
 import parseLinkedList from "../../utils/parseLinkedList";
@@ -10,6 +10,7 @@ import sortedTasks from './sortedTasks';
 import ProjectToolbar from './ProjectToolbar';
 import TasksToolbar from './TasksToolbar';
 import TasksLoading from './TasksLoading';
+import TasksSearch from './TasksSearch';
 
 const TasksPanel = (props) => {
   const {
@@ -24,6 +25,7 @@ const TasksPanel = (props) => {
     tasks,
     dispatch,
   } = props;
+  const [searchKeyword, setSearchKeyword] = useState("")
   const addNewTask = (e) => {
     e.target.getAttribute("name") === "TasksPanelContainer" &&
     status.tasks === READY &&
@@ -39,7 +41,10 @@ const TasksPanel = (props) => {
   return (
     <TasksPanelContainer
       name="TasksPanelContainer"
-      isReady={status.tasks === READY}
+      isReady={
+        status.tasks === READY ||
+        status.tasks === LOADING
+      }
       onClick={addNewTask}
     >
       {selectedProject ? (
@@ -50,8 +55,13 @@ const TasksPanel = (props) => {
           ) : (
             <>
               <ProjectTitle />
-              <TasksToolbar />
-              {React.createElement(sortedTasks[tasksSortingCriteria])}
+              <TasksToolbar
+                searchKeyword={searchKeyword}
+                setSearchKeyword={setSearchKeyword}
+              />
+              {searchKeyword.trim() ? (
+                <TasksSearch searchKeyword={searchKeyword} />
+              ) : React.createElement(sortedTasks[tasksSortingCriteria])}
             </>
           )}
         </>
@@ -70,7 +80,7 @@ const TasksPanelContainer = styled.div`
   min-height: calc(100vh - 80px);
   opacity: ${({isReady}) => isReady ? 1 : 0.5};
   pointer-events: ${({isReady}) => isReady ? "all" : "none"};
-  background-color: ${({theme}) => theme.tasksPanelBg};
+  background-color: ${({theme}) => theme.primaryBg};
   transition: opacity 0.3s;
   @media only screen and (max-width: 768px) {
 		padding: 0px;

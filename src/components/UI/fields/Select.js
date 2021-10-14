@@ -26,9 +26,11 @@ const Select = (props) => {
 
 	return (
     <SelectShell style={style}>
-      <label htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name}>
+          {label}
+        </label>
+      )}
       <SelectContainer readOnly={readOnly}>
         {values.map((x, i) => (
           <Selection

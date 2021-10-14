@@ -62,6 +62,7 @@ const ToolbarContainer = styled.div`
   flex-direction: row;
   margin: 0 12px;
   & > span {
+    color: ${({theme})=> theme.txtColor};
     font-size: 12px;
   }
 	@media only screen and (max-width: 768px) {

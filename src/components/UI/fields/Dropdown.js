@@ -77,7 +77,7 @@ const DropdownContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
   border: 1px solid #C0C0C0;
   border-radius: 4px;
   padding: 5px 10px;
@@ -90,10 +90,9 @@ const DropdownContainer = styled.div`
   & > input {
     pointer-events: none;
     width: 100%;
-    color: transparent;
+    color: ${({theme})=> theme.txtColor};
     border: none;
-    background-color: transparent;
-    text-shadow: 0 0 0 ${({theme})=> theme.txtColor};
+    background-color: ${({theme})=> theme.secondaryBg};
     font-size: 12px;
     cursor: pointer;
   }
@@ -105,12 +104,13 @@ const Options = styled.div`
   top: 5px;
   flex-direction: column;
   border: 1px solid #C0C0C0;
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
   width: 100%;
   font-size: 12px;
   border-radius: 8px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   & > span {
+    color: ${({theme})=> theme.txtColor};
     padding: 8px;
     cursor: pointer;
   }

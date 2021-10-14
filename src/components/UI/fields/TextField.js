@@ -20,9 +20,11 @@ const TextField = (props) => {
   const [isFocused, setIsFocused] = useState(false)
   return (
     <TextFieldShell style={style}>
-      <label htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name}>
+          {label}
+        </label>
+      )}
       <TextFieldContainer
         disabled={disabled}
         isError={error}
@@ -86,13 +88,14 @@ const TextFieldContainer = styled.div`
   }
   border: 1px solid ${({isError, isFocused, theme}) => 
     isError ? "#FF0000" : isFocused ? theme.primary : "#C0C0C0"};
-  background-color: ${({ disabled }) => disabled ? "#FAFAFA" : "transparent"};
+  background-color: ${({disabled, theme}) => disabled ? "#FAFAFA" : theme.secondaryBg};
   & > input {
     border: none;
     outline: none;
     padding: 0;
     width: 100%;
-    background-color: transparent;
+    color: ${({theme})=> theme.txtColor};
+    background-color: ${({theme})=> theme.secondaryBg};
     &:disabled {
       background-color: #FAFAFA;
     }

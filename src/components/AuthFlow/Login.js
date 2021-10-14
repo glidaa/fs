@@ -164,7 +164,7 @@ const LoginFormContainer = styled.div`
   flex-direction: column;
   margin: 40px 0;
   justify-content: center;
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   border-radius: 25px;
   height: fit-content;
@@ -218,6 +218,9 @@ const LoginStepOneForm = styled.form`
   }
   & > *:nth-child(5) {
     grid-area: signIn;
+  }
+  & > *:nth-child(3) > span:first-child {
+    color: ${({theme})=> theme.txtColor};
   }
   & > h2 > span {
     cursor: pointer;

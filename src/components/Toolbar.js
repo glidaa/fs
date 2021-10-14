@@ -104,7 +104,7 @@ const ToolbarContainer = styled.div`
   padding: 30px 15px;
   width: 40px;
   height: calc(100vh - 60px);
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
 	@media only screen and (max-width: 768px) {
     padding: 15px 20px;
     flex-direction: row;

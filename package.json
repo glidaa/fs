@@ -26,6 +26,7 @@
     "redux-thunk": "2.3.0",
     "simplebar-react": "^2.3.6",
     "styled-components": "5.3.1",
+    "fuse.js": "^6.4.6",
     "uuid": "8.3.2",
     "workbox-background-sync": "^6.3.0",
     "workbox-broadcast-update": "^6.3.0",
@@ -75,13 +76,13 @@
       ">0.2%",
       "not dead",
       "not op_mini all",
-      "ie 11"
+      "ie 9"
     ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version",
-      "ie 11"
+      "ie 9"
     ]
   },
   "devDependencies": {

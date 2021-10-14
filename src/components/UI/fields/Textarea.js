@@ -29,9 +29,11 @@ const Textarea = (props) => {
       isError={error}
       isFocused={isFocused}
     >
-      <label htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name}>
+          {label}
+        </label>
+      )}
       <div>
         <textarea
           name={name}
@@ -89,7 +91,8 @@ const TextareaContainer = styled.div`
     & > textarea, &::after {
       width: calc(100% - 20px);
       padding: 5px 10px;
-      background-color: transparent;
+      color: ${({theme})=> theme.txtColor};
+      background-color: ${({theme})=> theme.secondaryBg};
       border-radius: 8px;
       border: none;
       border: 1px solid ${({isError, isFocused, theme}) => 

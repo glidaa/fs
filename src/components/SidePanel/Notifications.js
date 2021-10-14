@@ -130,7 +130,7 @@ const NotificationShell = styled.div`
   width: calc(100% - 80px);
   margin: 0 25px;
   border-radius: 8px;
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
   ${({isClickable}) => isClickable ? `
     cursor: pointer;
     &:hover {

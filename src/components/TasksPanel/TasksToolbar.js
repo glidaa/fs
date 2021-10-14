@@ -1,12 +1,14 @@
-import React, { useContext } from 'react';
-import styled, { ThemeContext } from "styled-components";
+import React, { useState } from 'react';
+import styled from "styled-components";
 import { connect } from "react-redux";
 import * as tasksActions from "../../actions/tasks"
 import * as appSettingsActions from "../../actions/appSettings";
 import parseLinkedList from "../../utils/parseLinkedList"
 import copyTask from "../../utils/copyTask"
 import { ReactComponent as ClipboardIcon } from "../../assets/clipboard-outline.svg"
+import { ReactComponent as SearchIcon } from "../../assets/search-outline.svg"
 import Dropdown from '../UI/fields/Dropdown';
+import TextField from '../UI/fields/TextField';
 
 const TasksToolbar = (props) => {
   const {
@@ -15,9 +17,10 @@ const TasksToolbar = (props) => {
     appSettings: {
       tasksSortingCriteria
     },
+    searchKeyword,
+    setSearchKeyword,
     dispatch,
   } = props;
-  const themeContext = useContext(ThemeContext);
   const pasteTask = () => {
     const tasksClipboardData = window.localStorage.getItem("tasksClipboard")
     if (tasksClipboardData) {
@@ -59,6 +62,25 @@ const TasksToolbar = (props) => {
         />
         <span>Paste</span>
       </PasteBtn>
+      <TextField
+        name="searchKeyword"
+        placeholder="Search tasks…"
+        value={searchKeyword}
+        onChange={(e) => setSearchKeyword(e.target.value)}
+        prefix={() => (
+          <SearchIcon
+            width={18}
+            height={18}
+            strokeWidth={32}
+            style={{
+              marginRight: 5
+            }}
+          />
+        )}
+        style={{
+          flex: 1
+        }}
+      />
       <SortingSettings>
         <span>Sorted By</span>
         <Dropdown
@@ -77,15 +99,17 @@ const TasksToolbar = (props) => {
 
 const ToolbarContainer = styled.div`
   display: flex;
-  background-color: #FFFFFF;
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
   margin: 0 12px 12px 12px;
-  padding: 10px;
+  padding: 10px 0;
   border-radius: 15px;
   & > span {
     font-size: 12px;
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
   }
 	@media only screen and (max-width: 768px) {
     margin: 0 12px 9px 12px;
@@ -98,8 +122,11 @@ const SortingSettings = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 14px;
+  & > span {
+    color: ${({theme})=> theme.txtColor};
+  }
   & > div {
-    width: 120px;
+    width: 90px;
   }
   & > *:not(:last-child) {
     margin-right: 8px;
@@ -124,6 +151,14 @@ const PasteBtn = styled.button`
   & > *:not(:last-child) {
     margin-right: 3px;
   }
+	@media only screen and (max-width: 768px) {
+    & > span {
+      display: none;
+    }
+    & > *:not(:last-child) {
+      margin-right: 0;
+    }
+	}
 `
 
 export default connect((state) => ({

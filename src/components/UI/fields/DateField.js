@@ -58,9 +58,11 @@ const DateField = (props) => {
   }, [readOnly, isPickerOpened, setIsPickerOpened])
   return (
     <DateFieldShell style={style}>
-      <label htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name}>
+          {label}
+        </label>
+      )}
       <DateFieldContainer readOnly={readOnly} isError={error}>
         <input
           name={name}
@@ -136,7 +138,7 @@ const DateFieldContainer = styled.div`
     padding: 0;
     border: none;
     color: ${({theme})=> theme.txtColor};
-    background-color: transparent;
+    background-color: ${({theme})=> theme.secondaryBg};
     cursor: ${({readOnly}) => readOnly ? "default" : "pointer"};
     transition: border 0.3s, box-shadow 0.3s;
     font-size: 14px;
@@ -159,7 +161,7 @@ const PickerContainer = styled.div`
   background-color: #000000AA;
   z-index: 9999;
   div.Calendar {
-    background-color: #FFFFFF;
+    background-color: ${({theme})=> theme.secondaryBg};
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border: none;
   }

@@ -130,7 +130,7 @@ const NotificationShell = styled.div`
   margin: 10px 10px 10px 0;
   border-radius: 8px;
   position: relative;
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   animation: ${({anim}) => anim === 0 ? enteringAnim : exitingAnim} 0.4s ease-in-out forwards;
   ${({isClickable}) => isClickable ? `

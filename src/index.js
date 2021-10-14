@@ -19,7 +19,7 @@ const root = ReactDOM.createRoot(container);
 root.render(
   <Provider store={store}>
     <BrowserRouter>
-      <ThemeProvider theme={theme.light}>
+      <ThemeProvider theme={theme['light']}>
         <App />
       </ThemeProvider>
     </BrowserRouter>

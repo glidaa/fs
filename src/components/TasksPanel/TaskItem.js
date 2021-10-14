@@ -324,7 +324,7 @@ const TaskItem = (props) => {
           <AvatarGroup
             max={4}
             users={processedAssingees}
-            borderColor={themeContext.tasksPanelBg}
+            borderColor={themeContext.primaryBg}
             size={ width > 768 ? 24 : 18 }
           />
         </TaskItemRightPart>
@@ -494,6 +494,7 @@ const TaskItemHeader = styled.span`
 const TaskItemInput = styled.div`
   width: 100%;
   & > input {
+    color: ${({theme})=> theme.txtColor};
     background-color: transparent;
     font-size: 16px;
     width: 100%;

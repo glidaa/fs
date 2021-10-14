@@ -63,9 +63,11 @@ const AssigneeField = (props) => {
 
   return (
     <AssigneeFieldShell style={style}>
-      <label htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name}>
+          {label}
+        </label>
+      )}
       {(processedValue.length) ? (
         <ShadowScroll>
           {!readOnly && (
@@ -244,7 +246,7 @@ const RemoveBtn = styled.button`
   border: none;
   line-height: 0;
   padding: 0;
-  background-color: transparent;
+  background-color: ${({theme})=> theme.secondaryBg};
   cursor: pointer;
 `
 

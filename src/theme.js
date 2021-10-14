@@ -4,13 +4,15 @@ export default {
     primaryDark: "#0058CC",
     primaryLight: "#CCE2FF",
     txtColor: "#222222",
-    tasksPanelBg: "#F5F7FB"
+    primaryBg: "#F5F7FB",
+    secondaryBg: "#FFFFFF"
   },
   dark: {
     primary: "#1D5EFF",
     primaryDark: "#0058CC",
     primaryLight: "#CCE2FF",
-    txtColor: "#CBCCCE",
-    tasksPanelBg: "#23242A"
+    txtColor: "#FFFFFF",
+    primaryBg: "#23242A",
+    secondaryBg: "#1B2029"
   }
 }

@@ -40,9 +40,11 @@ const TagField = (props) => {
 
   return (
     <TagFieldShell style={style}>
-      <label htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name}>
+          {label}
+        </label>
+      )}
       <TagFieldContainer ref={tagFieldRef}>
         {!readOnly && <NewTagBtn onClick={() => setIsEntering(true)}>+</NewTagBtn>}
         {(value.length || isEntering) ? value.map(x => (
@@ -123,7 +125,7 @@ const NewTagBtn = styled.button`
   cursor: pointer;
   border-radius: 8px;
   border: 1px solid ${({theme})=> theme.primary};
-  background-color: #FFFFFF;
+  background-color: ${({theme})=> theme.secondaryBg};
 `
 
 const NoTags = styled.span`
@@ -189,11 +191,11 @@ const TagInput = styled.span`
   & > input {
     border: none;
     width: 60px;
-    color: #5D6969;
     font-size: 14px;
     font-weight: 600;
     padding: 0;
-    background-color: transparent;
+    color: ${({theme})=> theme.txtColor};
+    background-color: ${({theme})=> theme.secondaryBg};
     &::placeholder {
       color: #C0C0C0;
     }

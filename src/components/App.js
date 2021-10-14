@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { createGlobalStyle } from 'styled-components'
 import Amplify, { API, graphqlOperation } from "aws-amplify";
 import { AuthState } from "../constants";
 import * as projectsActions from "../actions/projects";
@@ -49,6 +50,12 @@ const App = (props) => {
       dispatch(appSettingsActions.importAppSettings(JSON.parse(fetchedSettings)))
     }
   }
+
+  const GlobalStyle = createGlobalStyle`
+    body {
+      background-color: ${({theme})=> theme.primaryBg};
+    }
+  `
 
   useEffect(() => {
     dispatch(appActions.setHistory(history));
@@ -107,7 +114,8 @@ const App = (props) => {
     })()
   }, [routeMatch?.url, app.isLoading, user]);
   return (
-    <div className="App">
+    <div>
+      <GlobalStyle />
       <Notifications />
       <Route
         exact

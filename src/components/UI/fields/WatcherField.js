@@ -44,9 +44,11 @@ const WatcherField = (props) => {
 
   return (
     <WatcherFieldShell style={style}>
-      <label htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name}>
+          {label}
+        </label>
+      )}
       {(value.length) ? (
         <ShadowScroll>
           {!readOnly && (
@@ -225,7 +227,7 @@ const RemoveBtn = styled.button`
   border: none;
   line-height: 0;
   padding: 0;
-  background-color: transparent;
+  background-color: ${({theme})=> theme.secondaryBg};
   cursor: pointer;
 `
 
