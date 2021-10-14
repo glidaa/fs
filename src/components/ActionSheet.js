@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { connect } from "react-redux";
 import { useDrag } from '@use-gesture/react'
 import { animated, useSpring, config } from '@react-spring/web'
@@ -11,7 +11,7 @@ import { ReactComponent as DuplicateIcon } from "../assets/duplicate-outline.svg
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
 import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
 import { ReactComponent as CheckmarkIcon } from "../assets/checkmark-circle-outline.svg";
-import styled from "styled-components";
+import styled, { ThemeContext } from "styled-components";
 
 const ActionSheet = (props) => {
   
@@ -25,6 +25,8 @@ const ActionSheet = (props) => {
     tasks,
     dispatch
   } = props
+
+  const themeContext = useContext(ThemeContext)
 
   const [{ y }, api] = useSpring(() => ({ y: 243 }))
 
@@ -123,7 +125,7 @@ const ActionSheet = (props) => {
             <CopyIcon
               width={24}
               height={24}
-              color="#222222"
+              color={themeContext.txtColor}
               strokeWidth="32"
             />
             <span>Copy</span>
@@ -132,7 +134,7 @@ const ActionSheet = (props) => {
             <DuplicateIcon
               width={24}
               height={24}
-              color="#222222"
+              color={themeContext.txtColor}
               strokeWidth="32"
             />
             <span>Duplicate</span>
@@ -141,7 +143,7 @@ const ActionSheet = (props) => {
             <ShareIcon
               width={24}
               height={24}
-              color="#222222"
+              color={themeContext.txtColor}
               strokeWidth="32"
             />
             <span>Share</span>
@@ -150,7 +152,7 @@ const ActionSheet = (props) => {
             <RemoveIcon
               width={24}
               height={24}
-              color="#222222"
+              color={themeContext.txtColor}
               strokeWidth="32"
             />
             <span>Remove</span>
@@ -159,7 +161,7 @@ const ActionSheet = (props) => {
             <CheckmarkIcon
               width={24}
               height={24}
-              stroke="#222222"
+              stroke={themeContext.txtColor}
               strokeWidth="32"
             />
             <span>Mark As Done</span>
@@ -168,7 +170,7 @@ const ActionSheet = (props) => {
             <DetailsIcon
               width="24"
               height="24"
-              color="#222222"
+              color={themeContext.txtColor}
               strokeWidth="32"
             />
             <span>Details</span>
@@ -210,7 +212,7 @@ const ActionSheetHeader = styled.span`
   width: 100%;
   text-align: center;
   font-weight: bold;
-  color: #222222;
+  color: ${({theme})=> theme.txtColor};
 `
 
 const Actions = styled.div`
@@ -228,7 +230,7 @@ const Action = styled.button`
   align-items: center;
   border-radius: 10px;
   font-size: 14px;
-  color: #222222;
+  color: ${({theme})=> theme.txtColor};
   font-weight: bold;
   padding: 15px;
   background-color: #F0F0F0;

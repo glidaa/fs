@@ -108,7 +108,7 @@ const AppSetting = styled.div`
   justify-content: center;
   margin: 0 25px;
   & > label {
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
     margin-bottom: 0;
     width: max-content;
     font-size: 16px;
@@ -159,7 +159,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #222222;
+  color: ${({theme})=> theme.txtColor};
   font-size: 18px;
   font-weight: 600;
 `

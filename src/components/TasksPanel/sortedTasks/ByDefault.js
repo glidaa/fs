@@ -17,7 +17,7 @@ import {
   restrictToVerticalAxis,
   restrictToFirstScrollableAncestor
 } from '@dnd-kit/modifiers';
-import {CSS} from '@dnd-kit/utilities';
+import { CSS } from '@dnd-kit/utilities';
 import { connect } from "react-redux";
 import parseLinkedList from "../../../utils/parseLinkedList";
 import TaskItem from "../TaskItem";

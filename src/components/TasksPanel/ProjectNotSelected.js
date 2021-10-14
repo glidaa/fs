@@ -57,7 +57,7 @@ const ProjectNotSelectedContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  flex: 1;
   align-items: center;
   justify-content: center;
   & > svg {
@@ -72,7 +72,7 @@ const ProjectNotSelectedContainer = styled.div`
     & > span {
       font-weight: bold;
       font-size: 28px;
-      color: #222222;
+      color: ${({theme})=> theme.txtColor};
     }
     & > button {
       color: ${({theme})=> theme.primary};

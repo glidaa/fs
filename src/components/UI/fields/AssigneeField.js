@@ -112,7 +112,7 @@ const AssigneeFieldShell = styled.div`
   align-items: flex-start;
   justify-content: center;
   & > label {
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -177,7 +177,7 @@ const NoAssignees = styled.div`
   & > span {
     font-weight: 600;
     font-size: 14px;
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
   }
   & > button {
     position: relative;

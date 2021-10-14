@@ -9,17 +9,22 @@ import * as appSettingsActions from "../actions/appSettings";
 import aws_exports from "../aws-exports";
 import * as queries from "../graphql/queries"
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
-import TasksPanel from "./TasksPanel";
+import TasksPanel from "./TasksPanel/";
 import Loading from "./Loading";
 import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
-import SidePanel from "./SidePanel";
-import AuthFlow from "./AuthFlow";
+import SidePanel from "./SidePanel/";
+import AuthFlow from "./AuthFlow/";
 import Notifications from "./Notifications";
 Amplify.configure(aws_exports);
 
 const App = (props) => {
-  const { dispatch, user, projects, app } = props;
+  const {
+    app,
+    user,
+    projects,
+    dispatch
+  } = props;
   const history = useHistory();
   const routeMatch = useRouteMatch({
     exact: true,
@@ -79,9 +84,11 @@ const App = (props) => {
           }
         }
         if (reqProject) {
+          const prevSelectedProject = app.selectedProject
           dispatch(appActions.handleSetProject(reqProject.id, false));
           if (taskPermalink) {
-            const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id, true))
+            const tasks = prevSelectedProject === app.selectedProject ?
+              props.tasks : await dispatch(tasksActions.handleFetchTasks(reqProject.id, true))
             const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(taskPermalink, 10))[0]
             if (reqTask) {
               dispatch(appActions.handleSetTask(reqTask.id, false));
@@ -146,5 +153,6 @@ const App = (props) => {
 export default connect((state) => ({
   user: state.user,
   projects: state.projects,
+  tasks: state.tasks,
   app: state.app,
 }))(App);

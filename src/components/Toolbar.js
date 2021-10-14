@@ -47,7 +47,7 @@ const TasksPanel = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color="#222222"
+              color={themeContext.txtColor}
           />
         </ToolbarAction>
         <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
@@ -57,7 +57,7 @@ const TasksPanel = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.PROJECTS ?
-                themeContext.primary : "#222222"
+                themeContext.primary : themeContext.txtColor
               }
           />
         </ToolbarAction>
@@ -68,7 +68,7 @@ const TasksPanel = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.APP_SETTINGS ?
-                themeContext.primary : "#222222"
+                themeContext.primary : themeContext.txtColor
               }
           />
         </ToolbarAction>

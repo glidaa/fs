@@ -206,7 +206,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #222222;
+  color: ${({theme})=> theme.txtColor};
   font-size: 18px;
   font-weight: 600;
 `
@@ -229,12 +229,12 @@ const AccountSettingsHeader = styled.div`
   align-items: center;
   justify-content: center;
   & > span:nth-child(2) {
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
     font-size: 26px;
     line-height: 0;
   }
   & > span:nth-child(3) {
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
     font-size: 14px;
     line-height: 0;
   }

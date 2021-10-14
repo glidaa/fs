@@ -174,7 +174,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #222222;
+  color: ${({theme})=> theme.txtColor};
   font-size: 18px;
   font-weight: 600;
 `
@@ -239,7 +239,7 @@ const SearchResultsItem = styled.button`
     flex-direction: column;
     & > span:nth-child(1) {
       font-weight: bold;
-      color: #222222;
+      color: ${({theme})=> theme.txtColor};
     }
     & > span:nth-child(2) {
       font-style: italic;
@@ -272,7 +272,7 @@ const WatcherChooserIllustartion = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
   }
   & > *:not(:last-child) {
     margin-bottom: 40px;

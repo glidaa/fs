@@ -5,10 +5,8 @@ import * as tasksActions from "../../actions/tasks"
 import * as appSettingsActions from "../../actions/appSettings";
 import parseLinkedList from "../../utils/parseLinkedList"
 import copyTask from "../../utils/copyTask"
-import { ReactComponent as CalendarIcon } from "../../assets/calendar-outline.svg"
 import { ReactComponent as ClipboardIcon } from "../../assets/clipboard-outline.svg"
-import { ReactComponent as CheckmarkIcon } from "../../assets/checkmark-outline.svg"
-import { ReactComponent as ListIcon } from "../../assets/list-outline.svg"
+import Dropdown from '../UI/fields/Dropdown';
 
 const TasksToolbar = (props) => {
   const {
@@ -43,6 +41,13 @@ const TasksToolbar = (props) => {
       }
     }
   }
+  const handleChangeSortingCriteria = (e) => {
+    dispatch(
+      appSettingsActions.handleSetTasksSortingCriteria(
+        e.target.value
+      )
+    )
+  }
   return (
     <ToolbarContainer>
       <PasteBtn onClick={pasteTask}>
@@ -56,64 +61,15 @@ const TasksToolbar = (props) => {
       </PasteBtn>
       <SortingSettings>
         <span>Sorted By</span>
-        <SortingSetting
-          isSelected={tasksSortingCriteria === "BY_DEFAULT"}
-          onClick={() => dispatch(
-            appSettingsActions.handleSetTasksSortingCriteria(
-              "BY_DEFAULT"
-            )
-          )}
-        >
-          <ListIcon
-            width={14}
-            height={14}
-            strokeWidth={32}
-            color={
-              tasksSortingCriteria === "BY_DEFAULT" ?
-              "#FFFFFF" : themeContext.primary
-            }
-          />
-        </SortingSetting>
-        <SortingSetting
-          isSelected={tasksSortingCriteria === "BY_DUE"}
-          onClick={() => dispatch(
-            appSettingsActions.handleSetTasksSortingCriteria(
-              "BY_DUE"
-            )
-          )}
-        >
-          <CalendarIcon
-            width={14}
-            height={14}
-            strokeWidth={32}
-            fill={
-              tasksSortingCriteria === "BY_DUE" ?
-              "#FFFFFF" : themeContext.primary
-            }
-            color={
-              tasksSortingCriteria === "BY_DUE" ?
-              "#FFFFFF" : themeContext.primary
-            }
-          />
-        </SortingSetting>
-        <SortingSetting
-          isSelected={tasksSortingCriteria === "BY_STATUS"}
-          onClick={() => dispatch(
-            appSettingsActions.handleSetTasksSortingCriteria(
-              "BY_STATUS"
-            )
-          )}
-        >
-          <CheckmarkIcon
-            width={14}
-            height={14}
-            strokeWidth={32}
-            stroke={
-              tasksSortingCriteria === "BY_STATUS" ?
-              "#FFFFFF" : themeContext.primary
-            }
-          />
-        </SortingSetting>
+        <Dropdown
+          onChange={handleChangeSortingCriteria}
+          value={tasksSortingCriteria}
+          options={{
+            BY_DEFAULT: "default",
+            BY_DUE: "due",
+            BY_STATUS: "status"
+          }}
+        />
       </SortingSettings>
     </ToolbarContainer>     
   )
@@ -142,29 +98,12 @@ const SortingSettings = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  & > *:not(:last-child) {
-    margin-right: 5px;
+  & > div {
+    width: 120px;
   }
-`
-
-const SortingSetting = styled.button`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  color: ${({theme})=> theme.primary};
-  font-size: 20px;
-  outline: none;
-  width: 33px;
-  height: 33px;
-  font-weight: 500;
-  line-height: 0;
-  padding: 0;
-  cursor: pointer;
-  border-radius: 8px;
-  border: 1px solid ${({theme})=> theme.primary};
-  background-color: ${({isSelected, theme})=> isSelected ? theme.primary : "#FFFFFF"};
+  & > *:not(:last-child) {
+    margin-right: 8px;
+  }
 `
 
 const PasteBtn = styled.button`

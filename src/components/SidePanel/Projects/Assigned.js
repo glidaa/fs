@@ -51,7 +51,7 @@ const NoAssignedProjects = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
     margin-top: 25px;
   }
   & > *:not(:last-child) {

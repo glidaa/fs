@@ -76,7 +76,7 @@ const DateField = (props) => {
               height="16"
               width="16"
               strokeWidth="32"
-              color="#222222"
+              color={themeContext.txtColor}
             />
           </ClearBtn>
         )}
@@ -105,7 +105,7 @@ const DateFieldShell = styled.div`
   align-items: flex-start;
   justify-content: center;
   & > label {
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;
@@ -135,7 +135,7 @@ const DateFieldContainer = styled.div`
     flex: 1;
     padding: 0;
     border: none;
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
     background-color: transparent;
     cursor: ${({readOnly}) => readOnly ? "default" : "pointer"};
     transition: border 0.3s, box-shadow 0.3s;
@@ -156,7 +156,7 @@ const PickerContainer = styled.div`
   height: 100%;
   top: 0;
   left: 0;
-  background-color: #222222AA;
+  background-color: #000000AA;
   z-index: 9999;
   div.Calendar {
     background-color: #FFFFFF;

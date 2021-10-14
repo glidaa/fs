@@ -222,7 +222,7 @@ const PanelPageToolbar = styled.div`
 `
 
 const PanelPageTitle = styled.span`
-  color: #222222;
+  color: ${({theme})=> theme.txtColor};
   font-size: 18px;
   font-weight: 600;
 `

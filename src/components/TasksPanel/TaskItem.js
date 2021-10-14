@@ -310,7 +310,7 @@ const TaskItem = (props) => {
             </TaskItemActions> :
             <TaskItemOptsBtn onClick={() => openActionSheet(item)}>
               <OptionsIcon
-                stroke="#222222"
+                stroke={themeContext.txtColor}
                 strokeWidth="32"
                 width="18"
               />
@@ -324,7 +324,7 @@ const TaskItem = (props) => {
           <AvatarGroup
             max={4}
             users={processedAssingees}
-            borderColor="#F8F8F8"
+            borderColor={themeContext.tasksPanelBg}
             size={ width > 768 ? 24 : 18 }
           />
         </TaskItemRightPart>
@@ -488,7 +488,7 @@ const TaskItemHeader = styled.span`
   cursor: text;
   flex: 1;
   text-decoration: ${({isDone}) => isDone ? "line-through" : "none"};
-  color: ${({isPlaceholder}) => isPlaceholder ? "#C0C0C0" : "#222222"};
+  color: ${({isPlaceholder, theme}) => isPlaceholder ? "#C0C0C0" : theme.txtColor};
 `
 
 const TaskItemInput = styled.div`
@@ -568,7 +568,7 @@ const TaskItemStatusToggle = styled.button`
   align-items: center;
   justify-content: center;
   outline: none;
-  border: 1px solid ${({isDone, theme}) => isDone ? theme.primary : "#222222"};
+  border: 1px solid ${({isDone, theme}) => isDone ? theme.primary : theme.txtColor};
   background-color: ${({isDone, theme}) => isDone ? theme.primary : "transparent"};
   border-radius: 100%;
   width: 20px;

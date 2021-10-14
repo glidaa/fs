@@ -60,7 +60,7 @@ const TextareaContainer = styled.div`
     margin-bottom: 5px;
   }
   & > label {
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;

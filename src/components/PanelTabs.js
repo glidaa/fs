@@ -39,7 +39,7 @@ const PanelTabsContainer = styled.div`
   height: fit-content;
   width: fit-content;
   border-radius: 24px;
-  background-color: #CCE2FF;
+  background-color: ${({theme}) => theme.primaryLight};
   position: relative;
   & > *:not(:last-child) {
     margin-right: 5px;
@@ -53,13 +53,13 @@ const PanelTab = styled.span`
   font-size: 14px;
   display: flex;
   justify-content: center;
-  ${({isSelected}) => isSelected ? `
-    background: ${({theme})=> theme.primary};
+  ${({isSelected, theme}) => isSelected ? `
+    background-color: ${theme.primary};
     color: #FFFFFF;
     cursor: default;
   ` : `
     background-color: transparent;
-    color: ${({theme})=> theme.primary};
+    color: ${theme.primary};
     cursor: pointer;
   `}
 `

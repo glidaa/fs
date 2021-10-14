@@ -249,7 +249,7 @@ const CommentUnit = styled.div`
     ` : `
       border-radius: 16px 16px 16px 0;
       background-color: rgba(255, 255, 255, 0.5);
-      color: #222222;
+      color: ${({theme})=> theme.txtColor};
       box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     `}
   }
@@ -329,7 +329,7 @@ const CommentTime = styled.span`
 const CommentDay = styled.span`
   font-weight: 600;
   font-size: 12px;
-  color: #222222;
+  color: ${({theme})=> theme.txtColor};
   text-align: center;
   width: 100%;
 `
@@ -355,7 +355,7 @@ const NoComments = styled.div`
   & > span {
     font-weight: bold;
     font-size: 18px;
-    color: #222222;
+    color: ${({theme})=> theme.txtColor};
   }
   & > *:not(:last-child) {
     margin-bottom: 40px;

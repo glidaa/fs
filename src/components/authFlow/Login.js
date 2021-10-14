@@ -185,7 +185,7 @@ const LoginFormContainer = styled.div`
 const LoginFormHeader = styled.div`
   display: flex;
   flex-direction: column;
-  color: #222222;
+  color: ${({theme})=> theme.txtColor};
   & > span:nth-child(1) {
     font-weight: 600;
     font-size: 24px;

@@ -74,6 +74,7 @@ const DropdownContainer = styled(SimpleBar)`
   width: 320px;
   max-height: 300px;
   background-color: #FFFFFF;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   animation: ${openAnim} 0.3s ease;
   @media only screen and (max-width: 768px) {
     left: 0;

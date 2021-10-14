@@ -3,6 +3,10 @@ import generateRandomWords from './utils/generateRandomWords';
 
 export const PENDING = "PENDING"
 export const OK = "OK"
+export const CREATING = "CREATING"
+export const REMOVING = "REMOVING"
+export const LOADING = "LOADING"
+export const READY = "READY"
 export const NOT_ASSIGNED = "NOT_ASSIGNED"
 
 export const commandIntents = {

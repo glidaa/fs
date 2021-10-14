@@ -4,7 +4,7 @@
 }
 
 body {
-  background-color: #F8F8F8;
+  background-color: #F5F7FB;
   width: 100vw;
   height: 100vh;
   margin: 0;
@@ -22,7 +22,7 @@ body {
   margin: 10px 0 0;
 }
 
-button {
+button, .noselect {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
    -khtml-user-select: none;
@@ -43,6 +43,16 @@ button {
 input:read-only {
   color: transparent;
   text-shadow: 0 0 0 #222222;
+}
+
+input:-webkit-autofill::first-line,
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  font-family: 'Poppins', sans-serif !important;
+  box-shadow: 0 0 0 30px white inset !important;
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
 @media only screen and (max-width: 768px) {

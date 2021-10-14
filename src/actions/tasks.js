@@ -4,11 +4,12 @@ import { listTasksForProject } from "../graphql/queries"
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
 import * as appActions from "./app"
+import * as statusActions from "./status"
 import * as projectsActions from "./projects"
 import * as usersActions from "./users"
 import * as mutationsActions from "./mutations"
 import * as mutations from "../graphql/mutations"
-import { OK, PENDING } from "../constants";
+import { CREATING, REMOVING, READY, LOADING } from "../constants";
 import prepareTaskToBeSent from "../utils/prepareTaskToBeSent";
 import generateMutationID from "../utils/generateMutationID";
 
@@ -45,7 +46,7 @@ const fetchTasks = (tasks) => ({
 export const handleCreateTask = (taskState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    dispatch(appActions.setTaskAddingStatus(PENDING))
+    dispatch(statusActions.setTasksStatus(CREATING))
     const dataToSend = prepareTaskToBeSent(taskState)
     return API.graphql(graphqlOperation(mutations.createTask, { input: dataToSend }))
       .then((incoming) => {
@@ -56,11 +57,11 @@ export const handleCreateTask = (taskState) => (dispatch, getState) => {
           }
           dispatch(appActions.handleSetTask(incoming.data.createTask.id))
         }
-        dispatch(appActions.setTaskAddingStatus(OK))
+        dispatch(statusActions.setTasksStatus(READY))
       })
       .catch((err) => {
         console.error(err)
-        dispatch(appActions.setTaskAddingStatus(OK))
+        dispatch(statusActions.setTasksStatus(READY))
       })
   } else {
     if (taskState.projectID === getState().app.selectedProject) {
@@ -96,9 +97,9 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
   const prevTaskState = {...tasks[update.id]}
   const prevCommands = app.commands
   if (update.task) {
-    const tokens = /^(.*?)(\/.*||)$/m.exec(update.task)
-    update.task = tokens[1];
-    dispatch(appActions.setCommand(tokens[2]))
+    const tREADYens = /^(.*?)(\/.*||)$/m.exec(update.task)
+    update.task = tREADYens[1];
+    dispatch(appActions.setCommand(tREADYens[2]))
   }
   const updateWithID = {id: prevTaskState.id, ...update };
   if (user.state === AuthState.SignedIn) {
@@ -161,15 +162,14 @@ export const handleRemoveTask = (taskState) => (dispatch, getState) => {
     dispatch(appActions.handleSetTask(null))
   }
   if (user.state === AuthState.SignedIn) {
-    if (tasks[taskState.id]) {
-      dispatch(removeTask(taskState.id))
-    }
+    dispatch(statusActions.setTasksStatus(REMOVING))
     return API.graphql(graphqlOperation(mutations.deleteTaskAndComments, { taskId: taskState.id }))
+      .then(() => {
+        dispatch(statusActions.setTasksStatus(READY))
+      })
       .catch((err) => {
         console.error(err)
-        if (tasks[taskState.id]) {
-          dispatch(createTask(taskState))
-        }
+        dispatch(statusActions.setTasksStatus(READY))
       })
   } else {
     if (tasks[taskState.id]) {
@@ -323,6 +323,7 @@ export const handleFetchTasks = (projectID, isInitial = false) => async (dispatc
   }
   if (user.state === AuthState.SignedIn) {
     try {
+      dispatch(statusActions.setTasksStatus(LOADING))
       const res = await API.graphql(graphqlOperation(listTasksForProject, { projectID }))
       const items = res.data.listTasksForProject.items
       let usersToBeFetched = []
@@ -335,9 +336,11 @@ export const handleFetchTasks = (projectID, isInitial = false) => async (dispatc
       }
       await dispatch(usersActions.handleAddUsers(usersToBeFetched))
       dispatch(fetchTasks(items))
+      dispatch(statusActions.setTasksStatus(READY))
       return getState().tasks
     } catch (err) {
       console.error(err)
+      dispatch(statusActions.setTasksStatus(READY))
     }
   } else {
     const localProjects = JSON.parse(window.localStorage.getItem("projects"))

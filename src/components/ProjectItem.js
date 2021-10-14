@@ -1,5 +1,5 @@
-import React from "react"
-import styled from "styled-components"
+import React, { useContext } from "react"
+import styled, { ThemeContext } from "styled-components"
 import { connect } from "react-redux";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects";
@@ -19,6 +19,7 @@ const ProjectItem = (props) => {
     dispatch,
     listeners
   } = props
+  const themeContext = useContext(ThemeContext)
   const shareProject = (e) => {
     e.stopPropagation()
     const linkToBeCopied = window.location.href.replace(/\/\d+/, "")
@@ -36,6 +37,7 @@ const ProjectItem = (props) => {
   }
   return (
     <ProjectItemShell
+      className="noselect"
       isSelected={selectedProject === project.id}
       onClick={() => selectProject(project.id)}
       {...listeners}
@@ -46,7 +48,7 @@ const ProjectItem = (props) => {
             height="200"
             width="200"
             strokeWidth="24"
-            color="#222222"
+            color={themeContext.txtColor}
           />
         )}
         {project.privacy === "private" && (
@@ -54,7 +56,7 @@ const ProjectItem = (props) => {
             height="200"
             width="200"
             strokeWidth="24"
-            color="#222222"
+            color={themeContext.txtColor}
           />
         )}
       </ProjectItemPermission>

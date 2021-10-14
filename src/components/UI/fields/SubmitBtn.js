@@ -1,10 +1,11 @@
 import styled from "styled-components";
 
 const SubmitBtn = styled.input`
-  padding: 15px 0;
+  padding: 14px 0;
   background-color: ${({theme})=> theme.primary};
   color: #FFFFFF !important;
-  border-radius: 8px;
+  border-radius: 12px;
+  font-size: 16px;
   outline: none;
   border: none;
   cursor: pointer;
