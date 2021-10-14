@@ -9,12 +9,12 @@ import * as appSettingsActions from "../actions/appSettings";
 import aws_exports from "../aws-exports";
 import * as queries from "../graphql/queries"
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
-import TasksPanel from "./TasksPanel/";
+import TasksPanel from "./TasksPanel";
 import Loading from "./Loading";
 import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
-import SidePanel from "./SidePanel/";
-import AuthFlow from "./AuthFlow/";
+import SidePanel from "./SidePanel";
+import AuthFlow from "./AuthFlow";
 import Notifications from "./Notifications";
 Amplify.configure(aws_exports);
 
