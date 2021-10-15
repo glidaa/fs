@@ -13,6 +13,7 @@ const PanelTabs = (props) => {
       <PanelTabsContainer>
         {tabs.map(x => (
           <PanelTab
+            className="noselect"
             key={x[0]}
             isSelected={value === x[0]}
             onClick={() => value !== x[0] && onChange(x[0])}

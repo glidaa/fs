@@ -44,6 +44,7 @@ exports.handler = async function (ctx) {
   const cachedProjects = {};
   const cachedTasks = {};
   const cachedComments = {};
+  const cachedNotifications = {};
 
   const resolvers = {
     Mutation: {
@@ -52,6 +53,9 @@ exports.handler = async function (ctx) {
       },
       pushProjectUpdate: (ctx) => {
         return pushProjectUpdate(ctx);
+      },
+      pushNotification: (ctx) => {
+        return pushNotification(ctx);
       },
       createProject: (ctx) => {
         return createProject(ctx);
@@ -82,6 +86,9 @@ exports.handler = async function (ctx) {
       },
       deleteComment: (ctx) => {
         return deleteComment(ctx);
+      },
+      dismissNotification: (ctx) => {
+        return dismissNotification(ctx);
       },
       assignTask: (ctx) => {
         return assignTask(ctx);
@@ -131,6 +138,9 @@ exports.handler = async function (ctx) {
     Subscription: {
       onPushUserUpdate: (ctx) => {
         return onPushUserUpdate(ctx);
+      },
+      onPushNotification: (ctx) => {
+        return onPushNotification(ctx);
       },
       onCreateOwnedProject: (ctx) => {
         return onCreateOwnedProject(ctx);
@@ -256,6 +266,30 @@ exports.handler = async function (ctx) {
     }
   }
 
+  async function getNotification(notificationID) {
+    if (cachedNotifications[notificationID]) {
+      return {...cachedNotifications[notificationID]}
+    } else {
+      const params = {
+        TableName: NOTIFICATIONTABLE,
+        Key: {
+          "id": notificationID
+        }
+      }
+      try {
+        const data = await docClient.get(params).promise()
+        if (data.Item) {
+          cachedNotifications[notificationID] = {...data.Item}
+          return data.Item
+        } else {
+          throw new Error(COMMENT_NOT_FOUND)
+        }
+      } catch (err) {
+        throw new Error(err)
+      }
+    }
+  }
+
   async function isProjectSharedWithClient(projectID, client) {
     try {
       const { privacy, members, owner } = await getProject(projectID)
@@ -286,6 +320,15 @@ exports.handler = async function (ctx) {
   async function isCommentOwner(commentID, client) {
     try {
       const { owner } = await getComment(commentID)
+      return client === owner
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+
+  async function isNotificationOwner(notificationID, client) {
+    try {
+      const { owner } = await getNotification(notificationID)
       return client === owner
     } catch (err) {
       throw new Error(err)
@@ -339,6 +382,19 @@ exports.handler = async function (ctx) {
 
   async function pushProjectUpdate(ctx) {
     try {
+      return ctx.arguments.input
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async function pushNotification(ctx) {
+    const params = {
+      TableName: NOTIFICATIONTABLE,
+      Item: ctx.arguments.input
+    };
+    try {
+      await docClient.put(params).promise();
       return ctx.arguments.input
     } catch (err) {
       throw new Error(err);
@@ -1085,6 +1141,14 @@ exports.handler = async function (ctx) {
                 }
               }).promise()
               await _pushUserUpdate(userUpdate.Attributes)
+              await _pushNotification({
+                type: "ASSIGNMENT",
+                payload: {
+                  link: `${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}`
+                },
+                sender: client,
+                owner: assigneeID
+              })
             }
             return {
               id: taskID,
@@ -1620,6 +1684,28 @@ exports.handler = async function (ctx) {
     }
   }
 
+  async function dismissNotification(ctx) {
+    const notificationID = ctx.arguments.notificationID
+    const client = ctx.identity.username
+    if (await isNotificationOwner(notificationID, client)) {
+      const params = {
+        TableName: NOTIFICATIONTABLE,
+        Key: {
+          id: notificationID
+        },
+        ReturnValues: "ALL_OLD",
+      }
+      try {
+        const data = await docClient.delete(params).promise();
+        return data.Attributes
+      } catch (err) {
+        throw new Error(err);
+      }
+    } else {
+      throw new Error(UNAUTHORIZED)
+    }
+  }
+
   async function deleteProjectAndTasks(ctx) {
     const projectID = ctx.arguments.projectID
     const client = ctx.identity.username
@@ -1734,6 +1820,24 @@ exports.handler = async function (ctx) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         owner: username
+      }
+    } else {
+      throw new Error(UNAUTHORIZED)
+    }
+  }
+
+  async function onPushNotification(ctx) {
+    const client = ctx.identity.username
+    const username = ctx.arguments.username
+    if (client === username) {
+      return {
+        id: "00000000-0000-0000-0000-000000000000",
+        type: "DUMP",
+        payload: '{}',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        owner: username,
+        sender: username
       }
     } else {
       throw new Error(UNAUTHORIZED)
@@ -2220,5 +2324,59 @@ exports.handler = async function (ctx) {
     } catch (err) {
       throw new Error(err)
     }
+  }
+}
+
+async function _pushNotification(notification) {
+  const graphqlQuery = /* GraphQL */ `
+    mutation pushNotification($input: PushNotificationInput!) {
+      pushNotification(input: $input) {
+        id
+        type
+        payload
+        createdAt
+        updatedAt
+        owner
+        sender
+      }
+    }
+  `
+  try {
+    const req = new AWS.HttpRequest(APIURL, REGION);
+    const endpoint = new urlParse(APIURL).hostname.toString()
+    req.method = "POST";
+    req.path = "/graphql";
+    req.headers.host = endpoint;
+    req.headers["Content-Type"] = "application/json";
+    req.body = JSON.stringify({
+      query: graphqlQuery,
+      operationName: "pushNotification",
+      variables: {
+        input: {
+          ...notification,
+          id: uuidv4(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      }
+    });
+    const signer = new AWS.Signers.V4(req, "appsync", true);
+    signer.addAuthorization(AWS.config.credentials, AWS.util.date.getDate());
+    const data = await new Promise((resolve, reject) => {
+      const httpRequest = https.request({ ...req, host: endpoint }, (result) => {
+        let data = "";
+        result.on("data", (chunk) => {
+          data += chunk;
+        });
+        result.on("end", () => {
+          resolve(JSON.parse(data.toString()));
+        });
+      });
+      httpRequest.write(req.body);
+      httpRequest.end();
+    });
+    console.log(data)
+  } catch (err) {
+    throw new Error(err)
   }
 }
