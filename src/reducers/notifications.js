@@ -1,24 +1,7 @@
-import { PUSH_NOTIFICATION, DISMISS_NOTIFICATION } from "../actions/notifications"
+import { PUSH_NOTIFICATION, DISMISS_NOTIFICATION, FETCH_NOTIFICATIONS } from "../actions/notifications"
 
 const initState = {
-  stored: {
-    "1": {
-      id: 1,
-      type: "assignment",
-      payload: {
-        assigner: "Jerry",
-        link: "/GeeekyBoy/overflows-reactions/6"
-      }
-    },
-    "2": {
-      id: 2,
-      type: "assignment",
-      payload: {
-        assigner: "GeeekyBoy",
-        link: "/GeeekyBoy/overflows-reactions/6"
-      }
-    }
-  },
+  stored: {},
   pushed: []
 }
 
@@ -28,16 +11,24 @@ export default function (state = initState, action) {
       return {
         ...state,
         pushed: [
-          ...new Set([
-            ...state.pushed,
-            action.id
-          ])
+          action.notification,
+          ...state.pushed
         ]
       }
     case DISMISS_NOTIFICATION:
       return {
         ...state,
-        pushed: state.pushed.filter(x => x !== action.id)
+        pushed: state.pushed.filter(x => x.id !== action.id)
+      }
+    case FETCH_NOTIFICATIONS:
+      const newStored = {}
+      for (const notification of action.notifications) {
+        notification.payload = JSON.parse(notification.payload)
+        newStored[notification.id] = notification
+      }
+      return {
+        ...state,
+        stored: newStored
       }
     default:
       return state

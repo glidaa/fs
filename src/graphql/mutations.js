@@ -40,6 +40,19 @@ export const pushProjectUpdate = /* GraphQL */ `
     }
   }
 `;
+export const pushNotification = /* GraphQL */ `
+  mutation PushNotification($input: PushNotificationInput!) {
+    pushNotification(input: $input) {
+      id
+      type
+      payload
+      createdAt
+      updatedAt
+      owner
+      sender
+    }
+  }
+`;
 export const createProject = /* GraphQL */ `
   mutation CreateProject($input: CreateProjectInput!) {
     createProject(input: $input) {

@@ -2,11 +2,11 @@ import React, { useState } from "react"
 import {
   closestCenter,
   DndContext,
-  LayoutMeasuringStrategy,
   useSensor,
   useSensors,
   MouseSensor,
-  TouchSensor
+  TouchSensor,
+  MeasuringStrategy
 } from '@dnd-kit/core';
 import {
   useSortable,
@@ -68,7 +68,11 @@ const Sortable = (props) => {
       }}
       onDragCancel={() => setActiveId(null)}
       sensors={sensors}
-      layoutMeasuring={{strategy: LayoutMeasuringStrategy.Always}}
+      measuring={{
+        droppable: {
+          strategy: MeasuringStrategy.Always
+        }
+      }}
       modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
     >
       <div>

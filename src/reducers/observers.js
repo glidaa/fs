@@ -9,6 +9,8 @@ import {
   CLEAR_TASKS_OBSERVERS,
   SET_COMMENTS_OBSERVERS,
   CLEAR_COMMENTS_OBSERVERS,
+  SET_NOTIFICATIONS_OBSERVERS,
+  CLEAR_NOTIFICATIONS_OBSERVERS,
 } from "../actions/observers"
 
 const initState = {
@@ -18,6 +20,7 @@ const initState = {
   },
   tasks: null,
   comments: null,
+  notifications: null,
   user: null
 }
 
@@ -48,6 +51,10 @@ export default function (state = initState, action) {
       return {...state, comments: action.observers}
     case CLEAR_COMMENTS_OBSERVERS:
       return {...state, comments: null}
+    case SET_NOTIFICATIONS_OBSERVERS:
+      return {...state, notifications: action.observers}
+    case CLEAR_NOTIFICATIONS_OBSERVERS:
+      return {...state, notifications: null}
     default:
       return state
   }

@@ -133,6 +133,9 @@ exports.handler = async function (ctx) {
       },
       listCommentsForTask: (ctx) => {
         return listCommentsForTask(ctx);
+      },
+      listNotifications: (ctx) => {
+        return listNotifications(ctx);
       }
     }, 
     Subscription: {
@@ -1143,9 +1146,9 @@ exports.handler = async function (ctx) {
               await _pushUserUpdate(userUpdate.Attributes)
               await _pushNotification({
                 type: "ASSIGNMENT",
-                payload: {
-                  link: `${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}`
-                },
+                payload: `{
+                  "link": "${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}"
+                }`,
                 sender: client,
                 owner: assigneeID
               })
@@ -1545,6 +1548,33 @@ exports.handler = async function (ctx) {
     }
   }
 
+  async function listNotifications(ctx) {
+    const client = ctx.identity.username
+    const params = {
+      TableName: NOTIFICATIONTABLE,
+      IndexName: "byOwner",
+      KeyConditionExpression: "#owner = :owner",
+      ExpressionAttributeNames: { "#owner": "owner" },
+      ExpressionAttributeValues: {
+        ":owner": client
+      },
+    };
+    try {
+      let items = []
+      let lastData = null
+      while (!lastData || lastData.LastEvaluatedKey) {
+        lastData = await docClient.query(params).promise();
+        items = [...items, ...(lastData.Items || [])]
+        params.ExclusiveStartKey = lastData.LastEvaluatedKey
+      }
+      return {
+        items: items
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
   async function listAssignedProjects(ctx) {
     const client = ctx.identity.username
     try {
@@ -1828,16 +1858,16 @@ exports.handler = async function (ctx) {
 
   async function onPushNotification(ctx) {
     const client = ctx.identity.username
-    const username = ctx.arguments.username
-    if (client === username) {
+    const owner = ctx.arguments.owner
+    if (client === owner) {
       return {
         id: "00000000-0000-0000-0000-000000000000",
         type: "DUMP",
         payload: '{}',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        owner: username,
-        sender: username
+        owner: owner,
+        sender: owner
       }
     } else {
       throw new Error(UNAUTHORIZED)

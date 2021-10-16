@@ -40,15 +40,15 @@ const Notifications = (props) => {
           key={notifications.pushed[0]}
           ref={notificationElem}
           anim={anim}
-          isClickable={notifications.stored[notifications.pushed[0]].payload.link}
-          onClick={() => openLink(notifications.stored[notifications.pushed[0]].payload.link)}
+          isClickable={notifications.pushed[0].payload.link}
+          onClick={() => openLink(notifications.pushed[0].payload.link)}
         >
           <NotificationContainer>
             <NotificationContent>
-              {/* <Avatar user={users.GeeekyBoy} size={32} /> */}
+              <Avatar user={users[notifications.pushed[0].sender]} size={32} />
               <div>
                   <span>
-                    <b>@{notifications.stored[notifications.pushed[0]].payload.assigner} </b>
+                    <b>@{notifications.pushed[0].sender} </b>
                     has assigned a task to you. 
                     Tap here to review it.
                   </span>

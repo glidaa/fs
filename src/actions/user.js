@@ -1,5 +1,6 @@
 import { AuthState } from '../constants';
 import * as observersActions from "./observers"
+import * as notificationsActions from "./notifications"
 
 export const SET_STATE = "SET_STATE";
 export const SET_DATA = "SET_DATA";
@@ -21,6 +22,8 @@ export const handleSetState = (userState) => (dispatch) => {
   dispatch(setState(userState))
   if (userState === AuthState.SignedIn) {
     dispatch(observersActions.handleSetUserObservers())
+    dispatch(notificationsActions.handleFetchNotifications())
+    dispatch(observersActions.handleSetNotificationsObservers())
   }
 }
 

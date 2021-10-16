@@ -2,6 +2,7 @@ import { API, graphqlOperation } from "aws-amplify";
 import * as projectsActions from "./projects"
 import * as tasksActions from "./tasks"
 import * as commentsActions from "./comments"
+import * as notificationsActions from "./notifications"
 import * as appActions from "./app"
 import * as userActions from "./user"
 import * as usersActions from "./users"
@@ -20,6 +21,8 @@ export const SET_TASKS_OBSERVERS = "SET_TASKS_OBSERVERS";
 export const CLEAR_TASKS_OBSERVERS = "CLEAR_TASKS_OBSERVERS";
 export const SET_COMMENTS_OBSERVERS = "SET_COMMENTS_OBSERVERS";
 export const CLEAR_COMMENTS_OBSERVERS = "CLEAR_COMMENTS_OBSERVERS";
+export const SET_NOTIFICATIONS_OBSERVERS = "SET_NOTIFICATIONS_OBSERVERS";
+export const CLEAR_NOTIFICATIONS_OBSERVERS = "CLEAR_NOTIFICATIONS_OBSERVERS";
 
 const setUserObservers = (observers) => ({
   type: SET_USER_OBSERVERS,
@@ -67,6 +70,43 @@ const setCommentsObservers = (observers) => ({
 const clearCommentsObservers = () => ({
   type: CLEAR_COMMENTS_OBSERVERS
 });
+
+const setNotificationsObservers = (observers) => ({
+  type: SET_NOTIFICATIONS_OBSERVERS,
+  observers
+});
+
+const clearNotificationsObservers = () => ({
+  type: CLEAR_NOTIFICATIONS_OBSERVERS
+});
+
+export const handleSetNotificationsObservers = () => async (dispatch, getState) => {
+  const { user, notifications } = getState()
+  const observers = [];
+  const data = {
+    owner: user.data.username
+  }
+  observers.push(await API.graphql(graphqlOperation(subscriptions.onPushNotification, data)).subscribe({
+    next: e => {
+      const incoming = e.value.data.onPushNotification
+      if (!Object.keys(notifications.stored).includes(incoming.id)) {
+        dispatch(notificationsActions.push(incoming))
+      }
+    },
+    error: error => console.warn(error)
+  }))
+  return dispatch(setNotificationsObservers(observers))
+}
+
+export const handleClearNotificationsObservers = () => (dispatch, getState) => {
+  const { observers } = getState()
+  if (observers.notifications) {
+    for (const observer of observers.notifications) {
+      observer.unsubscribe()
+    }
+  }
+  return dispatch(clearNotificationsObservers())
+}
 
 export const handleSetUserObservers = () => async (dispatch, getState) => {
   const { user } = getState()

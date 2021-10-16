@@ -20,6 +20,19 @@ export const onPushUserUpdate = /* GraphQL */ `
     }
   }
 `;
+export const onPushNotification = /* GraphQL */ `
+  subscription OnPushNotification($owner: String!) {
+    onPushNotification(owner: $owner) {
+      id
+      type
+      payload
+      createdAt
+      updatedAt
+      owner
+      sender
+    }
+  }
+`;
 export const onCreateOwnedProject = /* GraphQL */ `
   subscription OnCreateOwnedProject($owner: String!) {
     onCreateOwnedProject(owner: $owner) {

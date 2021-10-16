@@ -490,7 +490,8 @@ enum Gender {
 }
 
 enum NotificationType {
-	assigment
-	addingWatcher
-	comment
+	DUMP
+	ASSIGNMENT
+	ADDING_WATCHER
+	COMMENT
 }

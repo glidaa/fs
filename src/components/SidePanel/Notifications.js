@@ -54,10 +54,10 @@ const Notifications = (props) => {
           >
             <NotificationContainer>
               <NotificationContent>
-                <Avatar user={users.GeeekyBoy} size={32} />
+                <Avatar user={users[x.sender]} size={32} />
                 <div>
                   <span>
-                    <b>@{x.payload.assigner} </b>
+                    <b>@{x.sender} </b>
                     has assigned a task to you. 
                     Tap here to review it.
                   </span>
