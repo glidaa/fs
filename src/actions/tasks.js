@@ -1,4 +1,4 @@
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from '../constants';
 import { listTasksForProject } from "../graphql/queries"
 import injectItemOrder from "../utils/injectItemOrder"

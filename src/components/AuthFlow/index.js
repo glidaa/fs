@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from "styled-components"
 import { Redirect } from "react-router-dom"
 import { connect } from "react-redux"
-import { Auth } from "aws-amplify";
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import { Auth } from "@aws-amplify/auth";
+import CustomScroller from 'react-custom-scroller';
 import Login from './Login';
 import NewAccount from './NewAccount';
 import ForgotPassword from './ForgotPassword';
@@ -51,11 +50,11 @@ const AuthFlow = (props) => {
   )
 }
 
-const AuthFlowContainer = styled(SimpleBar)`
+const AuthFlowContainer = styled(CustomScroller)`
   position: fixed;
   width: 100%;
   height: 100%;
-  & .simplebar-content {
+  & div[class^="index-module_inner__"] {
     display: flex;
     flex-direction: row;
     align-items: center;

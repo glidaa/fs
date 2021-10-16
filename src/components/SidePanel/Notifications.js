@@ -3,8 +3,7 @@ import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
 import styled, { ThemeContext } from "styled-components";
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import CustomScroller from 'react-custom-scroller';
 import { ReactComponent as CloseIcon } from "../../assets/close-outline.svg"
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
@@ -80,12 +79,11 @@ const Notifications = (props) => {
   );
 };
 
-const NotificationsForm = styled(SimpleBar)`
+const NotificationsForm = styled(CustomScroller)`
   flex: 1;
-  overflow: auto;
   height: 0;
   min-height: 0;
-  & .simplebar-content {
+  & div[class^="index-module_inner__"] {
     display: flex;
     flex-direction: column;
     align-items: center;

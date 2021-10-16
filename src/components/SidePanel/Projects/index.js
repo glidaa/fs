@@ -7,8 +7,7 @@ import { initProjectState, OK, PENDING, AuthState } from "../../../constants"
 import parseLinkedList from "../../../utils/parseLinkedList"
 import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-back-outline.svg";
 import { ReactComponent as AddIcon } from "../../../assets/add-outline.svg";
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import CustomScroller from 'react-custom-scroller';
 import filterObj from "../../../utils/filterObj";
 import PanelTabs from "../../PanelTabs";
 import Assigned from "./Assigned";
@@ -115,15 +114,14 @@ const PanelPageTitle = styled.span`
   font-weight: 600;
 `
 
-const ProjectItems = styled(SimpleBar)`
+const ProjectItems = styled(CustomScroller)`
   flex: 1;
-  overflow: auto;
   height: 0;
   min-height: 0;
-  & .simplebar-content-wrapper {
+  /* & div[class^="index-module_inner__"]-wrapper {
     min-height: 100%;
-  }
-  & .simplebar-content > div > div {
+  } */
+  & div[class^="index-module_inner__"] > div > div {
     display: flex;
     flex-direction: column;
     overflow-y: auto;

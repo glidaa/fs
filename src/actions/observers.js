@@ -1,4 +1,4 @@
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
 import * as projectsActions from "./projects"
 import * as tasksActions from "./tasks"
 import * as commentsActions from "./comments"

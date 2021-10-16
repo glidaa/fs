@@ -1,8 +1,7 @@
 import React, { useMemo, createRef } from 'react';
 import styled, { keyframes } from "styled-components"
 import { connect } from "react-redux";
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import CustomScroller from 'react-custom-scroller';
 import { supportedCommands } from "../../constants"
 import ASSIGN from "./Assign"
 import COMMANDS from "./Commands"
@@ -60,7 +59,7 @@ const openAnim = keyframes`
   }
 `;
 
-const DropdownContainer = styled(SimpleBar)`
+const DropdownContainer = styled.div`
   position: fixed;
   top: ${({ $posInfo }) => $posInfo.top}px;
   left: ${({ $posInfo }) => $posInfo.left}px;

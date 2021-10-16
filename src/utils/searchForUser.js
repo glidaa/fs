@@ -1,4 +1,5 @@
-import { API, Auth } from "aws-amplify";
+import { API } from "@aws-amplify/api";
+import { Auth } from "@aws-amplify/auth";
 
 export default async (filter) => {
   const queryData = { 

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from "styled-components"
 import { useState } from "react"
 import { connect } from "react-redux"
-import { Auth } from "aws-amplify";
+import { Auth } from "@aws-amplify/auth";
 import * as appActions from "../../actions/app"
 import SubmitBtn from '../UI/fields/SubmitBtn';
 import TextField from '../UI/fields/TextField';

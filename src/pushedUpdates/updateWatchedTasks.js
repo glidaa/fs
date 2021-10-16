@@ -1,4 +1,4 @@
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
 import * as observersActions from "../actions/observers";
 import * as projectsActions from "../actions/projects"
 import * as queries from "../graphql/queries"

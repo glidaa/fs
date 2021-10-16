@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components"
 import { connect } from "react-redux";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../../actions/app"
 import * as tasksActions from "../../actions/tasks"
 import { AuthState } from "../../constants";

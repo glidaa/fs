@@ -2,7 +2,8 @@ import React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import styled from "styled-components"
-import { API, graphqlOperation, Auth } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
+import { Auth } from "@aws-amplify/auth";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
 import * as tasksActions from "../actions/tasks"

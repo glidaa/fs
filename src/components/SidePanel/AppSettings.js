@@ -3,8 +3,7 @@ import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
 import styled, { ThemeContext } from "styled-components";
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import CustomScroller from 'react-custom-scroller';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 
@@ -81,12 +80,11 @@ const AppSettings = (props) => {
   );
 };
 
-const AppSettingsForm = styled(SimpleBar)`
+const AppSettingsForm = styled(CustomScroller)`
   flex: 1;
-  overflow: auto;
   height: 0;
   min-height: 0;
-  & .simplebar-content > form {
+  & div[class^="index-module_inner__"] > form {
     display: flex;
     flex-direction: column;
     & > h2 > span {

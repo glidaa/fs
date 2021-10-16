@@ -1,4 +1,4 @@
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
 import { listUsersByUsernames } from "../graphql/queries"
 
 export const ADD_USERS = "ADD_USERS";

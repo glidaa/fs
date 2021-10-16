@@ -5,8 +5,7 @@ import DateField from "../../UI/fields/DateField";
 import * as tasksActions from "../../../actions/tasks";
 import styled from "styled-components";
 import TagField from "../../UI/fields/TagField";
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import CustomScroller from 'react-custom-scroller';
 import AssigneeField from "../../UI/fields/AssigneeField";
 import Textarea from '../../UI/fields/Textarea';
 import WatcherField from '../../UI/fields/WatcherField';
@@ -108,12 +107,11 @@ const Details = (props) => {
   )
 }
 
-const DetailsForm = styled(SimpleBar)`
+const DetailsForm = styled(CustomScroller)`
   flex: 1;
-  overflow: auto;
   height: 0;
   min-height: 0;
-  & .simplebar-content > form {
+  & div[class^="index-module_inner__"] > form {
     display: flex;
     flex-direction: column;
     margin: 0 25px 25px 25px;

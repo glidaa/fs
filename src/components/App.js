@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { createGlobalStyle } from 'styled-components'
-import Amplify, { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
+import { Auth } from "@aws-amplify/auth";
 import { AuthState } from "../constants";
 import * as projectsActions from "../actions/projects";
 import * as tasksActions from "../actions/tasks";
@@ -17,7 +18,8 @@ import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
 import AuthFlow from "./AuthFlow";
 import Notifications from "./Notifications";
-Amplify.configure(aws_exports);
+API.configure(aws_exports);
+Auth.configure(aws_exports);
 
 const App = (props) => {
   const {
@@ -50,12 +52,6 @@ const App = (props) => {
       dispatch(appSettingsActions.importAppSettings(JSON.parse(fetchedSettings)))
     }
   }
-
-  const GlobalStyle = createGlobalStyle`
-    body {
-      background-color: ${({theme})=> theme.primaryBg};
-    }
-  `
 
   useEffect(() => {
     dispatch(appActions.setHistory(history));
@@ -157,6 +153,12 @@ const App = (props) => {
     </div>
   );
 };
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${({theme})=> theme.primaryBg};
+  }
+`
 
 export default connect((state) => ({
   user: state.user,

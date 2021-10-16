@@ -1,4 +1,4 @@
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from '../constants';
 import { listCommentsForTask } from "../graphql/queries"
 import * as mutations from "../graphql/mutations"

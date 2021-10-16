@@ -1,11 +1,10 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { connect } from "react-redux";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
 import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
 import styled, { ThemeContext } from "styled-components";
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import CustomScroller from 'react-custom-scroller';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as LogOutIcon } from "../../assets/log-out-outline.svg"
 import DateField from '../UI/fields/DateField';
@@ -175,12 +174,11 @@ const AccountSettings = (props) => {
   );
 };
 
-const AccountSettingsForm = styled(SimpleBar)`
+const AccountSettingsForm = styled(CustomScroller)`
   flex: 1;
-  overflow: auto;
   height: 0;
   min-height: 0;
-  & .simplebar-content > form {
+  & div[class^="index-module_inner__"] > form {
     display: flex;
     flex-direction: column;
     margin: 0 25px 25px 25px;

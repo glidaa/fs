@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { connect } from "react-redux";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../../actions/app";
 import styled, { ThemeContext } from "styled-components";
 import * as tasksActions from "../../actions/tasks"
