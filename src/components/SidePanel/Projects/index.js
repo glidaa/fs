@@ -115,6 +115,7 @@ const PanelPageTitle = styled.span`
 `
 
 const ProjectItems = styled(CustomScroller)`
+  overflow: hidden;
   flex: 1;
   height: 0;
   min-height: 0;

@@ -122,6 +122,8 @@ const NewWatcherBtn = styled.button`
   cursor: pointer;
   margin-left: 5px;
   border-radius: 8px;
+  background-color: ${({theme}) => theme.secondaryBg};
+  border: 1px solid #C0C0C0;
   & > div {
     display: flex;
     align-items: center;
@@ -189,6 +191,7 @@ const WatcherItem = styled.span`
   border-radius: 8px;
   flex-direction: column;
   align-items: center;
+  border: 1px solid #C0C0C0;
   &:last-child {
     margin-right: 5px;
   }

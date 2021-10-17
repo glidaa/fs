@@ -52,6 +52,7 @@ const AuthFlow = (props) => {
 
 const AuthFlowContainer = styled(CustomScroller)`
   position: fixed;
+  overflow: hidden;
   width: 100%;
   height: 100%;
   & div[class^="index-module_inner__"] {

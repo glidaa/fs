@@ -1,21 +1,8 @@
-import styled from "styled-components";
+import React from "react";
+import styles from "./Button.module.scss"
 
-const Button = styled.button`
-  padding: 15px 0;
-  background-color: ${({theme})=> theme.primary};
-  color: ${({theme})=> theme.secondaryBg} !important;
-  border-radius: 8px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  &:hover {
-    background-color: ${({theme})=> theme.primaryDark};
-  }
-  &:disabled {
-    background-color: ${({theme})=> theme.primaryLight};
-    cursor: default;
-  }
-`
+const Button = (props) => (
+  <button className={styles.Button} {...props} />
+)
 
 export default Button

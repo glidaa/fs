@@ -216,8 +216,7 @@ const PanelPageToolbarAction = styled.button`
 const KeywordField = styled.input`
   width: calc(100% - 90px);
   outline: none;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  background-color: #F6F6F6;
   border: none;
   padding: 10px;
   border-radius: 8px;

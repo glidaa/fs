@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import styled from "styled-components"
+import styles from "./ProgressRing.module.scss"
 
 const ProgressRing = (props) => {
   const { radius, stroke } = props;
@@ -13,7 +13,8 @@ const ProgressRing = (props) => {
       height={radius * 2}
       width={radius * 2}
     >
-      <InnerRing
+      <circle
+        className={styles.InnerRing}
         stroke="none"
         fill="#FFFFFF"
         strokeWidth={stroke / 2}
@@ -22,7 +23,8 @@ const ProgressRing = (props) => {
         cx={radius}
         cy={radius}
       />
-      <OuterRing
+      <circle
+        className={styles.OuterRing}
         stroke={`hsl(${progress},100%,50%)`}
         fill="transparent"
         strokeWidth={stroke}
@@ -47,22 +49,5 @@ const ProgressRing = (props) => {
     </svg>
     );
 }
-
-const OuterRing = styled.circle`
-  transition: stroke-dashoffset 0.35s;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
-  stroke-linecap: round;
-`
-
-const InnerRing = styled.circle`
-  transition: stroke-dashoffset 0.35s;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
-  opacity: 0.25;
-  filter: drop-shadow(0px 2px 8px rgba(99, 99, 99, 0.2));
-  -webkit-filter: drop-shadow(0px 2px 8px rgba(99, 99, 99, 0.2));
-  border: none;
-`
 
 export default ProgressRing

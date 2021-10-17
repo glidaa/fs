@@ -1,7 +1,7 @@
 import React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
-import styled from "styled-components"
+import styles from "./Loading.module.scss"
 import { API, graphqlOperation } from "@aws-amplify/api";
 import { Auth } from "@aws-amplify/auth";
 import * as appActions from "../actions/app"
@@ -168,56 +168,18 @@ const Loading = (props) => {
           }}
         />
       ) : (
-        <LoadingContainer>
+        <div className={styles.LoadingContainer}>
           <span>Forward Slash</span>
           <ProgressBar
             max={progressMax}
             value={progressValue}
           />
           <span>{loadingMsg}</span>
-        </LoadingContainer>
+        </div>
       )}
     </>
   )
 }
-
-const LoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background-color: ${({theme})=> theme.primaryBg};
-  align-items: center;
-  justify-content: center;
-  & > span:nth-child(1) {
-    font-weight: bold;
-    font-size: 42px;
-    color: grey;
-  }
-  & > span:nth-child(3) {
-    font-weight: bold;
-    font-size: 18px;
-    color: ${({theme})=> theme.txtColor};
-  }
-  & > div {
-    width: 250px;
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 30px;
-  }
-	@media only screen and (max-width: 768px) {
-    & > span:nth-child(1) {
-      font-size: 36px;
-    }
-    & > span:nth-child(3) {
-      font-size: 16px;
-    }
-    & > div {
-      width: 200px;
-    }
-  }
-`
 
 export default connect((state) => ({
   user: state.user,

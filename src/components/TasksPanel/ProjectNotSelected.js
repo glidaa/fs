@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from "styled-components"
+import styles from "./ProjectNotSelected.module.scss"
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app"
 import * as projectsActions from "../../actions/projects"
@@ -38,7 +38,7 @@ const ProjectNotSelected = (props) => {
     dispatch(appActions.handleSetLeftPanel(true))
   }
   return (
-    <ProjectNotSelectedContainer>
+    <div className={styles.ProjectNotSelectedContainer}>
       {params.projectPermalink && <NotFoundIllustartion />}
       {!params.projectPermalink && <TasksIllustartion />}
       <div>
@@ -49,64 +49,9 @@ const ProjectNotSelected = (props) => {
         {params.projectPermalink && <button onClick={openProjectsPanel}>My Projects</button>}
         {!params.projectPermalink && <button onClick={createNewProject}>+ Create New</button>}
       </div>
-    </ProjectNotSelectedContainer>
+    </div>
   )
 }
-
-const ProjectNotSelectedContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  & > svg {
-    width: 360px;
-    height: auto;
-  }
-  & > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    & > span {
-      font-weight: bold;
-      font-size: 28px;
-      color: ${({theme})=> theme.txtColor};
-    }
-    & > button {
-      color: ${({theme})=> theme.primary};
-      background-color: ${({theme})=> theme.primaryLight};
-      border-radius: 8px;
-      max-width: fit-content;
-      outline: none;
-      border: none;
-      cursor: pointer;
-      padding: 5px 10px;
-      font-weight: 600;
-      font-size: 18px;
-    }
-    & > *:not(:last-child) {
-      margin-bottom: 40px;
-    }
-    & > *:not(:last-child) {
-      margin-bottom: 10px;
-    }
-  }
-  @media only screen and (max-width: 768px) {
-    & > svg {
-      width: 240px;
-    }
-    & > div {
-      & > span {
-        font-size: 20px;
-      }
-      & > button {
-        font-size: 16px;
-      }
-    }
-  }
-`
 
 export default connect((state) => ({
 	user: state.user,

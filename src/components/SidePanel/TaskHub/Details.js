@@ -108,6 +108,7 @@ const Details = (props) => {
 }
 
 const DetailsForm = styled(CustomScroller)`
+  overflow: hidden;
   flex: 1;
   height: 0;
   min-height: 0;

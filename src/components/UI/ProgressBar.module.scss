@@ -1,0 +1,13 @@
+.ProgressBarContainer {
+  @include themify(background-color, "primaryLight");
+  height: 5px;
+  width: 500px;
+  border-radius: 100px;
+  max-width: 100%;
+  & > div {
+    @include themify(background-color, "primary");
+    height: 5px;
+    border-radius: 100px;
+    transition: width 0.5s linear;
+  }
+}

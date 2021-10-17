@@ -46,7 +46,7 @@ const Notifications = (props) => {
         </PanelPageToolbarAction>
       </PanelPageToolbar>
       <NotificationsForm>
-        {Object.values(notifications.stored).map(x => (
+        {notifications.stored.map(x => (
           <NotificationShell
             key={x.id}
             isClickable={x.payload.link}
@@ -55,22 +55,32 @@ const Notifications = (props) => {
               <NotificationContent>
                 <Avatar user={users[x.sender]} size={32} />
                 <div>
-                  <span>
-                    <b>@{x.sender} </b>
-                    has assigned a task to you. 
-                    Tap here to review it.
-                  </span>
-                  <span>05:30pm</span>
+                  <NotificationHeading>
+                    <b style={{ float: "left" }}>
+                      {users[x.sender].firstName} {users[x.sender].lastName}
+                    </b>
+                    <span style={{ float: "right" }}>
+                      {new Date(x.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                    </span>
+                  </NotificationHeading>
+                  {x.type === "ASSIGNMENT" && (
+                    <span>
+                      Assigned a task to&nbsp;
+                      {x.payload.assignee ? 
+                      (<b>@{x.payload.assignee}</b>) : "you"}.
+                      Tap here to review it.
+                    </span>
+                  )}
                 </div>
               </NotificationContent>
-              <NotificationCloseBtn>
+              {/* <NotificationCloseBtn>
                 <CloseIcon
                   height="16"
                   width="16"
                   strokeWidth="32"
                   color={themeContext.primary}
                 />
-              </NotificationCloseBtn>
+              </NotificationCloseBtn> */}
             </NotificationContainer>
           </NotificationShell>
         ))}
@@ -80,6 +90,7 @@ const Notifications = (props) => {
 };
 
 const NotificationsForm = styled(CustomScroller)`
+  overflow: hidden;
   flex: 1;
   height: 0;
   min-height: 0;
@@ -123,7 +134,7 @@ const PanelPageToolbarAction = styled.button`
 const NotificationShell = styled.div`
   position: relative;
   display: flex;
-  color: ${({theme})=> theme.primary};
+  color: ${({theme})=> theme.txtColor};
   padding: 15px;
   width: calc(100% - 80px);
   margin: 0 25px;
@@ -166,6 +177,12 @@ const NotificationContent = styled.div`
   & > *:not(:last-child) {
     margin-right: 10px;
   }
+`
+
+const NotificationHeading = styled.span`
+	line-height: 18.4px;
+  display: inline-block;
+  vertical-align: middle;
 `
 
 const NotificationCloseBtn = styled.button`

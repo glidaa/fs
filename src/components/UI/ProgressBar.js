@@ -1,28 +1,17 @@
 import React from "react"
-import styled from "styled-components"
+import styles from "./ProgressBar.module.scss"
 
 const ProgressBar = (props) => {
   const { max, value, style } = props;
   return (
-    <ProgressBarContainer progress={value / max * 100} style={style}>
-      <div />
-    </ProgressBarContainer>
+    <div
+      className={styles.ProgressBarContainer}
+      progress={value / max * 100}
+      style={style}
+    >
+      <div style={{width: `${(value / max * 100) || 0}%`}} />
+    </div>
   );
 }
-
-const ProgressBarContainer = styled.div`
-  background-color: ${({theme}) => theme.primaryLight};
-  height: 5px;
-  width: 500px;
-  border-radius: 100px;
-  max-width: 100%;
-  & > div {
-    background-color: ${({theme}) => theme.primary};
-    height: 5px;
-    border-radius: 100px;
-    width: ${({progress}) => (progress || 0)}%;
-    transition: width 0.5s linear;
-  }
-`
 
 export default ProgressBar

@@ -90,6 +90,7 @@ export const handleSetNotificationsObservers = () => async (dispatch, getState) 
     next: e => {
       const incoming = e.value.data.onPushNotification
       if (!Object.keys(notifications.stored).includes(incoming.id)) {
+        dispatch(notificationsActions.add(incoming))
         dispatch(notificationsActions.push(incoming))
       }
     },

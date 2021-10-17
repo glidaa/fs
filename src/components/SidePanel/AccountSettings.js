@@ -175,6 +175,7 @@ const AccountSettings = (props) => {
 };
 
 const AccountSettingsForm = styled(CustomScroller)`
+  overflow: hidden;
   flex: 1;
   height: 0;
   min-height: 0;

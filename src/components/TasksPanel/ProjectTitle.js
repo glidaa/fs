@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from "styled-components";
+import styles from "./ProjectTitle.module.scss"
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app"
 import * as projectsActions from "../../actions/projects"
@@ -58,9 +58,9 @@ const ProjectTitle = (props) => {
 	}
 
 	return (
-		<ProjectTitleShell>
+		<div className={styles.ProjectTitleShell}>
 			{isProjectTitleSelected ? (
-				<ProjectTitleInput>
+				<div className={styles.ProjectTitleInput}>
 					<input
 						type="text"
 						placeholder="Project Title…"
@@ -70,72 +70,21 @@ const ProjectTitle = (props) => {
 						autoFocus={true}
 						readOnly={readOnly}
 					/>
-				</ProjectTitleInput>
+				</div>
 			) : (
-				<ProjectTitleHeader
-					className={projects[selectedProject].title ? null : "placeholder"}
+				<span
+          className={[
+            styles.ProjectTitleHeader,
+            ...(projects[selectedProject].title && [styles.placeholder] || [])
+          ].join(" ")}
 					onClick={selectTitle}
 				>
 					{projects[selectedProject].title || "Project Title…"}
-				</ProjectTitleHeader>
+				</span>
 			)}
-		</ProjectTitleShell>
+		</div>
 	);
 };
-
-const ProjectTitleShell = styled.div`
-	display: flex;
-	flex-direction: column;
-	& > *:not(:last-child) {
-		margin-bottom: 10px;
-	}
-`
-
-const ProjectTitleHeader = styled.span`
-	font-weight: 600;
-	margin: 4px 0;
-	padding: 8px 12px;
-	font-size: 32px;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
-	cursor: text;
-	color: #596766;
-	&.placeholder {
-		color: #C0C0C0;
-	}
-	@media only screen and (max-width: 768px) {
-		padding: 5px 20px 5px 20px;
-		font-size: 22px;
-	}
-`
-
-const ProjectTitleInput = styled.div`
-	width: 100%;
-	margin: 4px 0;
-	padding: 8px 12px;
-	& > input {
-		background-color: transparent;
-		color: #596766;
-		font-size: 32px;
-		width: 100%;
-		font-weight: 600;
-		padding: 0;
-		margin: 0;
-		border: none;
-		outline: none;
-		&::placeholder {
-			color: #C0C0C0;
-		}
-	}
-	@media only screen and (max-width: 768px) {
-		padding: 15px 20px 15px 20px;
-		width: calc(100% - 40px);
-		& > input {
-			font-size: 22px;
-		}
-	}
-`
 
 export default connect((state) => ({
 	tasks: state.tasks,

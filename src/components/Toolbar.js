@@ -1,5 +1,6 @@
 import React, { startTransition, useContext  } from 'react';
 import styled, { ThemeContext } from "styled-components";
+import styles from "./Toolbar.module.scss"
 import * as appActions from "../actions/app"
 import { connect } from "react-redux";
 import { panelPages, AuthState } from "../constants"
@@ -10,7 +11,7 @@ import { ReactComponent as LoginIcon } from "../assets/log-in-outline.svg"
 import Avatar from './UI/Avatar';
 import { useHistory } from 'react-router-dom';
 
-const TasksPanel = (props) => {
+const Toolbar = (props) => {
   const {
     app: {
       isLeftPanelOpened,
@@ -38,19 +39,25 @@ const TasksPanel = (props) => {
     return history.push("/login")
   }
   return (
-    <ToolbarContainer>
-      <TopControls>
-        <Logo>/.</Logo>
-        <Spacer color="transparent" />
-        <ToolbarAction onClick={() => openLeftPanel(panelPages.NOTIFICATIONS)}>
+    <div className={styles.ToolbarContainer}>
+      <div className={styles.TopControls}>
+        <span className={styles.Logo}>/.</span>
+        <div className={styles.Spacer} />
+        <button
+          className={styles.ToolbarAction}
+          onClick={() => openLeftPanel(panelPages.NOTIFICATIONS)}
+        >
           <NotificationIcon
               width="24"
               height="24"
               strokeWidth="32"
               color={themeContext.txtColor}
           />
-        </ToolbarAction>
-        <ToolbarAction onClick={() => openLeftPanel(panelPages.PROJECTS)}>
+        </button>
+        <button
+          className={styles.ToolbarAction}
+          onClick={() => openLeftPanel(panelPages.PROJECTS)}
+        >
           <ProjectsIcon
               width="24"
               height="24"
@@ -60,8 +67,11 @@ const TasksPanel = (props) => {
                 themeContext.primary : themeContext.txtColor
               }
           />
-        </ToolbarAction>
-        <ToolbarAction onClick={() => openLeftPanel(panelPages.APP_SETTINGS)}>
+        </button>
+        <button
+          className={styles.ToolbarAction}
+          onClick={() => openLeftPanel(panelPages.APP_SETTINGS)}
+        >
           <SettingsIcon
               width="24"
               height="24"
@@ -71,117 +81,39 @@ const TasksPanel = (props) => {
                 themeContext.primary : themeContext.txtColor
               }
           />
-        </ToolbarAction>
-      </TopControls>
-      <BottomControls>
+        </button>
+      </div>
+      <div className={styles.BottomControls}>
           {user.state === AuthState.SignedIn ? (
-              <ToolbarAction style={{padding: 0}} onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}>
+              <button
+                className={styles.ToolbarAction}
+                style={{padding: 0}}
+                onClick={() => openLeftPanel(panelPages.ACCOUNT_SETTINGS)}
+              >
                 <Avatar user={user.data} size={42} />
-              </ToolbarAction>
+              </button>
           ) : (
-            <LoginBtn onClick={goToLoginPage}>
+            <button
+              className={[
+                styles.ToolbarAction,
+                styles.LoginBtn
+              ].join(" ")}
+              onClick={goToLoginPage}
+            >
               <LoginIcon
                 width="24"
                 height="24"
                 strokeWidth="32"
                 color="#FFFFFF"
               />
-            </LoginBtn>
+            </button>
           )}
-      </BottomControls>
-    </ToolbarContainer>
+      </div>
+    </div>
   );
 };
-
-const ToolbarContainer = styled.div`
-  position: fixed;
-  left: 0;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
-  padding: 30px 15px;
-  width: 40px;
-  height: calc(100vh - 60px);
-  background-color: ${({theme})=> theme.secondaryBg};
-	@media only screen and (max-width: 768px) {
-    padding: 15px 20px;
-    flex-direction: row;
-    bottom: 10px;
-    top: auto;
-    margin: 0 10px;
-    width: calc(100vw - 40px - 20px);
-    height: 40px;
-    border-radius: 16px;
-	}
-`;
-
-const TopControls = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  & > *:not(:last-child) {
-    margin-bottom: 20px;
-  }
-	@media only screen and (max-width: 768px) {
-    flex-direction: row;
-    & > *:not(:last-child) {
-      margin-bottom: 0px;
-      margin-right: 20px;
-    }
-  }
-`;
-
-const BottomControls = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  & > *:not(:last-child) {
-    margin-bottom: 15px;
-  }
-	@media only screen and (max-width: 768px) {
-    flex-direction: row;
-    & > *:not(:last-child) {
-      display: none;
-      margin-bottom: 0px;
-      margin-right: 15px;
-    }
-  }
-`;
-
-const ToolbarAction = styled.button`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  margin: 0;
-  background-color: transparent;
-  cursor: pointer;
-`
-
-const LoginBtn = styled(ToolbarAction)`
-  padding: 10px;
-  border-radius: 8px;
-  background-color: ${({theme})=> theme.primary};
-`
-
-const Spacer = styled.div`
-  border-top: 1px solid ${({ color }) => color};
-  width: 100%;
-`
-
-const Logo = styled.span`
-  color: ${({theme})=> theme.primary};
-  font-weight: 900;
-  font-size: 22px;
-`
 
 export default connect((state) => ({
   app: state.app,
   user: state.user
-}))(TasksPanel);
+}))(Toolbar);

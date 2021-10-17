@@ -1,0 +1,34 @@
+.ToolbarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  margin: 0 12px;
+  & > span {
+    @include themify(color, "txtColor");
+    font-size: 12px;
+  }
+  @media only screen and (max-width: 768px) {
+    margin: 20px 20px 10px 20px;
+  }
+}
+
+.ToolbarAction {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  padding: 5px;
+  line-height: 0;
+  width: 80px;
+  @include themify(color, "primary");
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 6px;
+  @include themify(background-color, "primaryLight");
+  & > *:not(:last-child) {
+    margin-right: 3px;
+  }
+}

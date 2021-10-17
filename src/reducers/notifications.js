@@ -1,12 +1,20 @@
-import { PUSH_NOTIFICATION, DISMISS_NOTIFICATION, FETCH_NOTIFICATIONS } from "../actions/notifications"
+import { ADD_NOTIFICATION, PUSH_NOTIFICATION, DISMISS_NOTIFICATION, FETCH_NOTIFICATIONS } from "../actions/notifications"
 
 const initState = {
-  stored: {},
+  stored: [],
   pushed: []
 }
 
 export default function (state = initState, action) {
   switch(action.type) {
+    case ADD_NOTIFICATION:
+      return {
+        ...state,
+        stored: [
+          action.notification,
+          ...state.stored
+        ]
+      }
     case PUSH_NOTIFICATION:
       return {
         ...state,
@@ -21,14 +29,14 @@ export default function (state = initState, action) {
         pushed: state.pushed.filter(x => x.id !== action.id)
       }
     case FETCH_NOTIFICATIONS:
-      const newStored = {}
+      const newStored = []
       for (const notification of action.notifications) {
         notification.payload = JSON.parse(notification.payload)
-        newStored[notification.id] = notification
+        newStored.push(notification)
       }
       return {
         ...state,
-        stored: newStored
+        stored: newStored.sort((a, b) => b.createdAt - a.createdAt)
       }
     default:
       return state

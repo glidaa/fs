@@ -1,0 +1,53 @@
+.ProjectTitleShell {
+  display: flex;
+  flex-direction: column;
+  & > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
+}
+
+.ProjectTitleHeader {
+  font-weight: 600;
+  margin: 4px 0;
+  padding: 8px 12px;
+  font-size: 32px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: text;
+  color: #596766;
+  &.placeholder {
+    color: #c0c0c0;
+  }
+  @media only screen and (max-width: 768px) {
+    padding: 5px 20px 5px 20px;
+    font-size: 22px;
+  }
+}
+
+.ProjectTitleInput {
+  width: 100%;
+  margin: 4px 0;
+  padding: 8px 12px;
+  & > input {
+    background-color: transparent;
+    color: #596766;
+    font-size: 32px;
+    width: 100%;
+    font-weight: 600;
+    padding: 0;
+    margin: 0;
+    border: none;
+    outline: none;
+    &::placeholder {
+      color: #c0c0c0;
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    padding: 15px 20px 15px 20px;
+    width: calc(100% - 40px);
+    & > input {
+      font-size: 22px;
+    }
+  }
+}

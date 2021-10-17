@@ -23,7 +23,7 @@ const Notifications = (props) => {
     clearTimeout(dismissTimer.current)
     setAnim(1)
     notificationElem.current.addEventListener("animationend", () => {
-      dispatch(notificationsActions.dismiss(notifications.pushed[0]))
+      dispatch(notificationsActions.dismiss(notifications.pushed[0]?.id))
       setAnim(0)
     })
   }
@@ -32,7 +32,7 @@ const Notifications = (props) => {
     if (notifications.pushed[0]) {
       dismissTimer.current = setTimeout(dismissNotification, 5000)
     }
-  }, [notifications.pushed[0]])
+  }, [notifications.pushed[0]?.id])
   return (
     <NotificationsContainer>
       {notifications.pushed[0] && (
@@ -47,11 +47,15 @@ const Notifications = (props) => {
             <NotificationContent>
               <Avatar user={users[notifications.pushed[0].sender]} size={32} />
               <div>
-                  <span>
-                    <b>@{notifications.pushed[0].sender} </b>
-                    has assigned a task to you. 
-                    Tap here to review it.
-                  </span>
+                  {notifications.pushed[0].type === "ASSIGNMENT" && (
+                    <span>
+                      <b>@{notifications.pushed[0].sender} </b>
+                      has assigned a task to&nbsp;
+                      {notifications.pushed[0].payload.assignee ? 
+                      (<b>@{notifications.pushed[0].payload.assignee}</b>) : "you"}. 
+                      Tap here to review it.
+                    </span>
+                  )}
               </div>
             </NotificationContent>
             <NotificationCloseBtn onClick={dismissNotification}>

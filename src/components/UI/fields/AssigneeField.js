@@ -141,6 +141,8 @@ const NewAssigneeBtn = styled.button`
   cursor: pointer;
   margin-left: 5px;
   border-radius: 8px;
+  background-color: ${({theme}) => theme.secondaryBg};
+  border: 1px solid #C0C0C0;
   & > div {
     display: flex;
     align-items: center;
@@ -208,6 +210,7 @@ const AssigneeItem = styled.span`
   flex-direction: column;
   align-items: center;
   border-radius: 8px;
+  border: 1px solid #C0C0C0;
   &:last-child {
     margin-right: 5px;
   }

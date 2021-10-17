@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from "styled-components";
+import styles from "./index.module.scss";
 import { connect } from "react-redux";
 import parseLinkedList from "../../utils/parseLinkedList";
 import ProjectNotSelected from "./ProjectNotSelected";
@@ -15,8 +15,7 @@ import TasksSearch from './TasksSearch';
 const TasksPanel = (props) => {
   const {
     app: {
-      selectedProject,
-      taskAddingStatus
+      selectedProject
     },
     appSettings: {
       tasksSortingCriteria
@@ -39,12 +38,13 @@ const TasksPanel = (props) => {
     )
   }
   return (
-    <TasksPanelContainer
+    <div
       name="TasksPanelContainer"
-      isReady={
-        status.tasks === READY ||
-        status.tasks === LOADING
-      }
+      className={[
+        styles.TasksPanelContainer,
+        ...((status.tasks === READY ||
+          status.tasks === LOADING) && [styles.ready] || [])
+      ].join(" ")}
       onClick={addNewTask}
     >
       {selectedProject ? (
@@ -66,29 +66,9 @@ const TasksPanel = (props) => {
           )}
         </>
       ) : <ProjectNotSelected />}
-    </TasksPanelContainer>
+    </div>
   )
 }
-
-const TasksPanelContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  flex: 2;
-  padding: 20px 40px 20px 40px;
-  overflow: auto;
-  min-height: calc(100vh - 80px);
-  opacity: ${({isReady}) => isReady ? 1 : 0.5};
-  pointer-events: ${({isReady}) => isReady ? "all" : "none"};
-  background-color: ${({theme}) => theme.primaryBg};
-  transition: opacity 0.3s;
-  @media only screen and (max-width: 768px) {
-		padding: 0px;
-    width: 100%;
-    min-height: 100%;
-    max-height: 100%;
-  }
-`
 
 export default connect((state) => ({
   tasks: state.tasks,

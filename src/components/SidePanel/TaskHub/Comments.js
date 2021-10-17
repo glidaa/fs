@@ -242,15 +242,14 @@ const CommentUnit = styled.div`
     margin-right: 10px;
   }
   ${CommentBox} {
-    ${({isSelf}) => isSelf ? `
+    ${({isSelf, theme}) => isSelf ? `
       border-radius: 16px 16px 0 16px;
-      background-color: ${({theme})=> theme.primaryLight};
-      color: ${({theme})=> theme.primary};
+      background-color: ${theme.primaryLight};
+      color: ${theme.primary};
     ` : `
       border-radius: 16px 16px 16px 0;
-      background-color: rgba(255, 255, 255, 0.5);
-      color: ${({theme})=> theme.txtColor};
-      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+      background-color: ${theme.primary};
+      color: ${theme.txtColor};
     `}
   }
 `

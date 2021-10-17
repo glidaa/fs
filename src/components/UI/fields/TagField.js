@@ -30,7 +30,7 @@ const TagField = (props) => {
         name: name
       }})
     }
-}
+  }
 
   useOuterClick(tagFieldRef, () => {
     if (isEntering && !tagFieldInputRef.current.value.trim()) {

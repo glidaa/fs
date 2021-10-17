@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styled from "styled-components";
+import React from 'react';
+import styles from "./TasksToolbar.module.scss";
 import { connect } from "react-redux";
 import * as tasksActions from "../../actions/tasks"
 import * as appSettingsActions from "../../actions/appSettings";
@@ -52,8 +52,11 @@ const TasksToolbar = (props) => {
     )
   }
   return (
-    <ToolbarContainer>
-      <PasteBtn onClick={pasteTask}>
+    <div className={styles.ToolbarContainer}>
+      <button
+        className={styles.PasteBtn}
+        onClick={pasteTask}
+      >
         <ClipboardIcon
           width={14}
           height={14}
@@ -61,7 +64,7 @@ const TasksToolbar = (props) => {
           color="#FFFFFF"
         />
         <span>Paste</span>
-      </PasteBtn>
+      </button>
       <TextField
         name="searchKeyword"
         placeholder="Search tasks…"
@@ -81,7 +84,7 @@ const TasksToolbar = (props) => {
           flex: 1
         }}
       />
-      <SortingSettings>
+      <div className={styles.SortingSettings}>
         <span>Sorted By</span>
         <Dropdown
           onChange={handleChangeSortingCriteria}
@@ -92,74 +95,10 @@ const TasksToolbar = (props) => {
             BY_STATUS: "status"
           }}
         />
-      </SortingSettings>
-    </ToolbarContainer>     
+      </div>
+    </div>     
   )
 }
-
-const ToolbarContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
-  margin: 0 12px 12px 12px;
-  padding: 10px 0;
-  border-radius: 15px;
-  & > span {
-    font-size: 12px;
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-	@media only screen and (max-width: 768px) {
-    margin: 0 12px 9px 12px;
-	}
-`
-
-const SortingSettings = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  & > span {
-    color: ${({theme})=> theme.txtColor};
-  }
-  & > div {
-    width: 90px;
-  }
-  & > *:not(:last-child) {
-    margin-right: 8px;
-  }
-`
-
-const PasteBtn = styled.button`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  padding: 5px;
-  line-height: 0;
-  padding: 8px 15px;
-  color: #FFFFFF;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  border-radius: 6px;
-  background-color: ${({theme})=> theme.primary};
-  & > *:not(:last-child) {
-    margin-right: 3px;
-  }
-	@media only screen and (max-width: 768px) {
-    & > span {
-      display: none;
-    }
-    & > *:not(:last-child) {
-      margin-right: 0;
-    }
-	}
-`
 
 export default connect((state) => ({
   app: state.app,

@@ -2,13 +2,19 @@ import { API, graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from '../constants';
 import { listNotifications } from "../graphql/queries"
 
+export const ADD_NOTIFICATION = "ADD_NOTIFICATION";
 export const PUSH_NOTIFICATION = "PUSH_NOTIFICATION";
 export const DISMISS_NOTIFICATION = "DISMISS_NOTIFICATION";
 export const FETCH_NOTIFICATIONS = "FETCH_NOTIFICATIONS";
 
-export const push = (id) => ({
+export const add = (notification) => ({
+  type: ADD_NOTIFICATION,
+  notification
+})
+
+export const push = (notification) => ({
   type: PUSH_NOTIFICATION,
-  id
+  notification
 })
 
 export const dismiss = (id) => ({

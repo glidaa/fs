@@ -1,6 +1,7 @@
 import React, { useRef, useMemo, useContext } from "react"
 import styled, { ThemeContext } from "styled-components";
 import { connect } from "react-redux";
+import styles from "./TaskItem.module.scss"
 import useWindowSize from "../../utils/useWindowSize";
 import formatDate from "../../utils/formatDate"
 import copyTaskCore from "../../utils/copyTask"
@@ -214,20 +215,29 @@ const TaskItem = (props) => {
   }
 
   return (
-    <TaskItemShell
+    <div
       {...listeners}
-      isSorting={isSorting}
-      isDragging={isDragging}
+      className={[
+        styles.TaskItemShell,
+        ...(isSorting && [styles.sorting] || []),
+        ...(isDragging && [styles.dragging] || [])
+      ].join(" ")}
     >
-      <TaskItemCore
-        isSorting={isSorting}
-        isDragging={isDragging}
-        isFocused={item.id === selectedTask}
+      <div
+        className={[
+          styles.TaskItemCore,
+          ...(isSorting && [styles.sorting] || []),
+          ...(isDragging && [styles.dragging] || []),
+          ...(item.id === selectedTask && [styles.focused] || [])
+        ].join(" ")}
       >
-        <TaskItemLeftPart>
-          <TaskItemLeftLeftPart>
-            <TaskItemStatusToggle
-              isDone={item.status === "done"}
+        <div className={styles.TaskItemLeftPart}>
+          <div className={styles.TaskItemLeftLeftPart}>
+            <button
+              className={[
+                styles.TaskItemStatusToggle,
+                ...(item.status === "done" && [styles.done] || [])
+              ].join(" ")}
               onClick={() => toggleStatus(item)}
             >
               {item.status === "done" && (
@@ -238,9 +248,9 @@ const TaskItem = (props) => {
                   height="24"
                 />
               )}
-            </TaskItemStatusToggle>
+            </button>
             {selectedTask === item.id ? (
-              <TaskItemInput>
+              <div className={styles.TaskItemInput}>
                 <input
                   type="text"
                   ref={inputRef}
@@ -254,331 +264,98 @@ const TaskItem = (props) => {
                   contentEditable={false}
                   readOnly={readOnly}
                 />
-              </TaskItemInput>
+              </div>
             ) : (
-              <TaskItemHeader
+              <span
                 onClick={() => selectItem(item)}
-                isPlaceholder={!item.task}
-                isDone={item.status === "done"}
+                className={[
+                  styles.TaskItemHeader,
+                  ...(!item.task && [styles.placeholder] || []),
+                  ...(item.status === "done" && [styles.done] || [])
+                ].join(" ")}
               >
                 {item.task || "Task…"}
-              </TaskItemHeader>
+              </span>
             )}
-          </TaskItemLeftLeftPart>
-          <TaskItemLeftRightPart>
+          </div>
+          <div className={styles.TaskItemLeftRightPart}>
             {width > 768 ?
-            <TaskItemActions>
-              <TaskItemAction onClick={() => copyTask(item)}>
+            <div className={styles.TaskItemActions}>
+              <button className={styles.TaskItemAction} onClick={() => copyTask(item)}>
                 <CopyIcon
                   height="18"
                   strokeWidth="34"
                   color={themeContext.primary}
                 />
-              </TaskItemAction>
+              </button>
               {!readOnly && (
-                <TaskItemAction onClick={() => duplicateTask(item)}>
+                <button className={styles.TaskItemAction} onClick={() => duplicateTask(item)}>
                   <DuplicateIcon
                     height="18"
                     strokeWidth="34"
                     color={themeContext.primary}
                   />
-                </TaskItemAction>
+                </button>
               )}
-              <TaskItemAction onClick={() => shareTask(item)}>
+              <button className={styles.TaskItemAction} onClick={() => shareTask(item)}>
                 <ShareIcon
                   height="18"
                   strokeWidth="34"
                   color={themeContext.primary}
                 />
-              </TaskItemAction>
+              </button>
               {!readOnly && (
-                <TaskItemAction onClick={() => removeTask(item)}>
+                <button className={styles.TaskItemAction} onClick={() => removeTask(item)}>
                   <RemoveIcon
                     height="18"
                     strokeWidth="34"
                     color={themeContext.primary}
                   />
-                </TaskItemAction>
+                </button>
               )}
-              <TaskItemAction onClick={() => openRightPanel(item)}>
+              <button className={styles.TaskItemAction} onClick={() => openRightPanel(item)}>
                 <DetailsIcon
                   height="18"
                   strokeWidth="34"
                   color={themeContext.primary}
                 />
-              </TaskItemAction>
-            </TaskItemActions> :
-            <TaskItemOptsBtn onClick={() => openActionSheet(item)}>
+              </button>
+            </div> :
+            <button className={styles.TaskItemOptsBtn} onClick={() => openActionSheet(item)}>
               <OptionsIcon
                 stroke={themeContext.txtColor}
                 strokeWidth="32"
                 width="18"
               />
-            </TaskItemOptsBtn>}
-          </TaskItemLeftRightPart>
-        </TaskItemLeftPart>
-        <TaskItemRightPart isFocused={item.id === selectedTask}>
-          <TaskItemDueDate>
+            </button>}
+          </div>
+        </div>
+        <div
+          className={[
+            styles.TaskItemRightPart,
+            ...(item.id === selectedTask && [styles.focused] || [])
+          ].join(" ")}
+        >
+          <span className={styles.TaskItemDueDate}>
             {item.due ? formatDate(item.due) : "No Due"}
-          </TaskItemDueDate>
+          </span>
           <AvatarGroup
             max={4}
             users={processedAssingees}
             borderColor={themeContext.primaryBg}
             size={ width > 768 ? 24 : 18 }
           />
-        </TaskItemRightPart>
-      </TaskItemCore>
+        </div>
+      </div>
       {(command && selectedTask === item.id) && (
         <SlashCommands
           onChooseSuggestion={onChooseSuggestion}
           posInfo={slashCommandsPos}
         />
       )}
-    </TaskItemShell>
+    </div>
   );
 };
-
-
-const TaskItemActions = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  width: 0;
-  background-color: transparent;
-  &:hover {
-    transition: opacity 0.2s;
-  }
-  & > *:not(:last-child) {
-    margin-right: 5px;
-  }
-`
-
-const TaskItemAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  padding: 5px;
-  border: none;
-  outline: none;
-  border-radius: 100%;
-  cursor: pointer;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  &:hover {
-    background: ${({theme})=> theme.primary};
-    & > svg {
-      color: #FFFFFF;
-    }
-  }
-`
-
-const TaskItemShell = styled.div`
-  display: flex;
-  flex-direction: column;
-  & > *:not(:last-child) {
-    margin-bottom: 10px;
-  }
-  ${({ isSorting, isDragging }) => isDragging ? `
-    z-index: 99;
-  ` : isSorting ? `
-    z-index: -1;
-  ` : ``}
-`
-
-const TaskItemCore = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid ${({isFocused, theme}) => isFocused ? theme.primary : "transparent"};
-  border-radius: 10px;
-  padding: 8px 12px;
-  margin: 4px 0;
-  overflow: hidden;
-  transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-  ${({ isFocused, isSorting, isDragging }) => isFocused ? `
-    & ${TaskItemActions} {
-      opacity: 1;
-      width: auto;
-    }
-  ` : isDragging ? `
-    transform: scale(1.03);
-    background-color: #EAEFEF;
-  ` : isSorting ? `
-    opacity: 0.5;
-  ` : `
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.5);
-      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-      & ${TaskItemActions} {
-        opacity: 1;
-        width: auto;
-      }
-    }
-  `}
-  @media only screen and (max-width: 768px) {
-    margin: 0;
-    padding: 6px 20px;
-    border: none;
-    border-radius: 0;
-    & > *:not(:last-child) {
-      margin-right: 2px;
-    }
-    ${({ isFocused }) => isFocused ? `
-      background-color: rgba(255, 255, 255, 0.5);
-      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    ` : `
-      background-color: transparent;
-    `}
-  }
-`;
-
-const TaskItemLeftPart = styled.div`
-  display: flex;
-  flex: 1;
-  width: 100%;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-  @media only screen and (max-width: 768px) {
-    & > *:not(:last-child) {
-      margin-right: 2px;
-    }
-  }
-`
-
-const TaskItemRightPart = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  width: ${({ isFocused }) => isFocused ? "0px" : "170px"};
-  transition: width 0.3s ease-in-out;
-  & > *:not(:last-child) {
-    margin-right: 5px;
-  }
-  @media only screen and (max-width: 768px) {
-    flex-direction: column;
-    width: ${({ isFocused }) => isFocused ? "0px" : "68px"};
-    & > *:not(:last-child) {
-      margin-right: 2px;
-    }
-  }
-`
-
-const TaskItemHeader = styled.span`
-  font-size: 16px;
-  width: 0px;
-  font-weight: 400;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  cursor: text;
-  flex: 1;
-  text-decoration: ${({isDone}) => isDone ? "line-through" : "none"};
-  color: ${({isPlaceholder, theme}) => isPlaceholder ? "#C0C0C0" : theme.txtColor};
-`
-
-const TaskItemInput = styled.div`
-  width: 100%;
-  & > input {
-    color: ${({theme})=> theme.txtColor};
-    background-color: transparent;
-    font-size: 16px;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    font-weight: 400;
-    &::placeholder {
-      color: #C0C0C0;
-    }
-  }
-`
-
-const TaskItemDueDate = styled.span`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 64px;
-  color: #FFFFFF;
-  font-weight: 600;
-  font-size: 11.2px;
-  background: ${({theme})=> theme.primary};
-  white-space: nowrap;
-    border-radius: 10px;
-    padding: 3px 10px;
-  @media only screen and (max-width: 768px) {
-    width: 48px;
-    font-size: 8px;
-  }
-`
-
-const TaskItemOptsBtn = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  padding: 5px;
-  border: none;
-  outline: none;
-  border-radius: 100%;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-`
-
-const TaskItemLeftLeftPart = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-  @media only screen and (max-width: 768px) {
-    justify-content: flex-start;
-  }
-`
-
-const TaskItemLeftRightPart = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-  @media only screen and (max-width: 768px) {
-    justify-content: flex-start;
-  }
-`
-
-const TaskItemStatusToggle = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  outline: none;
-  border: 1px solid ${({isDone, theme}) => isDone ? theme.primary : theme.txtColor};
-  background-color: ${({isDone, theme}) => isDone ? theme.primary : "transparent"};
-  border-radius: 100%;
-  width: 20px;
-  height: 20px;
-  min-height: 20px;
-  min-width: 20px;
-  padding: 2.5px;
-  cursor: pointer;
-`
 
 export default connect((state) => ({
   user: state.user,
