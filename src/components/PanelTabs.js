@@ -1,4 +1,5 @@
 import React from "react"
+import styles from "./PanelTabs.module.scss"
 import styled from "styled-components"
 
 const PanelTabs = (props) => {
@@ -9,60 +10,24 @@ const PanelTabs = (props) => {
   } = props
 
   return (
-    <PanelTabsShell>
-      <PanelTabsContainer>
+    <div className={styles.PanelTabsShell}>
+      <div className={styles.PanelTabsContainer}>
         {tabs.map(x => (
-          <PanelTab
-            className="noselect"
+            <span
+            className={[
+              styles.PanelTab,
+              "noselect",
+              ...(value === x[0] && [styles.selected] || [])
+            ].join(" ")}
             key={x[0]}
-            isSelected={value === x[0]}
             onClick={() => value !== x[0] && onChange(x[0])}
           >
             {x[1]}
-          </PanelTab>
+          </span>
         ))}
-      </PanelTabsContainer>
-    </PanelTabsShell>
+      </div>
+    </div>
   )
 }
-
-const PanelTabsShell = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;
-
-const PanelTabsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding: 5px;
-  border: none;
-  height: fit-content;
-  width: fit-content;
-  border-radius: 24px;
-  background-color: ${({theme}) => theme.primaryLight};
-  position: relative;
-  & > *:not(:last-child) {
-    margin-right: 5px;
-  }
-`
-
-const PanelTab = styled.span`
-  border-radius: 24px;
-  padding: 4px 15px;
-  font-weight: 600;
-  font-size: 14px;
-  display: flex;
-  justify-content: center;
-  ${({isSelected, theme}) => isSelected ? `
-    background-color: ${theme.primary};
-    color: #FFFFFF;
-    cursor: default;
-  ` : `
-    background-color: transparent;
-    color: ${theme.primary};
-    cursor: pointer;
-  `}
-`
 
 export default PanelTabs

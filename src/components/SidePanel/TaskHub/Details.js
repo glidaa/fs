@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { AuthState } from "../../../constants";
 import DateField from "../../UI/fields/DateField";
 import * as tasksActions from "../../../actions/tasks";
-import styled from "styled-components";
+import styles from "./Details.module.scss";
 import TagField from "../../UI/fields/TagField";
 import CustomScroller from 'react-custom-scroller';
 import AssigneeField from "../../UI/fields/AssigneeField";
@@ -41,7 +41,7 @@ const Details = (props) => {
     );
   };
   return selectedTask && (
-    <DetailsForm>
+    <CustomScroller className={styles.DetailsForm}>
       <form onSubmit={(e) => e.preventDefault()}>
         <input type="submit" name="submit" value="Submit"></input>
         <AssigneeField
@@ -103,30 +103,9 @@ const Details = (props) => {
           readOnly={readOnly}
         />
       </form>
-    </DetailsForm>
+    </CustomScroller>
   )
 }
-
-const DetailsForm = styled(CustomScroller)`
-  overflow: hidden;
-  flex: 1;
-  height: 0;
-  min-height: 0;
-  & div[class^="index-module_inner__"] > form {
-    display: flex;
-    flex-direction: column;
-    margin: 0 25px 25px 25px;
-    & > h2 > span {
-      cursor: pointer;
-    }
-    & > input[type="submit"] {
-      display: none;
-    }
-    & > *:not(:last-child) {
-      margin-bottom: 20px;
-    }
-  }
-`;
 
 export default connect((state) => ({
   user: state.user,

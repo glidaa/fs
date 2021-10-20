@@ -1,5 +1,6 @@
 import React, { useContext } from "react"
-import styled, { ThemeContext } from "styled-components"
+import { ThemeContext } from "styled-components"
+import styles from "./ProjectItem.module.scss"
 import { connect } from "react-redux";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects";
@@ -36,13 +37,16 @@ const ProjectItem = (props) => {
     }
   }
   return (
-    <ProjectItemShell
-      className="noselect"
-      isSelected={selectedProject === project.id}
+    <div
+      className={[
+        styles.ProjectItemShell,
+        "noselect",
+        ...(selectedProject === project.id && [styles.selected] || [])
+      ].join(" ")}
       onClick={() => selectProject(project.id)}
       {...listeners}
     >
-      <ProjectItemPermission>
+      <div className={styles.ProjectItemPermission}>
         {project.privacy === "public" && (
           <GlobeIcon
             height="200"
@@ -59,32 +63,58 @@ const ProjectItem = (props) => {
             color={themeContext.txtColor}
           />
         )}
-      </ProjectItemPermission>
-      <ProjectItemContainer>
-        <ProjectItemLeftPart>
-          <ProjectItemHeader>
-            <ProjectItemTitle isNullTitle={!project.title}>
+      </div>
+      <div className={styles.ProjectItemContainer}>
+        <div className={styles.ProjectItemLeftPart}>
+          <div className={styles.ProjectItemHeader}>
+            <span
+              className={styles.ProjectItemTitle}
+              isNullTitle={!project.title}
+            >
               {project.title || "Untitled Project"}
-            </ProjectItemTitle>
-            <ProjectItemPermalink>{project.permalink}</ProjectItemPermalink>
-          </ProjectItemHeader>
-          <TasksCount>
-            <TodoTasksCount>{project.todoCount}</TodoTasksCount>
-            <PendingTasksCount>{project.pendingCount}</PendingTasksCount>
-            <DoneTasksCount>{project.doneCount}</DoneTasksCount>
-          </TasksCount>
-          <ProjectItemDate>
+            </span>
+            <span className={styles.ProjectItemPermalink}>
+              {project.permalink}
+            </span>
+          </div>
+          <div className={styles.TasksCount}>
+            <span
+              className={[
+                styles.TasksCountItem,
+                styles.TodoTasksCount
+              ].join(" ")}
+            >
+              {project.todoCount}
+            </span>
+            <span
+              className={[
+                styles.TasksCountItem,
+                styles.PendingTasksCount
+              ].join(" ")}
+            >
+              {project.pendingCount}
+            </span>
+            <span
+              className={[
+                styles.TasksCountItem,
+                styles.DoneTasksCount
+              ].join(" ")}
+            >
+              {project.doneCount}
+            </span>
+          </div>
+          <span className={styles.ProjectItemDate}>
             Created {formatDate(new Date(project.createdAt).getTime())}
-          </ProjectItemDate>
-        </ProjectItemLeftPart>
-        <ProjectItemRightPart>
+          </span>
+        </div>
+        <div className={styles.ProjectItemRightPart}>
           <ProgressRing
             radius={36}
             stroke={3.5}
             progress={project.doneCount / (project.todoCount + project.pendingCount + project.doneCount) * 100}
           />
-          <ProjectItemActions>
-            <ProjectItemAction>
+          <div className={styles.ProjectItemActions}>
+            <button className={styles.ProjectItemAction}>
               <ShareIcon
                 onClick={shareProject}
                 height="20"
@@ -92,8 +122,8 @@ const ProjectItem = (props) => {
                 strokeWidth="42"
                 color="#FFFFFF"
               />
-            </ProjectItemAction>
-            <ProjectItemAction>
+            </button>
+            <button className={styles.ProjectItemAction}>
               <RemoveIcon
                 onClick={removeProject}
                 height="20"
@@ -101,161 +131,13 @@ const ProjectItem = (props) => {
                 strokeWidth="42"
                 color="#FFFFFF"
               />
-            </ProjectItemAction>
-          </ProjectItemActions>
-        </ProjectItemRightPart>
-      </ProjectItemContainer>
-    </ProjectItemShell>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
-
-const ProjectItemShell = styled.div`
-  background-origin: border-box!important;
-  border: none;
-  padding: 20px;
-  margin: 0 25px;
-  overflow: hidden;
-  border-radius: 10px;
-  position: relative;
-  background-color: ${({theme})=> theme.primary};
-  ${({ isSelected }) => isSelected ? `
-    border: 4px solid #F778BA;
-  ` : `
-    border: 4px solid transparent;
-  `}
-`
-
-const ProjectItemContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  transition: background-color 0.3s;
-  & * {
-    z-index: 2;
-  }
-`;
-
-const ProjectItemLeftPart = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex: 2;
-  & > *:not(:last-child) {
-    margin-bottom: 10px;
-  }
-`
-
-const ProjectItemRightPart = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex: 1;
-`
-
-const ProjectItemHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-`
-
-const ProjectItemTitle = styled.span`
-  color: #FFFFFF;
-  font-weight: 600;
-  font-size: 20px;
-  max-width: 197.08px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-`
-
-const ProjectItemPermalink = styled.span`
-  font-size: 12px;
-  color: #FFFFFF;
-  font-weight: 500;
-  max-width: 197.08px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-`
-
-const TasksCount = styled.div`
-  display: flex;
-  flex-direction: row;
-  color: #5D6969;
-  font-size: 14px;
-  & > *:not(:last-child) {
-    margin-right: 5px;
-  }
-`
-
-const TasksCountItem = styled.span`
-  padding: 1px 10px;
-  border-radius: 10px;
-  &::before {
-    content: "⬤ ";
-    white-space: pre;
-  }
-`
-
-const TodoTasksCount = styled(TasksCountItem)`
-  background-color: #FFEBE5;
-  &::before {
-    color: #FF1744;
-  }
-`
-
-const PendingTasksCount = styled(TasksCountItem)`
-  background-color: #FDF1DB;
-  &::before {
-    color: #FF9100;
-  }
-`
-
-const DoneTasksCount = styled(TasksCountItem)`
-  background-color: #DAF6F4;
-  &::before {
-    color: #00E676;
-  }
-`
-
-const ProjectItemActions = styled.div`
-  display: flex;
-  flex-direction: row;
-  & > *:not(:last-child) {
-    margin-right: 5px;
-  }
-`
-
-const ProjectItemAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 1px 6px;
-`
-
-const ProjectItemPermission = styled.div`
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  right: 0;
-  bottom: 0;
-  opacity: 0.15;
-  z-index: 1;
-`
-
-const ProjectItemDate = styled.span`
-  font-size: 12px;
-  color: #FFFFFF;
-  font-weight: 500;
-  max-width: 100%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-`
 
 export default connect((state) => ({
   app: state.app

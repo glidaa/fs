@@ -1,0 +1,26 @@
+.PanelPageToolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 25px;
+  padding-top: 25px;
+}
+
+.PanelPageTitle {
+  @include themify(color, "txtColor");
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.PanelPageToolbarAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  cursor: pointer;
+}

@@ -1,0 +1,124 @@
+.TagFieldShell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  & > label {
+    @include themify(color, "txtColor");
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
+}
+
+.TagFieldContainer {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.NewTagBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  @include themify(color, "primary");
+  font-size: 20px;
+  outline: none;
+  width: 33px;
+  height: 33px;
+  font-weight: 500;
+  line-height: 0;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid;
+  @include themify(border-color, "primary");
+  @include themify(background-color, "secondaryBg");
+}
+
+.NoTags {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  @include themify(background-color, "primary");
+  outline: none;
+  width: fit-content;
+  height: fit-content;
+  border: 1px solid;
+  @include themify(border-color, "primary");
+}
+
+.TagItem {
+  position: relative;
+  display: inline-flex;
+  padding: 5px 10px;
+  font-weight: 600;
+  font-size: 14px;
+  width: fit-content;
+  height: fit-content;
+  color: #5d6969;
+  border-radius: 8px;
+  border: none;
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid #c0c0c0;
+  & > span {
+    cursor: pointer;
+    &:nth-child(1) {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    &:nth-child(2) {
+      border-radius: 100%;
+      height: 12px;
+      width: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.TagInput {
+  position: relative;
+  display: inline-flex;
+  padding: 5px 10px;
+  width: 60px;
+  border: none;
+  border-radius: 8px;
+  border: 1px solid #c0c0c0;
+  & > input {
+    border: none;
+    width: 60px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0;
+    @include themify(color, "txtColor");
+    @include themify(background-color, "secondaryBg");
+    &::placeholder {
+      color: #c0c0c0;
+    }
+  }
+}

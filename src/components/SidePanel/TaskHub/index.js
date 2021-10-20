@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useState, useContext } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../../actions/app";
 import { AuthState } from "../../../constants";
-import styled, { ThemeContext } from "styled-components";
+import { ThemeContext } from "styled-components";
+import styles from "./index.module.scss"
 import Comments from "./Comments";
 import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-back-outline.svg";
 import { ReactComponent as ShareIcon } from "../../../assets/share-outline.svg"
@@ -42,25 +43,33 @@ const TaskHub = (props) => {
 	}
   return (
     <>
-      <PanelPageToolbar>
-        <PanelPageToolbarAction onClick={closePanel}>
+      <div className={styles.PanelPageToolbar}>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={closePanel}
+        >
           <BackArrowIcon
               width={24}
               height={24}
               strokeWidth={32}
               color={themeContext.primary}
           />
-        </PanelPageToolbarAction>
-        <PanelPageTitle>Task Hub</PanelPageTitle>
-        <PanelPageToolbarAction onClick={shareTask}>
+        </button>
+        <span className={styles.PanelPageTitle}>
+          Task Hub
+        </span>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={shareTask}
+        >
           <ShareIcon
               width={24}
               height={24}
               strokeWidth={32}
               color={themeContext.primary}
           />
-        </PanelPageToolbarAction>
-      </PanelPageToolbar>
+        </button>
+      </div>
       {user.state === AuthState.SignedIn && (
         <PanelTabs
           tabs={[
@@ -76,33 +85,6 @@ const TaskHub = (props) => {
     </>
   );
 };
-
-const PanelPageToolbar = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 25px;
-  padding-top: 25px;
-`
-
-const PanelPageTitle = styled.span`
-  color: ${({theme})=> theme.txtColor};
-  font-size: 18px;
-  font-weight: 600;
-`
-
-const PanelPageToolbarAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  cursor: pointer;
-`
 
 export default connect((state) => ({
   user: state.user,

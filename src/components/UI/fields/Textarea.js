@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import styled from "styled-components"
+import styles from "./Textarea.module.scss"
 
 const Textarea = (props) => {
   const {
@@ -24,10 +24,13 @@ const Textarea = (props) => {
     }
   }, [])
   return (
-    <TextareaContainer
+    <div
       style={style}
-      isError={error}
-      isFocused={isFocused}
+      className={[
+        styles.TextareaContainer,
+        ...(error && [styles.error] || []),
+        ...(isFocused && [styles.focused] || [])
+      ].join(" ")}
     >
       {label && (
         <label htmlFor={name}>
@@ -49,63 +52,8 @@ const Textarea = (props) => {
         ></textarea>
       </div>
       {error && <span>{error}</span>}
-    </TextareaContainer>
+    </div>
   )
 }
-
-const TextareaContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  & > *:not(:last-child) {
-    margin-bottom: 5px;
-  }
-  & > label {
-    color: ${({theme})=> theme.txtColor};
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  & > div {
-    position: relative;
-    display: grid;
-    width: 100%;
-    border-radius: 8px;
-    &::after {
-      content: attr(data-replicated-value) " ";
-      white-space: pre-wrap;
-      visibility: hidden;
-    }
-    & > textarea {
-      resize: none;
-      overflow: hidden;
-      &:disabled {
-        background-color: #FAFAFA;
-      }
-      &::placeholder {
-        color: #C0C0C0;
-      }
-    }
-    & > textarea, &::after {
-      width: calc(100% - 20px);
-      padding: 5px 10px;
-      color: ${({theme})=> theme.txtColor};
-      background-color: ${({theme})=> theme.secondaryBg};
-      border-radius: 8px;
-      border: none;
-      border: 1px solid ${({isError, isFocused, theme}) => 
-        isError ? "#FF0000" : isFocused ? theme.primary : "#C0C0C0"};
-      font-size: 14px;
-      font-weight: 400;
-      grid-area: 1 / 1 / 2 / 2;
-    }
-  }
-  & > span {
-    color: #FF0000;
-    font-size: 12px;
-  }
-`
 
 export default Textarea

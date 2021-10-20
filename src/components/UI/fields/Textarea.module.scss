@@ -1,0 +1,59 @@
+.TextareaContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
+  & > label {
+    @include themify(color, "txtColor");
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & > div {
+    position: relative;
+    display: grid;
+    width: 100%;
+    border-radius: 8px;
+    &::after {
+      content: attr(data-replicated-value) " ";
+      white-space: pre-wrap;
+      visibility: hidden;
+    }
+    & > textarea {
+      resize: none;
+      overflow: hidden;
+      &:disabled {
+        background-color: #fafafa;
+      }
+      &::placeholder {
+        color: #c0c0c0;
+      }
+    }
+    & > textarea,
+    &::after {
+      width: calc(100% - 20px);
+      padding: 5px 10px;
+      @include themify(color, "txtColor");
+      @include themify(background-color, "secondaryBg");
+      border-radius: 8px;
+      border: 1px solid #c0c0c0;
+      &.error {
+        border-color: #ff0000;
+      }
+      &.focused {
+        @include themify(border-color, "primary");
+      }
+      font-size: 14px;
+      font-weight: 400;
+      grid-area: 1 / 1 / 2 / 2;
+    }
+  }
+  & > span {
+    color: #ff0000;
+    font-size: 12px;
+  }
+}
