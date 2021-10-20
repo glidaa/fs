@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "@aws-amplify/api";
-import { Auth } from "@aws-amplify/auth";
 import { AuthState } from "../constants";
 import * as projectsActions from "../actions/projects";
 import * as tasksActions from "../actions/tasks";
 import * as appActions from "../actions/app";
 import * as appSettingsActions from "../actions/appSettings";
-import aws_exports from "../aws-exports";
 import * as queries from "../graphql/queries"
 import { Route, useHistory, useRouteMatch } from "react-router-dom";
 import TasksPanel from "./TasksPanel";
@@ -17,8 +15,6 @@ import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
 import AuthFlow from "./AuthFlow";
 import Notifications from "./Notifications";
-API.configure(aws_exports);
-Auth.configure(aws_exports);
 
 const App = (props) => {
   const {

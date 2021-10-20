@@ -7,11 +7,13 @@ import { BrowserRouter } from "react-router-dom"
 import store from "./store"
 import './index.scss';
 import App from './components/App';
-import Amplify from 'aws-amplify';
+import { API } from "@aws-amplify/api";
+import { Auth } from "@aws-amplify/auth";
 import awsconfig from './aws-exports';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-Amplify.configure(awsconfig);
+API.configure(awsconfig);
+Auth.configure(awsconfig);
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
 root.render(
