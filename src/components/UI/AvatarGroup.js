@@ -1,5 +1,5 @@
 import React, { Fragment } from "react"
-import styled from "styled-components"
+import styles from "./AvatarGroup.module.scss"
 
 const AvatarGroup = (props) => {
 	const {
@@ -10,72 +10,80 @@ const AvatarGroup = (props) => {
 	} = props
 
 	return (
-		<AvatarGroupContainer max={max} size={size}>
+		<div
+      className={styles.AvatarGroupContainer}
+			style={{
+        minHeight: size,
+        minWidth: size + max * (size - size * 0.42)
+      }}
+		>
 			{users.slice(0, users.length > max ? max - 1 : max).map(({ avatar, abbr, name }, i) => (
 				<Fragment key={i}>
 					{avatar ?
-						<ImageAvatar borderColor={borderColor} size={size} src={avatar} /> :
-						<LetterAvatar borderColor={borderColor} size={size}>{abbr || name[0]}</LetterAvatar>
+						<img
+              className={styles.ImageAvatar}
+              style={{
+                width: size,
+                height: size,
+                borderColor: borderColor,
+                ...(i < max - 1 && {
+                  marginRight: -(size * 0.42)
+                })
+              }}
+              src={avatar}
+            /> :
+						<div 
+              className={styles.LetterAvatar}
+              style={{
+                fontSize: size / 2.4,
+                minWidth: size,
+                minHeight: size,
+                width: size,
+                height: size,
+                borderColor: borderColor,
+                ...(i < max - 1 && {
+                  marginRight: -(size * 0.42)
+                })
+              }}
+            >
+              {abbr || name[0]}
+            </div>
 					}
 				</Fragment>
 			))}
 			{users.length <= max && new Array(max - users.length).fill(0).map((_, i) => (
-				<DumpAvatar key={i} borderColor={borderColor} size={size} />
+        <div 
+          className={styles.DumpAvatar}
+          style={{
+            minWidth: size,
+            minHeight: size,
+            width: size,
+            height: size,
+            borderColor: borderColor,
+            ...(i < max - 1 && {
+              marginRight: -(size * 0.42)
+            })
+          }}
+          key={i}
+        />
 			))}
-			{users.length > max && <LetterAvatar borderColor={borderColor} size={size}>+{users.length - max + 1}</LetterAvatar>}
-		</AvatarGroupContainer>
+			{users.length > max && (
+        <div 
+          className={styles.LetterAvatar}
+          style={{
+            fontSize: size / 2.4,
+            minWidth: size,
+            minHeight: size,
+            width: size,
+            height: size,
+            borderColor: borderColor
+          }}
+        >
+          +{users.length - max + 1}
+        </div>
+      )}
+		</div>
 	)
 }
-
-const AvatarGroupContainer = styled.div`
-	display: flex;
-	align-items: center;
-	min-height: ${({ size }) => size}px;
-	min-width: ${({ max, size }) => size + max * (size - size * 0.42)}px;
-`
-
-const ImageAvatar = styled.img`
-	display: inline;
-	border-radius: 100%;
-	width: ${({ size }) => size}px;
-	height: ${({ size }) => size}px;
-	border: 2px solid ${({ borderColor }) => borderColor};
-	&:not(:last-child) {
-		margin-right: -${({ size }) => size * 0.42}px;
-	}
-`
-
-const LetterAvatar = styled.div`
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 100%;
-	color: ${({theme})=> theme.primary};
-	background-color: ${({theme})=> theme.primaryLight};
-	line-height: 0;
-	font-size: ${({ size }) => size / 2.4}px;
-	min-width: ${({ size }) => size}px;
-	min-height: ${({ size }) => size}px;
-	width: ${({ size }) => size}px;
-	height: ${({ size }) => size}px;
-	border: 2px solid ${({ borderColor }) => borderColor};
-	&:not(:last-child) {
-		margin-right: -${({ size }) => size * 0.42}px;
-	}
-`
-
-const DumpAvatar = styled.div`
-	display: inline-flex;
-	border-radius: 100%;
-	background-color: ${({theme})=> theme.primaryLight};
-	min-width: ${({ size }) => size}px;
-	min-height: ${({ size }) => size}px;
-	width: ${({ size }) => size}px;
-	height: ${({ size }) => size}px;
-	border: 2px solid ${({ borderColor }) => borderColor};
-	&:not(:last-child) {
-		margin-right: -${({ size }) => size * 0.42}px;
-	}
-`
 
 export default AvatarGroup

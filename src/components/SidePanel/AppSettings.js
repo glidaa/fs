@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
-import styled, { ThemeContext } from "styled-components";
+import themes from "../../themes"
+import styles from "./AppSettings.module.scss"
 import CustomScroller from 'react-custom-scroller';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
@@ -10,12 +11,13 @@ import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 const AppSettings = (props) => {
   const {
     appSettings: {
-      tasksSortingCriteria
+      tasksSortingCriteria,
     },
+    appSettings,
     dispatch
   } = props;
 
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
 
   const handleChange = (e) => {
     switch (e.target.name) {
@@ -38,32 +40,41 @@ const AppSettings = (props) => {
   }
   return (
     <>
-      <PanelPageToolbar>
-        <PanelPageToolbarAction onClick={closePanel}>
+      <div className={styles.PanelPageToolbar}>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={closePanel}
+        >
           <BackArrowIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-        <PanelPageTitle>App Settings</PanelPageTitle>
-        <PanelPageToolbarAction onClick={removeProject}>
+        </button>
+        <span className={styles.PanelPageTitle}>
+          App Settings
+        </span>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={removeProject}
+        >
           <RemoveIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-      </PanelPageToolbar>
-      <AppSettingsForm>
+        </button>
+      </div>
+      <CustomScroller className={styles.AppSettingsForm}>
         <form onSubmit={(e) => e.preventDefault()}>
-          <AppSetting>
+          <div className={styles.AppSetting}>
             <label htmlFor="tasksSortingCriteria">
               Sort Tasks By
             </label>
-            <SelectField
+            <select
+              className={styles.SelectField}
               name="tasksSortingCriteria"
               onChange={handleChange}
               value={tasksSortingCriteria}
@@ -71,94 +82,14 @@ const AppSettings = (props) => {
               <option value="BY_DEFAULT">default</option>
               <option value="BY_DUE">due date</option>
               <option value="BY_STATUS">status</option>
-            </SelectField>
-          </AppSetting>
+            </select>
+          </div>
           <input type="submit" name="submit" value="Submit"></input>
         </form>
-      </AppSettingsForm>
+      </CustomScroller>
     </>
   );
 };
-
-const AppSettingsForm = styled(CustomScroller)`
-  overflow: hidden;
-  flex: 1;
-  height: 0;
-  min-height: 0;
-  & div[class^="index-module_inner__"] > form {
-    display: flex;
-    flex-direction: column;
-    & > h2 > span {
-      cursor: pointer;
-    }
-    & > input[type="submit"] {
-      display: none;
-    }
-    & > *:not(:last-child) {
-      margin-bottom: 20px;
-    }
-  }
-`;
-
-const AppSetting = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 0 25px;
-  & > label {
-    color: ${({theme})=> theme.txtColor};
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 16px;
-    font-weight: 600;
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 5px;
-  }
-`
-
-const SelectField = styled.select`
-  width: calc(100% - 20px);
-  padding: 10px 10px;
-  border: 1px solid #C0C0C0;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  &:disabled {
-    background-color: #FAFAFA;
-  }
-  &::placeholder {
-    color: #C0C0C0;
-  }
-`
-
-const PanelPageToolbar = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 25px;
-  padding-top: 25px;
-`
-
-const PanelPageTitle = styled.span`
-  color: ${({theme})=> theme.txtColor};
-  font-size: 18px;
-  font-weight: 600;
-`
-
-const PanelPageToolbarAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  cursor: pointer;
-`
 
 export default connect((state) => ({
   appSettings: state.appSettings

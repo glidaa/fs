@@ -1,9 +1,9 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useMemo } from 'react';
 import { useOuterClick } from 'react-outer-click';
 import { useState, useRef } from "react"
 import { connect } from "react-redux";
 import { AuthState } from "../../../constants";
-import { ThemeContext } from "styled-components";
+import themes from "../../../themes"
 import styles from "./Comments.module.scss"
 import { stateToHTML } from 'draft-js-export-html';
 import { Editor, EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';
@@ -22,9 +22,10 @@ const Comments = (props) => {
       selectedTask
     },
     projects,
+    appSettings,
     dispatch
   } = props
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
   const newCommentRef = useRef(null)
   const [isNewCommentOpened, setIsNewCommentOpened] = useState(false)
   const [editorState, setEditorState] = useState(
@@ -118,7 +119,7 @@ const Comments = (props) => {
                         height="16"
                         width="16"
                         strokeWidth="32"
-                        color={themeContext.primary}
+                        color={theme.primary}
                       />
                     </button>
                   </div>
@@ -192,4 +193,5 @@ export default connect((state) => ({
   comments: state.comments,
   projects: state.projects,
   users: state.users,
+  appSettings: state.appSettings
 }))(Comments);

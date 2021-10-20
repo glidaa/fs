@@ -1,5 +1,6 @@
-import React, { useState, useContext } from "react"
-import styled, { ThemeContext } from "styled-components";
+import React, { useState } from "react"
+import themes from "../../../themes"
+import styles from "./index.module.scss"
 import { connect } from "react-redux";
 import * as projectsActions from "../../../actions/projects"
 import * as appActions from "../../../actions/app"
@@ -21,9 +22,10 @@ const Projects = (props) => {
       projectAddingStatus
     },
     projects,
+    appSettings,
     dispatch
   } = props
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
   const [scope, setScope] = useState("owned")
   const createNewProject = () => {
     if (projectAddingStatus === OK) {
@@ -46,29 +48,34 @@ const Projects = (props) => {
   }
   return (
     <>
-      <PanelPageContainer>
-        <PanelPageToolbar>
-          <PanelPageToolbarAction onClick={closePanel}>
+      <div className={styles.PanelPageContainer}>
+        <div className={styles.PanelPageToolbar}>
+          <button
+            className={styles.PanelPageToolbarAction}
+            onClick={closePanel}
+          >
             <BackArrowIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
             />
-          </PanelPageToolbarAction>
-          <PanelPageTitle>Projects</PanelPageTitle>
-          <PanelPageToolbarAction
+          </button>
+          <span className={styles.PanelPageTitle}>
+            Projects
+          </span>
+          <button
+            className={styles.PanelPageToolbarAction}
             onClick={createNewProject}
-            isInactive={projectAddingStatus === PENDING}
           >
             <AddIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
             />
-          </PanelPageToolbarAction>
-        </PanelPageToolbar>
+          </button>
+        </div>
         {user.state === AuthState.SignedIn && (
           <PanelTabs
             tabs={[
@@ -80,73 +87,19 @@ const Projects = (props) => {
             onChange={(newVal) => setScope(newVal)}
           />
         )}
-        <ProjectItems>
+        <CustomScroller className={styles.ProjectItems}>
           {scope === "assigned" && <Assigned />}
           {scope === "watched" && <Watched />}
           {scope === "owned" && <Owned />}
-        </ProjectItems>
-      </PanelPageContainer>
+        </CustomScroller>
+      </div>
     </>
   );  
 }
 
-const PanelPageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  & > *:not(:last-child) {
-    margin-bottom: 25px;
-  }
-`;
-
-const PanelPageToolbar = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 25px;
-  padding-top: 25px;
-`
-
-const PanelPageTitle = styled.span`
-  color: ${({theme})=> theme.txtColor};
-  font-size: 18px;
-  font-weight: 600;
-`
-
-const ProjectItems = styled(CustomScroller)`
-  overflow: hidden;
-  flex: 1;
-  height: 0;
-  min-height: 0;
-  /* & div[class^="index-module_inner__"]-wrapper {
-    min-height: 100%;
-  } */
-  & div[class^="index-module_inner__"] > div > div {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    padding-bottom: 25px;
-    & > *:not(:last-child) {
-      margin-bottom: 10px;
-    }
-  }
-`;
-
-const PanelPageToolbarAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  cursor: pointer;
-`
-
 export default connect((state) => ({
   user: state.user,
   app: state.app,
-  projects: state.projects
+  projects: state.projects,
+  appSettings: state.appSettings
 }))(Projects);

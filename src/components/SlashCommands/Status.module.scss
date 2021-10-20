@@ -1,0 +1,32 @@
+.StatusSuggestion {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: transparent;
+  padding: 10px 20px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  &.selected {
+      background-color: #F5F5F5;
+  }
+  & > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    & > span:nth-child(1) {
+      font-size: 18px;
+    }
+    & > span:nth-child(2) {
+      @include themify(color, "txtColor");
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: lowercase;
+      &::first-letter {
+        text-transform: capitalize;
+      }
+    }
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+}

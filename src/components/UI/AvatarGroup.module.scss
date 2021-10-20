@@ -1,0 +1,28 @@
+.AvatarGroupContainer {
+  display: flex;
+  align-items: center;
+}
+
+.ImageAvatar {
+  display: inline;
+  border-radius: 100%;
+  border: 2px solid;
+}
+
+.LetterAvatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  @include themify(color, "primary");
+  @include themify(background-color, "primaryLight");
+  line-height: 0;
+  border: 2px solid;
+}
+
+.DumpAvatar {
+  display: inline-flex;
+  border-radius: 100%;
+  @include themify(background-color, "primaryLight");
+  border: 2px solid;
+}

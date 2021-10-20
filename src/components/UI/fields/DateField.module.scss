@@ -1,0 +1,79 @@
+.DateFieldShell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  & > label {
+    @include themify(color, "txtColor");
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & > span {
+    color: #ff0000;
+    font-size: 12px;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
+}
+
+.DateFieldContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 20px);
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  border: 1px solid #c0c0c0;
+  &.error {
+    border-color: #ff0000;
+  }
+  &.readOnly > input {
+    cursor: default;
+  }
+  & > input {
+    flex: 1;
+    padding: 0;
+    border: none;
+    @include themify(color, "txtColor");
+    @include themify(background-color, "secondaryBg");
+    cursor: pointer;
+    transition: border 0.3s, box-shadow 0.3s;
+    font-size: 14px;
+    font-weight: 400;
+    &::placeholder {
+      color: #c0c0c0;
+    }
+  }
+}
+
+.PickerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #000000aa;
+  z-index: 9999;
+  div.Calendar {
+    @include themify(background-color, "secondaryBg");
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border: none;
+  }
+}
+
+.ClearBtn {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  line-height: 0;
+  cursor: pointer;
+}

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 import { connect } from "react-redux"
-import styled from "styled-components";
+import styles from "./Watched.module.scss";
 import ProjectItem from "../../ProjectItem"
 import { ReactComponent as NoWatchedIllustartion } from "../../../assets/undraw_Surveillance_re_8tkl.svg"
 
@@ -22,42 +22,16 @@ const Projects = (props) => {
           />
         </div>
       )) : (
-        <NoWatchedProjects>
+        <div className={styles.NoWatchedProjects}>
           <NoWatchedIllustartion />
           <span>
             No Projects Watched By You
           </span>
-        </NoWatchedProjects>
+        </div>
       )}
     </div>
   );  
 }
-
-const NoWatchedProjects = styled.div`
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  margin-top: -25px;
-  width: 100%;
-  & > svg {
-    width: 250px;
-    height: auto;
-    margin-top: 25px;
-  }
-  & > span {
-    font-weight: bold;
-    font-size: 18px;
-    color: ${({theme})=> theme.txtColor};
-    margin-top: 25px;
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 40px;
-  }
-`
 
 export default connect((state) => ({
   user: state.user,

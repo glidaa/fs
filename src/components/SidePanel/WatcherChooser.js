@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../../actions/app";
-import styled, { ThemeContext } from "styled-components";
+import themes from "../../themes"
+import styles from "./WatcherChooser.module.scss"
 import * as tasksActions from "../../actions/tasks"
 import { panelPages, AuthState } from "../../constants";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -18,10 +19,11 @@ const WatcherChooser = (props) => {
     },
     tasks,
     user,
+    appSettings,
     dispatch
   } = props;
 
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
 
   const [keyword, setKeyword] = useState("")
   const [results, setResults] = useState([])
@@ -95,8 +97,9 @@ const WatcherChooser = (props) => {
   }
   return (
     <>
-      <PanelPageToolbar>
-        <PanelPageToolbarAction
+      <div className={styles.PanelPageToolbar}>
+        <button
+          className={styles.PanelPageToolbarAction}
           onClick={closeChooser}
           disabled={isBusy}
         >
@@ -104,11 +107,14 @@ const WatcherChooser = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-        <PanelPageTitle>Add Watcher</PanelPageTitle>
-        <PanelPageToolbarAction
+        </button>
+        <span className={styles.PanelPageTitle}>
+          Add Watcher
+        </span>
+        <button
+          className={styles.PanelPageToolbarAction}
           onClick={shareTask}
           disabled={isBusy}
         >
@@ -116,11 +122,12 @@ const WatcherChooser = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-      </PanelPageToolbar>
-      <KeywordField
+        </button>
+      </div>
+      <input
+        className={styles.KeywordField}
         type="text"
         name="keyword"
         placeholder="Start searching…"
@@ -128,9 +135,10 @@ const WatcherChooser = (props) => {
         disabled={isBusy}
         value={keyword}
       />
-      <SearchResults>
+      <div className={styles.SearchResults}>
         {keyword && filteredResults.map(x => (
-          <SearchResultsItem
+          <button
+            className={styles.SearchResultsItem}
             key={x.username}
             disabled={isBusy}
             onClick={() => handleAddWatcher(x.username)}
@@ -140,149 +148,34 @@ const WatcherChooser = (props) => {
               <span>{`${x.firstName} ${x.lastName}`}</span>
               <span>@{x.username}</span>
             </div>
-          </SearchResultsItem>
+          </button>
         ))}
         {!keyword && (
-          <WatcherChooserIllustartion>
+          <div className={styles.WatcherChooserIllustartion}>
             <WatcherSearchIllustartion />
             <span>
               Search For A Watcher
             </span>
-          </WatcherChooserIllustartion>
+          </div>
         )}
         {keyword &&
         !filteredResults.length && (
-          <WatcherChooserIllustartion>
+          <div className={styles.WatcherChooserIllustartion}>
             <NoResultsIllustartion />
             <span>
               No Results Found
             </span>
-          </WatcherChooserIllustartion>
+          </div>
         )}
-      </SearchResults>
+      </div>
     </>
   );
 };
-
-const PanelPageToolbar = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 25px;
-  padding-top: 25px;
-`
-
-const PanelPageTitle = styled.span`
-  color: ${({theme})=> theme.txtColor};
-  font-size: 18px;
-  font-weight: 600;
-`
-
-const PanelPageToolbarAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  transition: opacity 0.3s;
-  cursor: pointer;
-  &:disabled {
-    opacity: 0.6;
-    cursor: default;
-  }
-`
-
-const KeywordField = styled.input`
-  position: relative;
-  width: calc(100% - 90px);
-  background-color: #F6F6F6;
-  outline: none;
-  border: none;
-  padding: 10px;
-  margin: 0 25px;
-  font-size: 14px;
-  font-weight: 400;
-  transition: opacity 0.3s;
-  border-radius: 8px;
-  &::placeholder {
-    color: #C0C0C0;
-  }
-  &:disabled {
-    opacity: 0.6;
-  }
-`
-
-const SearchResults = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  border-radius: 4px;
-  width: 100%;
-`
-
-const SearchResultsItem = styled.button`
-  display: flex;
-  flex-direction: row;
-  cursor: pointer;
-  align-items: center;
-  font-size: 12px;
-  padding: 10px 25px;
-  border: none;
-  background-color: transparent;
-  text-align: start;
-  transition: background-color 0.3s, opacity 0.3s;
-  & > div:nth-child(2) {
-    display: flex;
-    flex-direction: column;
-    & > span:nth-child(1) {
-      font-weight: bold;
-      color: ${({theme})=> theme.txtColor};
-    }
-    & > span:nth-child(2) {
-      font-style: italic;
-      color: grey;
-    }
-  }
-  &:not(:disabled):hover {
-    background-color: #E4E4E2;
-  }
-  &:disabled {
-    cursor: default;
-    opacity: 0.6;
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
-const WatcherChooserIllustartion = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  margin-top: -25px;
-  & > svg {
-    width: 250px;
-    height: auto;
-  }
-  & > span {
-    font-weight: bold;
-    font-size: 18px;
-    color: ${({theme})=> theme.txtColor};
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 40px;
-  }
-`
 
 export default connect((state) => ({
   user: state.user,
   tasks: state.tasks,
   app: state.app,
   users: state.users,
+  appSettings: state.appSettings
 }))(WatcherChooser);

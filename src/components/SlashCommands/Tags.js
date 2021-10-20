@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import styled from "styled-components"
+import styles from "./Tags.module.scss"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
@@ -41,52 +41,27 @@ const Tags = (props) => {
   }, [suggestedTags, tasks, selectedTask])
 
   return (
-    <TagsSuggestion
-      isActive={suggestedTags}
+    <div
+      className={[
+        styles.TagsSuggestion,
+        ...(suggestedTags && [styles.active] || [])
+      ].join(" ")}
       onClick={chooseTags}
     >
-      {suggestedTags && suggestedTags.map(x => <TagItem key={x}>{x}</TagItem>)}
-      {!suggestedTags && <NoTags>Enter Comma Separated Tags</NoTags>}
-    </TagsSuggestion>
+      {suggestedTags && (
+        suggestedTags.map(x => (
+          <span className={styles.TagItem} key={x}>
+            {x}
+          </span>
+      )))}
+      {!suggestedTags && (
+        <span className={styles.NoTags}>
+          Enter Comma Separated Tags
+        </span>
+      )}
+    </div>
   );
 };
-
-const TagsSuggestion = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  flex-direction: row;
-  align-items: center;
-  background-color: ${({ isActive }) => isActive ? "#F5F5F5" : "transparent"};
-  padding: 10px 20px;
-  cursor: pointer;
-  & > *:not(:last-child) {
-    margin-right: 5px;
-  }
-`
-
-const TagItem = styled.span`
-  display: inline-flex;
-  padding: 5px 10px;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 14px;
-  width: fit-content;
-  height: fit-content;
-  color: ${({theme})=> theme.primary};
-  background-color: ${({theme})=> theme.primaryLight};
-  flex-direction: row;
-  align-items: center;
-`
-
-const NoTags = styled.span`
-  display: flex;
-  width: 100%;
-  font-size: 14px;
-  align-items: center;
-  justify-content: center;
-`
 
 export default connect((state) => ({
 	app: state.app,

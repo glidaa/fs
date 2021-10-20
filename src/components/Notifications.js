@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect, useContext } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { useHistory } from 'react-router-dom';
-import styled, { keyframes, ThemeContext } from "styled-components";
+import themes from "../themes"
+import styles from "./Notifications.module.scss"
 import * as notificationsActions from "../actions/notifications"
 import { ReactComponent as CloseIcon } from "../assets/close-outline.svg"
 import Avatar from './UI/Avatar';
@@ -10,9 +11,10 @@ const Notifications = (props) => {
   const {
     users,
     notifications,
+    appSettings,
     dispatch
   } = props;
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
   const history = useHistory();
   const notificationElem = useRef(null)
   const dismissTimer = useRef(null)
@@ -34,17 +36,21 @@ const Notifications = (props) => {
     }
   }, [notifications.pushed[0]?.id])
   return (
-    <NotificationsContainer>
+    <div className={styles.NotificationsContainer}>
       {notifications.pushed[0] && (
-        <NotificationShell
+        <div
+          className={[
+            styles.NotificationShell,
+            ...(anim === 0 && [styles.entering] || []),
+            ...(anim !== 0 && [styles.exiting] || []),
+            ...(notifications.pushed[0].payload.link && [styles.clickable] || [])
+          ].join(" ")}
           key={notifications.pushed[0]}
           ref={notificationElem}
-          anim={anim}
-          isClickable={notifications.pushed[0].payload.link}
           onClick={() => openLink(notifications.pushed[0].payload.link)}
         >
-          <NotificationContainer>
-            <NotificationContent>
+          <div className={styles.NotificationContainer}>
+            <div className={styles.NotificationContent}>
               <Avatar user={users[notifications.pushed[0].sender]} size={32} />
               <div>
                   {notifications.pushed[0].type === "ASSIGNMENT" && (
@@ -57,143 +63,27 @@ const Notifications = (props) => {
                     </span>
                   )}
               </div>
-            </NotificationContent>
-            <NotificationCloseBtn onClick={dismissNotification}>
+            </div>
+            <button
+              className={styles.NotificationCloseBtn}
+              onClick={dismissNotification}
+            >
               <CloseIcon
                 height="16"
                 width="16"
                 strokeWidth="32"
-                color={themeContext.primary}
+                color={theme.primary}
               />
-            </NotificationCloseBtn>
-          </NotificationContainer>
-        </NotificationShell>
+            </button>
+          </div>
+        </div>
       )}
-    </NotificationsContainer>
+    </div>
   );
 };
 
-const enteringAnim = keyframes`
-from {
-  margin-right: -330px;
-}
-
-to {
-  margin-right: 10px;
-}
-`;
-
-const exitingAnim = keyframes`
-from {
-  margin-right: 10px;
-}
-
-to {
-  margin-right: -330px;
-}
-`;
-
-const enteringAnimMobile = keyframes`
-from {
-  margin-top: -48px;
-}
-
-to {
-  margin-top: 10px;
-}
-`;
-
-const exitingAnimMobile = keyframes`
-from {
-  margin-top: 10px;
-}
-
-to {
-  margin-top: -48px;
-}
-`;
-
-const NotificationsContainer = styled.div`
-  position: fixed;
-  right: 0;
-  top: 0;
-  display: flex;
-  background-color: transparent;
-  flex-direction: column;
-  z-index: 9999999;
-	@media only screen and (max-width: 768px) {
-    width: 100%;
-	}
-`;
-
-const NotificationShell = styled.div`
-  display: flex;
-  color: ${({theme})=> theme.primary};
-  padding: 15px;
-  width: 300px;
-  margin: 10px 10px 10px 0;
-  border-radius: 8px;
-  position: relative;
-  background-color: ${({theme})=> theme.secondaryBg};
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  animation: ${({anim}) => anim === 0 ? enteringAnim : exitingAnim} 0.4s ease-in-out forwards;
-  ${({isClickable}) => isClickable ? `
-    cursor: pointer;
-    &:hover {
-      background-color: #F2F2F2;
-    }
-  `: ``}
-	@media only screen and (max-width: 768px) {
-    width: calc(100% - 50px);
-    margin: auto;
-    animation: ${({anim}) => anim === 0 ? enteringAnimMobile : exitingAnimMobile} 0.4s ease-in-out forwards;
-	}
-`
-
-const NotificationContainer = styled.div`
-	display: flex;
-	flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
-const NotificationContent = styled.div`
-	display: flex;
-	flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  div {
-    display: flex;
-    flex-direction: column;
-    span:nth-child(1) {
-      font-size: 12px;
-    }
-    span:nth-child(2) {
-      font-size: 14px;
-    }
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
-const NotificationCloseBtn = styled.button`
-	display: flex;
-	flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  border: none;
-  background-color: transparent;
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
 export default connect((state) => ({
   users: state.users,
-  notifications: state.notifications
+  notifications: state.notifications,
+  appSettings: state.appSettings
 }))(Notifications);

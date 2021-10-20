@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { connect } from "react-redux";
 import parseLinkedList from "../../../utils/parseLinkedList";
 import TaskItem from "../TaskItem";
-import styled from "styled-components";
+import styles from "./ByStatus.module.scss";
 
 const ByStatus = (props) => {
   const { tasks } = props;
@@ -19,7 +19,9 @@ const ByStatus = (props) => {
     <>
       {sortedTasks.todo.length > 0 && (
         <div>
-          <StatusHeader>Todo</StatusHeader>
+          <span className={styles.StatusHeader}>
+            Todo
+          </span>
           {sortedTasks.todo.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -40,7 +42,9 @@ const ByStatus = (props) => {
       )}
       {sortedTasks.pending.length > 0 && (
         <div>
-          <StatusHeader>Pending</StatusHeader>
+          <span className={styles.StatusHeader}>
+            Pending
+          </span>
           {sortedTasks.pending.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -64,7 +68,9 @@ const ByStatus = (props) => {
       )}
       {sortedTasks.done.length > 0 && (
         <div>
-          <StatusHeader>Finished</StatusHeader>
+          <span className={styles.StatusHeader}>
+            Finished
+          </span>
           {sortedTasks.done.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -86,17 +92,6 @@ const ByStatus = (props) => {
     </>
   )
 }
-
-const StatusHeader = styled.span`
-  padding: 0 12px;
-  font-weight: 600;
-  font-size: 24px;
-  color: #596766;
-	@media only screen and (max-width: 768px) {
-		padding: 5px 20px 5px 20px;
-		font-size: 16.5px;
-	}
-`
 
 export default connect((state) => ({
   tasks: state.tasks

@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import styled from "styled-components"
+import React, { useEffect, useMemo } from 'react';
+import styles from "./Due.module.scss"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
@@ -70,38 +70,22 @@ const Due = (props) => {
   }, [suggestedDue, selectedTask])
 
   return (
-    <DueSuggestion
-      isActive={suggestedDue}
+    <div
+      className={[
+        styles.DueSuggestion,
+        ...(suggestedDue && [styles.active] || [])
+      ].join(" ")}
       onClick={chooseDue}
     >
         {suggestedDue && <span>due {suggestedDue}</span>}
-        {!suggestedDue && <NoDue>Invalid Date</NoDue>}
-    </DueSuggestion>
+        {!suggestedDue && (
+          <span className={styles.NoDue}>
+            Invalid Date
+          </span>
+        )}
+    </div>
   );
 };
-
-const DueSuggestion = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  flex-direction: row;
-  align-items: center;
-  background-color: ${({ isActive }) => isActive ? "#F5F5F5" : "transparent"};
-  padding: 10px 20px;
-  cursor: pointer;
-  & > *:not(:last-child) {
-    margin-right: 5px;
-  }
-`
-
-const NoDue = styled.span`
-  display: flex;
-  width: 100%;
-  font-size: 14px;
-  align-items: center;
-  justify-content: center;
-`
 
 export default connect((state) => ({
 	app: state.app,

@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
-import styled, { ThemeContext } from "styled-components";
+import themes from "../../themes"
+import styles from "./Notifications.module.scss"
 import CustomScroller from 'react-custom-scroller';
 import { ReactComponent as CloseIcon } from "../../assets/close-outline.svg"
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -13,10 +14,11 @@ const Notifications = (props) => {
   const {
     notifications,
     users,
+    appSettings,
     dispatch
   } = props;
 
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
 
   const closePanel = () => {
     return dispatch(appActions.handleSetLeftPanel(false))
@@ -26,43 +28,55 @@ const Notifications = (props) => {
   }
   return (
     <>
-      <PanelPageToolbar>
-        <PanelPageToolbarAction onClick={closePanel}>
+      <div className={styles.PanelPageToolbar}>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={closePanel}
+        >
           <BackArrowIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-        <PanelPageTitle>Notifications</PanelPageTitle>
-        <PanelPageToolbarAction onClick={removeProject}>
+        </button>
+        <span className={styles.PanelPageTitle}>
+          Notifications
+        </span>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={removeProject}
+        >
           <RemoveIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-      </PanelPageToolbar>
-      <NotificationsForm>
+        </button>
+      </div>
+      <CustomScroller className={styles.NotificationsForm}>
         {notifications.stored.map(x => (
-          <NotificationShell
+          <div
+            className={[
+              styles.NotificationShell,
+              "noselect",
+              ...(x.payload.link && [styles.clickable] || [])
+            ].join(" ")}
             key={x.id}
-            isClickable={x.payload.link}
           >
-            <NotificationContainer>
-              <NotificationContent>
+            <div className={styles.NotificationContainer}>
+              <div className={styles.NotificationContent}>
                 <Avatar user={users[x.sender]} size={32} />
                 <div>
-                  <NotificationHeading>
+                  <span className={styles.NotificationHeading}>
                     <b style={{ float: "left" }}>
                       {users[x.sender].firstName} {users[x.sender].lastName}
                     </b>
                     <span style={{ float: "right" }}>
                       {new Date(x.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
                     </span>
-                  </NotificationHeading>
+                  </span>
                   {x.type === "ASSIGNMENT" && (
                     <span>
                       Assigned a task to&nbsp;
@@ -72,132 +86,25 @@ const Notifications = (props) => {
                     </span>
                   )}
                 </div>
-              </NotificationContent>
-              {/* <NotificationCloseBtn>
+              </div>
+              {/* <button className={styles.NotificationCloseBtn}>
                 <CloseIcon
                   height="16"
                   width="16"
                   strokeWidth="32"
-                  color={themeContext.primary}
+                  color={theme.primary}
                 />
-              </NotificationCloseBtn> */}
-            </NotificationContainer>
-          </NotificationShell>
+              </button> */}
+            </div>
+          </div>
         ))}
-      </NotificationsForm>
+      </CustomScroller>
     </>
   );
 };
 
-const NotificationsForm = styled(CustomScroller)`
-  overflow: hidden;
-  flex: 1;
-  height: 0;
-  min-height: 0;
-  & div[class^="index-module_inner__"] {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    & > *:not(:last-child) {
-      margin-bottom: 15px;
-    }
-  }
-`;
-
-const PanelPageToolbar = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 25px;
-  padding-top: 25px;
-`
-
-const PanelPageTitle = styled.span`
-  color: ${({theme})=> theme.txtColor};
-  font-size: 18px;
-  font-weight: 600;
-`
-
-const PanelPageToolbarAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  cursor: pointer;
-`
-
-const NotificationShell = styled.div`
-  position: relative;
-  display: flex;
-  color: ${({theme})=> theme.txtColor};
-  padding: 15px;
-  width: calc(100% - 80px);
-  margin: 0 25px;
-  border-radius: 8px;
-  background-color: ${({theme})=> theme.secondaryBg};
-  ${({isClickable}) => isClickable ? `
-    cursor: pointer;
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.90);
-    }
-  `: ``}
-`
-
-const NotificationContainer = styled.div`
-	display: flex;
-	flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
-const NotificationContent = styled.div`
-	display: flex;
-	flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  div {
-    display: flex;
-    flex-direction: column;
-    span:nth-child(1) {
-      font-size: 12px;
-    }
-    span:nth-child(2) {
-      font-size: 10px;
-    }
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
-const NotificationHeading = styled.span`
-	line-height: 18.4px;
-  display: inline-block;
-  vertical-align: middle;
-`
-
-const NotificationCloseBtn = styled.button`
-	display: flex;
-	flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  border: none;
-  background-color: transparent;
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
 export default connect((state) => ({
   notifications: state.notifications,
-  users: state.users
+  users: state.users,
+  appSettings: state.appSettings
 }))(Notifications);

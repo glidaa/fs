@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from "styled-components"
+import styles from "./Login.module.scss"
 import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
@@ -93,11 +93,14 @@ const Login = (props) => {
     }
   }
   return currStep === 0 ? (
-    <LoginFormContainer>
-      <LoginFormHeader>
+    <div className={styles.LoginFormContainer}>
+      <div className={styles.LoginFormHeader}>
         <span>Login</span>
-      </LoginFormHeader>
-      <LoginStepOneForm onSubmit={handleLogin}>
+      </div>
+      <form
+        className={styles.LoginStepOneForm}
+        onSubmit={handleLogin}
+      >
         <TextField
           type="text"
           name="username"
@@ -118,27 +121,36 @@ const Login = (props) => {
           error={passwordError}
           value={password}
         />
-        <NewAccountLink onClick={() => history.push("/signup")}>
+        <div
+          className={styles.NewAccountLink}
+          onClick={() => history.push("/signup")}
+        >
           <span>No Account? </span>
           <span>Create One</span>
-        </NewAccountLink>
-        <ForgotPasswordLink onClick={() => history.push("/forgot-password")}>
+        </div>
+        <span
+          className={styles.ForgotPasswordLink}
+          onClick={() => history.push("/forgot-password")}
+        >
           Forgot Password?
-        </ForgotPasswordLink>
+        </span>
         <SubmitBtn
           type="submit"
           value={isBusy ? "Signing In" : "Sign In"}
           disabled={isBusy || !username.trim() || !password.trim()}
         />
-      </LoginStepOneForm>
-    </LoginFormContainer>
+      </form>
+    </div>
   ) : (
-    <LoginFormContainer>
-      <LoginFormHeader>
+    <div className={styles.LoginFormContainer}>
+      <div className={styles.LoginFormHeader}>
         <span>Confirm Account</span>
         <span>Enter code sent to your email.</span>
-      </LoginFormHeader>
-      <LoginStepTwoForm onSubmit={handleConfirmAccount}>
+      </div>
+      <form
+        className={styles.LoginStepTwoForm}
+        onSubmit={handleConfirmAccount}
+      >
         <TextField
           type="text"
           label="Verification Code"
@@ -154,111 +166,9 @@ const Login = (props) => {
           value={isBusy ? "Processing" : "Submit"}
           disabled={isBusy || !verificationCode.trim()}
         />
-      </LoginStepTwoForm>
-    </LoginFormContainer>
+      </form>
+    </div>
   )
 }
-
-const LoginFormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 40px 0;
-  justify-content: center;
-  background-color: ${({theme})=> theme.secondaryBg};
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  border-radius: 25px;
-  height: fit-content;
-  width: 350px;
-  padding: 35px;
-  & > *:not(:last-child) {
-    margin-bottom: 15px;
-  }
-  @media only screen and (max-width: 768px) {
-    position: absolute;
-    width: calc(100% - 70px);
-    height: calc(100% - 70px);
-    border-radius: 0;
-    margin: 0;
-  }
-`
-
-const LoginFormHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  color: ${({theme})=> theme.txtColor};
-  & > span:nth-child(1) {
-    font-weight: 600;
-    font-size: 24px;
-  }
-  & > span:nth-child(2) {
-    font-weight: 400;
-    font-size: 16px;
-  }
-`
-
-const LoginStepOneForm = styled.form`
-  display: grid;
-  grid-template-areas:
-    'username username'
-    'password password'
-    'newAccount ForgotPassword'
-    'signIn signIn';
-  gap: 15px;
-  & > *:nth-child(1) {
-    grid-area: username;
-  }
-  & > *:nth-child(2) {
-    grid-area: password;
-  }
-  & > *:nth-child(3) {
-    grid-area: newAccount;
-  }
-  & > *:nth-child(4) {
-    grid-area: ForgotPassword;
-  }
-  & > *:nth-child(5) {
-    grid-area: signIn;
-  }
-  & > *:nth-child(3) > span:first-child {
-    color: ${({theme})=> theme.txtColor};
-  }
-  & > h2 > span {
-    cursor: pointer;
-  }
-`;
-
-const LoginStepTwoForm = styled.form`
-  display: grid;
-  grid-template-areas:
-    'code code'
-    'submit submit';
-  gap: 15px;
-  align-items: start;
-  & > *:nth-child(1) {
-    grid-area: code;
-  }
-  & > *:nth-child(2) {
-    grid-area: submit;
-  }
-`;
-
-const NewAccountLink = styled.div`
-  font-size: 14px;
-  justify-self: flex-start;
-  cursor: pointer;
-  & > span:nth-child(2) {
-    color: ${({theme})=> theme.primary};
-  }
-`
-
-const ForgotPasswordLink = styled.span`
-  font-size: 14px;
-  justify-self: flex-end;
-  color: ${({theme})=> theme.primary};
-  cursor: pointer;
-  &:hover {
-
-  }
-`
 
 export default connect()(Login);

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from "styled-components"
+import styles from "./ForgotPassword.module.scss"
 import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
@@ -114,11 +114,14 @@ const ForgotPassword = (props) => {
     }
   }
   return currStep === 0 ? (
-    <ForgotPasswordFormContainer>
-      <ForgotPasswordFormHeader>
+    <div className={styles.ForgotPasswordFormContainer}>
+      <div className={styles.ForgotPasswordFormHeader}>
         <span>Forgot Password?</span>
-      </ForgotPasswordFormHeader>
-      <ForgotPasswordForm onSubmit={initiatePasswordRecovery}>
+      </div>
+      <form
+        className={styles.ForgotPasswordForm}
+        onSubmit={initiatePasswordRecovery}
+      >
         <TextField
           type="test"
           label="Username"
@@ -134,15 +137,18 @@ const ForgotPassword = (props) => {
           value={isBusy ? "Processing" : "Next"}
           disabled={isBusy || !username.trim()}
         />
-      </ForgotPasswordForm>
-    </ForgotPasswordFormContainer>
+      </form>
+    </div>
   ) : currStep === 1 ? (
-    <ForgotPasswordFormContainer>
-      <ForgotPasswordFormHeader>
+    <div className={styles.ForgotPasswordFormContainer}>
+      <div className={styles.ForgotPasswordFormHeader}>
         <span>Confirm Account First</span>
         <span>Enter code sent to your email.</span>
-      </ForgotPasswordFormHeader>
-      <ForgotPasswordForm onSubmit={confirmAccount}>
+      </div>
+      <form
+        className={styles.ForgotPasswordForm}
+        onSubmit={confirmAccount}
+      >
         <TextField
           type="text"
           label="Verification Code"
@@ -157,14 +163,17 @@ const ForgotPassword = (props) => {
           value={isBusy ? "Processing" : "Next"}
           disabled={isBusy || !verificationCode.trim()}
         />
-      </ForgotPasswordForm>
-    </ForgotPasswordFormContainer>
+      </form>
+    </div>
   ) : (
-    <ForgotPasswordFormContainer>
-      <ForgotPasswordFormHeader>
+    <div className={styles.ForgotPasswordFormContainer}>
+      <div className={styles.ForgotPasswordFormHeader}>
         <span>Forgot Password?</span>
-      </ForgotPasswordFormHeader>
-      <ForgotPasswordForm onSubmit={completePasswordRecovery}>
+      </div>
+      <form
+        className={styles.ForgotPasswordForm}
+        onSubmit={completePasswordRecovery}
+      >
         <TextField
           type="text"
           label="Verification Code"
@@ -190,57 +199,8 @@ const ForgotPassword = (props) => {
           value={isBusy ? "Processing" : "Submit"}
           disabled={isBusy || !verificationCode.trim() || !newPassword.trim() || newPasswordError}
         />
-      </ForgotPasswordForm>
-    </ForgotPasswordFormContainer>
+      </form>
+    </div>
   )
 }
-
-const ForgotPasswordFormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 40px 0;
-  justify-content: center;
-  background-color: ${({theme})=> theme.secondaryBg};
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  border-radius: 25px;
-  height: fit-content;
-  width: 350px;
-  padding: 35px;
-  & > *:not(:last-child) {
-    margin-bottom: 15px;
-  }
-  @media only screen and (max-width: 768px) {
-    position: absolute;
-    width: calc(100% - 70px);
-    height: calc(100% - 70px);
-    border-radius: 0;
-    margin: 0;
-  }
-`
-
-const ForgotPasswordFormHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  color: ${({theme})=> theme.txtColor};
-  & > span:nth-child(1) {
-    font-weight: 600;
-    font-size: 24px;
-  }
-  & > span:nth-child(2) {
-    font-weight: 400;
-    font-size: 16px;
-  }
-`
-
-const ForgotPasswordForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  & > h2 > span {
-    cursor: pointer;
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 15px;
-  }
-`;
-
 export default connect()(ForgotPassword);

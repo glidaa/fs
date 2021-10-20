@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { createGlobalStyle } from 'styled-components'
 import { API, graphqlOperation } from "@aws-amplify/api";
 import { Auth } from "@aws-amplify/auth";
 import { AuthState } from "../constants";
@@ -111,7 +110,6 @@ const App = (props) => {
   }, [routeMatch?.url, app.isLoading, user]);
   return (
     <div>
-      <GlobalStyle />
       <Notifications />
       <Route
         exact
@@ -153,12 +151,6 @@ const App = (props) => {
     </div>
   );
 };
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${({theme})=> theme.primaryBg};
-  }
-`
 
 export default connect((state) => ({
   user: state.user,

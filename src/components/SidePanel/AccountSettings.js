@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "@aws-amplify/api";
 import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
-import styled, { ThemeContext } from "styled-components";
+import themes from "../../themes"
+import styles from "./AccountSettings.module.scss"
 import CustomScroller from 'react-custom-scroller';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as LogOutIcon } from "../../assets/log-out-outline.svg"
@@ -28,10 +29,11 @@ const AccountSettings = (props) => {
         abbr
       },
     },
+    appSettings,
     dispatch
   } = props;
 
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
 
   const [newFirstName, setNewFirstName] = useState(firstName)
   const [newLastName, setNewLastName] = useState(lastName)
@@ -93,31 +95,39 @@ const AccountSettings = (props) => {
   }
   return (
     <>
-      <PanelPageToolbar>
-        <PanelPageToolbarAction onClick={closePanel}>
+      <div className={styles.PanelPageToolbar}>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={closePanel}
+        >
           <BackArrowIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-        <PanelPageTitle>Account Settings</PanelPageTitle>
-        <PanelPageToolbarAction onClick={logOut}>
+        </button>
+        <span className={styles.PanelPageTitle}>
+          Account Settings
+        </span>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={logOut}
+          >
           <LogOutIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-      </PanelPageToolbar>
-      <AccountSettingsHeader>
+        </button>
+      </div>
+      <div className={styles.AccountSettingsHeader}>
         <Avatar user={props.user.data} size={128} />
         <span>{firstName} {lastName}</span>
         <span>@{username}</span>
-      </AccountSettingsHeader>
-      <AccountSettingsForm>
+      </div>
+      <CustomScroller className={styles.AccountSettingsForm}>
         <form onSubmit={(e) => e.preventDefault()}>
           <TextField
             type="text"
@@ -162,7 +172,7 @@ const AccountSettings = (props) => {
           />
           <input type="submit" name="submit" value="Submit"></input>
         </form>
-      </AccountSettingsForm>
+      </CustomScroller>
       <Button
         style={{ margin: "0 25px 25px 25px" }}
         onClick={saveChanges}
@@ -174,75 +184,8 @@ const AccountSettings = (props) => {
   );
 };
 
-const AccountSettingsForm = styled(CustomScroller)`
-  overflow: hidden;
-  flex: 1;
-  height: 0;
-  min-height: 0;
-  & div[class^="index-module_inner__"] > form {
-    display: flex;
-    flex-direction: column;
-    margin: 0 25px 25px 25px;
-    & > h2 > span {
-      cursor: pointer;
-    }
-    & > input[type="submit"] {
-      display: none;
-    }
-    & > *:not(:last-child) {
-      margin-bottom: 20px;
-    }
-  }
-`;
-
-const PanelPageToolbar = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 25px;
-  padding-top: 25px;
-`
-
-const PanelPageTitle = styled.span`
-  color: ${({theme})=> theme.txtColor};
-  font-size: 18px;
-  font-weight: 600;
-`
-
-const PanelPageToolbarAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  cursor: pointer;
-`
-
-const AccountSettingsHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  & > span:nth-child(2) {
-    color: ${({theme})=> theme.txtColor};
-    font-size: 26px;
-    line-height: 0;
-  }
-  & > span:nth-child(3) {
-    color: ${({theme})=> theme.txtColor};
-    font-size: 14px;
-    line-height: 0;
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 25px;
-  }
-`
-
 export default connect((state) => ({
   user: state.user,
-  app: state.app
+  app: state.app,
+  appSettings: state.appSettings
 }))(AccountSettings);

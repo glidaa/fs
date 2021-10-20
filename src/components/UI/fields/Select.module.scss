@@ -1,0 +1,46 @@
+.SelectShell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  & > label {
+    @include themify(color, "txtColor");
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
+}
+
+.Selection {
+  position: relative;
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 8px;
+  color: #aaa8ac;
+  transition: color 0.2s, border-color 0.2s;
+  &.selected {
+    color: #5d6969;
+    border-color: #7daafc;
+    cursor: default;
+  }
+}
+
+.SelectContainer {
+  display: flex;
+  flex-direction: row;
+  & > .Selection {
+    cursor: pointer;
+  }
+  &.readOnly > .Selection {
+    cursor: default;
+  }
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}

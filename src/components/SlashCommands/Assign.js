@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from "styled-components"
+import styles from "./Assign.module.scss"
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../../actions/app"
@@ -87,10 +87,17 @@ const Assign = (props) => {
 
   return (
     <>
-      {!commandParam && <NoKeyword>Search For Assignees</NoKeyword>}
-      {commandParam && <AssigneeSuggestion
+      {!commandParam && (
+        <span className={styles.NoKeyword}>
+          Search For Assignees
+        </span>
+      )}
+      {commandParam && <div
+        className={[
+          styles.AssigneeSuggestion,
+          ...(selection === 0 && [styles.selected] || [])
+        ].join(" ")}
         key="::anonymous::"
-        isSelected={selection === 0}
         onMouseEnter={() => setSelection(0)}
         onClick={() => handleAssignTask(`anonymous:${commandParam}`)}
       >
@@ -99,11 +106,14 @@ const Assign = (props) => {
           <span>{commandParam}</span>
           <span>Anonymous Assignee</span>
         </div>
-      </AssigneeSuggestion>}
+      </div>}
       {results.map((x, i) => (
-        <AssigneeSuggestion
+        <div
+          className={[
+            styles.AssigneeSuggestion,
+            ...(selection === i + 1 && [styles.selected] || [])
+          ].join(" ")}
           key={x.username}
-          isSelected={selection === i + 1}
           onMouseEnter={() => setSelection(i + 1)}
           onClick={() => handleAssignTask(`user:${x.username}`)}
         >
@@ -112,46 +122,11 @@ const Assign = (props) => {
             <span>{`${x.firstName} ${x.lastName}`}</span>
             <span>{x.email}</span>
           </div>
-        </AssigneeSuggestion>
+        </div>
       ))}
     </>
   );
 };
-
-const AssigneeSuggestion = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: ${({ isSelected }) => isSelected ? "#F5F5F5" : "transparent"};
-  transition: background-color 0.2s;
-  cursor: pointer;
-  & > div {
-    display: flex;
-    flex-direction: column;
-    & > span:nth-child(1) {
-      color: ${({theme})=> theme.txtColor};
-      font-weight: 600;
-      font-size: 14px;
-    }
-    & > span:nth-child(2) {
-      color: ${({theme})=> theme.txtColor};
-      font-weight: 400;
-      font-size: 12px;
-    }
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
-const NoKeyword = styled.span`
-  display: flex;
-  width: 100%;
-  font-size: 14px;
-  align-items: center;
-  justify-content: center;
-`
 
 export default connect((state) => ({
 	app: state.app,

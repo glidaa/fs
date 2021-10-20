@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import styled from "styled-components"
+import styles from "./Status.module.scss"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import { connect } from "react-redux";
@@ -84,9 +84,12 @@ const Status = (props) => {
   return (
     <>
       {suggestedStatus.map((x, i) => (
-        <StatusSuggestion
+        <div
+          className={[
+            styles.StatusSuggestion,
+            ...(selection === i && [styles.selected] || [])
+          ].join(" ")}
           key={x}
-          isSelected={selection === i}
           onMouseEnter={() => setSelection(i)}
           onClick={() => chooseStatus(x)}
         >
@@ -94,41 +97,11 @@ const Status = (props) => {
             <span style={{ color: x[1], marginRight: 10 }}>⬤</span>
             <span>{x[0]}</span>
           </div>
-        </StatusSuggestion>
+        </div>
       ))}
     </>
   );
 };
-
-const StatusSuggestion = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: ${({ isSelected }) => isSelected ? "#F5F5F5" : "transparent"};
-  padding: 10px 20px;
-  transition: background-color 0.2s;
-  cursor: pointer;
-  & > div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    & > span:nth-child(1) {
-      font-size: 18px;
-    }
-    & > span:nth-child(2) {
-      color: ${({theme})=> theme.txtColor};
-      font-weight: 600;
-      font-size: 14px;
-      text-transform: lowercase;
-      &::first-letter {
-        text-transform: capitalize;
-      }
-    }
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
 
 export default connect((state) => ({
 	app: state.app,

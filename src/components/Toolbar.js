@@ -1,5 +1,5 @@
-import React, { startTransition, useContext  } from 'react';
-import styled, { ThemeContext } from "styled-components";
+import React, { startTransition  } from 'react';
+import themes from "../themes"
 import styles from "./Toolbar.module.scss"
 import * as appActions from "../actions/app"
 import { connect } from "react-redux";
@@ -18,10 +18,11 @@ const Toolbar = (props) => {
       leftPanelPage
     },
     user,
+    appSettings,
     dispatch
   } = props;
   const history = useHistory();
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
   const openLeftPanel = (page) => {
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== page)) {
       dispatch(appActions.setLeftPanelPage(page))
@@ -51,7 +52,7 @@ const Toolbar = (props) => {
               width="24"
               height="24"
               strokeWidth="32"
-              color={themeContext.txtColor}
+              color={theme.txtColor}
           />
         </button>
         <button
@@ -64,7 +65,7 @@ const Toolbar = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.PROJECTS ?
-                themeContext.primary : themeContext.txtColor
+                theme.primary : theme.txtColor
               }
           />
         </button>
@@ -78,7 +79,7 @@ const Toolbar = (props) => {
               strokeWidth="32"
               color={
                 isLeftPanelOpened && leftPanelPage === panelPages.APP_SETTINGS ?
-                themeContext.primary : themeContext.txtColor
+                theme.primary : theme.txtColor
               }
           />
         </button>
@@ -115,5 +116,6 @@ const Toolbar = (props) => {
 
 export default connect((state) => ({
   app: state.app,
-  user: state.user
+  user: state.user,
+  appSettings: state.appSettings
 }))(Toolbar);

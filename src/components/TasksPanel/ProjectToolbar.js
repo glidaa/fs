@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { ThemeContext } from "styled-components";
+import React from 'react';
+import themes from "../../themes"
 import styles from "./ProjectToolbar.module.scss"
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
@@ -15,9 +15,10 @@ const ProjectToolbar = (props) => {
       leftPanelPage
     },
     projects,
+    appSettings,
     dispatch,
   } = props;
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
   const openProjectSettings = () => {
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== panelPages.PROJECT_SETTINGS)) {
       dispatch(appActions.setLeftPanelPage(panelPages.PROJECT_SETTINGS))
@@ -37,7 +38,7 @@ const ProjectToolbar = (props) => {
           width={14}
           height={14}
           strokeWidth={32}
-          color={themeContext.primary}
+          color={theme.primary}
         />
         <span>Share</span>
       </button>
@@ -52,7 +53,7 @@ const ProjectToolbar = (props) => {
           width={14}
           height={14}
           strokeWidth={32}
-          color={themeContext.primary}
+          color={theme.primary}
         />
         <span>Settings</span>
       </button>
@@ -62,5 +63,6 @@ const ProjectToolbar = (props) => {
 
 export default connect((state) => ({
   app: state.app,
-  projects: state.projects
+  projects: state.projects,
+  appSettings: state.appSettings
 }))(ProjectToolbar);

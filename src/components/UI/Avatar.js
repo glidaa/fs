@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from "styled-components";
+import styles from "./Avatar.module.scss";
 
 const Avatar = (props) => {
   const { 
@@ -11,31 +11,30 @@ const Avatar = (props) => {
     },
     circular
    } = props
-  return avatar ?
-    <ImageAvatar size={size} src={avatar} isCircular={circular} /> :
-    <LetterAvatar size={size} isCircular={circular}>{abbr || name[0]}</LetterAvatar>
+  return avatar ? (
+    <img
+      className={styles.ImageAvatar}
+      style={{
+        borderRadius: circular ? "100%" : 0.315 * size,
+        width: size,
+        height: size
+      }}
+    />
+  ) : (
+    <div
+      className={styles.LetterAvatar}
+      style={{
+        borderRadius: circular ? "100%" : 0.315 * size,
+        fontSize: size / 2.4,
+        minWidth: size,
+        minHeight: size,
+        width: size,
+        height: size
+      }}
+    >
+      {abbr || name[0]}
+    </div>
+  )
 }
-
-const ImageAvatar = styled.img`
-	display: inline;
-  border-radius: ${({isCircular, size}) => isCircular ? "100%" : `${0.315 * size}px`};
-	width: ${({ size }) => size}px;
-	height: ${({ size }) => size}px;
-`
-
-const LetterAvatar = styled.div`
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	color: ${({theme})=> theme.primary};
-	background-color: ${({theme})=> theme.primaryLight};
-	line-height: 0;
-  border-radius: ${({isCircular, size}) => isCircular ? "100%" : `${0.315 * size}px`};
-	font-size: ${({ size }) => size / 2.4}px;
-	min-width: ${({ size }) => size}px;
-	min-height: ${({ size }) => size}px;
-	width: ${({ size }) => size}px;
-	height: ${({ size }) => size}px;
-`
 
 export default Avatar

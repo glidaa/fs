@@ -1,0 +1,114 @@
+.PanelPageToolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 25px;
+  padding-top: 25px;
+}
+
+.PanelPageTitle {
+  @include themify(color, "txtColor");
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.PanelPageToolbarAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  transition: opacity 0.3s;
+  cursor: pointer;
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.KeywordField {
+  width: calc(100% - 90px);
+  outline: none;
+  background-color: #f6f6f6;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 0 25px;
+  font-size: 14px;
+  font-weight: 400;
+  transition: opacity 0.3s;
+  &::placeholder {
+    color: #c0c0c0;
+  }
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.SearchResults {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.SearchResultsItem {
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  align-items: center;
+  font-size: 12px;
+  padding: 10px 25px;
+  border: none;
+  background-color: transparent;
+  text-align: start;
+  transition: background-color 0.3s, opacity 0.3s;
+  & > div:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    & > span:nth-child(1) {
+      font-weight: bold;
+      @include themify(color, "txtColor");
+    }
+    & > span:nth-child(2) {
+      font-style: italic;
+      color: grey;
+    }
+  }
+  &:not(:disabled):hover {
+    background-color: #e4e4e2;
+  }
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.AssigneeChooserIllustartion {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin-top: -25px;
+  & > svg {
+    width: 250px;
+    height: auto;
+  }
+  & > span {
+    font-weight: bold;
+    font-size: 18px;
+    @include themify(color, "txtColor");
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 40px;
+  }
+}

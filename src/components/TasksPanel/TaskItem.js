@@ -1,5 +1,5 @@
-import React, { useRef, useMemo, useContext } from "react"
-import styled, { ThemeContext } from "styled-components";
+import React, { useRef, useMemo } from "react"
+import themes from "../../themes"
 import { connect } from "react-redux";
 import styles from "./TaskItem.module.scss"
 import useWindowSize from "../../utils/useWindowSize";
@@ -40,13 +40,14 @@ const TaskItem = (props) => {
     listeners,
     isSorting,
     isDragging,
+    appSettings,
     dispatch
   } = props;
 
   const { width } = useWindowSize();
 
   const inputRef = useRef(null)
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
 
   const processAssingees = (value, users) => {
     const result = []
@@ -285,7 +286,7 @@ const TaskItem = (props) => {
                 <CopyIcon
                   height="18"
                   strokeWidth="34"
-                  color={themeContext.primary}
+                  color={theme.primary}
                 />
               </button>
               {!readOnly && (
@@ -293,7 +294,7 @@ const TaskItem = (props) => {
                   <DuplicateIcon
                     height="18"
                     strokeWidth="34"
-                    color={themeContext.primary}
+                    color={theme.primary}
                   />
                 </button>
               )}
@@ -301,7 +302,7 @@ const TaskItem = (props) => {
                 <ShareIcon
                   height="18"
                   strokeWidth="34"
-                  color={themeContext.primary}
+                  color={theme.primary}
                 />
               </button>
               {!readOnly && (
@@ -309,7 +310,7 @@ const TaskItem = (props) => {
                   <RemoveIcon
                     height="18"
                     strokeWidth="34"
-                    color={themeContext.primary}
+                    color={theme.primary}
                   />
                 </button>
               )}
@@ -317,13 +318,13 @@ const TaskItem = (props) => {
                 <DetailsIcon
                   height="18"
                   strokeWidth="34"
-                  color={themeContext.primary}
+                  color={theme.primary}
                 />
               </button>
             </div> :
             <button className={styles.TaskItemOptsBtn} onClick={() => openActionSheet(item)}>
               <OptionsIcon
-                stroke={themeContext.txtColor}
+                stroke={theme.txtColor}
                 strokeWidth="32"
                 width="18"
               />
@@ -342,7 +343,7 @@ const TaskItem = (props) => {
           <AvatarGroup
             max={4}
             users={processedAssingees}
-            borderColor={themeContext.primaryBg}
+            borderColor={theme.primaryBg}
             size={ width > 768 ? 24 : 18 }
           />
         </div>
@@ -363,4 +364,5 @@ export default connect((state) => ({
   app: state.app,
   users: state.users,
   projects: state.projects,
+  appSettings: state.appSettings
 }))(TaskItem);

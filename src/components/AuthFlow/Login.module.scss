@@ -1,0 +1,98 @@
+.LoginFormContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 40px 0;
+  justify-content: center;
+  @include themify(background-color, "secondaryBg");
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 25px;
+  height: fit-content;
+  width: 350px;
+  padding: 35px;
+  & > *:not(:last-child) {
+    margin-bottom: 15px;
+  }
+  @media only screen and (max-width: 768px) {
+    position: absolute;
+    width: calc(100% - 70px);
+    height: calc(100% - 70px);
+    border-radius: 0;
+    margin: 0;
+  }
+}
+
+.LoginFormHeader {
+  display: flex;
+  flex-direction: column;
+  @include themify(color, "txtColor");
+  & > span:nth-child(1) {
+    font-weight: 600;
+    font-size: 24px;
+  }
+  & > span:nth-child(2) {
+    font-weight: 400;
+    font-size: 16px;
+  }
+}
+
+.LoginStepOneForm {
+  display: grid;
+  grid-template-areas:
+    'username username'
+    'password password'
+    'newAccount ForgotPassword'
+    'signIn signIn';
+  gap: 15px;
+  & > *:nth-child(1) {
+    grid-area: username;
+  }
+  & > *:nth-child(2) {
+    grid-area: password;
+  }
+  & > *:nth-child(3) {
+    grid-area: newAccount;
+  }
+  & > *:nth-child(4) {
+    grid-area: ForgotPassword;
+  }
+  & > *:nth-child(5) {
+    grid-area: signIn;
+  }
+  & > *:nth-child(3) > span:first-child {
+    @include themify(color, "txtColor");
+  }
+  & > h2 > span {
+    cursor: pointer;
+  }
+}
+
+.LoginStepTwoForm {
+  display: grid;
+  grid-template-areas:
+    'code code'
+    'submit submit';
+  gap: 15px;
+  align-items: start;
+  & > *:nth-child(1) {
+    grid-area: code;
+  }
+  & > *:nth-child(2) {
+    grid-area: submit;
+  }
+}
+
+.NewAccountLink {
+  font-size: 14px;
+  justify-self: flex-start;
+  cursor: pointer;
+  & > span:nth-child(2) {
+    @include themify(color, "primary");
+  }
+}
+
+.ForgotPasswordLink {
+  font-size: 14px;
+  justify-self: flex-end;
+  @include themify(color, "primary");
+  cursor: pointer;
+}

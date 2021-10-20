@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState, useContext } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../../actions/app";
 import { AuthState } from "../../../constants";
-import { ThemeContext } from "styled-components";
+import themes from "../../../themes"
 import styles from "./index.module.scss"
 import Comments from "./Comments";
 import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-back-outline.svg";
@@ -16,10 +16,11 @@ const TaskHub = (props) => {
     app: {
       lockedTaskField
     },
+    appSettings,
     dispatch
   } = props;
 
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
   const idleTrigger = useRef(null)
 	
 	const forceIdle = () => {
@@ -52,7 +53,7 @@ const TaskHub = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
         </button>
         <span className={styles.PanelPageTitle}>
@@ -66,7 +67,7 @@ const TaskHub = (props) => {
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
         </button>
       </div>
@@ -92,4 +93,5 @@ export default connect((state) => ({
   app: state.app,
   comments: state.comments,
   users: state.users,
+  appSettings: state.appSettings
 }))(TaskHub);

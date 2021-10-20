@@ -1,7 +1,7 @@
 import { IMPORT_APP_SETTINGS, SET_THEME, SET_TASKS_SORTING_CRITERIA } from "../actions/appSettings"
 
 const initState = JSON.parse(window.localStorage.getItem("appSettings")) || {
-  theme: "blue",
+  theme: "light",
   tasksSortingCriteria: "BY_DEFAULT"
 }
 

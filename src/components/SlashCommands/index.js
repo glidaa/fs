@@ -1,5 +1,5 @@
 import React, { useMemo, createRef } from 'react';
-import styled, { keyframes } from "styled-components"
+import styles from "./index.module.scss"
 import { connect } from "react-redux";
 import CustomScroller from 'react-custom-scroller';
 import { supportedCommands } from "../../constants"
@@ -40,49 +40,18 @@ const SlashCommands = (props) => {
   const [commandIntent, commandParam] = useMemo(() => tokenizeCommand(command), [command])
 
   return slashCommandsPages[commandIntent] && (
-    <DropdownContainer
-      $posInfo={posInfo}
+    <CustomScroller
+      className={styles.DropdownContainer}
+      style={{
+        top: posInfo.top,
+        left: posInfo.posInfo
+      }}
       scrollableNodeProps={{ ref: scrollableNodeRef }}
     >
       {React.createElement(slashCommandsPages[commandIntent], {commandIntent, commandParam, scrollableNodeRef })}
-    </DropdownContainer>
+    </CustomScroller>
   )
 }
-
-const openAnim = keyframes`
-  from {
-    height: 0;
-  }
-
-  to {
-    height: 300px;
-  }
-`;
-
-const DropdownContainer = styled.div`
-  position: fixed;
-  top: ${({ $posInfo }) => $posInfo.top}px;
-  left: ${({ $posInfo }) => $posInfo.left}px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  z-index: 999;
-  border-radius: 10px;
-  border: none;
-  padding: 15px 0;
-  width: 320px;
-  max-height: 300px;
-  background-color: ${({theme})=> theme.secondaryBg};
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  animation: ${openAnim} 0.3s ease;
-  @media only screen and (max-width: 768px) {
-    left: 0;
-    max-height: 200px;
-    width: 100vw;
-    border-radius: 0px;
-    box-shadow: none;
-  }
-`
 
 export default connect((state) => ({
 	app: state.app,

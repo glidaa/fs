@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as projectsActions from "../../actions/projects";
 import { AuthState } from "../../constants";
-import styled, { ThemeContext } from "styled-components";
+import themes from "../../themes"
+import styles from "./ProjectSettings.module.scss"
 import CustomScroller from 'react-custom-scroller';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
@@ -14,10 +15,11 @@ import CardSelect from '../UI/fields/CardSelect';
 const ProjectSettings = (props) => {
   const {
     app: {
-        selectedProject
+      selectedProject
     },
     user,
     projects,
+    appSettings,
     dispatch
   } = props;
 
@@ -31,7 +33,7 @@ const ProjectSettings = (props) => {
     }
   } = projects
 
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
 
   const [newTitle, setNewTitle] = useState(title || "")
   const [newPermalink, setNewPermalink] = useState(/\w+\/(.*)/.exec(permalink)?.[1] || permalink)
@@ -91,26 +93,34 @@ const ProjectSettings = (props) => {
   }
   return (
     <>
-      <PanelPageToolbar>
-        <PanelPageToolbarAction onClick={closePanel}>
+      <div className={styles.PanelPageToolbar}>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={closePanel}
+        >
           <BackArrowIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-        <PanelPageTitle>Project Settings</PanelPageTitle>
-        <PanelPageToolbarAction onClick={removeProject}>
+        </button>
+        <span className={styles.PanelPageTitle}>
+          Project Settings
+        </span>
+        <button
+          className={styles.PanelPageToolbarAction}
+          onClick={removeProject}
+        >
           <RemoveIcon
               width={24}
               height={24}
               strokeWidth={32}
-              color={themeContext.primary}
+              color={theme.primary}
           />
-        </PanelPageToolbarAction>
-      </PanelPageToolbar>
-      <ProjectSettingsForm>
+        </button>
+      </div>
+      <CustomScroller className={styles.ProjectSettingsForm}>
         <form onSubmit={(e) => e.preventDefault()}>
           <TextField
             type="text"
@@ -161,9 +171,14 @@ const ProjectSettings = (props) => {
               />
             </>
           )}
-          <NonPrefixedInputField type="submit" name="submit" value="Submit"></NonPrefixedInputField>
+          <input
+            className={styles.NonPrefixedInputField}
+            type="submit"
+            name="submit" 
+            value="Submit"
+          />
         </form>
-      </ProjectSettingsForm>
+      </CustomScroller>
       <Button
         style={{margin: "0 25px 25px 25px"}}
         onClick={saveChanges}
@@ -175,71 +190,9 @@ const ProjectSettings = (props) => {
   );
 };
 
-const ProjectSettingsForm = styled(CustomScroller)`
-  overflow: hidden;
-  flex: 1;
-  height: 0;
-  min-height: 0;
-  & div[class^="index-module_inner__"] > form {
-    display: flex;
-    flex-direction: column;
-    margin: 0 25px 25px 25px;
-    & > h2 > span {
-      cursor: pointer;
-    }
-    & > input[type="submit"] {
-      display: none;
-    }
-    & > *:not(:last-child) {
-      margin-bottom: 20px;
-    }
-  }
-`;
-
-const NonPrefixedInputField = styled.input`
-  width: calc(100% - 20px);
-  padding: 5px 10px;
-  border: 1px solid #C0C0C0;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  &:disabled {
-    background-color: #FAFAFA;
-  }
-  &::placeholder {
-    color: #C0C0C0;
-  }
-`
-
-const PanelPageToolbar = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 25px;
-  padding-top: 25px;
-`
-
-const PanelPageTitle = styled.span`
-  color: ${({theme})=> theme.txtColor};
-  font-size: 18px;
-  font-weight: 600;
-`
-
-const PanelPageToolbarAction = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-  cursor: pointer;
-`
-
 export default connect((state) => ({
   app: state.app,
   projects: state.projects,
-  user: state.user
+  user: state.user,
+  appSettings: state.appSettings
 }))(ProjectSettings);

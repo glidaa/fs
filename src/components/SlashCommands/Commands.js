@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo, useContext } from 'react'
-import styled, { ThemeContext } from "styled-components"
+import React, { useState, useEffect, useMemo } from 'react'
+import themes from "../../themes"
+import styles from "./Commands.module.scss"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
 import copyTask from "../../utils/copyTask"
@@ -24,10 +25,11 @@ const Commands = (props) => {
     },
     scrollableNodeRef,
     tasks,
+    appSettings,
     dispatch
   } = props
 
-  const themeContext = useContext(ThemeContext);
+  const theme = themes[appSettings.theme];
 
   const supportedIntents = Object.keys(supportedCommands)
   const supportedAlias = Object.fromEntries(Object.entries(supportedCommands).map(x => [x[1].alias, x[0]]).filter(x => x[0]))
@@ -113,20 +115,23 @@ const Commands = (props) => {
   }, [command])
 
   return suggestedIntents ? suggestedIntents.map((x, i) => (
-    <CommandSuggestion
+    <div
+      className={[
+        styles.CommandSuggestion,
+        ...(selection === i && [styles.selected] || [])
+      ].join(" ")}
       key={x}
-      isSelected={selection === i}
       onMouseEnter={() => setSelection(i)}
       onClick={() => chooseCommand(x)}
     >
-      {x === "ASSIGN" && <AssignIcon color={themeContext.primary} strokeWidth="32" height={24} />}
-      {x === "DUE" && <CalenderIcon color={themeContext.primary} fill={themeContext.primary} strokeWidth="32" height={24} />}
-      {x === "TAGS" && <TagsIcon color={themeContext.primary} strokeWidth="32" height={24} />}
-      {x === "DESCRIPTION" && <DescriptionIcon color={themeContext.primary} strokeWidth="32" height={24} />}
-      {x === "STATUS" && <StatusIcon color={themeContext.primary} strokeWidth="32" height={24} />}
-      {x === "DELETE" && <RemoveIcon color={themeContext.primary} strokeWidth="32" height={24} />}
-      {x === "COPY" && <CopyIcon color={themeContext.primary} strokeWidth="32" height={24} />}
-      {x === "DUPLICATE" && <DuplicateIcon color={themeContext.primary} strokeWidth="32" height={24} />}
+      {x === "ASSIGN" && <AssignIcon color={theme.primary} strokeWidth="32" height={24} />}
+      {x === "DUE" && <CalenderIcon color={theme.primary} fill={theme.primary} strokeWidth="32" height={24} />}
+      {x === "TAGS" && <TagsIcon color={theme.primary} strokeWidth="32" height={24} />}
+      {x === "DESCRIPTION" && <DescriptionIcon color={theme.primary} strokeWidth="32" height={24} />}
+      {x === "STATUS" && <StatusIcon color={theme.primary} strokeWidth="32" height={24} />}
+      {x === "DELETE" && <RemoveIcon color={theme.primary} strokeWidth="32" height={24} />}
+      {x === "COPY" && <CopyIcon color={theme.primary} strokeWidth="32" height={24} />}
+      {x === "DUPLICATE" && <DuplicateIcon color={theme.primary} strokeWidth="32" height={24} />}
       <div>
         <div>
           <span>{x}</span>
@@ -134,76 +139,16 @@ const Commands = (props) => {
         </div>
         <span>{supportedCommands[x].description}</span>
       </div>
-    </CommandSuggestion>
-  )) : (<NoIntent>No Commands Found</NoIntent>)
+    </div>
+  )) : (
+    <span className={styles.NoIntent}>
+      No Commands Found
+    </span>
+  )
 };
-
-const CommandSuggestion = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: ${({ isSelected }) => isSelected ? "#F5F5F5" : "transparent"};
-  padding: 10px 20px;
-  transition: background-color 0.2s;
-  cursor: pointer;
-  & > div {
-    display: flex;
-    flex-direction: column;
-    & > div:nth-child(1) {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      & > span:nth-child(1) {
-        color: ${({theme})=> theme.txtColor};
-        font-weight: 600;
-        font-size: 14px;
-        text-transform: lowercase;
-        &::first-letter {
-          text-transform: capitalize;
-        }
-      }
-      & > span:nth-child(2) {
-        line-height: 0;
-        height: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 14px;
-        color: ${({theme})=> theme.primary};
-        background-color: ${({theme})=> theme.primaryLight};
-        font-weight: 600;
-        padding: 2px;
-        border-radius: 4px;
-        font-size: 12px;
-        text-transform: lowercase;
-      }
-      & > *:not(:last-child) {
-        margin-right: 5px;
-      }
-    }
-    & > span:nth-child(2) {
-      color: ${({theme})=> theme.txtColor};
-      font-weight: 400;
-      font-size: 12px;
-    }
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-`
-
-const NoIntent = styled.span`
-  display: flex;
-  width: 100%;
-  font-size: 14px;
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0;
-`
 
 export default connect((state) => ({
 	app: state.app,
-	tasks: state.tasks
+	tasks: state.tasks,
+  appSettings: state.appSettings
 }))(Commands);

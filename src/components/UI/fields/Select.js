@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from "styled-components";
+import styles from "./Select.module.scss";
 
 const Select = (props) => {
 
@@ -25,72 +25,36 @@ const Select = (props) => {
 	};
 
 	return (
-    <SelectShell style={style}>
+    <div className={styles.SelectShell} style={style}>
       {label && (
         <label htmlFor={name}>
           {label}
         </label>
       )}
-      <SelectContainer readOnly={readOnly}>
+      <div
+        className={[
+          styles.SelectContainer,
+          ...(readOnly && [styles.readOnly] || [])
+        ].join(" ")}
+      >
         {values.map((x, i) => (
-          <Selection
+          <button
+            className={[
+              styles.Selection,
+              ...(value === x && [styles.selected] || [])
+            ].join(" ")}
             key={x}
-            isSelected={value === x}
-            color={colors[i]}
+            style={{
+              backgroundColor: colors[i]
+            }}
             onClick={() => onSelect(x)}
           >
             {options[i]}
-          </Selection>
+          </button>
         ))}
-      </SelectContainer>
-    </SelectShell>
+      </div>
+    </div>
 	)
 }
-
-const SelectShell = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  & > label {
-    color: ${({theme})=> theme.txtColor};
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 5px;
-  }
-`
-
-const Selection = styled.button`
-  position: relative;
-  padding: 5px 10px;
-  border: 2px solid transparent;
-  font-weight: 600;
-  font-size: 14px;
-  border-radius: 8px;
-  background-color: ${({color}) => color};
-  transition: color 0.2s, border-color 0.2s;
-  ${({ isSelected }) => isSelected ? `
-    color: #5D6969;
-    border-color: #7DAAFC;
-    cursor: default;
-  ` : `
-    color: #AAA8AC;
-  `}
-`
-
-const SelectContainer = styled.div`
-	display: flex;
-	flex-direction: row;
-  ${Selection} {
-    cursor: ${({readOnly}) => readOnly ? "default" : "pointer"};
-  }
-  & > *:not(:last-child) {
-    margin-right: 5px;
-  }
-`
 
 export default Select

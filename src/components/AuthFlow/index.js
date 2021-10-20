@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from "styled-components"
+import styles from "./index.module.scss"
 import { Redirect } from "react-router-dom"
 import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
@@ -42,26 +42,12 @@ const AuthFlow = (props) => {
       {shouldRedirect ? (
         <Redirect to={referrer || "/"} />
       ) : (
-        <AuthFlowContainer>
+        <CustomScroller className={styles.AuthFlowContainer}>
           {React.createElement(currPage, {setShouldRedirect, setCurrPage})}
-        </AuthFlowContainer>
+        </CustomScroller>
       )}
     </>
   )
 }
-
-const AuthFlowContainer = styled(CustomScroller)`
-  position: fixed;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  & div[class^="index-module_inner__"] {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    min-height: 100%;
-  }
-`
 
 export default connect()(AuthFlow);

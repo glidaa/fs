@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import styled from "styled-components"
+import styles from "./NewAccount.module.scss"
 import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
@@ -232,11 +232,14 @@ const NewAccount = (props) => {
     }
   }
   return currStep === 0 ? (
-    <NewAccountFormContainer>
-      <NewAccountFormHeader>
+    <div className={styles.NewAccountFormContainer}>
+      <div className={styles.NewAccountFormHeader}>
         <span>Create Account</span>
-      </NewAccountFormHeader>
-      <NewAccountStepOneForm onSubmit={handleNewAccount}>
+      </div>
+      <form
+        className={styles.NewAccountStepOneForm}
+        onSubmit={handleNewAccount}
+      >
         <TextField
           type="text"
           label="First Name"
@@ -310,15 +313,18 @@ const NewAccount = (props) => {
           value={isBusy ? "Signing Up" : "Sign Up"}
           disabled={!isSubmissionPossible || isBusy}
         />
-      </NewAccountStepOneForm>
-    </NewAccountFormContainer>
+      </form>
+    </div>
   ) : (
-    <NewAccountFormContainer>
-      <NewAccountFormHeader>
+    <div className={styles.NewAccountFormContainer}>
+      <div className={styles.NewAccountFormHeader}>
         <span>Confirm Account</span>
         <span>Enter code sent to your email.</span>
-      </NewAccountFormHeader>
-      <NewAccountStepTwoForm onSubmit={completeNewAccount}>
+      </div>
+      <form
+        className={styles.NewAccountStepTwoForm}
+        onSubmit={completeNewAccount}
+      >
         <TextField
           type="text"
           label="Verification Code"
@@ -334,99 +340,9 @@ const NewAccount = (props) => {
           value={isBusy ? "Processing" : "Submit"}
           disabled={isBusy || !verificationCode.trim()}
         />
-      </NewAccountStepTwoForm>
-    </NewAccountFormContainer>
+      </form>
+    </div>
   )
 }
-
-const NewAccountFormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 40px 0;
-  justify-content: center;
-  background-color: ${({theme})=> theme.secondaryBg};
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  border-radius: 25px;
-  height: fit-content;
-  width: 350px;
-  padding: 35px;
-  & > *:not(:last-child) {
-    margin-bottom: 15px;
-  }
-  @media only screen and (max-width: 768px) {
-    position: absolute;
-    width: calc(100% - 70px);
-    height: calc(100% - 70px);
-    border-radius: 0;
-    margin: 0;
-  }
-`
-
-const NewAccountFormHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  color: ${({theme})=> theme.txtColor};
-  & > span:nth-child(1) {
-    font-weight: 600;
-    font-size: 24px;
-  }
-  & > span:nth-child(2) {
-    font-weight: 400;
-    font-size: 16px;
-  }
-`
-
-const NewAccountStepOneForm = styled.form`
-  display: grid;
-  grid-template-areas:
-    'firstName lastName'
-    'username username'
-    'email email'
-    'password password'
-    'dateOfBirth dateOfBirth'
-    'gender gender'
-    'signUp signUp';
-  gap: 15px;
-  align-items: start;
-  & > *:nth-child(1) {
-    grid-area: firstName;
-  }
-  & > *:nth-child(2) {
-    grid-area: lastName;
-  }
-  & > *:nth-child(3) {
-    grid-area: username;
-  }
-  & > *:nth-child(4) {
-    grid-area: email;
-  }
-  & > *:nth-child(5) {
-    grid-area: password;
-  }
-  & > *:nth-child(6) {
-    grid-area: dateOfBirth;
-  }
-  & > *:nth-child(7) {
-    grid-area: gender;
-  }
-  & > *:nth-child(8) {
-    grid-area: signUp;
-  }
-`;
-
-const NewAccountStepTwoForm = styled.form`
-  display: grid;
-  grid-template-areas:
-    'code code'
-    'submit submit';
-  gap: 15px;
-  align-items: start;
-  & > *:nth-child(1) {
-    grid-area: code;
-  }
-  & > *:nth-child(2) {
-    grid-area: submit;
-  }
-`;
 
 export default connect()(NewAccount);

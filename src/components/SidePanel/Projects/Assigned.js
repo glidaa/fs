@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 import { connect } from "react-redux"
-import styled from "styled-components";
+import styles from "./Assigned.module.scss";
 import ProjectItem from "../../ProjectItem"
 import { ReactComponent as NoAssignedIllustartion } from "../../../assets/undraw_accept_tasks_po1c.svg"
 
@@ -22,42 +22,16 @@ const Projects = (props) => {
           />
         </div>
       )) : (
-        <NoAssignedProjects>
+        <div className={styles.NoAssignedProjects}>
           <NoAssignedIllustartion />
           <span>
             No Projects Assigned To You
           </span>
-        </NoAssignedProjects>
+        </div>
       )}
     </div>
   );  
 }
-
-const NoAssignedProjects = styled.div`
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  margin-top: -25px;
-  width: 100%;
-  & > svg {
-    width: 250px;
-    height: auto;
-    margin-top: 25px;
-  }
-  & > span {
-    font-weight: bold;
-    font-size: 18px;
-    color: ${({theme})=> theme.txtColor};
-    margin-top: 25px;
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 40px;
-  }
-`
 
 export default connect((state) => ({
   user: state.user,
