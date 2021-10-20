@@ -12,8 +12,8 @@
   transform: translateX(-365px);
   margin: 0 -365px 0 0;
   overflow: hidden;
-  &.opened {
-    transform: translateX(initial);
+  &.right.opened, &.opened {
+    transform: initial;
     margin: 0;
     overflow: auto;
   }
@@ -31,11 +31,12 @@
     height: 100%;
     margin: 0;
     transform: translateX(-100%);
-    &.opened {
-      transform: translateX(initial);
+    &.right.opened, &.opened {
+      transform: initial;
     }
     &.right {
       transform: translateX(100%);
+      margin: 0;
     }
   }
   z-index: 9999;

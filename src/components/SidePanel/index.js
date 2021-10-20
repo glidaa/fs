@@ -36,8 +36,8 @@ const SidePanel = (props) => {
     <div
       className={[
         styles.SidePanelShell,
-        ...((isRight && isRightPanelOpened) || (!isRight && isLeftPanelOpened) && [styles.opened] || []),
-        ...(isRight && [styles.right] || [])
+        ...(isRight && [styles.right] || []),
+        ...(((isRight && isRightPanelOpened) || (!isRight && isLeftPanelOpened)) && [styles.opened] || [])
       ].join(" ")}
     >
       {isRight && rightPanelPage && React.createElement(sidePanelPages[rightPanelPage])}
