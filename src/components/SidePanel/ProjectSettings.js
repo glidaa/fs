@@ -5,7 +5,7 @@ import * as projectsActions from "../../actions/projects";
 import { AuthState } from "../../constants";
 import themes from "../../themes"
 import styles from "./ProjectSettings.module.scss"
-import CustomScroller from 'react-custom-scroller';
+import SimpleBar from 'simplebar-react';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import Button from '../UI/Button';
@@ -120,7 +120,7 @@ const ProjectSettings = (props) => {
           />
         </button>
       </div>
-      <CustomScroller className={styles.ProjectSettingsForm}>
+      <SimpleBar className={styles.ProjectSettingsForm}>
         <form onSubmit={(e) => e.preventDefault()}>
           <TextField
             type="text"
@@ -178,7 +178,7 @@ const ProjectSettings = (props) => {
             value="Submit"
           />
         </form>
-      </CustomScroller>
+      </SimpleBar>
       <Button
         style={{margin: "0 25px 25px 25px"}}
         onClick={saveChanges}

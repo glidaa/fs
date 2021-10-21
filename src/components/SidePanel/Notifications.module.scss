@@ -1,9 +1,9 @@
 .NotificationsForm {
-  overflow: hidden;
+  overflow: auto;
   flex: 1;
   height: 0;
   min-height: 0;
-  & div[class^="index-module_inner__"] {
+  & :global(.simplebar-content) {
     display: flex;
     flex-direction: column;
     align-items: center;

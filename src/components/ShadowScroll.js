@@ -36,7 +36,7 @@ const ShadowScroll = (props) => {
         ...(showEnd && [styles.showEnd] || [])
       ].join(" ")}
     >
-      <div ref={ref}>
+      <div className={styles.Container} ref={ref}>
         {props.children}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { useMemo, createRef } from 'react';
 import styles from "./index.module.scss"
 import { connect } from "react-redux";
-import CustomScroller from 'react-custom-scroller';
+import SimpleBar from 'simplebar-react';
 import { supportedCommands } from "../../constants"
 import ASSIGN from "./Assign"
 import COMMANDS from "./Commands"
@@ -40,7 +40,7 @@ const SlashCommands = (props) => {
   const [commandIntent, commandParam] = useMemo(() => tokenizeCommand(command), [command])
 
   return slashCommandsPages[commandIntent] && (
-    <CustomScroller
+    <SimpleBar
       className={styles.DropdownContainer}
       style={{
         top: posInfo.top,
@@ -49,7 +49,7 @@ const SlashCommands = (props) => {
       scrollableNodeProps={{ ref: scrollableNodeRef }}
     >
       {React.createElement(slashCommandsPages[commandIntent], {commandIntent, commandParam, scrollableNodeRef })}
-    </CustomScroller>
+    </SimpleBar>
   )
 }
 

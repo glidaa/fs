@@ -16,7 +16,7 @@ module.exports = {
     configure: {
       plugins: [
         new CompressionPlugin(),
-        new BundleAnalyzerPlugin()
+        // new BundleAnalyzerPlugin()
       ],
       resolve: {
         fallback: {

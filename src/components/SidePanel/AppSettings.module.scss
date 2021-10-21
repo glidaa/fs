@@ -1,9 +1,9 @@
 .AppSettingsForm {
-  overflow: hidden;
+  overflow: auto;
   flex: 1;
   height: 0;
   min-height: 0;
-  & div[class^="index-module_inner__"] > form {
+  & :global(.simplebar-content) > form {
     display: flex;
     flex-direction: column;
     & > h2 > span {

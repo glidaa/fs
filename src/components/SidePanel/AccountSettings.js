@@ -5,7 +5,7 @@ import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
 import themes from "../../themes"
 import styles from "./AccountSettings.module.scss"
-import CustomScroller from 'react-custom-scroller';
+import SimpleBar from 'simplebar-react';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as LogOutIcon } from "../../assets/log-out-outline.svg"
 import DateField from '../UI/fields/DateField';
@@ -127,7 +127,7 @@ const AccountSettings = (props) => {
         <span>{firstName} {lastName}</span>
         <span>@{username}</span>
       </div>
-      <CustomScroller className={styles.AccountSettingsForm}>
+      <SimpleBar className={styles.AccountSettingsForm}>
         <form onSubmit={(e) => e.preventDefault()}>
           <TextField
             type="text"
@@ -172,7 +172,7 @@ const AccountSettings = (props) => {
           />
           <input type="submit" name="submit" value="Submit"></input>
         </form>
-      </CustomScroller>
+      </SimpleBar>
       <Button
         style={{ margin: "0 25px 25px 25px" }}
         onClick={saveChanges}

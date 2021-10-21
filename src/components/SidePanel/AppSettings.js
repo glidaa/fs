@@ -4,7 +4,7 @@ import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
 import themes from "../../themes"
 import styles from "./AppSettings.module.scss"
-import CustomScroller from 'react-custom-scroller';
+import SimpleBar from 'simplebar-react';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 
@@ -67,7 +67,7 @@ const AppSettings = (props) => {
           />
         </button>
       </div>
-      <CustomScroller className={styles.AppSettingsForm}>
+      <SimpleBar className={styles.AppSettingsForm}>
         <form onSubmit={(e) => e.preventDefault()}>
           <div className={styles.AppSetting}>
             <label htmlFor="tasksSortingCriteria">
@@ -86,7 +86,7 @@ const AppSettings = (props) => {
           </div>
           <input type="submit" name="submit" value="Submit"></input>
         </form>
-      </CustomScroller>
+      </SimpleBar>
     </>
   );
 };

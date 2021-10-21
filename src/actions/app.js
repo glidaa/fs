@@ -8,7 +8,7 @@ export const SET_TASK = "SET_TASK";
 export const SET_COMMAND = "SET_COMMAND";
 export const SET_PROJECT_ADDING_STATUS = "SET_PROJECT_ADDING_STATUS";
 export const SET_TASK_ADDING_STATUS = "SET_TASK_ADDING_STATUS";
-export const SET_HISTORY = "SET_HISTORY";
+export const SET_NAVIGATE = "SET_NAVIGATE";
 export const SET_LOADING = "SET_LOADING";
 export const SET_PROJECT_PANEL = "SET_PROJECT_PANEL";
 export const SET_DETAILS_PANEL = "SET_DETAILS_PANEL";
@@ -73,9 +73,9 @@ export const setTaskAddingStatus = (status) => ({
   status
 });
 
-export const setHistory = (history) => ({
-  type: SET_HISTORY,
-  history
+export const setNavigate = (navigate) => ({
+  type: SET_NAVIGATE,
+  navigate
 });
 
 export const setLoading = (isLoading) => ({
@@ -99,9 +99,9 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
         dispatch(setProject(id))
         if (shouldChangeURL) {
           if (user.state === AuthState.SignedIn) {
-            app.history.push(`/${projects[id].permalink}`)
+            app.navigate(`/${projects[id].permalink}`)
           } else {
-            app.history.push(`/local/${projects[id].permalink}`)
+            app.navigate(`/local/${projects[id].permalink}`)
           }
         }
       }
@@ -111,7 +111,7 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
       }
     } else {
       if (shouldChangeURL) {
-        app.history.push("/")
+        app.navigate("/")
       }
       dispatch(setProject(null))
     }
@@ -129,7 +129,7 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
     }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.history.push(`/${projects[app.selectedProject].permalink}`)
+        app.navigate(`/${projects[app.selectedProject].permalink}`)
       }
     }
     dispatch(setCommand(""))
@@ -145,7 +145,7 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
     }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.history.push(`/${projects[app.selectedProject].permalink}/${tasks[id].permalink}`)
+        app.navigate(`/${projects[app.selectedProject].permalink}/${tasks[id].permalink}`)
       }
     }
     dispatch(setTask(id))

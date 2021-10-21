@@ -6,7 +6,7 @@ import { Auth } from "@aws-amplify/auth";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
 import { AuthState } from '../../constants';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SubmitBtn from '../UI/fields/SubmitBtn';
 import TextField from '../UI/fields/TextField';
 
@@ -20,7 +20,7 @@ const Login = (props) => {
   const [passwordError, setPasswordError] = useState(null)
   const [verificationCodeError, setVerificationCodeError] = useState(null)
   const [isBusy, setIsBusy] = useState(false)
-  const history = useHistory();
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault()
     setIsBusy(true)
@@ -123,14 +123,14 @@ const Login = (props) => {
         />
         <div
           className={styles.NewAccountLink}
-          onClick={() => history.push("/signup")}
+          onClick={() => navigate("/signup")}
         >
           <span>No Account? </span>
           <span>Create One</span>
         </div>
         <span
           className={styles.ForgotPasswordLink}
-          onClick={() => history.push("/forgot-password")}
+          onClick={() => navigate("/forgot-password")}
         >
           Forgot Password?
         </span>

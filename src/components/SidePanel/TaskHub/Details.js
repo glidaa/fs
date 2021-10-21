@@ -5,7 +5,7 @@ import DateField from "../../UI/fields/DateField";
 import * as tasksActions from "../../../actions/tasks";
 import styles from "./Details.module.scss";
 import TagField from "../../UI/fields/TagField";
-import CustomScroller from 'react-custom-scroller';
+import SimpleBar from 'simplebar-react';
 import AssigneeField from "../../UI/fields/AssigneeField";
 import Textarea from '../../UI/fields/Textarea';
 import WatcherField from '../../UI/fields/WatcherField';
@@ -41,7 +41,7 @@ const Details = (props) => {
     );
   };
   return selectedTask && (
-    <CustomScroller className={styles.DetailsForm}>
+    <SimpleBar className={styles.DetailsForm}>
       <form onSubmit={(e) => e.preventDefault()}>
         <input type="submit" name="submit" value="Submit"></input>
         <AssigneeField
@@ -103,7 +103,7 @@ const Details = (props) => {
           readOnly={readOnly}
         />
       </form>
-    </CustomScroller>
+    </SimpleBar>
   )
 }
 

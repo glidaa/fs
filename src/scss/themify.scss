@@ -21,7 +21,7 @@ $themes: (
 
 @mixin themify($property, $value) {
   #{$property}: map.get($themes, "light", $value);
-  html.dark & {
+  html:global(.dark) & {
     #{$property}: map.get($themes, "dark", $value);
   }
 }

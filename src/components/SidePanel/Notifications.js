@@ -4,7 +4,7 @@ import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
 import themes from "../../themes"
 import styles from "./Notifications.module.scss"
-import CustomScroller from 'react-custom-scroller';
+import SimpleBar from 'simplebar-react';
 import { ReactComponent as CloseIcon } from "../../assets/close-outline.svg"
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
@@ -55,7 +55,7 @@ const Notifications = (props) => {
           />
         </button>
       </div>
-      <CustomScroller className={styles.NotificationsForm}>
+      <SimpleBar className={styles.NotificationsForm}>
         {notifications.stored.map(x => (
           <div
             className={[
@@ -98,7 +98,7 @@ const Notifications = (props) => {
             </div>
           </div>
         ))}
-      </CustomScroller>
+      </SimpleBar>
     </>
   );
 };

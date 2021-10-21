@@ -11,21 +11,22 @@ import * as userActions from "../actions/user"
 import * as observersActions from "../actions/observers"
 import * as queries from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
-import { Redirect, useHistory } from "react-router-dom"
+import { Navigate, useNavigate, useParams, useLocation } from "react-router-dom"
 import { panelPages, AuthState } from '../constants';
 import ProgressBar from "./UI/ProgressBar";
 import isLoggedIn from "../utils/isLoggedIn";
 
 const Loading = (props) => {
-  const { user, route, dispatch } = props
+  const { user, dispatch } = props
   const [shouldLogin, setShouldLogin] = useState(false)
   const [progressMax, setProgressMax] = useState(100)
   const [progressValue, setProgressValue] = useState(0)
   const [loadingMsg, setLoadingMsg] = useState("Please Wait A Moment")
-  const history = useHistory()
+  const navigate = useNavigate()
+  const routeParams = useParams()
+  const routeLocation = useLocation()
   useEffect(() => {
     (async () => {
-    const { match: { params } } = route
 
     const authData = await isLoggedIn() && await Auth.currentUserInfo()
     let currUser = {...user}
@@ -62,14 +63,14 @@ const Loading = (props) => {
         }
       }
     }
-    if (params.projectPermalink &&
-        !params.username &&
+    if (routeParams.projectPermalink &&
+        !routeParams.username &&
         currUser.state === AuthState.SignedOut) {
       setProgressMax(2)
       setLoadingMsg("We Are Fetching Your Own Projects")
       const projects = await dispatch(projectsActions.handleFetchOwnedProjects())
       const reqProject = Object.values(projects)
-        .filter(x => x.permalink === `${params.username}/${params.projectPermalink}`)[0]
+        .filter(x => x.permalink === `${routeParams.username}/${routeParams.projectPermalink}`)[0]
       if (reqProject) {
         dispatch(appActions.handleSetProject(reqProject.id, false))
         setProgressValue(progressValue + 1)
@@ -77,13 +78,13 @@ const Loading = (props) => {
         await dispatch(tasksActions.handleFetchTasks(reqProject.id))
       }
       setProgressValue(progressValue + 2)
-    } else if (params.projectPermalink &&
-      params.username &&
+    } else if (routeParams.projectPermalink &&
+      routeParams.username &&
       currUser.state === AuthState.SignedOut) {
         setShouldLogin(true)
         return 0
-    } else if (params.projectPermalink &&
-      params.username &&
+    } else if (routeParams.projectPermalink &&
+      routeParams.username &&
       currUser.state === AuthState.SignedIn) {
         setProgressMax(5)
         setProgressValue(progressValue + 1)
@@ -97,17 +98,17 @@ const Loading = (props) => {
         const projects = await dispatch(projectsActions.handleFetchWatchedProjects())
         setProgressValue(progressValue + 4)
         await dispatch(observersActions.handleSetOwnedProjectsObservers())
-        let reqProject = Object.values(projects).filter(x => x.permalink === `${params.username}/${params.projectPermalink}`)[0]
+        let reqProject = Object.values(projects).filter(x => x.permalink === `${routeParams.username}/${routeParams.projectPermalink}`)[0]
         if (!reqProject) {
           try {
             reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
-              permalink: `${params.username}/${params.projectPermalink}`
+              permalink: `${routeParams.username}/${routeParams.projectPermalink}`
             }))).data.getProjectByPermalink
             dispatch(projectsActions.createProject(reqProject, "temp"))
           } catch {
             reqProject = null
-            if (params.taskPermalink) {
-              history.replace(`/${params.username}/${params.projectPermalink}`)
+            if (routeParams.taskPermalink) {
+              navigate(`/${routeParams.username}/${routeParams.projectPermalink}`, { replace: true })
             }
           }
         }
@@ -115,15 +116,15 @@ const Loading = (props) => {
           dispatch(appActions.handleSetProject(reqProject.id, false))
           setLoadingMsg("We Are Getting The Requested Tasks")
           const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id, true))
-          if (params.taskPermalink) {
-            const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(params.taskPermalink, 10))[0]
+          if (routeParams.taskPermalink) {
+            const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(routeParams.taskPermalink, 10))[0]
             if (reqTask) {
               dispatch(appActions.handleSetTask(reqTask.id, false))
               dispatch(appActions.setRightPanelPage(panelPages.TASK_HUB))
               dispatch(appActions.handleSetRightPanel(true))
             }
           } else {
-            history.replace(`/${params.username}/${params.projectPermalink}`)
+            navigate(`/${routeParams.username}/${routeParams.projectPermalink}`, { replace: true })
           }
         }
         setProgressValue(progressValue + 5)
@@ -143,7 +144,7 @@ const Loading = (props) => {
           const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
           if (firstProject) {
             dispatch(appActions.handleSetProject(firstProject.id, false))
-            history.replace(`/${firstProject.permalink}`)
+            navigate(`/${firstProject.permalink}`, { replace: true })
           }
         } else {
           setProgressMax(1)
@@ -153,7 +154,7 @@ const Loading = (props) => {
           const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
           if (firstProject) {
             dispatch(appActions.handleSetProject(firstProject.id, false))
-            history.replace(`/local/${firstProject.permalink}`)
+            navigate(`/local/${firstProject.permalink}`, { replace: true })
           }
         }
       }
@@ -163,10 +164,10 @@ const Loading = (props) => {
   return (
     <>
       {shouldLogin ? (
-        <Redirect
+        <Navigate
           to={{
             pathname: "/login",
-            state: { referrer: route.location.pathname }
+            state: { referrer: routeLocation.pathname }
           }}
         />
       ) : (

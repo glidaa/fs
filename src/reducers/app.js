@@ -1,4 +1,4 @@
-import { SET_PROJECT, SET_TASK, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_HISTORY, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE } from "../actions/app"
+import { SET_PROJECT, SET_TASK, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_NAVIGATE, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE } from "../actions/app"
 import { panelPages, OK } from "../constants"
 
 const initState = {
@@ -8,7 +8,7 @@ const initState = {
   projectsTab: "owned",
   projectAddingStatus: OK,
   taskAddingStatus: OK,
-  history: null,
+  navigate: null,
   isLoading: true,
   isLeftPanelOpened: false,
   isRightPanelOpened: false,
@@ -39,8 +39,8 @@ export default function (state = initState, action) {
       return {...state, projectAddingStatus: action.status}
     case SET_TASK_ADDING_STATUS:
       return {...state, taskAddingStatus: action.status}
-    case SET_HISTORY:
-      return {...state, history: action.history}
+    case SET_NAVIGATE:
+      return {...state, navigate: action.navigate}
     case SET_LOCKED_TASK_FIELD:
       return {...state, lockedTaskField: action.fieldName}
     case SET_RIGHT_PANEL_PAGE:

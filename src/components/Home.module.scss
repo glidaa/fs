@@ -1,0 +1,13 @@
+.MainPage {
+  position: fixed;
+  right: 0;
+  width: calc(100vw - 70px);
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  @media only screen and (max-width: 768px) {
+    top: 0;
+    width: 100vw;
+    height: calc(100% - 90px);
+  }
+}

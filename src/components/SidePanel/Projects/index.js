@@ -8,7 +8,7 @@ import { initProjectState, OK, PENDING, AuthState } from "../../../constants"
 import parseLinkedList from "../../../utils/parseLinkedList"
 import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-back-outline.svg";
 import { ReactComponent as AddIcon } from "../../../assets/add-outline.svg";
-import CustomScroller from 'react-custom-scroller';
+import SimpleBar from 'simplebar-react';
 import filterObj from "../../../utils/filterObj";
 import PanelTabs from "../../PanelTabs";
 import Assigned from "./Assigned";
@@ -87,11 +87,11 @@ const Projects = (props) => {
             onChange={(newVal) => setScope(newVal)}
           />
         )}
-        <CustomScroller className={styles.ProjectItems}>
+        <SimpleBar className={styles.ProjectItems}>
           {scope === "assigned" && <Assigned />}
           {scope === "watched" && <Watched />}
           {scope === "owned" && <Owned />}
-        </CustomScroller>
+        </SimpleBar>
       </div>
     </>
   );  

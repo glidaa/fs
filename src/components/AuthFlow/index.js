@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./index.module.scss"
-import { Redirect } from "react-router-dom"
+import { Navigate, useLocation } from "react-router-dom"
 import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
-import CustomScroller from 'react-custom-scroller';
+import SimpleBar from 'simplebar-react';
 import Login from './Login';
 import NewAccount from './NewAccount';
 import ForgotPassword from './ForgotPassword';
 import isLoggedIn from '../../utils/isLoggedIn';
 
 const AuthFlow = (props) => {
-  const { route, dispatch } = props
+  const { dispatch } = props
   const [shouldRedirect, setShouldRedirect] = useState(false)
   const [referrer, setReferrer] = useState(null)
   const [currPage, setCurrPage] = useState(Login)
+  const routeLocation = useLocation()
   useEffect(() => {
-    setReferrer(props.route.location.state?.referrer)
+    setReferrer(routeLocation.state?.referrer)
     isLoggedIn().then(res => res && (
       Auth.currentUserInfo().then((authData) => {
         if (authData) {
@@ -26,7 +27,7 @@ const AuthFlow = (props) => {
     ))
   }, [])
   useEffect(() => {
-    switch (route.match?.path) {
+    switch (routeLocation?.pathname) {
       case "/login":
         setCurrPage(Login)
         break
@@ -39,15 +40,15 @@ const AuthFlow = (props) => {
       default:
         break
     }
-  }, [route])
+  }, [routeLocation?.pathname])
   return (
     <>
       {shouldRedirect ? (
-        <Redirect to={referrer || "/"} />
+        <Navigate to={referrer || "/"} />
       ) : (
-        <CustomScroller className={styles.AuthFlowContainer}>
+        <SimpleBar className={styles.AuthFlowContainer}>
           {React.createElement(currPage, {setShouldRedirect, setCurrPage})}
-        </CustomScroller>
+        </SimpleBar>
       )}
     </>
   )

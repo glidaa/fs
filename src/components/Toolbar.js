@@ -9,7 +9,7 @@ import { ReactComponent as NotificationIcon } from "../assets/notifications-outl
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
 import { ReactComponent as LoginIcon } from "../assets/log-in-outline.svg"
 import Avatar from './UI/Avatar';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Toolbar = (props) => {
   const {
@@ -21,7 +21,7 @@ const Toolbar = (props) => {
     appSettings,
     dispatch
   } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const theme = themes[appSettings.theme];
   const openLeftPanel = (page) => {
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== page)) {
@@ -37,7 +37,7 @@ const Toolbar = (props) => {
   }
   const goToLoginPage = () => {
     dispatch(appActions.handleSetTask(null))
-    return history.push("/login")
+    return navigate("/login")
   }
   return (
     <div className={styles.ToolbarContainer}>

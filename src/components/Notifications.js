@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect } from "react-redux";
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import themes from "../themes"
 import styles from "./Notifications.module.scss"
 import * as notificationsActions from "../actions/notifications"
@@ -15,11 +15,11 @@ const Notifications = (props) => {
     dispatch
   } = props;
   const theme = themes[appSettings.theme];
-  const history = useHistory();
+  const navigate = useNavigate();
   const notificationElem = useRef(null)
   const dismissTimer = useRef(null)
   const [anim, setAnim] = useState(0)
-  const openLink = (link) => link && history.push(link)
+  const openLink = (link) => link && navigate(link)
   const dismissNotification = (e) => {
     if (e) e.stopPropagation()
     clearTimeout(dismissTimer.current)
