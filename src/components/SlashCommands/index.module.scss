@@ -9,7 +9,7 @@
 }
 
 .DropdownContainer {
-  position: fixed;
+  position: fixed!important;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

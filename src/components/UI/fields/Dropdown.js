@@ -57,7 +57,10 @@ const Dropdown = (props) => {
         {Object.entries(props.options).map(x => (
           <span
             key={x[0]}
-            className={x[0] === (props.value || props.defaultValue) ? "selected noselect" : "noselect"}
+            className={[
+              "noselect",
+              ...(x[0] === (props.value || props.defaultValue) && [styles.selected] || [])
+            ].join(" ")}
             onClick={() => {
                 toggleDropdown()
                 props.onChange({ target: {

@@ -16,10 +16,12 @@ export default function (state = {}, action) {
       )
       return {...stateClone, [action.taskState.id]: action.taskState}
     case UPDATE_TASK:
-      const update = Object.fromEntries(Object.entries(action.update).filter(item => item[1] != null))
-      if (update.prevTask && update.nextTask) {
+      const update = Object.fromEntries(Object.entries(action.update).filter(item => (
+        item[0] === "prevTask" || item[0] === "nextTask" || item[1] != null
+      )))
+      if (update.prevTask !== undefined || update.nextTask !== undefined) {
         stateClone = removeItemOrder(
-          stateClone,
+          stateClone, 
           stateClone[update.id],
           "prevTask",
           "nextTask"

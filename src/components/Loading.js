@@ -14,6 +14,7 @@ import * as mutations from "../graphql/mutations"
 import { Redirect, useHistory } from "react-router-dom"
 import { panelPages, AuthState } from '../constants';
 import ProgressBar from "./UI/ProgressBar";
+import isLoggedIn from "../utils/isLoggedIn";
 
 const Loading = (props) => {
   const { user, route, dispatch } = props
@@ -25,7 +26,8 @@ const Loading = (props) => {
   useEffect(() => {
     (async () => {
     const { match: { params } } = route
-    const authData = await Auth.currentUserInfo()
+
+    const authData = await isLoggedIn() && await Auth.currentUserInfo()
     let currUser = {...user}
     if (authData) {
       const userData = (await API.graphql(

@@ -7,6 +7,7 @@ import CustomScroller from 'react-custom-scroller';
 import Login from './Login';
 import NewAccount from './NewAccount';
 import ForgotPassword from './ForgotPassword';
+import isLoggedIn from '../../utils/isLoggedIn';
 
 const AuthFlow = (props) => {
   const { route, dispatch } = props
@@ -15,12 +16,14 @@ const AuthFlow = (props) => {
   const [currPage, setCurrPage] = useState(Login)
   useEffect(() => {
     setReferrer(props.route.location.state?.referrer)
-    Auth.currentUserInfo().then((authData) => {
-      if (authData) {
-        //dispatch(appActions.setLoading(true))
-        //setShouldRedirect(true)
-      }
-    })
+    isLoggedIn().then(res => res && (
+      Auth.currentUserInfo().then((authData) => {
+        if (authData) {
+          //dispatch(appActions.setLoading(true))
+          //setShouldRedirect(true)
+        }
+      })
+    ))
   }, [])
   useEffect(() => {
     switch (route.match?.path) {
