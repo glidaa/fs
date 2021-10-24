@@ -31,9 +31,8 @@
 }
 
 .KeywordField {
-  width: calc(100% - 90px);
+  width: calc(100% - 70px);
   outline: none;
-  background-color: #f6f6f6;
   border: none;
   padding: 10px;
   border-radius: 8px;
@@ -41,6 +40,9 @@
   font-size: 14px;
   font-weight: 400;
   transition: opacity 0.3s;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(color, "txtColor");
+  @include themify(background-color, "fieldBg");
   &::placeholder {
     color: #c0c0c0;
   }

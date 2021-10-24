@@ -43,9 +43,9 @@
   padding: 0;
   cursor: pointer;
   border-radius: 8px;
-  border: 1px solid;
-  @include themify(border-color, "primary");
-  @include themify(background-color, "secondaryBg");
+  border: none;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(background-color, "fieldBg");
 }
 
 .NoTags {
@@ -79,7 +79,8 @@
   border: none;
   flex-direction: row;
   align-items: center;
-  border: 1px solid #c0c0c0;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(background-color, "fieldBg");
   & > span {
     cursor: pointer;
     &:nth-child(1) {
@@ -108,7 +109,8 @@
   width: 60px;
   border: none;
   border-radius: 8px;
-  border: 1px solid #c0c0c0;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(background-color, "fieldBg");
   & > input {
     border: none;
     width: 60px;
@@ -116,7 +118,7 @@
     font-weight: 600;
     padding: 0;
     @include themify(color, "txtColor");
-    @include themify(background-color, "secondaryBg");
+    @include themify(background-color, "fieldBg");
     &::placeholder {
       color: #c0c0c0;
     }

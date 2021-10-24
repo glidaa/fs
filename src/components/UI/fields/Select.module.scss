@@ -23,6 +23,7 @@
   font-size: 14px;
   border-radius: 8px;
   color: #aaa8ac;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
   transition: color 0.2s, border-color 0.2s;
   &.selected {
     color: #5d6969;

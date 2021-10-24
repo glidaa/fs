@@ -78,8 +78,8 @@
     opacity: 0.5;
   }
   &:not(.focused):not(.dragging):not(.sorting):hover {
-    background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    @include themify(background-color, "fieldBg");;
+    box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
     & .TaskItemActions {
       opacity: 1;
       width: auto;
@@ -96,7 +96,7 @@
     }
     &.focused {
       background-color: rgba(255, 255, 255, 0.5);
-      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+      box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
     }
   }
 }

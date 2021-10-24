@@ -1,11 +1,11 @@
 export default {
   light: {
-    primary: "#1F5EFF",
+    primary: "#1560FB",
     primaryDark: "#0058CC",
-    primaryLight: "#CCE2FF",
-    txtColor: "#222222",
-    primaryBg: "#F5F7FB",
-    secondaryBg: "#FFFFFF"
+    primaryLight: "#d0dffe",
+    txtColor: "#0d3a97",
+    primaryBg: "#F3F7FF",
+    secondaryBg: "#e8efff"
   },
   dark: {
     primary: "#1D5EFF",

@@ -8,6 +8,7 @@ import Home from "./Home";
 
 const App = (props) => {
   const {
+    appSettings,
     dispatch
   } = props;
   const navigate = useNavigate();
@@ -26,6 +27,13 @@ const App = (props) => {
       window.removeEventListener("storage", fetchAppSettings)
     }
   }, []);
+
+  useEffect(() => {
+    let classNames = document.documentElement.className.split(" ");
+    classNames = classNames.filter(x => x !== "dark" || x !== "light")
+    classNames.push(appSettings.theme)
+    document.documentElement.className = classNames.join(" ")
+  }, [appSettings.theme]);
   return useRoutes([
     {
       caseSensitive: true,
@@ -65,4 +73,6 @@ const App = (props) => {
   ])
 };
 
-export default connect()(App);
+export default connect((state) => ({
+  appSettings: state.appSettings
+}))(App);

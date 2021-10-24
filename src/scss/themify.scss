@@ -2,26 +2,35 @@
 
 $themes: (
   "light": (
-    "primary": #1F5EFF,
-    "primaryDark": #0058CC,
-    "primaryLight": #CCE2FF,
-    "txtColor": #222222,
-    "primaryBg": #F5F7FB,
-    "secondaryBg": #FFFFFF
+    "primary": #1560FB, // Y7K Blue
+    "primaryDark": #0058CC, //
+    "primaryLight": #d0dffe, // 80% lighter
+    "txtColor": #0d3a97, // 45% darker
+    "primaryBg": #F3F7FF, // 95% lighter
+    "secondaryBg": #e8efff, // 90% lighter
+    "fieldBg": #FFFFFF
   ),
   "dark": (
-    "primary": #1D5EFF,
+    "primary": #1560FB,
     "primaryDark": #0058CC,
-    "primaryLight": #CCE2FF,
+    "primaryLight": #d0dffe, // 80% lighter
     "txtColor": #FFFFFF,
-    "primaryBg": #23242A,
-    "secondaryBg": #1B2029
+    "primaryBg": #1F1F1F,
+    "secondaryBg": #282A2D,
+    "fieldBg": #444746
   )
 );
 
 @mixin themify($property, $value) {
   #{$property}: map.get($themes, "light", $value);
   html:global(.dark) & {
+    #{$property}: map.get($themes, "dark", $value);
+  }
+}
+
+@mixin themify-global($property, $value) {
+  #{$property}: map.get($themes, "light", $value);
+  html.dark & {
     #{$property}: map.get($themes, "dark", $value);
   }
 }

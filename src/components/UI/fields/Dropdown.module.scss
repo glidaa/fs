@@ -9,23 +9,21 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  @include themify(background-color, "secondaryBg");
-  border: 1px solid #c0c0c0;
+  @include themify(background-color, "fieldBg");
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  border: 1px solid transparent;
   border-radius: 4px;
   padding: 5px 10px;
   cursor: pointer;
-  transition: border 0.3s, box-shadow 0.3s;
   &.opened {
-    border: 1px solid;
     @include themify(border-color, "primary");
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
   }
   & > input {
     pointer-events: none;
     width: 100%;
     @include themify(color, "txtColor");
     border: none;
-    @include themify(background-color, "secondaryBg");
+    @include themify(background-color, "fieldBg");
     font-size: 12px;
     cursor: pointer;
   }

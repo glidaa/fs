@@ -41,6 +41,7 @@
 }
 
 .NotificationShell {
+  // background-color: #FFDACD;
   position: relative;
   display: flex;
   @include themify(color, "txtColor");
@@ -48,7 +49,7 @@
   width: calc(100% - 80px);
   margin: 0 25px;
   border-radius: 8px;
-  @include themify(background-color, "secondaryBg");
+  @include themify(background-color, "primaryLight");
   &.clickable {
     cursor: pointer;
     &:hover {
@@ -61,37 +62,34 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 100%;
+  & > div {
+    width: 100%;
+  }
   & > *:not(:last-child) {
     margin-right: 10px;
   }
 }
 
-.NotificationContent {
+.NotificationTopPart {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  justify-content: flex-start;
-  div {
-    display: flex;
-    flex-direction: column;
-    span:nth-child(1) {
-      font-size: 12px;
-    }
-    span:nth-child(2) {
-      font-size: 10px;
-    }
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
+  width: 100%;
+  font-size: 12px;
+  span:first-child {
+    font-weight: 600;
   }
 }
 
-.NotificationHeading {
-  line-height: 18.4px;
-  display: inline-block;
-  vertical-align: middle;
+.NotificationBottomPart {
+  font-size: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .NotificationCloseBtn {

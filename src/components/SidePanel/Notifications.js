@@ -66,17 +66,17 @@ const Notifications = (props) => {
             key={x.id}
           >
             <div className={styles.NotificationContainer}>
-              <div className={styles.NotificationContent}>
-                <Avatar user={users[x.sender]} size={32} />
-                <div>
-                  <span className={styles.NotificationHeading}>
-                    <b style={{ float: "left" }}>
-                      {users[x.sender].firstName} {users[x.sender].lastName}
-                    </b>
-                    <span style={{ float: "right" }}>
-                      {new Date(x.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-                    </span>
+              <Avatar user={users[x.sender]} size={32} />
+              <div>
+                <div className={styles.NotificationTopPart}>
+                  <span>
+                    {users[x.sender].firstName} {users[x.sender].lastName}
                   </span>
+                  <span>
+                    {new Date(x.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                  </span>
+                </div>
+                <div className={styles.NotificationBottomPart}>
                   {x.type === "ASSIGNMENT" && (
                     <span>
                       Assigned a task to&nbsp;
@@ -85,16 +85,16 @@ const Notifications = (props) => {
                       Tap here to review it.
                     </span>
                   )}
+                  {/* <button className={styles.NotificationCloseBtn}>
+                    <CloseIcon
+                      height="16"
+                      width="16"
+                      strokeWidth="32"
+                      color={theme.primary}
+                    />
+                  </button> */}
                 </div>
               </div>
-              {/* <button className={styles.NotificationCloseBtn}>
-                <CloseIcon
-                  height="16"
-                  width="16"
-                  strokeWidth="32"
-                  color={theme.primary}
-                />
-              </button> */}
             </div>
           </div>
         ))}
