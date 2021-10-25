@@ -173,6 +173,7 @@ export const onCreateTaskByProjectId = /* GraphQL */ `
       due
       tags
       status
+      priority
       createdAt
       updatedAt
       owner
@@ -194,6 +195,7 @@ export const onUpdateTaskByProjectId = /* GraphQL */ `
       due
       tags
       status
+      priority
       watchers
       assignees
       updatedAt
@@ -214,6 +216,7 @@ export const onDeleteTaskByProjectId = /* GraphQL */ `
       due
       tags
       status
+      priority
       createdAt
       updatedAt
       owner

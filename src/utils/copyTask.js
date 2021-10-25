@@ -11,6 +11,7 @@ export default (taskState, projectID, prevTask = null, nextTask = null) => {
     due: taskState.due,
     tags: taskState.tags,
     status: taskState.status,
+    priority: taskState.priority,
     assignees: []
   }
 }

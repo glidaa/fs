@@ -87,6 +87,7 @@ export const createTask = /* GraphQL */ `
       due
       tags
       status
+      priority
       createdAt
       updatedAt
       owner
@@ -140,6 +141,7 @@ export const updateTask = /* GraphQL */ `
       due
       tags
       status
+      priority
       watchers
       assignees
       updatedAt
@@ -211,6 +213,7 @@ export const deleteTaskAndComments = /* GraphQL */ `
       due
       tags
       status
+      priority
       createdAt
       updatedAt
       owner
@@ -256,6 +259,7 @@ export const assignTask = /* GraphQL */ `
       due
       tags
       status
+      priority
       watchers
       assignees
       updatedAt
@@ -280,6 +284,7 @@ export const unassignTask = /* GraphQL */ `
       due
       tags
       status
+      priority
       watchers
       assignees
       updatedAt
@@ -300,6 +305,7 @@ export const addWatcher = /* GraphQL */ `
       due
       tags
       status
+      priority
       watchers
       assignees
       updatedAt
@@ -320,6 +326,7 @@ export const removeWatcher = /* GraphQL */ `
       due
       tags
       status
+      priority
       watchers
       assignees
       updatedAt

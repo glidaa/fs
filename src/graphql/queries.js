@@ -194,6 +194,7 @@ export const listTasksForProject = /* GraphQL */ `
         due
         tags
         status
+        priority
         createdAt
         updatedAt
         owner

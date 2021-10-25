@@ -7,6 +7,7 @@ export default (taskState) => {
     description: taskState.description,
     due: taskState.due,
     tags: taskState.tags,
-    status: taskState.status
+    status: taskState.status,
+    priority: taskState.priority
   }
 }

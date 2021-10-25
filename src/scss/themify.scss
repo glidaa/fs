@@ -1,36 +1,44 @@
 @use "sass:map";
+@use "sass:color";
+
+@function construct-theme($variant) {
+  @return (
+    "light": (
+      "primary": $variant, // Y7K Blue
+      "primaryDark": color.scale($variant, $lightness: -10%),
+      "primaryLight": color.scale($variant, $lightness: 80%),
+      "txtColor": color.scale($variant, $lightness: -45%),
+      "primaryBg": color.scale($variant, $lightness: 95%),
+      "secondaryBg": color.scale($variant, $lightness: 90%),
+      "fieldBg": #FFFFFF
+    ),
+    "dark": (
+      "primary": $variant, // Y7K Blue
+      "primaryDark": color.scale($variant, $lightness: -10%),
+      "primaryLight": color.scale($variant, $lightness: 80%),
+      "txtColor": #FFFFFF,
+      "primaryBg": #1F1F1F,
+      "secondaryBg": #282A2D,
+      "fieldBg": #444746
+    )
+  )
+}
 
 $themes: (
-  "light": (
-    "primary": #1560FB, // Y7K Blue
-    "primaryDark": #0058CC, //
-    "primaryLight": #d0dffe, // 80% lighter
-    "txtColor": #0d3a97, // 45% darker
-    "primaryBg": #F3F7FF, // 95% lighter
-    "secondaryBg": #e8efff, // 90% lighter
-    "fieldBg": #FFFFFF
-  ),
-  "dark": (
-    "primary": #1560FB,
-    "primaryDark": #0058CC,
-    "primaryLight": #d0dffe, // 80% lighter
-    "txtColor": #FFFFFF,
-    "primaryBg": #1F1F1F,
-    "secondaryBg": #282A2D,
-    "fieldBg": #444746
-  )
+  "blue": construct-theme(#1560FB),
+  "orange": construct-theme(#FE6000)
 );
 
 @mixin themify($property, $value) {
-  #{$property}: map.get($themes, "light", $value);
+  #{$property}: map.get($themes, "blue", "light", $value);
   html:global(.dark) & {
-    #{$property}: map.get($themes, "dark", $value);
+    #{$property}: map.get($themes, "blue", "dark", $value);
   }
 }
 
 @mixin themify-global($property, $value) {
-  #{$property}: map.get($themes, "light", $value);
+  #{$property}: map.get($themes, "blue", "light", $value);
   html.dark & {
-    #{$property}: map.get($themes, "dark", $value);
+    #{$property}: map.get($themes, "blue", "dark", $value);
   }
 }

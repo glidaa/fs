@@ -82,6 +82,7 @@ const AppSettings = (props) => {
               <option value="BY_DEFAULT">default</option>
               <option value="BY_DUE">due date</option>
               <option value="BY_STATUS">status</option>
+              <option value="BY_PRIORITY">priority</option>
             </select>
           </div>
           <input type="submit" name="submit" value="Submit"></input>

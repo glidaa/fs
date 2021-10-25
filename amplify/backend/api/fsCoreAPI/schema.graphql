@@ -59,6 +59,7 @@ type Task
 	due: AWSTimestamp
 	tags: [String!]
 	status: TaskStatus!
+	priority: TaskPriority!
 	createdAt: AWSDateTime!
 	updatedAt: AWSDateTime!
 	owner: String!
@@ -316,6 +317,7 @@ input CreateTaskInput {
 	due: AWSTimestamp
 	tags: [String!]
 	status: TaskStatus
+	priority: TaskPriority
 }
 
 input CreateCommentInput {
@@ -343,6 +345,7 @@ input UpdateTaskInput {
 	due: AWSTimestamp
 	tags: [String!]
 	status: TaskStatus
+	priority: TaskPriority
 	mutationID: String
 }
 
@@ -410,6 +413,7 @@ type TaskUpdate
 	due: AWSTimestamp
 	tags: [String!]
 	status: TaskStatus
+	priority: TaskPriority
 	watchers: [String!]
 	assignees: [String!]
 	updatedAt: AWSDateTime!
@@ -467,6 +471,12 @@ enum TaskStatus {
 	todo
 	pending
 	done
+}
+
+enum TaskPriority {
+	high
+	normal
+	low
 }
 
 enum ProjectPrivacy {

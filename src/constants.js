@@ -95,7 +95,8 @@ export const initTaskState = (projectID, prevTask = null, nextTask = null) => ({
   due: null,
   tags: [],
   assignees: [],
-  status: "todo"
+  status: "todo",
+  priority: "normal"
 })
 
 export const AuthState = {

@@ -92,7 +92,8 @@ const TasksToolbar = (props) => {
           options={{
             BY_DEFAULT: "default",
             BY_DUE: "due",
-            BY_STATUS: "status"
+            BY_STATUS: "status",
+            BY_PRIORITY: "priority"
           }}
         />
       </div>

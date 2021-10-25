@@ -518,6 +518,8 @@ exports.handler = async function (ctx) {
         todoCount: 0,
         pendingCount: 0,
         doneCount: 0,
+        privacy: ctx.arguments.input.privacy || "public",
+        permissions: ctx.arguments.input.permissions || "rw",
         permalink: `${client}/${ctx.arguments.input.permalink}`,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -670,6 +672,7 @@ exports.handler = async function (ctx) {
         ...ctx.arguments.input,
         id: uuidv4(),
         status: ctx.arguments.input.status || TODO,
+        priority: ctx.arguments.input.priority || "normal",
         assignees: ctx.arguments.input.assignees || [],
         watchers: ctx.arguments.input.watchers || [],
         tags: ctx.arguments.input.tags || [],
@@ -1464,6 +1467,7 @@ exports.handler = async function (ctx) {
                 due: task.due,
                 tags: task.tags,
                 status: task.status,
+                priority: task.priority,
                 assignees: task.assignees
               }
             }
@@ -1957,6 +1961,7 @@ exports.handler = async function (ctx) {
         task: "Dummy Task",
         permalink: 1,
         status: "todo",
+        priority: "normal",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         owner: client
@@ -1991,6 +1996,7 @@ exports.handler = async function (ctx) {
         task: "Dummy Task",
         permalink: 1,
         status: "todo",
+        priority: "normal",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         owner: client

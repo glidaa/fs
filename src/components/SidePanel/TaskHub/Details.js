@@ -102,6 +102,16 @@ const Details = (props) => {
           value={tasks[selectedTask].status}
           readOnly={readOnly}
         />
+        <Select
+          name="priority"
+          label="Priority"
+          onChange={handleChange}
+          values={["low", "normal", "high"]}
+          options={["Low", "Normal", "High"]}
+          colors={["#FFEBE5", "#FDF1DB", "#DAF6F4"]}
+          value={tasks[selectedTask].priority}
+          readOnly={readOnly}
+        />
       </form>
     </SimpleBar>
   )
