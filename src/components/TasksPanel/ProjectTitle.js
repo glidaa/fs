@@ -75,7 +75,7 @@ const ProjectTitle = (props) => {
 				<span
           className={[
             styles.ProjectTitleHeader,
-            ...(projects[selectedProject].title && [styles.placeholder] || [])
+            ...(!projects[selectedProject].title && [styles.placeholder] || [])
           ].join(" ")}
 					onClick={selectTitle}
 				>

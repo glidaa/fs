@@ -4,6 +4,5 @@
       "apifsCoreAPI",
       "Outputs.GraphQLAPIIdOutput"
     ]
-  },
-  "sesIdentityName": "forwardslash.ch"
+  }
 }

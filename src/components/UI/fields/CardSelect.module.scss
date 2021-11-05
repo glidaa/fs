@@ -28,13 +28,13 @@
   outline: none;
   cursor: pointer;
   border-radius: 8px;
-  @include themify(background-color, "primaryLight");
+  @include themify(background-color, "fieldBg");
   box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
   transition: color 0.2s, border-color 0.2s;
   & > span:nth-child(1) {
     font-size: 24px;
     font-weight: 600;
-    @include themify(color, "primaryDark");
+    @include themify(color, "primaryLight");
   }
   & > span:nth-child(2) {
     font-size: 14px;

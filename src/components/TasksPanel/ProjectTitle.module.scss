@@ -15,7 +15,7 @@
   white-space: nowrap;
   overflow: hidden;
   cursor: text;
-  color: #596766;
+  @include themify(color, "txtColor");
   &.placeholder {
     color: #c0c0c0;
   }
@@ -31,7 +31,7 @@
   padding: 8px 12px;
   & > input {
     background-color: transparent;
-    color: #596766;
+    @include themify(color, "txtColor");
     font-size: 32px;
     width: 100%;
     font-weight: 600;

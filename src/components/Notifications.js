@@ -62,6 +62,12 @@ const Notifications = (props) => {
                       Tap here to review it.
                     </span>
                   )}
+                  {notifications.pushed[0].type === "DUE_CHANGE" && (
+                    <span>
+                      <b>@{notifications.pushed[0].sender} </b>
+                      has changed due to. Tap here to review it.
+                    </span>
+                  )}
               </div>
             </div>
             <button

@@ -1,12 +1,14 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require("aws-sdk");
-const ses = new AWS.SESV2();
+const sgMail = require('@sendgrid/mail');
 const https = require('https');
 const urlParse = require("url").URL;
 const getEmailContent = require("./email/index").getContent;
+require('dotenv').config();
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cognitoClient = new AWS.CognitoIdentityServiceProvider();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const UNAUTHORIZED = "UNAUTHORIZED";
 const ALREADY_ASSIGNED = "ALREADY_ASSIGNED";
@@ -29,8 +31,6 @@ const PROJECTTABLE = process.env.API_FSCOREAPI_PROJECTTABLE_NAME;
 const TASKTABLE = process.env.API_FSCOREAPI_TASKTABLE_NAME;
 const COMMENTTABLE = process.env.API_FSCOREAPI_COMMENTTABLE_NAME;
 const NOTIFICATIONTABLE = process.env.API_FSCOREAPI_NOTIFICATIONTABLE_NAME;
-const SES_EMAIL = process.env.SES_EMAIL;
-const SES_IDENTITY_ARN = process.env.SES_IDENTITY_ARN;
 
 const APIURL = process.env.API_FSCOREAPI_GRAPHQLAPIENDPOINTOUTPUT;
 
@@ -199,7 +199,7 @@ exports.handler = async function (ctx) {
 
   async function getProject(projectID) {
     if (cachedProjects[projectID]) {
-      return {...cachedProjects[projectID]}
+      return JSON.parse(JSON.stringify(cachedProjects[projectID]))
     } else {
       const params = {
         TableName: PROJECTTABLE,
@@ -210,7 +210,7 @@ exports.handler = async function (ctx) {
       try {
         const data = await docClient.get(params).promise()
         if (data.Item) {
-          cachedProjects[projectID] = {...data.Item}
+          cachedProjects[projectID] = JSON.parse(JSON.stringify(data.Item))
           return data.Item
         } else {
           throw new Error(PROJECT_NOT_FOUND)
@@ -223,7 +223,7 @@ exports.handler = async function (ctx) {
 
   async function getTask(taskID) {
     if (cachedTasks[taskID]) {
-      return {...cachedTasks[taskID]}
+      return JSON.parse(JSON.stringify(cachedTasks[taskID]))
     } else {
       const params = {
         TableName: TASKTABLE,
@@ -234,7 +234,7 @@ exports.handler = async function (ctx) {
       try {
         const data = await docClient.get(params).promise()
         if (data.Item) {
-          cachedTasks[taskID] = {...data.Item}
+          cachedTasks[taskID] = JSON.parse(JSON.stringify(data.Item))
           return data.Item
         } else {
           throw new Error(TASK_NOT_FOUND)
@@ -247,7 +247,7 @@ exports.handler = async function (ctx) {
 
   async function getComment(commentID) {
     if (cachedComments[commentID]) {
-      return {...cachedComments[commentID]}
+      return JSON.parse(JSON.stringify(cachedComments[commentID]))
     } else {
       const params = {
         TableName: COMMENTTABLE,
@@ -258,7 +258,7 @@ exports.handler = async function (ctx) {
       try {
         const data = await docClient.get(params).promise()
         if (data.Item) {
-          cachedComments[commentID] = {...data.Item}
+          cachedComments[commentID] = JSON.parse(JSON.stringify(data.Item))
           return data.Item
         } else {
           throw new Error(COMMENT_NOT_FOUND)
@@ -749,6 +749,16 @@ exports.handler = async function (ctx) {
       try {
         await docClient.put(params).promise();
         cachedComments[commentData.id] = {...commentData}
+        const taskData = await getTask(taskID)
+        await _pushNotification({
+          type: "NEW_COMMENT",
+          payload: `{
+            "task_id": "${taskID}",
+            "link": "${cachedProjects[taskData.projectID].permalink}/${taskData.permalink}"
+          }`,
+          sender: client,
+          owners: [...taskData.watchers]
+        })
         return commentData;
       } catch (err) {
         throw new Error(err);
@@ -856,6 +866,7 @@ exports.handler = async function (ctx) {
     const mutationID = updateData.mutationID
     const client = ctx.identity.username
     if (await isTaskEditableByClient(taskID, client)) {
+      const prevData = await getTask(taskID)
       delete updateData.id
       delete updateData.mutationID
       const expAttrVal = {}
@@ -907,6 +918,42 @@ exports.handler = async function (ctx) {
           await updateTaskCount(taskID, updateData.status)
         }
         const data = await docClient.update(taskUpdateParams).promise();
+        if (updateData.due) {
+          await _pushNotification({
+            type: "DUE_CHANGE",
+            payload: `{
+              "old_due": "${prevData.due}",
+              "new_due": "${data.Attributes.due}",
+              "link": "${cachedProjects[data.Attributes.projectID].permalink}/${data.Attributes.permalink}"
+            }`,
+            sender: client,
+            owners: [...data.Attributes.watchers]
+          })
+        }
+        if (updateData.status) {
+          await _pushNotification({
+            type: "STATUS_CHANGE",
+            payload: `{
+              "old_status": "${prevData.status}",
+              "new_status": "${data.Attributes.status}",
+              "link": "${cachedProjects[data.Attributes.projectID].permalink}/${data.Attributes.permalink}"
+            }`,
+            sender: client,
+            owners: [...data.Attributes.watchers]
+          })
+        }
+        if (updateData.status) {
+          await _pushNotification({
+            type: "PRIORITY_CHANGE",
+            payload: `{
+              "old_priority": "${prevData.priority}",
+              "new_priority": "${data.Attributes.priority}",
+              "link": "${cachedProjects[data.Attributes.projectID].permalink}/${data.Attributes.permalink}"
+            }`,
+            sender: client,
+            owners: [...data.Attributes.watchers]
+          })
+        }
         return {
           id: taskID,
           projectID: cachedTasks[taskID].projectID,
@@ -1100,52 +1147,18 @@ exports.handler = async function (ctx) {
                   continue
                 }
               }
-              await ses.sendEmail({
-                FromEmailAddress: SES_EMAIL,
-                FromEmailAddressIdentityArn: SES_IDENTITY_ARN,
-                Destination: {
-                  ToAddresses: [
-                    userUpdate.Attributes.email
-                  ]
-                },
-                Content: {
-                  Simple: {
-                    Body: {
-                      Html: {
-                        Data: emailToBeSentToAssignee.body,
-                        Charset: "UTF-8"
-                      }
-                    },
-                    Subject: {
-                      Data: emailToBeSentToAssignee.subject,
-                      Charset: "UTF-8"
-                    }
-                  }
-                }
-              }).promise()
-              watchersEmails.length && await ses.sendEmail({
-                FromEmailAddress: SES_EMAIL,
-                FromEmailAddressIdentityArn: SES_IDENTITY_ARN,
-                Destination: {
-                  ToAddresses: [
-                    ...watchersEmails
-                  ]
-                },
-                Content: {
-                  Simple: {
-                    Body: {
-                      Html: {
-                        Data: emailToBeSentToWatchers.body,
-                        Charset: "UTF-8"
-                      }
-                    },
-                    Subject: {
-                      Data: emailToBeSentToWatchers.subject,
-                      Charset: "UTF-8"
-                    }
-                  }
-                }
-              }).promise()
+              await sgMail.send({
+                to: userUpdate.Attributes.email,
+                from: "notify@forwardslash.ch",
+                subject: emailToBeSentToAssignee.subject,
+                html: emailToBeSentToAssignee.body
+              })
+              watchersEmails.length && await sgMail.sendMultiple({
+                to: [...watchersEmails],
+                from: "notify@forwardslash.ch",
+                subject: emailToBeSentToWatchers.subject,
+                html: emailToBeSentToWatchers.body
+              })
               await _pushUserUpdate(userUpdate.Attributes)
               await _pushNotification({
                 type: "ASSIGNMENT",
@@ -1153,7 +1166,10 @@ exports.handler = async function (ctx) {
                   "link": "${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}"
                 }`,
                 sender: client,
-                owner: assigneeID
+                owners: [
+                  ...updatedTask.Attributes.watchers,
+                  assigneeID
+                ]
               })
             }
             return {
@@ -2363,56 +2379,61 @@ exports.handler = async function (ctx) {
   }
 }
 
-async function _pushNotification(notification) {
-  const graphqlQuery = /* GraphQL */ `
-    mutation pushNotification($input: PushNotificationInput!) {
-      pushNotification(input: $input) {
-        id
-        type
-        payload
-        createdAt
-        updatedAt
-        owner
-        sender
-      }
-    }
-  `
-  try {
-    const req = new AWS.HttpRequest(APIURL, REGION);
-    const endpoint = new urlParse(APIURL).hostname.toString()
-    req.method = "POST";
-    req.path = "/graphql";
-    req.headers.host = endpoint;
-    req.headers["Content-Type"] = "application/json";
-    req.body = JSON.stringify({
-      query: graphqlQuery,
-      operationName: "pushNotification",
-      variables: {
-        input: {
-          ...notification,
-          id: uuidv4(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+async function _pushNotification({ owners, ...notification }) {
+  const ownersSet = new Set(owners)
+  for (const owner of ownersSet) {
+    const graphqlQuery = /* GraphQL */ `
+      mutation pushNotification($input: PushNotificationInput!) {
+        pushNotification(input: $input) {
+          id
+          type
+          payload
+          createdAt
+          updatedAt
+          owner
+          sender
         }
       }
-    });
-    const signer = new AWS.Signers.V4(req, "appsync", true);
-    signer.addAuthorization(AWS.config.credentials, AWS.util.date.getDate());
-    const data = await new Promise((resolve, reject) => {
-      const httpRequest = https.request({ ...req, host: endpoint }, (result) => {
-        let data = "";
-        result.on("data", (chunk) => {
-          data += chunk;
-        });
-        result.on("end", () => {
-          resolve(JSON.parse(data.toString()));
-        });
+    `
+    try {
+      const req = new AWS.HttpRequest(APIURL, REGION);
+      const endpoint = new urlParse(APIURL).hostname.toString()
+      req.method = "POST";
+      req.path = "/graphql";
+      req.headers.host = endpoint;
+      req.headers["Content-Type"] = "application/json";
+      req.body = JSON.stringify({
+        query: graphqlQuery,
+        operationName: "pushNotification",
+        variables: {
+          input: {
+            payload: `{}`,
+            ...notification,
+            id: uuidv4(),
+            owner: owner,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        }
       });
-      httpRequest.write(req.body);
-      httpRequest.end();
-    });
-    console.log(data)
-  } catch (err) {
-    throw new Error(err)
+      const signer = new AWS.Signers.V4(req, "appsync", true);
+      signer.addAuthorization(AWS.config.credentials, AWS.util.date.getDate());
+      const data = await new Promise((resolve, reject) => {
+        const httpRequest = https.request({ ...req, host: endpoint }, (result) => {
+          let data = "";
+          result.on("data", (chunk) => {
+            data += chunk;
+          });
+          result.on("end", () => {
+            resolve(JSON.parse(data.toString()));
+          });
+        });
+        httpRequest.write(req.body);
+        httpRequest.end();
+      });
+      console.log(data)
+    } catch (err) {
+      throw new Error(err)
+    }
   }
 }

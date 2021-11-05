@@ -36,7 +36,7 @@ const ProjectItem = (props) => {
       dispatch(appActions.handleSetLeftPanel(false))
       dispatch(appActions.handleSetProject(id))
     }
-  }
+  } 
   return (
     <div
       className={[

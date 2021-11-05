@@ -10,7 +10,7 @@
       "txtColor": color.scale($variant, $lightness: -45%),
       "primaryBg": color.scale($variant, $lightness: 95%),
       "secondaryBg": color.scale($variant, $lightness: 90%),
-      "fieldBg": #FFFFFF
+      "fieldBg": color.scale($variant, $lightness: 99%)
     ),
     "dark": (
       "primary": $variant, // Y7K Blue
