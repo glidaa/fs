@@ -42,15 +42,23 @@ $themes: (
 }
 
 @mixin themify($property, $value, $important: false) {
-  #{$property}: map.get($themes, "rose", "light", $value) if-important($important);
-  html:global(.dark) & {
-    #{$property}: map.get($themes, "rose", "dark", $value) if-important($important);
+  @each $themeName, $theme in $themes {
+    body:global(.#{$themeName}) & {
+      #{$property}: map.get($theme, "light", $value) if-important($important);
+    }
+    body:global(.#{$themeName}.dark) & {
+      #{$property}: map.get($theme, "dark", $value) if-important($important);
+    }
   }
 }
 
 @mixin themify-global($property, $value, $important: false) {
-  #{$property}: map.get($themes, "rose", "light", $value) if-important($important);
-  html.dark & {
-    #{$property}: map.get($themes, "rose", "dark", $value) if-important($important);
+  @each $themeName, $theme in $themes {
+    body.#{$themeName} & {
+      #{$property}: map.get($theme, "light", $value) if-important($important);
+    }
+    body.#{$themeName}.dark & {
+      #{$property}: map.get($theme, "dark", $value) if-important($important);
+    }
   }
 }

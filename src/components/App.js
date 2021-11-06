@@ -29,10 +29,7 @@ const App = (props) => {
   }, []);
 
   useEffect(() => {
-    let classNames = document.documentElement.className.split(" ");
-    classNames = classNames.filter(x => x !== "dark" || x !== "light")
-    classNames.push(appSettings.theme)
-    document.documentElement.className = classNames.join(" ")
+    document.body.className = appSettings.theme
   }, [appSettings.theme]);
   return useRoutes([
     {
