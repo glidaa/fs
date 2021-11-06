@@ -9,7 +9,8 @@
   border: 4px solid transparent;
   @include themify(background-color, "primary");
   &.selected {
-    border: 4px solid #f778ba;
+    border: 4px solid;
+    @include themify(border-color, "txtColor");
   }
 }
 

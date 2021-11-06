@@ -29,8 +29,8 @@ const App = (props) => {
   }, []);
 
   useEffect(() => {
-    document.body.className = appSettings.theme
-  }, [appSettings.theme]);
+    document.documentElement.className = appSettings.theme + " " + (appSettings.isDarkMode ? "dark" : "light");
+  }, [appSettings.theme, appSettings.isDarkMode]);
   return useRoutes([
     {
       caseSensitive: true,

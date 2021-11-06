@@ -4,16 +4,16 @@
 @function construct-theme($variant) {
   @return (
     "light": (
-      "primary": $variant, // Y7K Blue
+      "primary": $variant,
       "primaryDark": color.scale($variant, $lightness: -10%),
       "primaryLight": color.scale($variant, $lightness: 80%),
-      "txtColor": color.scale($variant, $lightness: -45%),
+      "txtColor": color.scale($variant, $lightness: -80%),
       "primaryBg": color.scale($variant, $lightness: 95%),
       "secondaryBg": color.scale($variant, $lightness: 90%),
       "fieldBg": color.scale($variant, $lightness: 99%)
     ),
     "dark": (
-      "primary": $variant, // Y7K Blue
+      "primary": $variant,
       "primaryDark": color.scale($variant, $lightness: -10%),
       "primaryLight": color.scale($variant, $lightness: 80%),
       "txtColor": #FFFFFF,
@@ -43,10 +43,10 @@ $themes: (
 
 @mixin themify($property, $value, $important: false) {
   @each $themeName, $theme in $themes {
-    body:global(.#{$themeName}) & {
+    html:global(.#{$themeName}) & {
       #{$property}: map.get($theme, "light", $value) if-important($important);
     }
-    body:global(.#{$themeName}.dark) & {
+    html:global(.#{$themeName}.dark) & {
       #{$property}: map.get($theme, "dark", $value) if-important($important);
     }
   }
@@ -54,10 +54,10 @@ $themes: (
 
 @mixin themify-global($property, $value, $important: false) {
   @each $themeName, $theme in $themes {
-    body.#{$themeName} & {
+    html.#{$themeName} & {
       #{$property}: map.get($theme, "light", $value) if-important($important);
     }
-    body.#{$themeName}.dark & {
+    html.#{$themeName}.dark & {
       #{$property}: map.get($theme, "dark", $value) if-important($important);
     }
   }

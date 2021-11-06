@@ -7,6 +7,7 @@ import SimpleBar from 'simplebar-react';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import ColorPicker from '../UI/fields/ColorPicker';
+import Toggle from '../UI/fields/Toggle';
 
 const AppSettings = (props) => {
   const {
@@ -19,8 +20,8 @@ const AppSettings = (props) => {
       case "theme":
         dispatch(appSettingsActions.handleSetTheme(e.target.value))
         break
-      case "tasksSortingCriteria":
-        dispatch(appSettingsActions.handleSetTasksSortingCriteria(e.target.value))
+      case "darkMode":
+        dispatch(appSettingsActions.handleSetIsDarkMode(e.target.value))
         break
       default:
         break
@@ -90,6 +91,12 @@ const AppSettings = (props) => {
                 "#5615fb",
                 "#000000",
               ]}
+            />
+            <Toggle
+              label="Dark Mode"
+              name="darkMode"
+              value={appSettings.isDarkMode}
+              onChange={handleChange}
             />
           </div>
           <input type="submit" name="submit" value="Submit"></input>

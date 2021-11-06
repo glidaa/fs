@@ -28,7 +28,7 @@
   align-items: center;
   justify-content: center;
   & > *:not(:last-child) {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
   @media only screen and (max-width: 768px) {
     flex-direction: row;
@@ -65,23 +65,24 @@
   border: none;
   outline: none;
   margin: 0;
+  padding: 10px;
+  border-radius: 8px;
   background-color: transparent;
   cursor: pointer;
   @include themify(color, "txtColor");
 }
 
 .ToolbarAction.selected {
-  @include themify(color, "primary");
+  color: #FFFFFF!important;
+  @include themify(background-color, "primary");
 }
 
 .ToolbarAction.LoginBtn {
-  padding: 10px;
-  border-radius: 8px;
   @include themify(background-color, "primary");
 }
 
 .Spacer {
-  border-top: 1px solid transparent;
+  border-top: 10px solid transparent;
   width: 100%;
 }
 

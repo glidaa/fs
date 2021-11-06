@@ -33,15 +33,19 @@ const ColorPicker = (props) => {
         {colors.map((color, index) => (
           <div
             key={index}
-            className={styles.ColorPickerOption}
-            style={{ backgroundColor: color }}
+            className={[
+              styles.ColorPickerOption,
+              ...[options[index] === value && styles.selected || []]
+            ].join(" ")}
             onClick={() => onChange({
               target: {
                 name: name,
                 value: options[index]
               }
             })}
-          />
+          >
+            <div style={{ backgroundColor: color }} />
+          </div>
         ))}
       </div>
       {error && <span>{error}</span>}

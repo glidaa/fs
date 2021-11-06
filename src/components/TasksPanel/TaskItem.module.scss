@@ -33,7 +33,7 @@
   &:hover {
     @include themify(background, "primary");
     & > svg {
-      color: #ffffff;
+      color: #FFFFFF !important;
     }
   }
 }
