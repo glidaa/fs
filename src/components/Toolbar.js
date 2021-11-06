@@ -1,5 +1,4 @@
 import React, { startTransition  } from 'react';
-import themes from "../themes"
 import styles from "./Toolbar.module.scss"
 import * as appActions from "../actions/app"
 import { connect } from "react-redux";
@@ -18,11 +17,9 @@ const Toolbar = (props) => {
       leftPanelPage
     },
     user,
-    appSettings,
     dispatch
   } = props;
   const navigate = useNavigate();
-  const theme = themes[appSettings.theme];
   const openLeftPanel = (page) => {
     if (!isLeftPanelOpened || (isLeftPanelOpened && leftPanelPage !== page)) {
       dispatch(appActions.setLeftPanelPage(page))
@@ -45,42 +42,39 @@ const Toolbar = (props) => {
         <span className={styles.Logo}>/.</span>
         <div className={styles.Spacer} />
         <button
-          className={styles.ToolbarAction}
+          className={[
+            styles.ToolbarAction,
+            ...(isLeftPanelOpened && leftPanelPage === panelPages.NOTIFICATIONS ? [styles.selected] : [])
+          ].join(" ")}
           onClick={() => openLeftPanel(panelPages.NOTIFICATIONS)}
         >
           <NotificationIcon
-              width="24"
-              height="24"
-              strokeWidth="32"
-              color={theme.txtColor}
+            width={24}
+            height={24}
           />
         </button>
         <button
-          className={styles.ToolbarAction}
+          className={[
+            styles.ToolbarAction,
+            ...(isLeftPanelOpened && leftPanelPage === panelPages.PROJECTS ? [styles.selected] : [])
+          ].join(" ")}
           onClick={() => openLeftPanel(panelPages.PROJECTS)}
         >
           <ProjectsIcon
-              width="24"
-              height="24"
-              strokeWidth="32"
-              color={
-                isLeftPanelOpened && leftPanelPage === panelPages.PROJECTS ?
-                theme.primary : theme.txtColor
-              }
+            width={24}
+            height={24}
           />
         </button>
         <button
-          className={styles.ToolbarAction}
+          className={[
+            styles.ToolbarAction,
+            ...(isLeftPanelOpened && leftPanelPage === panelPages.APP_SETTINGS ? [styles.selected] : [])
+          ].join(" ")}
           onClick={() => openLeftPanel(panelPages.APP_SETTINGS)}
         >
           <SettingsIcon
-              width="24"
-              height="24"
-              strokeWidth="32"
-              color={
-                isLeftPanelOpened && leftPanelPage === panelPages.APP_SETTINGS ?
-                theme.primary : theme.txtColor
-              }
+            width={24}
+            height={24}
           />
         </button>
       </div>
@@ -102,8 +96,8 @@ const Toolbar = (props) => {
               onClick={goToLoginPage}
             >
               <LoginIcon
-                width="24"
-                height="24"
+                width={24}
+                height={24}
                 strokeWidth="32"
                 color="#FFFFFF"
               />
@@ -116,6 +110,5 @@ const Toolbar = (props) => {
 
 export default connect((state) => ({
   app: state.app,
-  user: state.user,
-  appSettings: state.appSettings
+  user: state.user
 }))(Toolbar);

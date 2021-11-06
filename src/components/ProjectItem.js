@@ -1,5 +1,4 @@
 import React from "react"
-import themes from "../themes"
 import styles from "./ProjectItem.module.scss"
 import { connect } from "react-redux";
 import * as appActions from "../actions/app"
@@ -17,11 +16,9 @@ const ProjectItem = (props) => {
       selectedProject
     },
     project,
-    appSettings,
     dispatch,
     listeners
   } = props
-  const theme = themes[appSettings.theme]
   const shareProject = (e) => {
     e.stopPropagation()
     const linkToBeCopied = window.location.href.replace(/\/\d+/, "")
@@ -53,7 +50,6 @@ const ProjectItem = (props) => {
             height="200"
             width="200"
             strokeWidth="24"
-            color={theme.txtColor}
           />
         )}
         {project.privacy === "private" && (
@@ -61,7 +57,6 @@ const ProjectItem = (props) => {
             height="200"
             width="200"
             strokeWidth="24"
-            color={theme.txtColor}
           />
         )}
       </div>
@@ -138,6 +133,5 @@ const ProjectItem = (props) => {
 };
 
 export default connect((state) => ({
-  app: state.app,
-  appSettings: state.appSettings
+  app: state.app
 }))(ProjectItem);

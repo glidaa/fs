@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { API, graphqlOperation } from "@aws-amplify/api";
 import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
-import themes from "../../themes"
 import styles from "./AccountSettings.module.scss"
 import SimpleBar from 'simplebar-react';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -29,11 +28,8 @@ const AccountSettings = (props) => {
         abbr
       },
     },
-    appSettings,
     dispatch
   } = props;
-
-  const theme = themes[appSettings.theme];
 
   const [newFirstName, setNewFirstName] = useState(firstName)
   const [newLastName, setNewLastName] = useState(lastName)
@@ -101,10 +97,8 @@ const AccountSettings = (props) => {
           onClick={closePanel}
         >
           <BackArrowIcon
-              width={24}
-              height={24}
-              strokeWidth={32}
-              color={theme.primary}
+            width={24}
+            height={24}
           />
         </button>
         <span className={styles.PanelPageTitle}>
@@ -115,10 +109,8 @@ const AccountSettings = (props) => {
           onClick={logOut}
           >
           <LogOutIcon
-              width={24}
-              height={24}
-              strokeWidth={32}
-              color={theme.primary}
+            width={24}
+            height={24}
           />
         </button>
       </div>
@@ -186,6 +178,5 @@ const AccountSettings = (props) => {
 
 export default connect((state) => ({
   user: state.user,
-  app: state.app,
-  appSettings: state.appSettings
+  app: state.app
 }))(AccountSettings);

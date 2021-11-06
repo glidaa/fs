@@ -1,5 +1,4 @@
 import React, { useRef, useMemo } from "react"
-import themes from "../../themes"
 import { connect } from "react-redux";
 import styles from "./TaskItem.module.scss"
 import useWindowSize from "../../utils/useWindowSize";
@@ -13,7 +12,7 @@ import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import { ReactComponent as CopyIcon } from "../../assets/copy-outline.svg"
 import { ReactComponent as DuplicateIcon } from "../../assets/duplicate-outline.svg"
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
-import { ReactComponent as DetailsIcon } from "../../assets/info_black_24dp.svg";
+import { ReactComponent as DetailsIcon } from "../../assets/information-circle-outline.svg";
 import SlashCommands from "../SlashCommands";
 import { OK, initTaskState, AuthState } from "../../constants";
 import AvatarGroup from "../UI/AvatarGroup";
@@ -40,14 +39,12 @@ const TaskItem = (props) => {
     listeners,
     isSorting,
     isDragging,
-    appSettings,
     dispatch
   } = props;
 
   const { width } = useWindowSize();
 
   const inputRef = useRef(null)
-  const theme = themes[appSettings.theme];
 
   const processAssingees = (value, users) => {
     const result = []
@@ -283,51 +280,27 @@ const TaskItem = (props) => {
             {width > 768 ?
             <div className={styles.TaskItemActions}>
               <button className={styles.TaskItemAction} onClick={() => copyTask(item)}>
-                <CopyIcon
-                  height="18"
-                  strokeWidth="34"
-                  color={theme.primary}
-                />
+                <CopyIcon height={18} />
               </button>
               {!readOnly && (
                 <button className={styles.TaskItemAction} onClick={() => duplicateTask(item)}>
-                  <DuplicateIcon
-                    height="18"
-                    strokeWidth="34"
-                    color={theme.primary}
-                  />
+                  <DuplicateIcon height={18} />
                 </button>
               )}
               <button className={styles.TaskItemAction} onClick={() => shareTask(item)}>
-                <ShareIcon
-                  height="18"
-                  strokeWidth="34"
-                  color={theme.primary}
-                />
+                <ShareIcon height={18} />
               </button>
               {!readOnly && (
                 <button className={styles.TaskItemAction} onClick={() => removeTask(item)}>
-                  <RemoveIcon
-                    height="18"
-                    strokeWidth="34"
-                    color={theme.primary}
-                  />
+                  <RemoveIcon height={18} />
                 </button>
               )}
               <button className={styles.TaskItemAction} onClick={() => openRightPanel(item)}>
-                <DetailsIcon
-                  height="18"
-                  strokeWidth="34"
-                  color={theme.primary}
-                />
+                <DetailsIcon height={18} />
               </button>
             </div> :
             <button className={styles.TaskItemOptsBtn} onClick={() => openActionSheet(item)}>
-              <OptionsIcon
-                stroke={theme.txtColor}
-                strokeWidth="32"
-                width="18"
-              />
+              <OptionsIcon width={18} />
             </button>}
           </div>
         </div>
@@ -343,7 +316,6 @@ const TaskItem = (props) => {
           <AvatarGroup
             max={4}
             users={processedAssingees}
-            borderColor={theme.primaryBg}
             size={ width > 768 ? 24 : 18 }
           />
         </div>
@@ -363,6 +335,5 @@ export default connect((state) => ({
   tasks: state.tasks,
   app: state.app,
   users: state.users,
-  projects: state.projects,
-  appSettings: state.appSettings
+  projects: state.projects
 }))(TaskItem);

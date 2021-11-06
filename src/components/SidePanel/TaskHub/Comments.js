@@ -3,7 +3,6 @@ import { useOuterClick } from 'react-outer-click';
 import { useState, useRef } from "react"
 import { connect } from "react-redux";
 import { AuthState } from "../../../constants";
-import themes from "../../../themes"
 import styles from "./Comments.module.scss"
 import { stateToHTML } from 'draft-js-export-html';
 import { Editor, EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';
@@ -22,10 +21,8 @@ const Comments = (props) => {
       selectedTask
     },
     projects,
-    appSettings,
     dispatch
   } = props
-  const theme = themes[appSettings.theme];
   const newCommentRef = useRef(null)
   const [isNewCommentOpened, setIsNewCommentOpened] = useState(false)
   const [editorState, setEditorState] = useState(
@@ -118,8 +115,6 @@ const Comments = (props) => {
                       <RemoveIcon
                         height="16"
                         width="16"
-                        strokeWidth="32"
-                        color={theme.primary}
                       />
                     </button>
                   </div>
@@ -192,6 +187,5 @@ export default connect((state) => ({
   app: state.app,
   comments: state.comments,
   projects: state.projects,
-  users: state.users,
-  appSettings: state.appSettings
+  users: state.users
 }))(Comments);

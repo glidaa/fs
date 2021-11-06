@@ -5,7 +5,6 @@ const AvatarGroup = (props) => {
 	const {
 		max,
 		users,
-		borderColor,
 		size
 	} = props
 
@@ -25,7 +24,6 @@ const AvatarGroup = (props) => {
               style={{
                 width: size,
                 height: size,
-                borderColor: borderColor,
                 ...(i < max - 1 && {
                   marginRight: -(size * 0.42)
                 })
@@ -40,7 +38,6 @@ const AvatarGroup = (props) => {
                 minHeight: size,
                 width: size,
                 height: size,
-                borderColor: borderColor,
                 ...(i < max - 1 && {
                   marginRight: -(size * 0.42)
                 })
@@ -59,7 +56,6 @@ const AvatarGroup = (props) => {
             minHeight: size,
             width: size,
             height: size,
-            borderColor: borderColor,
             ...(i < max - 1 && {
               marginRight: -(size * 0.42)
             })
@@ -75,8 +71,7 @@ const AvatarGroup = (props) => {
             minWidth: size,
             minHeight: size,
             width: size,
-            height: size,
-            borderColor: borderColor
+            height: size
           }}
         >
           +{users.length - max + 1}

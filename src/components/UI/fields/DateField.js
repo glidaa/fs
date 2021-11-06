@@ -2,11 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from "react-dom"
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
-import themes from "../../../themes"
 import styles from "./DateField.module.scss"
 import { ReactComponent as RemoveIcon } from "../../../assets/close-outline.svg"
 import formatDate from '../../../utils/formatDate';
-import { connect } from 'react-redux';
 
 const BodyOverlay = ({ children }) => createPortal(children, window.document.querySelector("body"))
 
@@ -20,10 +18,8 @@ const DateField = (props) => {
     error,
     label,
     style,
-    clearable,
-    appSettings
+    clearable
   } = props
-  const theme = themes[appSettings.theme];
   const [isPickerOpened, setIsPickerOpened] = useState(false)
   const clearValue = () => {
     if (!readOnly) onChange({ target: { value: null, name: name }})
@@ -89,8 +85,6 @@ const DateField = (props) => {
             <RemoveIcon
               height="16"
               width="16"
-              strokeWidth="32"
-              color={theme.txtColor}
             />
           </button>
         )}
@@ -103,8 +97,6 @@ const DateField = (props) => {
               <Calendar
                 value={pickerValue}
                 onChange={pickValue}
-                colorPrimary={theme.primary}
-                colorPrimaryLight={theme.primaryLight}
                 shouldHighlightWeekends
               />
             </div>
@@ -116,6 +108,4 @@ const DateField = (props) => {
   );
 };
 
-export default connect((state) => ({
-  appSettings: state.appSettings
-}))(DateField);
+export default DateField;

@@ -27,6 +27,9 @@
   width: 28px;
   height: 28px;
   border-radius: 6px;
+  & > svg {
+    @include themify(color, "primary");
+  }
   &:hover {
     @include themify(background, "primary");
     & > svg {
@@ -207,6 +210,9 @@
   cursor: pointer;
   width: 30px;
   height: 30px;
+  & > svg {
+    @include themify(fill, "txtColor");
+  }
 }
 
 .TaskItemLeftLeftPart {

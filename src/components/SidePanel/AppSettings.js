@@ -2,22 +2,17 @@ import React from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
-import themes from "../../themes"
 import styles from "./AppSettings.module.scss"
 import SimpleBar from 'simplebar-react';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
+import ColorPicker from '../UI/fields/ColorPicker';
 
 const AppSettings = (props) => {
   const {
-    appSettings: {
-      tasksSortingCriteria,
-    },
     appSettings,
     dispatch
   } = props;
-
-  const theme = themes[appSettings.theme];
 
   const handleChange = (e) => {
     switch (e.target.name) {
@@ -46,10 +41,8 @@ const AppSettings = (props) => {
           onClick={closePanel}
         >
           <BackArrowIcon
-              width={24}
-              height={24}
-              strokeWidth={32}
-              color={theme.primary}
+            width={24}
+            height={24}
           />
         </button>
         <span className={styles.PanelPageTitle}>
@@ -60,30 +53,44 @@ const AppSettings = (props) => {
           onClick={removeProject}
         >
           <RemoveIcon
-              width={24}
-              height={24}
-              strokeWidth={32}
-              color={theme.primary}
+            width={24}
+            height={24}
           />
         </button>
       </div>
       <SimpleBar className={styles.AppSettingsForm}>
         <form onSubmit={(e) => e.preventDefault()}>
           <div className={styles.AppSetting}>
-            <label htmlFor="tasksSortingCriteria">
-              Sort Tasks By
-            </label>
-            <select
-              className={styles.SelectField}
-              name="tasksSortingCriteria"
+            <ColorPicker
+              label="Theme"
+              name="theme"
+              value={appSettings.theme}
               onChange={handleChange}
-              value={tasksSortingCriteria}
-            >
-              <option value="BY_DEFAULT">default</option>
-              <option value="BY_DUE">due date</option>
-              <option value="BY_STATUS">status</option>
-              <option value="BY_PRIORITY">priority</option>
-            </select>
+              options={[
+                "red",
+                "rose",
+                "orange",
+                "green",
+                "turquoise",
+                "cyan",
+                "blue",
+                "pink",
+                "purple",
+                "black",
+              ]}
+              colors={[
+                "#FB1515",
+                "#FF969C",
+                "#FE6000",
+                "#15fb3b",
+                "#15fbd9",
+                "#15dcfb",
+                "#1560FB",
+                "#fb15b2",
+                "#5615fb",
+                "#000000",
+              ]}
+            />
           </div>
           <input type="submit" name="submit" value="Submit"></input>
         </form>

@@ -59,4 +59,5 @@
   margin: 0;
   background-color: transparent;
   cursor: pointer;
+  @include themify(color, "primary");
 }

@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import themes from "../../../themes"
 import styles from "./index.module.scss"
 import { connect } from "react-redux";
 import * as projectsActions from "../../../actions/projects"
@@ -22,10 +21,8 @@ const Projects = (props) => {
       projectAddingStatus
     },
     projects,
-    appSettings,
     dispatch
   } = props
-  const theme = themes[appSettings.theme];
   const [scope, setScope] = useState("owned")
   const createNewProject = () => {
     if (projectAddingStatus === OK) {
@@ -57,8 +54,6 @@ const Projects = (props) => {
             <BackArrowIcon
               width={24}
               height={24}
-              strokeWidth={32}
-              color={theme.primary}
             />
           </button>
           <span className={styles.PanelPageTitle}>
@@ -71,8 +66,6 @@ const Projects = (props) => {
             <AddIcon
               width={24}
               height={24}
-              strokeWidth={32}
-              color={theme.primary}
             />
           </button>
         </div>
@@ -100,6 +93,5 @@ const Projects = (props) => {
 export default connect((state) => ({
   user: state.user,
   app: state.app,
-  projects: state.projects,
-  appSettings: state.appSettings
+  projects: state.projects
 }))(Projects);

@@ -9,6 +9,10 @@
   &.selected {
     background-color: #f5f5f5;
   }
+  & > svg {
+    @include themify(color, "primary");
+    @include themify(fill, "primary");
+  }
   & > div {
     display: flex;
     flex-direction: column;

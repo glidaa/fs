@@ -124,6 +124,7 @@
   justify-content: flex-start;
   border: none;
   background-color: transparent;
+  @include themify-global(color, "primary");
   & > *:not(:last-child) {
     margin-right: 10px;
   }

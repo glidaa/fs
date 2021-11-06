@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import * as projectsActions from "../../actions/projects";
 import { AuthState } from "../../constants";
-import themes from "../../themes"
 import styles from "./ProjectSettings.module.scss"
 import SimpleBar from 'simplebar-react';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -19,7 +18,6 @@ const ProjectSettings = (props) => {
     },
     user,
     projects,
-    appSettings,
     dispatch
   } = props;
 
@@ -32,8 +30,6 @@ const ProjectSettings = (props) => {
       permissions
     }
   } = projects
-
-  const theme = themes[appSettings.theme];
 
   const [newTitle, setNewTitle] = useState(title || "")
   const [newPermalink, setNewPermalink] = useState(/\w+\/(.*)/.exec(permalink)?.[1] || permalink)
@@ -99,10 +95,8 @@ const ProjectSettings = (props) => {
           onClick={closePanel}
         >
           <BackArrowIcon
-              width={24}
-              height={24}
-              strokeWidth={32}
-              color={theme.primary}
+            width={24}
+            height={24}
           />
         </button>
         <span className={styles.PanelPageTitle}>
@@ -113,10 +107,8 @@ const ProjectSettings = (props) => {
           onClick={removeProject}
         >
           <RemoveIcon
-              width={24}
-              height={24}
-              strokeWidth={32}
-              color={theme.primary}
+            width={24}
+            height={24}
           />
         </button>
       </div>
@@ -193,6 +185,5 @@ const ProjectSettings = (props) => {
 export default connect((state) => ({
   app: state.app,
   projects: state.projects,
-  user: state.user,
-  appSettings: state.appSettings
+  user: state.user
 }))(ProjectSettings);

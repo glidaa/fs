@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import themes from "../themes"
 import styles from "./Notifications.module.scss"
 import * as notificationsActions from "../actions/notifications"
 import { ReactComponent as CloseIcon } from "../assets/close-outline.svg"
@@ -14,7 +13,6 @@ const Notifications = (props) => {
     appSettings,
     dispatch
   } = props;
-  const theme = themes[appSettings.theme];
   const navigate = useNavigate();
   const notificationElem = useRef(null)
   const dismissTimer = useRef(null)
@@ -77,8 +75,6 @@ const Notifications = (props) => {
               <CloseIcon
                 height="16"
                 width="16"
-                strokeWidth="32"
-                color={theme.primary}
               />
             </button>
           </div>
@@ -90,6 +86,5 @@ const Notifications = (props) => {
 
 export default connect((state) => ({
   users: state.users,
-  notifications: state.notifications,
-  appSettings: state.appSettings
+  notifications: state.notifications
 }))(Notifications);

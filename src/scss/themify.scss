@@ -25,20 +25,32 @@
 }
 
 $themes: (
+  "red": construct-theme(#FB1515),
+  "rose": construct-theme(#FF969C),
+  "orange": construct-theme(#FE6000),
+  "green": construct-theme(#15fb3b),
+  "turquoise": construct-theme(#15fbd9),
+  "cyan": construct-theme(#15dcfb),
   "blue": construct-theme(#1560FB),
-  "orange": construct-theme(#FE6000)
+  "pink": construct-theme(#fb15b2),
+  "purple": construct-theme(#5615fb),
+  "black": construct-theme(#000000),
 );
 
-@mixin themify($property, $value) {
-  #{$property}: map.get($themes, "blue", "light", $value);
+@function if-important($important){
+  @return #{if($important, '!important', '')};
+}
+
+@mixin themify($property, $value, $important: false) {
+  #{$property}: map.get($themes, "rose", "light", $value) if-important($important);
   html:global(.dark) & {
-    #{$property}: map.get($themes, "blue", "dark", $value);
+    #{$property}: map.get($themes, "rose", "dark", $value) if-important($important);
   }
 }
 
-@mixin themify-global($property, $value) {
-  #{$property}: map.get($themes, "blue", "light", $value);
+@mixin themify-global($property, $value, $important: false) {
+  #{$property}: map.get($themes, "rose", "light", $value) if-important($important);
   html.dark & {
-    #{$property}: map.get($themes, "blue", "dark", $value);
+    #{$property}: map.get($themes, "rose", "dark", $value) if-important($important);
   }
 }

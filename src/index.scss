@@ -3,6 +3,11 @@
   outline: none;
 }
 
+.Calendar {
+  @include themify-global(--cl-color-primary, "primary", true);
+  @include themify-global(--cl-color-primary-light, "primaryLight", true);
+}
+
 body {
   width: 100vw;
   height: 100%;

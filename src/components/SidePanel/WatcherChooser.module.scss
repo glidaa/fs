@@ -24,6 +24,7 @@
   background-color: transparent;
   transition: opacity 0.3s;
   cursor: pointer;
+  @include themify(color, "primary");
   &:disabled {
     opacity: 0.6;
     cursor: default;

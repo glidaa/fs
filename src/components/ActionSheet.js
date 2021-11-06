@@ -9,9 +9,8 @@ import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
 import { ReactComponent as CopyIcon } from "../assets/copy-outline.svg"
 import { ReactComponent as DuplicateIcon } from "../assets/duplicate-outline.svg"
 import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
-import { ReactComponent as DetailsIcon } from "../assets/info_black_24dp.svg";
+import { ReactComponent as DetailsIcon } from "../assets/information-circle-outline.svg";
 import { ReactComponent as CheckmarkIcon } from "../assets/checkmark-circle-outline.svg";
-import themes from "../themes"
 import styles from "./ActionSheet.module.scss"
 
 const ActionSheet = (props) => {
@@ -24,11 +23,8 @@ const ActionSheet = (props) => {
       isRightPanelOpened
     },
     tasks,
-    appSettings,
     dispatch
   } = props
-
-  const theme = themes[appSettings.theme]
 
   const [{ y }, api] = useSpring(() => ({ y: 243 }))
 
@@ -140,7 +136,6 @@ const ActionSheet = (props) => {
           <CopyIcon
             width={24}
             height={24}
-            color={theme.txtColor}
             strokeWidth="32"
           />
           <span>Copy</span>
@@ -152,8 +147,6 @@ const ActionSheet = (props) => {
           <DuplicateIcon
             width={24}
             height={24}
-            color={theme.txtColor}
-            strokeWidth="32"
           />
           <span>Duplicate</span>
         </button>
@@ -164,8 +157,6 @@ const ActionSheet = (props) => {
           <ShareIcon
             width={24}
             height={24}
-            color={theme.txtColor}
-            strokeWidth="32"
           />
           <span>Share</span>
         </button>
@@ -176,8 +167,6 @@ const ActionSheet = (props) => {
           <RemoveIcon
             width={24}
             height={24}
-            color={theme.txtColor}
-            strokeWidth="32"
           />
           <span>Remove</span>
         </button>
@@ -188,8 +177,6 @@ const ActionSheet = (props) => {
           <CheckmarkIcon
             width={24}
             height={24}
-            stroke={theme.txtColor}
-            strokeWidth="32"
           />
           <span>Mark As Done</span>
         </button>
@@ -198,10 +185,8 @@ const ActionSheet = (props) => {
           onClick={openRightPanel}
         >
           <DetailsIcon
-            width="24"
-            height="24"
-            color={theme.txtColor}
-            strokeWidth="32"
+            width={24}
+            height={24}
           />
           <span>Details</span>
         </button>
@@ -221,6 +206,5 @@ export default connect((state) => ({
   user: state.user,
   tasks: state.tasks,
   app: state.app,
-  users: state.users,
-  appSettings: state.appSettings
+  users: state.users
 }))(ActionSheet);

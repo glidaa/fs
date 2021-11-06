@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import themes from "../../themes"
 import styles from "./Commands.module.scss"
 import * as tasksActions from "../../actions/tasks"
 import * as appActions from "../../actions/app"
@@ -25,11 +24,8 @@ const Commands = (props) => {
     },
     scrollableNodeRef,
     tasks,
-    appSettings,
     dispatch
   } = props
-
-  const theme = themes[appSettings.theme];
 
   const supportedIntents = Object.keys(supportedCommands)
   const supportedAlias = Object.fromEntries(Object.entries(supportedCommands).map(x => [x[1].alias, x[0]]).filter(x => x[0]))
@@ -124,14 +120,14 @@ const Commands = (props) => {
       onMouseEnter={() => setSelection(i)}
       onClick={() => chooseCommand(x)}
     >
-      {x === "ASSIGN" && <AssignIcon color={theme.primary} strokeWidth="32" height={24} />}
-      {x === "DUE" && <CalenderIcon color={theme.primary} fill={theme.primary} strokeWidth="32" height={24} />}
-      {x === "TAGS" && <TagsIcon color={theme.primary} strokeWidth="32" height={24} />}
-      {x === "DESCRIPTION" && <DescriptionIcon color={theme.primary} strokeWidth="32" height={24} />}
-      {x === "STATUS" && <StatusIcon color={theme.primary} strokeWidth="32" height={24} />}
-      {x === "DELETE" && <RemoveIcon color={theme.primary} strokeWidth="32" height={24} />}
-      {x === "COPY" && <CopyIcon color={theme.primary} strokeWidth="32" height={24} />}
-      {x === "DUPLICATE" && <DuplicateIcon color={theme.primary} strokeWidth="32" height={24} />}
+      {x === "ASSIGN" && <AssignIcon height={24} />}
+      {x === "DUE" && <CalenderIcon height={24} />}
+      {x === "TAGS" && <TagsIcon height={24} />}
+      {x === "DESCRIPTION" && <DescriptionIcon height={24} />}
+      {x === "STATUS" && <StatusIcon height={24} />}
+      {x === "DELETE" && <RemoveIcon height={24} />}
+      {x === "COPY" && <CopyIcon height={24} />}
+      {x === "DUPLICATE" && <DuplicateIcon height={24} />}
       <div>
         <div>
           <span>{x}</span>
@@ -149,6 +145,5 @@ const Commands = (props) => {
 
 export default connect((state) => ({
 	app: state.app,
-	tasks: state.tasks,
-  appSettings: state.appSettings
+	tasks: state.tasks
 }))(Commands);

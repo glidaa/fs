@@ -1,6 +1,5 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { connect } from "react-redux"
-import themes from "../../../themes"
 import styles from "./AssigneeField.module.scss"
 import * as tasksActions from "../../../actions/tasks"
 import * as appActions from "../../../actions/app";
@@ -20,11 +19,9 @@ const AssigneeField = (props) => {
       selectedTask
     },
     users,
-    appSettings,
     dispatch
   } = props
 
-  const theme = themes[appSettings.theme];
   const assigneeFieldRef = useRef(null)
 
   useEffect(() => {
@@ -90,8 +87,6 @@ const AssigneeField = (props) => {
                 <RemoveIcon
                   height="16"
                   width="16"
-                  strokeWidth="32"
-                  color={theme.primary}
                 />
               </button>
               <Avatar user={x} size={36} circular />
@@ -118,6 +113,5 @@ const AssigneeField = (props) => {
 
 export default connect((state) => ({
     app: state.app,
-    users: state.users,
-    appSettings: state.appSettings
+    users: state.users
   }))(AssigneeField);

@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
-import * as appSettingsActions from "../../actions/appSettings";
-import themes from "../../themes"
 import styles from "./Notifications.module.scss"
 import SimpleBar from 'simplebar-react';
 import { ReactComponent as CloseIcon } from "../../assets/close-outline.svg"
@@ -14,11 +12,8 @@ const Notifications = (props) => {
   const {
     notifications,
     users,
-    appSettings,
     dispatch
   } = props;
-
-  const theme = themes[appSettings.theme];
 
   const closePanel = () => {
     return dispatch(appActions.handleSetLeftPanel(false))
@@ -34,10 +29,8 @@ const Notifications = (props) => {
           onClick={closePanel}
         >
           <BackArrowIcon
-              width={24}
-              height={24}
-              strokeWidth={32}
-              color={theme.primary}
+            width={24}
+            height={24}
           />
         </button>
         <span className={styles.PanelPageTitle}>
@@ -48,10 +41,8 @@ const Notifications = (props) => {
           onClick={removeProject}
         >
           <RemoveIcon
-              width={24}
-              height={24}
-              strokeWidth={32}
-              color={theme.primary}
+            width={24}
+            height={24}
           />
         </button>
       </div>
@@ -89,8 +80,6 @@ const Notifications = (props) => {
                     <CloseIcon
                       height="16"
                       width="16"
-                      strokeWidth="32"
-                      color={theme.primary}
                     />
                   </button> */}
                 </div>
@@ -105,6 +94,5 @@ const Notifications = (props) => {
 
 export default connect((state) => ({
   notifications: state.notifications,
-  users: state.users,
-  appSettings: state.appSettings
+  users: state.users
 }))(Notifications);

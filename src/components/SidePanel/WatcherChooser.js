@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
 import { API, graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../../actions/app";
-import themes from "../../themes"
 import styles from "./WatcherChooser.module.scss"
 import * as tasksActions from "../../actions/tasks"
 import { panelPages, AuthState } from "../../constants";
@@ -19,11 +18,8 @@ const WatcherChooser = (props) => {
     },
     tasks,
     user,
-    appSettings,
     dispatch
   } = props;
-
-  const theme = themes[appSettings.theme];
 
   const [keyword, setKeyword] = useState("")
   const [results, setResults] = useState([])
@@ -104,10 +100,8 @@ const WatcherChooser = (props) => {
           disabled={isBusy}
         >
           <BackArrowIcon
-              width="24"
-              height="24"
-              strokeWidth="32"
-              color={theme.primary}
+            width="24"
+            height="24"
           />
         </button>
         <span className={styles.PanelPageTitle}>
@@ -119,10 +113,8 @@ const WatcherChooser = (props) => {
           disabled={isBusy}
         >
           <ShareIcon
-              width="24"
-              height="24"
-              strokeWidth="32"
-              color={theme.primary}
+            width="24"
+            height="24"
           />
         </button>
       </div>
@@ -176,6 +168,5 @@ export default connect((state) => ({
   user: state.user,
   tasks: state.tasks,
   app: state.app,
-  users: state.users,
-  appSettings: state.appSettings
+  users: state.users
 }))(WatcherChooser);

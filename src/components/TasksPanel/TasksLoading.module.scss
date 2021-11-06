@@ -8,6 +8,7 @@
   & > svg {
     width: 150px;
     height: auto;
+    @include themify(color, "primary");
   }
   & > div {
     display: flex;

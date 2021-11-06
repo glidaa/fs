@@ -130,6 +130,10 @@
   bottom: 0;
   opacity: 0.15;
   z-index: 1;
+  & > svg {
+    @include themify(color, "txtColor");
+    @include themify(fill, "txtColor");
+  }
 }
 
 .ProjectItemDate {
