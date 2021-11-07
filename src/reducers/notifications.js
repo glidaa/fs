@@ -8,6 +8,7 @@ const initState = {
 export default function (state = initState, action) {
   switch(action.type) {
     case ADD_NOTIFICATION:
+      action.notification.payload = JSON.parse(action.notification.payload)
       return {
         ...state,
         stored: [

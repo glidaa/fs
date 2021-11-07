@@ -78,13 +78,13 @@
     position: relative;
     outline: none;
     border: none;
-    @include themify(color, "primary");
     padding: 5px 10px;
     font-weight: 600;
     font-size: 12px;
     cursor: pointer;
     border-radius: 8px;
-    @include themify(background-color, "primaryLight");
+    color: #FFFFFF;
+    @include themify(background-color, "primary");
   }
   & > *:not(:last-child) {
     margin-bottom: 5px;
@@ -143,6 +143,6 @@
   padding: 0;
   border-radius: 100%;
   cursor: pointer;
-  @include themify(background-color, "secondaryBg");
-  @include themify(color, "primary");
+  color: #FFFFFF;
+  @include themify(background-color, "primary");
 }

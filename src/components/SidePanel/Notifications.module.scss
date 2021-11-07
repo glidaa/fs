@@ -7,7 +7,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    & > *:not(:last-child) {
+    & > * {
       margin-bottom: 15px;
     }
   }
@@ -38,71 +38,5 @@
   margin: 0;
   background-color: transparent;
   cursor: pointer;
-  @include themify-global(color, "primary");
-}
-
-.NotificationShell {
-  // background-color: #FFDACD;
-  position: relative;
-  display: flex;
-  @include themify(color, "txtColor");
-  padding: 15px;
-  width: calc(100% - 80px);
-  margin: 0 25px;
-  border-radius: 8px;
-  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
-  @include themify(background-color, "primaryLight");
-  &.clickable {
-    cursor: pointer;
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.9);
-    }
-  }
-}
-
-.NotificationContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  & > div {
-    width: 100%;
-  }
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
-}
-
-.NotificationTopPart {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  font-size: 12px;
-  span:first-child {
-    font-weight: 600;
-  }
-}
-
-.NotificationBottomPart {
-  font-size: 10px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.NotificationCloseBtn {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  border: none;
-  background-color: transparent;
-  @include themify-global(color, "primary");
-  & > *:not(:last-child) {
-    margin-right: 10px;
-  }
+  @include themify(color, "primary");
 }

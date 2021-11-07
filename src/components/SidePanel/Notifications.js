@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
 import styles from "./Notifications.module.scss"
 import SimpleBar from 'simplebar-react';
 import { ReactComponent as CloseIcon } from "../../assets/close-outline.svg"
+import { ReactComponent as ChevronUpIcon } from "../../assets/chevron-up-outline.svg"
+import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down-outline.svg"
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import Avatar from '../UI/Avatar';
+import Notification from '../UI/Notification';
 
 const Notifications = (props) => {
   const {
@@ -15,10 +18,20 @@ const Notifications = (props) => {
     dispatch
   } = props;
 
+  const [expandedComment, setExpandedComment] = useState(null);
+
+  const handleSetExpandedComment = (comment) => {
+    if (expandedComment === comment) {
+      setExpandedComment(null);
+    } else {
+      setExpandedComment(comment);
+    }
+  }
+
   const closePanel = () => {
     return dispatch(appActions.handleSetLeftPanel(false))
   }
-  const removeProject = () => {
+  const dismissNotifications = () => {
     
   }
   return (
@@ -38,7 +51,7 @@ const Notifications = (props) => {
         </span>
         <button
           className={styles.PanelPageToolbarAction}
-          onClick={removeProject}
+          onClick={dismissNotifications}
         >
           <RemoveIcon
             width={24}
@@ -48,44 +61,7 @@ const Notifications = (props) => {
       </div>
       <SimpleBar className={styles.NotificationsForm}>
         {notifications.stored.map(x => (
-          <div
-            className={[
-              styles.NotificationShell,
-              "noselect",
-              ...(x.payload.link && [styles.clickable] || [])
-            ].join(" ")}
-            key={x.id}
-          >
-            <div className={styles.NotificationContainer}>
-              <Avatar user={users[x.sender]} size={32} />
-              <div>
-                <div className={styles.NotificationTopPart}>
-                  <span>
-                    {users[x.sender].firstName} {users[x.sender].lastName}
-                  </span>
-                  <span>
-                    {new Date(x.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-                  </span>
-                </div>
-                <div className={styles.NotificationBottomPart}>
-                  {x.type === "ASSIGNMENT" && (
-                    <span>
-                      Assigned a task to&nbsp;
-                      {x.payload.assignee ? 
-                      (<b>@{x.payload.assignee}</b>) : "you"}.
-                      Tap here to review it.
-                    </span>
-                  )}
-                  {/* <button className={styles.NotificationCloseBtn}>
-                    <CloseIcon
-                      height="16"
-                      width="16"
-                    />
-                  </button> */}
-                </div>
-              </div>
-            </div>
-          </div>
+          <Notification key={x.id} notificationData={x} />
         ))}
       </SimpleBar>
     </>

@@ -50,7 +50,7 @@ const ProjectToolbar = (props) => {
         />
         <span>Settings</span>
       </button>
-    </div>     
+    </div>
   )
 }
 

@@ -26,8 +26,8 @@
   outline: none;
   cursor: pointer;
   border-radius: 6px;
-  @include themify(color, "primary");
-  @include themify(background-color, "primaryLight");
+  color: #FFFFFF;
+  @include themify(background-color, "primary");
   & > *:not(:last-child) {
     margin-right: 3px;
   }
