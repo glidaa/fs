@@ -105,6 +105,7 @@
   & > svg {
     width: 250px;
     height: auto;
+    @include themify(color, "primary");
   }
   & > span {
     font-weight: bold;

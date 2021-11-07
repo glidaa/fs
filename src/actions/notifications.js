@@ -1,5 +1,6 @@
 import { API, graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from '../constants';
+import * as usersActions from './users';
 import { listNotifications } from "../graphql/queries"
 
 export const ADD_NOTIFICATION = "ADD_NOTIFICATION";
@@ -37,9 +38,10 @@ export const handleFetchNotifications = (taskID) => async (dispatch, getState) =
       for (const item of items) {
         usersToBeFetched = [...new Set([
           ...usersToBeFetched,
-          item.owner
+          item.sender
         ])]
       }
+      await dispatch(usersActions.handleAddUsers(usersToBeFetched))
       dispatch(fetchNotifications(items))
     } catch (err) {
       console.error(err)

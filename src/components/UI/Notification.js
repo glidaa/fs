@@ -100,7 +100,7 @@ const UnconnectedNotification = (props) => {
   )
 }
 
-const ConnectedNotification =  connect((state) => ({
+const ConnectedNotification = connect((state) => ({
   users: state.users
 }))(UnconnectedNotification);
 

@@ -8,6 +8,7 @@
   & > svg {
     width: 360px;
     height: auto;
+    @include themify(color, "primary");
   }
   & > div {
     display: flex;
@@ -20,8 +21,8 @@
       @include themify(color, "txtColor");
     }
     & > button {
-      @include themify(color, "primary");
-      @include themify(background-color, "primaryLight");
+      color: #FFFFFF;
+      @include themify(background-color, "primary");
       border-radius: 8px;
       max-width: fit-content;
       outline: none;
