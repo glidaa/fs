@@ -34,7 +34,10 @@ const UnconnectedNotification = (props) => {
       onClick={() => openLink(notificationData.payload.link)}
     >
       <div className={styles.NotificationControls}>
-        <div onClick={() => setIsExpanded(!isExpanded)}>
+        <div onClick={(e) => {
+          e.stopPropagation()
+          setIsExpanded(!isExpanded)
+        }}>
           <span>
             {new Date(notificationData.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
           </span>

@@ -33,6 +33,19 @@ export const onPushNotification = /* GraphQL */ `
     }
   }
 `;
+export const onDismissNotification = /* GraphQL */ `
+  subscription OnDismissNotification($owner: String!) {
+    onDismissNotification(owner: $owner) {
+      id
+      type
+      payload
+      createdAt
+      updatedAt
+      owner
+      sender
+    }
+  }
+`;
 export const onCreateOwnedProject = /* GraphQL */ `
   subscription OnCreateOwnedProject($owner: String!) {
     onCreateOwnedProject(owner: $owner) {

@@ -1,4 +1,4 @@
-import { ADD_NOTIFICATION, PUSH_NOTIFICATION, DISMISS_NOTIFICATION, FETCH_NOTIFICATIONS } from "../actions/notifications"
+import { ADD_NOTIFICATION, PUSH_NOTIFICATION, DISMISS_NOTIFICATION, REMOVE_NOTIFICATION, FETCH_NOTIFICATIONS } from "../actions/notifications"
 
 const initState = {
   stored: [],
@@ -28,6 +28,11 @@ export default function (state = initState, action) {
       return {
         ...state,
         pushed: state.pushed.filter(x => x.id !== action.id)
+      }
+    case REMOVE_NOTIFICATION:
+      return {
+        ...state,
+        stored: state.stored.filter(x => x.id !== action.id)
       }
     case FETCH_NOTIFICATIONS:
       const newStored = []

@@ -145,6 +145,9 @@ exports.handler = async function (ctx) {
       onPushNotification: (ctx) => {
         return onPushNotification(ctx);
       },
+      onDismissNotification: (ctx) => {
+        return onDismissNotification(ctx);
+      },
       onCreateOwnedProject: (ctx) => {
         return onCreateOwnedProject(ctx);
       },
@@ -1877,6 +1880,24 @@ exports.handler = async function (ctx) {
   }
 
   async function onPushNotification(ctx) {
+    const client = ctx.identity.username
+    const owner = ctx.arguments.owner
+    if (client === owner) {
+      return {
+        id: "00000000-0000-0000-0000-000000000000",
+        type: "DUMP",
+        payload: '{}',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        owner: owner,
+        sender: owner
+      }
+    } else {
+      throw new Error(UNAUTHORIZED)
+    }
+  }
+
+  async function onDismissNotification(ctx) {
     const client = ctx.identity.username
     const owner = ctx.arguments.owner
     if (client === owner) {

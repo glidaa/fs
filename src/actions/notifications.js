@@ -6,6 +6,7 @@ import { listNotifications } from "../graphql/queries"
 export const ADD_NOTIFICATION = "ADD_NOTIFICATION";
 export const PUSH_NOTIFICATION = "PUSH_NOTIFICATION";
 export const DISMISS_NOTIFICATION = "DISMISS_NOTIFICATION";
+export const REMOVE_NOTIFICATION = "REMOVE_NOTIFICATION";
 export const FETCH_NOTIFICATIONS = "FETCH_NOTIFICATIONS";
 
 export const add = (notification) => ({
@@ -20,6 +21,11 @@ export const push = (notification) => ({
 
 export const dismiss = (id) => ({
   type: DISMISS_NOTIFICATION,
+  id
+})
+
+export const remove = (id) => ({
+  type: REMOVE_NOTIFICATION,
   id
 })
 

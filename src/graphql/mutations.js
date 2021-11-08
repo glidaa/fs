@@ -238,11 +238,12 @@ export const dismissNotification = /* GraphQL */ `
   mutation DismissNotification($notificationID: ID!) {
     dismissNotification(notificationID: $notificationID) {
       id
-      taskID
-      content
+      type
+      payload
       createdAt
       updatedAt
       owner
+      sender
     }
   }
 `;

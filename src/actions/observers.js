@@ -81,17 +81,30 @@ const clearNotificationsObservers = () => ({
 });
 
 export const handleSetNotificationsObservers = () => async (dispatch, getState) => {
-  const { user, notifications } = getState()
+  const { user } = getState()
   const observers = [];
   const data = {
     owner: user.data.username
   }
   observers.push(await API.graphql(graphqlOperation(subscriptions.onPushNotification, data)).subscribe({
-    next: e => {
+    next: async e => {
+      const { notifications } = getState()
       const incoming = e.value.data.onPushNotification
-      if (!Object.keys(notifications.stored).includes(incoming.id)) {
+      if (!notifications.stored.filter(x => x.id === incoming.id).length) {
+        await dispatch(usersActions.handleAddUsers([incoming.sender]))
         dispatch(notificationsActions.add(incoming))
         dispatch(notificationsActions.push(incoming))
+      }
+    },
+    error: error => console.warn(error)
+  }))
+  observers.push(await API.graphql(graphqlOperation(subscriptions.onDismissNotification, data)).subscribe({
+    next: e => {
+      const { notifications } = getState()
+      const incoming = e.value.data.onDismissNotification
+      if (notifications.stored.filter(x => x.id === incoming.id).length) {
+        dispatch(notificationsActions.dismiss(incoming.id))
+        dispatch(notificationsActions.remove(incoming.id))
       }
     },
     error: error => console.warn(error)

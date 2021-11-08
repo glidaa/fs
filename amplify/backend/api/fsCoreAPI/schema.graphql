@@ -136,7 +136,7 @@ type Mutation {
 	deleteComment(commentID: ID!): Comment
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	dismissNotification(notificationID: ID!): Comment
+	dismissNotification(notificationID: ID!): Notification
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	assignTask(taskID: ID!, assignee: String!, mutationID: String): TaskUpdate
@@ -202,6 +202,10 @@ type Subscription {
 		@aws_cognito_user_pools
 	onPushNotification(owner: String!): Notification
 		@aws_subscribe(mutations: ["pushNotification"])
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_cognito_user_pools
+	onDismissNotification(owner: String!): Notification
+		@aws_subscribe(mutations: ["dismissNotification"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	onCreateOwnedProject(owner: String!): Project
