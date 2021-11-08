@@ -57,22 +57,23 @@ const DateField = (props) => {
   }, [readOnly, isPickerOpened, setIsPickerOpened])
   return (
     <div className={styles.DateFieldShell} style={style}>
-      {label && (
-        <label htmlFor={name}>
-          {label}
-        </label>
-      )}
       <div
         className={[
           styles.DateFieldContainer,
           ...(readOnly && [styles.readOnly] || []),
-          ...(error && [styles.error] || [])
+          ...(error && [styles.error] || []),
+          ...(value && [styles.filled] || [])
         ].join(" ")}
       >
+        {label && (
+          <label htmlFor={name}>
+            {label}
+          </label>
+        )}
         <input
           name={name}
           value={value ? formatDate(value) : ""}
-          placeholder={placeholder}
+          placeholder={label ? null : placeholder}
           contentEditable={false}
           onClick={togglePicker}
           readOnly

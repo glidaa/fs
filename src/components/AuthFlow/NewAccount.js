@@ -234,6 +234,7 @@ const NewAccount = (props) => {
   return currStep === 0 ? (
     <div className={styles.NewAccountFormContainer}>
       <div className={styles.NewAccountFormHeader}>
+        <span>forwardslash</span>
         <span>Create Account</span>
       </div>
       <form
@@ -304,7 +305,6 @@ const NewAccount = (props) => {
           label="Gender"
           values={["male", "female"]}
           options={["Male", "Female"]}
-          colors={["#FFEBE5", "#FDF1DB"]}
           onChange={handleChange}
           value={gender}
         />
@@ -318,6 +318,7 @@ const NewAccount = (props) => {
   ) : (
     <div className={styles.NewAccountFormContainer}>
       <div className={styles.NewAccountFormHeader}>
+        <span>forwardslash</span>
         <span>Confirm Account</span>
         <span>Enter code sent to your email.</span>
       </div>

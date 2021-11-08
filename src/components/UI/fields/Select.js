@@ -44,9 +44,6 @@ const Select = (props) => {
               ...(value === x && [styles.selected] || [])
             ].join(" ")}
             key={x}
-            style={{
-              backgroundColor: colors[i]
-            }}
             onClick={() => onSelect(x)}
           >
             {options[i]}

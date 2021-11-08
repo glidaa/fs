@@ -13,8 +13,8 @@
       "fieldBg": color.scale($variant, $lightness: 99%)
     ),
     "dark": (
-      "primary": $variant,
-      "primaryDark": color.scale($variant, $lightness: -10%),
+      "primary": color.scale($variant, $lightness: 20%),
+      "primaryDark": color.scale($variant, $lightness: 10%),
       "primaryLight": color.scale($variant, $lightness: 80%),
       "txtColor": #FFFFFF,
       "primaryBg": #1F1F1F,

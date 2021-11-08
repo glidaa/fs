@@ -158,7 +158,6 @@ const AccountSettings = (props) => {
             label="Gender"
             values={["male", "female"]}
             options={["Male", "Female"]}
-            colors={["#FFEBE5", "#FDF1DB"]}
             onChange={(e) => setNewGender(e.target.value)}
             value={newGender}
           />

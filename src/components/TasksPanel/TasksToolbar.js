@@ -8,7 +8,7 @@ import copyTask from "../../utils/copyTask"
 import { ReactComponent as ClipboardIcon } from "../../assets/clipboard-outline.svg"
 import { ReactComponent as SearchIcon } from "../../assets/search-outline.svg"
 import Dropdown from '../UI/fields/Dropdown';
-import TextField from '../UI/fields/TextField';
+import HeadingTextField from '../UI/fields/HeadingTextField';
 
 const TasksToolbar = (props) => {
   const {
@@ -65,7 +65,7 @@ const TasksToolbar = (props) => {
         />
         <span>Paste</span>
       </button>
-      <TextField
+      <HeadingTextField
         name="searchKeyword"
         placeholder="Search tasks…"
         value={searchKeyword}

@@ -1,7 +1,7 @@
 import React, { useState } from "react"
-import styles from "./TextField.module.scss"
+import styles from "./HeadingTextField.module.scss"
 
-const TextField = (props) => {
+const HeadingTextField = (props) => {
   const {
     value = "",
     onChange,
@@ -9,7 +9,6 @@ const TextField = (props) => {
     placeholder,
     type,
     error,
-    label,
     name,
     prefix,
     suffix,
@@ -19,37 +18,23 @@ const TextField = (props) => {
   } = props
   const [isFocused, setIsFocused] = useState(false)
   return (
-    <div
-      className={[
-        styles.TextFieldShell,
-        ...(disabled && [styles.disabled] || []),
-        ...(error && [styles.error] || []),
-        ...(isFocused && [styles.focused] || []),
-        ...(value && [styles.filled] || [])
-      ].join(" ")}
-      style={style}
-    >
+    <div className={styles.HeadingTextFieldShell} style={style}>
       <div
         className={[
-          styles.TextFieldContainer,
+          styles.HeadingTextFieldContainer,
           ...(disabled && [styles.disabled] || []),
           ...(error && [styles.error] || []),
-          ...(isFocused && [styles.focused] || []),
-          ...(value && [styles.filled] || [])
+          ...(isFocused && [styles.focused] || [])
         ].join(" ")}
       >
-        {label && (
-          <label htmlFor={name}>
-            {label}
-          </label>
-        )}
+        {prefix && React.createElement(prefix)}
         <input
           type={type}
           name={name}
+          placeholder={placeholder}
           autoComplete={autoComplete}
           onChange={onChange}
           value={value}
-          placeholder={label ? null : placeholder}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           readOnly={readOnly}
@@ -62,4 +47,4 @@ const TextField = (props) => {
   )
 }
 
-export default TextField
+export default HeadingTextField

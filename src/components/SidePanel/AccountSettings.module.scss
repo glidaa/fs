@@ -30,7 +30,7 @@
 
 .PanelPageTitle {
   @include themify(color, "txtColor");
-  font-size: 18px;
+  font-size: 28px;
   font-weight: 600;
 }
 
@@ -39,12 +39,13 @@
   align-items: center;
   justify-content: center;
   border: none;
+  border-radius: 100%;
   outline: none;
-  padding: 0;
+  padding: 5px;
   margin: 0;
-  background-color: transparent;
+  color: #FFFFFF;
   cursor: pointer;
-  @include themify(color, "primary");
+  @include themify(background-color, "primary");
 }
 
 .AccountSettingsHeader {

@@ -116,6 +116,7 @@ const ForgotPassword = (props) => {
   return currStep === 0 ? (
     <div className={styles.ForgotPasswordFormContainer}>
       <div className={styles.ForgotPasswordFormHeader}>
+        <span>forwardslash</span>
         <span>Forgot Password?</span>
       </div>
       <form
@@ -142,6 +143,7 @@ const ForgotPassword = (props) => {
   ) : currStep === 1 ? (
     <div className={styles.ForgotPasswordFormContainer}>
       <div className={styles.ForgotPasswordFormHeader}>
+        <span>forwardslash</span>
         <span>Confirm Account First</span>
         <span>Enter code sent to your email.</span>
       </div>
@@ -168,6 +170,7 @@ const ForgotPassword = (props) => {
   ) : (
     <div className={styles.ForgotPasswordFormContainer}>
       <div className={styles.ForgotPasswordFormHeader}>
+        <span>forwardslash</span>
         <span>Forgot Password?</span>
       </div>
       <form

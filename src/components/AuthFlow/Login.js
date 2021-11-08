@@ -95,7 +95,8 @@ const Login = (props) => {
   return currStep === 0 ? (
     <div className={styles.LoginFormContainer}>
       <div className={styles.LoginFormHeader}>
-        <span>Login</span>
+        <span>forwardslash</span>
+        <span>User Login</span>
       </div>
       <form
         className={styles.LoginStepOneForm}
@@ -144,6 +145,7 @@ const Login = (props) => {
   ) : (
     <div className={styles.LoginFormContainer}>
       <div className={styles.LoginFormHeader}>
+        <span>forwardslash</span>
         <span>Confirm Account</span>
         <span>Enter code sent to your email.</span>
       </div>

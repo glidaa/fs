@@ -5,6 +5,7 @@ import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
 import styles from "./Notifications.module.scss"
 import SimpleBar from 'simplebar-react';
+import { ReactComponent as NoNotificationsIllustration } from "../../assets/undraw_notify_re_65on.svg";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import Notification from '../UI/Notification';
@@ -60,13 +61,20 @@ const Notifications = (props) => {
         </button>
       </div>
       <SimpleBar className={styles.NotificationsForm}>
-        {notifications.stored.map(x => (
+        {notifications.stored.length ? notifications.stored.map(x => (
           <Notification
             key={x.id}
             notificationData={x}
             onDismiss={(e) => dismissNotification(e, x.id)}
           />
-        ))}
+        )) : (
+          <div className={styles.NoNotifications}>
+            <NoNotificationsIllustration />
+            <span>
+              All caught up!
+            </span>
+          </div>
+        )}
       </SimpleBar>
     </>
   );

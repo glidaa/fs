@@ -29,20 +29,21 @@ const Textarea = (props) => {
       className={[
         styles.TextareaContainer,
         ...(error && [styles.error] || []),
-        ...(isFocused && [styles.focused] || [])
+        ...(isFocused && [styles.focused] || []),
+        ...(value && [styles.filled] || [])
       ].join(" ")}
     >
-      {label && (
-        <label htmlFor={name}>
-          {label}
-        </label>
-      )}
       <div>
+        {label && (
+          <label htmlFor={name}>
+            {label}
+          </label>
+        )}
         <textarea
           name={name}
           value={value}
           ref={textareaRef}
-          placeholder={placeholder}
+          placeholder={label ? null : placeholder}
           onChange={onChange}
           readOnly={readOnly}
           onInput={adjustSize}

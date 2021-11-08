@@ -98,7 +98,6 @@ const Details = (props) => {
           onChange={handleChange}
           values={["todo", "pending", "done"]}
           options={["Todo", "Pending", "Done"]}
-          colors={["#FFEBE5", "#FDF1DB", "#DAF6F4"]}
           value={tasks[selectedTask].status}
           readOnly={readOnly}
         />
@@ -108,7 +107,6 @@ const Details = (props) => {
           onChange={handleChange}
           values={["low", "normal", "high"]}
           options={["Low", "Normal", "High"]}
-          colors={["#FFEBE5", "#FDF1DB", "#DAF6F4"]}
           value={tasks[selectedTask].priority}
           readOnly={readOnly}
         />
