@@ -47,16 +47,16 @@ const ProjectItem = (props) => {
       <div className={styles.ProjectItemPermission}>
         {project.privacy === "public" && (
           <GlobeIcon
-            height="200"
-            width="200"
-            strokeWidth="24"
+            height={200}
+            width={200}
+            strokeWidth={24}
           />
         )}
         {project.privacy === "private" && (
           <DocumentLockIcon
-            height="200"
-            width="200"
-            strokeWidth="24"
+            height={200}
+            width={200}
+            strokeWidth={24}
           />
         )}
       </div>
@@ -110,15 +110,15 @@ const ProjectItem = (props) => {
             <button className={styles.ProjectItemAction}>
               <ShareIcon
                 onClick={shareProject}
-                height="20"
-                width="20"
+                height={20}
+                width={20}
               />
             </button>
             <button className={styles.ProjectItemAction}>
               <RemoveIcon
                 onClick={removeProject}
-                height="20"
-                width="20"
+                height={20}
+                width={20}
               />
             </button>
           </div>

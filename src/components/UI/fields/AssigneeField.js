@@ -85,8 +85,8 @@ const AssigneeField = (props) => {
                 onClick={() => handleUnassignTask(x.raw)}
               >
                 <RemoveIcon
-                  height="16"
-                  width="16"
+                  height={16}
+                  width={16}
                 />
               </button>
               <Avatar user={x} size={36} circular />

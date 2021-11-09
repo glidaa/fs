@@ -246,7 +246,6 @@
   justify-content: center;
   outline: none;
   border: 1px solid;
-  @include themify(border-color, "txtColor");
   background-color: transparent;
   border-radius: 100%;
   width: 20px;
@@ -255,6 +254,8 @@
   min-width: 20px;
   padding: 2.5px;
   cursor: pointer;
+  @include themify(border-color, "txtColor");
+  @include themify(color, "onPrimaryColor");
   &.done {
     @include themify(border-color, "primary");
     @include themify(background-color, "primary");

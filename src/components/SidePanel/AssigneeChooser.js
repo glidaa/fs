@@ -100,8 +100,8 @@ const AssigneeChooser = (props) => {
           disabled={isBusy}
         >
           <BackArrowIcon
-            width="24"
-            height="24"
+            width={24}
+            height={24}
           />
         </button>
         <span className={styles.PanelPageTitle}>
@@ -113,8 +113,8 @@ const AssigneeChooser = (props) => {
           disabled={isBusy}
         >
           <ShareIcon
-            width="24"
-            height="24"
+            width={24}
+            height={24}
           />
         </button>
       </div>

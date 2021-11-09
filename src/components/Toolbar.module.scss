@@ -10,6 +10,7 @@
   width: 40px;
   height: calc(100vh - 60px);
   @include themify(background-color, "secondaryBg");
+  transition: background-color 0.2s ease;
   @media only screen and (max-width: 768px) {
     padding: 15px 20px;
     flex-direction: row;

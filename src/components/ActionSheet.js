@@ -136,7 +136,7 @@ const ActionSheet = (props) => {
           <CopyIcon
             width={24}
             height={24}
-            strokeWidth="32"
+            strokeWidth={32}
           />
           <span>Copy</span>
         </button>

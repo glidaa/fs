@@ -66,8 +66,8 @@ const WatcherField = (props) => {
                 onClick={() => handleRemoveWatcher(x)}
               >
                 <RemoveIcon
-                  height="16"
-                  width="16"
+                  height={16}
+                  width={16}
                 />
               </button>
               <Avatar user={users[x]} size={36} circular />

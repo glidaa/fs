@@ -58,8 +58,8 @@ const UnconnectedNotification = (props) => {
           onClick={onDismiss}
         >
           <CloseIcon
-            height="16"
-            width="16"
+            height={16}
+            width={16}
           />
         </button>
       </div>

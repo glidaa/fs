@@ -240,10 +240,8 @@ const TaskItem = (props) => {
             >
               {item.status === "done" && (
                 <CheckmarkIcon
-                  stroke="#FFFFFF"
-                  strokeWidth="32"
-                  width="24"
-                  height="24"
+                  width={24}
+                  height={24}
                 />
               )}
             </button>
