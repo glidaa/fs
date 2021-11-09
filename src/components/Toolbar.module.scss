@@ -79,6 +79,7 @@
 
 .ToolbarAction.LoginBtn {
   @include themify(background-color, "primary");
+  @include themify(color, "onPrimaryColor");
 }
 
 .Spacer {

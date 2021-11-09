@@ -22,7 +22,7 @@ const Textarea = (props) => {
     if (textareaRef.current) {
       adjustSize({ target: textareaRef.current })
     }
-  }, [])
+  }, [value])
   return (
     <div
       style={style}
@@ -47,7 +47,6 @@ const Textarea = (props) => {
           placeholder={label ? null : placeholder}
           onChange={onChange}
           readOnly={readOnly}
-          onInput={adjustSize}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           disabled={disabled}

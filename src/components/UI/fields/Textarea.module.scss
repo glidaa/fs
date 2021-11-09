@@ -52,6 +52,7 @@
       font-weight: 400;
       z-index: 1;
       grid-area: 1 / 1 / 2 / 2;
+      @include themify(color, "txtColor");
     }
   }
   &.error {

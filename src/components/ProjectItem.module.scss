@@ -10,7 +10,7 @@
   @include themify(background-color, "primary");
   &.selected {
     border: 4px solid;
-    @include themify(color, "onPrimaryColor");
+    @include themify(color, "txtColor");
   }
 }
 
