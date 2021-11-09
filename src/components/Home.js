@@ -33,13 +33,15 @@ const Home = (props) => {
   };
 
   useEffect(() => {
-    if (user.state !== AuthState.SignedIn) {
+    if (user.state === AuthState.SignedIn) {
+      window.removeEventListener("storage", fetchLocalProjects)
+    } else {
       window.addEventListener("storage", fetchLocalProjects);
     }
     return () => {
       window.removeEventListener("storage", fetchLocalProjects)
     }
-  }, []);
+  }, [user.state]);
 
   useEffect(() => {
     (async () => {

@@ -20,11 +20,13 @@ const TagField = (props) => {
     const tag = e.target.innerText;
   }
 
-  const handleTagInput = (e) => {
-    if (e.code === "Enter" && e.target.value.trim()) {
+  const handleTagSubmit = (e) => {
+    e.preventDefault();
+    const inputElem = e.target.querySelector('input');
+    if (e.code === "Enter" && inputElem.value.trim()) {
       const tagsSet = new Set(value || [])
-      tagsSet.add(e.target.value.trim())
-      e.target.value = ""
+      tagsSet.add(inputElem.value.trim())
+      inputElem.value = ""
       onChange({ target: {
         value: Array.from(tagsSet),
         name: name
@@ -75,14 +77,18 @@ const TagField = (props) => {
           </span>
         )}
         {(!readOnly && isEntering) && (
-          <span className={styles.TagInput}>
+          <form
+            action="."
+            className={styles.TagInput}
+            onSubmit={handleTagSubmit}
+          >
             <input
               ref={tagFieldInputRef}
               placeholder={placeholder}
+              enterKeyHint="done"
               autoFocus
-              onKeyDown={handleTagInput}
             />
-          </span>
+          </form>
         )}
       </div>
     </div>

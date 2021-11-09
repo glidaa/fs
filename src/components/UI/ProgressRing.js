@@ -19,7 +19,7 @@ const ProgressRing = (props) => {
         fill="#FFFFFF"
         strokeWidth={stroke / 2}
         strokeDasharray={`${circumference} ${circumference}`}
-        r={normalizedRadius - stroke / 2}
+        r={(normalizedRadius - stroke / 2) + 3}
         cx={radius}
         cy={radius}
       />
@@ -31,7 +31,7 @@ const ProgressRing = (props) => {
         strokeLinecap="round"
         strokeDasharray={`${circumference} ${circumference}`}
         style={{ strokeDashoffset }}
-        r={normalizedRadius}
+        r={normalizedRadius - 3}
         cx={radius}
         cy={radius}
       />
