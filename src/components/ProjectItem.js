@@ -112,8 +112,6 @@ const ProjectItem = (props) => {
                 onClick={shareProject}
                 height="20"
                 width="20"
-                strokeWidth="42"
-                color="#FFFFFF"
               />
             </button>
             <button className={styles.ProjectItemAction}>
@@ -121,8 +119,6 @@ const ProjectItem = (props) => {
                 onClick={removeProject}
                 height="20"
                 width="20"
-                strokeWidth="42"
-                color="#FFFFFF"
               />
             </button>
           </div>

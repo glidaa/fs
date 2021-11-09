@@ -10,7 +10,7 @@
   @include themify(background-color, "primary");
   &.selected {
     border: 4px solid;
-    @include themify(border-color, "txtColor");
+    @include themify(color, "onPrimaryColor");
   }
 }
 
@@ -48,23 +48,23 @@
 }
 
 .ProjectItemTitle {
-  color: #ffffff;
   font-weight: 600;
   font-size: 20px;
   max-width: 197.08px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  @include themify(color, "onPrimaryColor");
 }
 
 .ProjectItemPermalink {
   font-size: 12px;
-  color: #ffffff;
   font-weight: 500;
   max-width: 197.08px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  @include themify(color, "onPrimaryColor");
 }
 
 .TasksCount {
@@ -132,17 +132,17 @@
   opacity: 0.15;
   z-index: 1;
   & > svg {
-    @include themify(color, "txtColor");
-    @include themify(fill, "txtColor");
+    @include themify(color, "onPrimaryColor");
+    @include themify(fill, "onPrimaryColor");
   }
 }
 
 .ProjectItemDate {
   font-size: 12px;
-  color: #ffffff;
   font-weight: 500;
   max-width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  @include themify(color, "onPrimaryColor");
 }

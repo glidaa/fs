@@ -10,7 +10,7 @@
   & > span:nth-child(1) {
     font-weight: bold;
     font-size: 42px;
-    color: grey;
+    @include themify(color, "primary");
   }
   & > span:nth-child(3) {
     font-weight: bold;

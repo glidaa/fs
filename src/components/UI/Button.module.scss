@@ -1,7 +1,7 @@
 .Button {
   padding: 15px 0;
   @include themify(background-color, "primary");
-  @include themify(color, "secondaryBg");
+  @include themify(color, "onPrimaryColor");
   border-radius: 8px;
   outline: none;
   border: none;
@@ -11,7 +11,8 @@
     @include themify(background-color, "primaryDark");
   }
   &:disabled {
-    @include themify(background-color, "primaryLight");
-    cursor: default;
+    background-color: #CCCCCC!important;
+    color: #FFFFFF!important;
+    cursor: not-allowed;
   }
 }

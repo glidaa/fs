@@ -172,7 +172,7 @@ const Loading = (props) => {
         />
       ) : (
         <div className={styles.LoadingContainer}>
-          <span>Forward Slash</span>
+          <span>forwardslash</span>
           <ProgressBar
             max={progressMax}
             value={progressValue}

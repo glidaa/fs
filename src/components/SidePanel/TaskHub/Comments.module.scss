@@ -133,8 +133,8 @@
         font-size: 14px;
         border-radius: 8px;
         @include themify(background-color, "primary");
+        @include themify(color, "onPrimaryColor");
         cursor: pointer;
-        color: #ffffff;
         border: none;
         outline: none;
         transition: background-color 0.3s;

@@ -7,7 +7,7 @@
   transition: background-color 0.2s;
   cursor: pointer;
   &.selected {
-    background-color: #f5f5f5;
+    @include themify(background-color, "hover");
   }
   & > svg {
     @include themify(color, "primary");
@@ -68,4 +68,5 @@
   justify-content: center;
   align-items: center;
   padding: 10px 0;
+  @include themify(color, "txtColor");
 }

@@ -52,7 +52,7 @@
     border-radius: 0 0 8px 8px;
   }
   & > span:hover {
-    background-color: #f5f5f5;
+    @include themify(background-color, "hover");
   }
   & > span.selected {
     @include themify(color, "primary");

@@ -21,7 +21,7 @@
       @include themify(color, "txtColor");
     }
     & > button {
-      color: #FFFFFF;
+      @include themify(color, "onPrimaryColor");
       @include themify(background-color, "primary");
       border-radius: 8px;
       max-width: fit-content;

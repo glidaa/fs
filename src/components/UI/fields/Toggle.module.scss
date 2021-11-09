@@ -31,7 +31,7 @@
     border-color: #FF0000;
   }
   &.disabled {
-    background-color: #FAFAFA;
+    background-color: #FFFFFF2E;
   }
 }
 .ToggleHandle {
@@ -51,8 +51,8 @@
     height: 15px;
     width: 15px;
     border-radius: 100%;
-    background-color: #FFFFFF;
     transform: translateX(0);
     transition: transform 0.2s ease-in-out;
+    @include themify(background-color, "onPrimaryColor");
   }
 }

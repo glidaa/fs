@@ -73,7 +73,7 @@
 }
 
 .ToolbarAction.selected {
-  color: #FFFFFF!important;
+  @include themify(color, "onPrimaryColor");
   @include themify(background-color, "primary");
 }
 

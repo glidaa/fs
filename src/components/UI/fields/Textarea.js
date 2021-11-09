@@ -42,6 +42,7 @@ const Textarea = (props) => {
         <textarea
           name={name}
           value={value}
+          rows={1}
           ref={textareaRef}
           placeholder={label ? null : placeholder}
           onChange={onChange}

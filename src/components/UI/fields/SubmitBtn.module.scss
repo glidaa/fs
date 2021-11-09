@@ -1,7 +1,7 @@
 .SubmitBtn {
   padding: 14px 0;
   @include themify(background-color, "primary");
-  color: #FFFFFF !important;
+  @include themify(color, "onPrimaryColor", true);
   border-radius: 12px;
   font-size: 16px;
   outline: none;
@@ -12,7 +12,8 @@
     @include themify(background-color, "primaryDark");
   }
   &:disabled {
-    @include themify(background-color, "primaryLight");
-    cursor: default;
+    background-color: #CCCCCC!important;
+    color: #FFFFFF!important;
+    cursor: not-allowed;
   }
 }

@@ -7,7 +7,7 @@
   transition: background-color 0.2s;
   cursor: pointer;
   &.selected {
-    background-color: #f5f5f5;
+    @include themify(background-color, "hover");
   }
   & > div {
     display: flex;
@@ -34,4 +34,5 @@
   font-size: 14px;
   align-items: center;
   justify-content: center;
+  @include themify(color, "txtColor");
 }

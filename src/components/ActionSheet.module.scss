@@ -47,7 +47,7 @@
   @include themify(color, "txtColor");
   font-weight: bold;
   padding: 15px;
-  @include themify(background-color, "primaryLight");
+  @include themify(background-color, "primaryLightSurface");
   cursor: pointer;
   outline: none;
   border: none;
@@ -59,11 +59,11 @@
 .CloseBtn {
   outline: none;
   border: none;
-  color: #ffffff;
-  @include themify(background-color, "primary");
   width: 100%;
   font-weight: bold;
   padding: 10px 0;
   border-radius: 10px;
   cursor: pointer;
+  @include themify(background-color, "primary");
+  @include themify(color, "onPrimaryColor");
 }

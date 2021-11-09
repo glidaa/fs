@@ -98,8 +98,6 @@ const Toolbar = (props) => {
               <LoginIcon
                 width={24}
                 height={24}
-                strokeWidth="32"
-                color="#FFFFFF"
               />
             </button>
           )}

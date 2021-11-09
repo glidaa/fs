@@ -43,7 +43,7 @@
       @include themify(border-color, "primary");
     }
     &.disabled {
-      background-color: #FAFAFA;
+      background-color: #FFFFFF2E;
     }
     & > input {
       border: none;
@@ -53,7 +53,7 @@
       @include themify(color, "txtColor");
       @include themify(background-color, "fieldBg");
       &:disabled {
-        background-color: #FAFAFA;
+        background-color: transparent;
       }
       &::placeholder {
         color: #C0C0C0;

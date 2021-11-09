@@ -60,8 +60,6 @@ const TasksToolbar = (props) => {
         <ClipboardIcon
           width={14}
           height={14}
-          strokeWidth={32}
-          color="#FFFFFF"
         />
         <span>Paste</span>
       </button>

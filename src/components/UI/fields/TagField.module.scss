@@ -53,11 +53,11 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  color: #ffffff;
   padding: 5px 10px;
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
+  @include themify(color, "onPrimaryColor");
   @include themify(background-color, "primary");
   outline: none;
   width: fit-content;

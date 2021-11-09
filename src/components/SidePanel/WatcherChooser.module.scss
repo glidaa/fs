@@ -9,7 +9,7 @@
 
 .PanelPageTitle {
   @include themify(color, "txtColor");
-  font-size: 28px;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -22,10 +22,10 @@
   outline: none;
   padding: 5px;
   margin: 0;
-  color: #FFFFFF;
+  background-color: transparent;
   cursor: pointer;
   transition: opacity 0.3s;
-  @include themify(background-color, "primary");
+  @include themify(color, "primary");
   &:disabled {
     opacity: 0.6;
     cursor: default;
@@ -82,11 +82,11 @@
     }
     & > span:nth-child(2) {
       font-style: italic;
-      color: grey;
+      @include themify(color, "txtColor");
     }
   }
   &:not(:disabled):hover {
-    background-color: #e4e4e2;
+    @include themify(background-color, "hover");
   }
   &:disabled {
     cursor: default;
