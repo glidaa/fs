@@ -159,7 +159,7 @@
     text-decoration: line-through;
   }
   &.placeholder {
-    color: #c0c0c0;
+    color: #C0C0C0!important;
   }
 }
 
@@ -175,7 +175,7 @@
     margin: 0;
     font-weight: 400;
     &::placeholder {
-      color: #c0c0c0;
+      color: #C0C0C0!important;
     }
   }
 }
