@@ -5,6 +5,7 @@ import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
+import * as cacheController from "../../controllers/cache"
 import { AuthState } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import SubmitBtn from '../UI/fields/SubmitBtn';
@@ -28,6 +29,7 @@ const Login = (props) => {
     setPasswordError(null)
     try {
       await Auth.signIn(username, password);
+      cacheController.resetCache(true)
       dispatch(appActions.setLoading(true))
       setShouldRedirect(true)
     } catch (error) {

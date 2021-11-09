@@ -5,6 +5,7 @@ import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
 import * as userActions from "../../actions/user"
 import * as appActions from "../../actions/app"
+import * as cacheController from "../../controllers/cache"
 import { AuthState } from '../../constants';
 import DateField from '../UI/fields/DateField';
 import SubmitBtn from '../UI/fields/SubmitBtn';
@@ -179,6 +180,7 @@ const NewAccount = (props) => {
     try {
       await Auth.confirmSignUp(username, verificationCode)
       await Auth.signIn(username, password);
+      cacheController.resetCache(true)
       dispatch(appActions.setLoading(true))
       setShouldRedirect(true)
     } catch (error) {
