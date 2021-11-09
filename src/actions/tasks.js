@@ -1,14 +1,13 @@
 import { API, graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from '../constants';
 import { listTasksForProject } from "../graphql/queries"
-import injectItemOrder from "../utils/injectItemOrder"
-import removeItemOrder from "../utils/removeItemOrder"
 import * as appActions from "./app"
 import * as statusActions from "./status"
 import * as projectsActions from "./projects"
 import * as usersActions from "./users"
 import * as mutationsActions from "./mutations"
 import * as mutations from "../graphql/mutations"
+import * as cacheController from "../controllers/cache"
 import { CREATING, REMOVING, READY, LOADING } from "../constants";
 import prepareTaskToBeSent from "../utils/prepareTaskToBeSent";
 import generateMutationID from "../utils/generateMutationID";
@@ -18,6 +17,7 @@ export const UPDATE_TASK = "UPDATE_TASK";
 export const REMOVE_TASK = "REMOVE_TASK";
 export const EMPTY_TASKS = "EMPTY_TASKS";
 export const FETCH_TASKS = "FETCH_TASKS";
+export const FETCH_CACHED_TASKS = "FETCH_CACHED_TASKS";
 
 export const createTask = (taskState) => ({
   type: CREATE_TASK,
@@ -38,8 +38,14 @@ export const emptyTasks = () => ({
   type: EMPTY_TASKS
 });
 
-const fetchTasks = (tasks) => ({
+const fetchTasks = (tasks, projectID) => ({
   type: FETCH_TASKS,
+  tasks,
+  projectID
+});
+
+const fetchCachedTasks = (tasks) => ({
+  type: FETCH_CACHED_TASKS,
   tasks
 });
 
@@ -72,23 +78,6 @@ export const handleCreateTask = (taskState) => (dispatch, getState) => {
       }
       dispatch(appActions.handleSetTask(taskState.id))
     }
-    const localProjects = JSON.parse(window.localStorage.getItem("projects"))
-    const tasksArray = localProjects[taskState.projectID].tasks
-    let tasksList = {}
-    for (const task of tasksArray) {
-      tasksList[task.id] = task
-    }
-    tasksList = injectItemOrder(
-      tasksList,
-      taskState,
-      taskState.prevTask,
-      taskState.nextTask,
-      "prevTask",
-      "nextTask"
-    )
-    tasksList = {...tasksList, [taskState.id]: taskState}
-    localProjects[taskState.projectID].tasks = Object.values(tasksList)
-    return window.localStorage.setItem("projects", JSON.stringify(localProjects))
   }
 }
 
@@ -123,36 +112,6 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
         dispatch(projectsActions.handleUpdateTaskCount(prevTaskState.projectID, prevTaskState.status, update.status))
       }
     }
-    const localProjects = JSON.parse(window.localStorage.getItem("projects"))
-    const tasksArray = localProjects[prevTaskState.projectID].tasks
-    let tasksList = {}
-    for (const task of tasksArray) {
-      tasksList[task.id] = task
-    }
-    if (update.prevTask !== undefined && update.nextTask !== undefined) {
-      tasksList = removeItemOrder(
-        tasksList,
-        tasksList[update.id],
-        "prevTask",
-        "nextTask"
-      )
-      tasksList = injectItemOrder(
-        tasksList,
-        tasksList[update.id],
-        update.prevTask,
-        update.nextTask,
-        "prevTask",
-        "nextTask"
-      )
-    }
-    tasksList = {
-      ...tasksList,
-      [update.id]: {
-        ...tasksList[update.id],
-        ...update
-    }}
-    localProjects[prevTaskState.projectID].tasks = Object.values(tasksList)
-    return window.localStorage.setItem("projects", JSON.stringify(localProjects))
   }
 }
 
@@ -176,21 +135,6 @@ export const handleRemoveTask = (taskState) => (dispatch, getState) => {
       dispatch(removeTask(taskState.id))
       dispatch(projectsActions.handleUpdateTaskCount(taskState.projectID, taskState.status, null))
     }
-    const localProjects = JSON.parse(window.localStorage.getItem("projects"))
-    const tasksArray = localProjects[taskState.projectID].tasks
-    let tasksList = {}
-    for (const task of tasksArray) {
-      tasksList[task.id] = task
-    }
-    tasksList = removeItemOrder(
-      tasksList,
-      tasksList[taskState.id],
-      "prevTask",
-      "nextTask"
-    )
-    delete tasksList[taskState.id]
-    localProjects[taskState.projectID].tasks = Object.values(tasksList)
-    return window.localStorage.setItem("projects", JSON.stringify(localProjects))
   }
 }
 
@@ -316,7 +260,7 @@ export const handleRemoveWatcher= (taskID, username) => async (dispatch, getStat
   }
 }
 
-export const handleFetchTasks = (projectID, isInitial = false) => async (dispatch, getState) => {
+export const handleFetchTasks = (projectID, isInitial = false, isSync = false) => async (dispatch, getState) => {
   const { user } = getState()
   if (!isInitial) {
     dispatch(appActions.handleSetTask(null))
@@ -335,7 +279,7 @@ export const handleFetchTasks = (projectID, isInitial = false) => async (dispatc
         ])]
       }
       await dispatch(usersActions.handleAddUsers(usersToBeFetched))
-      dispatch(fetchTasks(items))
+      dispatch(fetchTasks(items, projectID))
       dispatch(statusActions.setTasksStatus(READY))
       return getState().tasks
     } catch (err) {
@@ -343,12 +287,7 @@ export const handleFetchTasks = (projectID, isInitial = false) => async (dispatc
       dispatch(statusActions.setTasksStatus(READY))
     }
   } else {
-    const localProjects = JSON.parse(window.localStorage.getItem("projects"))
-    if (localProjects?.[projectID].tasks) {
-      dispatch(fetchTasks(localProjects[projectID].tasks))
-    } else {
-      dispatch(fetchTasks([]))
-    }
+    dispatch(fetchCachedTasks(cacheController.getTasksByProjectID(projectID)))
     return getState().tasks
   }
 }

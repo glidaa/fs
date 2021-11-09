@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { connect } from "react-redux"
 import styles from "./Watched.module.scss";
-import ProjectItem from "../../ProjectItem"
+import ProjectItem from "./ProjectItem"
 import { ReactComponent as NoWatchedIllustartion } from "../../../assets/undraw_Surveillance_re_8tkl.svg"
 
 const Projects = (props) => {

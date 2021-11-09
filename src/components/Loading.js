@@ -10,11 +10,11 @@ import * as tasksActions from "../actions/tasks"
 import * as userActions from "../actions/user"
 import * as observersActions from "../actions/observers"
 import * as queries from "../graphql/queries"
-import * as mutations from "../graphql/mutations"
 import { Navigate, useNavigate, useParams, useLocation } from "react-router-dom"
 import { panelPages, AuthState } from '../constants';
 import ProgressBar from "./UI/ProgressBar";
 import isLoggedIn from "../utils/isLoggedIn";
+import uploadLocal from "../utils/uploadLocal";
 
 const Loading = (props) => {
   const { user, dispatch } = props
@@ -47,21 +47,8 @@ const Loading = (props) => {
       }
     }
     if (currUser.state === AuthState.SignedIn) {
-      const localProjectsList = JSON.parse(window.localStorage.getItem("projects"))
-      if (localProjectsList) {
-        const localProjects = Object.values(localProjectsList)
-        if (localProjects.length) {
-          try {
-            setLoadingMsg("We Are Importing Your Local Projects")
-            await API.graphql(graphqlOperation(mutations.importData, {
-              data: JSON.stringify(localProjects)
-            }))
-            window.localStorage.removeItem('projects')
-          } catch (err) {
-            console.error(err)
-          }
-        }
-      }
+      setLoadingMsg("We Are Importing Your Local Projects")
+      await uploadLocal()
     }
     if (routeParams.projectPermalink &&
         !routeParams.username &&

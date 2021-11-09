@@ -1,4 +1,5 @@
 import { AuthState } from '../constants';
+import getGravatar from '../utils/getGravatar';
 import * as observersActions from "./observers"
 import * as notificationsActions from "./notifications"
 
@@ -32,6 +33,11 @@ export const handleSetData = (userData) => (dispatch) => {
     const { firstName, lastName } = userData
     const abbr = firstName[0].toUpperCase() + lastName[0].toUpperCase()
     dispatch(setData({...userData, abbr}))
+    if (!userData.avatar) {
+      getGravatar(userData.email).then((avatar) => {
+        dispatch(setData({...userData, avatar}))
+      })
+    }
   } else {
     dispatch(setData(null))
   }

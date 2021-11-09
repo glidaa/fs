@@ -1,6 +1,6 @@
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
-import { CREATE_TASK, UPDATE_TASK, REMOVE_TASK, EMPTY_TASKS, FETCH_TASKS } from "../actions/tasks"
+import { CREATE_TASK, UPDATE_TASK, REMOVE_TASK, EMPTY_TASKS, FETCH_TASKS, FETCH_CACHED_TASKS } from "../actions/tasks"
 
 export default function (state = {}, action) {
   let stateClone = {...state}
@@ -58,6 +58,8 @@ export default function (state = {}, action) {
         newState[task.id] = task
       }
       return newState
+    case FETCH_CACHED_TASKS:
+      return action.tasks
     default:
       return state
   }

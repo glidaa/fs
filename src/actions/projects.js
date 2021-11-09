@@ -4,8 +4,7 @@ import * as appActions from "./app"
 import * as mutationsActions from "./mutations"
 import * as observersActions from "./observers"
 import * as mutations from "../graphql/mutations"
-import injectItemOrder from "../utils/injectItemOrder"
-import removeItemOrder from "../utils/removeItemOrder"
+import * as cacheController from "../controllers/cache"
 import { OK, PENDING, AuthState } from "../constants";
 import prepareProjectToBeSent from "../utils/prepareProjectToBeSent";
 import generateMutationID from "../utils/generateMutationID";
@@ -15,6 +14,7 @@ export const UPDATE_PROJECT = "UPDATE_PROJECT";
 export const REMOVE_PROJECT = "REMOVE_PROJECT";
 export const EMPTY_PROJECTS = "EMPTY_PROJECTS";
 export const FETCH_PROJECTS = "FETCH_PROJECTS";
+export const FETCH_CACHED_PROJECTS = "FETCH_CACHED_PROJECTS";
 
 const OWNED = "owned"
 const ASSIGNED = "assigned"
@@ -48,6 +48,11 @@ const fetchProjects = (projects, scope) => ({
   scope
 });
 
+const fetchCachedProjects = (projects) => ({
+  type: FETCH_CACHED_PROJECTS,
+  projects
+});
+
 export const handleCreateProject = (projectState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
@@ -66,20 +71,6 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
       })
   } else {
     dispatch(createProject(projectState, OWNED))
-    let localProjects = JSON.parse(window.localStorage.getItem("projects")) || {}
-    localProjects = injectItemOrder(
-      localProjects,
-      projectState,
-      projectState.prevProject,
-      projectState.nextProject,
-      "prevProject",
-      "nextProject"
-    )
-    localProjects[projectState.id] = {
-      ...projectState,
-      tasks: []
-    }
-    window.localStorage.setItem("projects", JSON.stringify(localProjects))
     dispatch(appActions.handleSetProject(null))
     return dispatch(appActions.handleSetProject(projectState.id))
   }
@@ -100,31 +91,6 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
       })
   } else {
     dispatch(updateProject(updateWithID, OWNED));
-    let localProjects = JSON.parse(window.localStorage.getItem("projects"))
-    if (update.prevProject !== undefined && update.nextProject !== undefined) {
-      localProjects = removeItemOrder(
-        localProjects,
-        localProjects[update.id],
-        "prevProject",
-        "nextProject"
-      )
-      localProjects = injectItemOrder(
-        localProjects,
-        localProjects[update.id],
-        update.prevProject,
-        update.nextProject,
-        "prevProject",
-        "nextProject"
-      )
-    }
-    localProjects = {
-      ...localProjects,
-      [prevProjectState.id]: {
-        ...localProjects[prevProjectState.id],
-        ...update
-      }
-    }
-    return window.localStorage.setItem("projects", JSON.stringify(localProjects))
   }
 }
 
@@ -142,15 +108,6 @@ export const handleRemoveProject = (projectState) => (dispatch, getState) => {
       })
   } else {
     dispatch(removeProject(projectState.id, OWNED))
-    let localProjects = JSON.parse(window.localStorage.getItem("projects"))
-    localProjects = removeItemOrder(
-      localProjects,
-      localProjects[projectState.id],
-      "prevProject",
-      "nextProject"
-    )
-    delete localProjects[projectState.id]
-    return window.localStorage.setItem("projects", JSON.stringify(localProjects))
   }
 }
 
@@ -166,17 +123,7 @@ export const handleFetchOwnedProjects = () => async (dispatch, getState) => {
       console.error(err)
     }
   } else {
-    let localProjects = JSON.parse(window.localStorage.getItem("projects"))
-    if (localProjects) {
-      localProjects = Object.values(localProjects)
-      localProjects = localProjects.map(project => {
-        delete project.tasks
-        return project
-      })
-      dispatch(fetchProjects(localProjects, OWNED))
-    } else {
-      dispatch(fetchProjects([], OWNED))
-    }
+    dispatch(fetchCachedProjects(cacheController.getProjects()))
     return getState().projects
   }
 }
@@ -239,15 +186,4 @@ export const handleUpdateTaskCount = (projectID, prevStatus, nextStatus) => (dis
     doneCount: prevDoneCount + doneCountInc
   }
   dispatch(updateProject(update, OWNED));
-  let localProjects = JSON.parse(window.localStorage.getItem("projects"))
-  localProjects = {
-    ...localProjects,
-    [projectID]: {
-      ...localProjects[projectID],
-      todoCount: prevTodoCount + todoCountInc,
-      pendingCount: prevPendingCount + pendingCountInc,
-      doneCount: prevDoneCount + doneCountInc
-    }
-  }
-  return window.localStorage.setItem("projects", JSON.stringify(localProjects))
 }

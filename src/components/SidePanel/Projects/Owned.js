@@ -20,7 +20,7 @@ import {
 import {CSS} from '@dnd-kit/utilities';
 import { connect } from "react-redux";
 import * as projectsActions from "../../../actions/projects"
-import ProjectItem from "../../ProjectItem"
+import ProjectItem from "./ProjectItem"
 import parseLinkedList from "../../../utils/parseLinkedList"
 import filterObj from "../../../utils/filterObj";
 

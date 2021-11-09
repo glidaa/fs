@@ -17,7 +17,7 @@
   cursor: text;
   @include themify(color, "txtColor");
   &.placeholder {
-    color: #c0c0c0;
+    color: #C0C0C0!important;
   }
   @media only screen and (max-width: 768px) {
     padding: 5px 20px 5px 20px;

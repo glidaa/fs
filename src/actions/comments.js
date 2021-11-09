@@ -4,6 +4,7 @@ import { listCommentsForTask } from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
 import * as usersActions from "./users"
 import * as mutationsActions from "./mutations"
+import * as cacheController from "../controllers/cache"
 import generateMutationID from "../utils/generateMutationID";
 
 export const CREATE_COMMENT = "CREATE_COMMENT";
@@ -11,6 +12,7 @@ export const UPDATE_COMMENT = "UPDATE_COMMENT";
 export const REMOVE_COMMENT = "REMOVE_COMMENT";
 export const EMPTY_COMMENTS = "EMPTY_COMMENTS";
 export const FETCH_COMMENTS = "FETCH_COMMENTS";
+export const FETCH_CACHED_COMMENTS = "FETCH_CACHED_COMMENTS";
 
 export const createComment = (commentState) => ({
   type: CREATE_COMMENT,
@@ -31,8 +33,14 @@ export const emptyComments = () => ({
   type: EMPTY_COMMENTS
 });
 
-const fetchComments = (comments) => ({
+const fetchComments = (comments, taskID) => ({
   type: FETCH_COMMENTS,
+  comments,
+  taskID
+});
+
+const fetchCachedComments = (comments) => ({
+  type: FETCH_CACHED_COMMENTS,
   comments
 });
 
@@ -96,7 +104,7 @@ export const handleFetchComments = (taskID) => async (dispatch, getState) => {
         ])]
       }
       await dispatch(usersActions.handleAddUsers(usersToBeFetched))
-      dispatch(fetchComments(items))
+      dispatch(fetchComments(items, taskID))
     } catch (err) {
       console.error(err)
     }

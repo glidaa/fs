@@ -1,14 +1,14 @@
 import React from "react"
 import styles from "./ProjectItem.module.scss"
 import { connect } from "react-redux";
-import * as appActions from "../actions/app"
-import * as projectsActions from "../actions/projects";
-import formatDate from "../utils/formatDate";
-import ProgressRing from "./UI/ProgressRing";
-import { ReactComponent as GlobeIcon } from "../assets/earth-outline.svg"
-import { ReactComponent as DocumentLockIcon } from "../assets/document-lock-outline.svg"
-import { ReactComponent as RemoveIcon } from "../assets/trash-outline.svg"
-import { ReactComponent as ShareIcon } from "../assets/share-outline.svg"
+import * as appActions from "../../../actions/app"
+import * as projectsActions from "../../../actions/projects";
+import formatDate from "../../../utils/formatDate";
+import ProgressRing from "../../UI/ProgressRing";
+import { ReactComponent as GlobeIcon } from "../../../assets/earth-outline.svg"
+import { ReactComponent as DocumentLockIcon } from "../../../assets/document-lock-outline.svg"
+import { ReactComponent as RemoveIcon } from "../../../assets/trash-outline.svg"
+import { ReactComponent as ShareIcon } from "../../../assets/share-outline.svg"
 
 const ProjectItem = (props) => {
   const {

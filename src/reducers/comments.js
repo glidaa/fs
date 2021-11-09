@@ -1,4 +1,4 @@
-import { CREATE_COMMENT, UPDATE_COMMENT, REMOVE_COMMENT, EMPTY_COMMENTS, FETCH_COMMENTS } from "../actions/comments"
+import { CREATE_COMMENT, UPDATE_COMMENT, REMOVE_COMMENT, EMPTY_COMMENTS, FETCH_COMMENTS, FETCH_CACHED_COMMENTS } from "../actions/comments"
 
 export default function (state = {}, action) {
   switch(action.type) {
@@ -24,6 +24,8 @@ export default function (state = {}, action) {
         newState[comment.id] = comment
       }
       return newState
+    case FETCH_CACHED_COMMENTS:
+      return action.comments
     default:
       return state
   }

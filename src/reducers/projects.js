@@ -1,6 +1,6 @@
 import injectItemOrder from "../utils/injectItemOrder"
 import removeItemOrder from "../utils/removeItemOrder"
-import { CREATE_PROJECT, UPDATE_PROJECT, REMOVE_PROJECT, EMPTY_PROJECTS, FETCH_PROJECTS } from "../actions/projects"
+import { CREATE_PROJECT, UPDATE_PROJECT, REMOVE_PROJECT, EMPTY_PROJECTS, FETCH_PROJECTS, FETCH_CACHED_PROJECTS } from "../actions/projects"
 import filterObj from "../utils/filterObj"
 
 export default function (state = {}, action) {
@@ -98,6 +98,8 @@ export default function (state = {}, action) {
         }
       }
       return stateClone
+    case FETCH_CACHED_PROJECTS:
+      return action.projects
     default:
       return state
   }

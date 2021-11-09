@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { connect } from "react-redux"
 import styles from "./Assigned.module.scss";
-import ProjectItem from "../../ProjectItem"
+import ProjectItem from "./ProjectItem"
 import { ReactComponent as NoAssignedIllustartion } from "../../../assets/undraw_accept_tasks_po1c.svg"
 
 const Projects = (props) => {
