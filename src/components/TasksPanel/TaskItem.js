@@ -31,6 +31,7 @@ const TaskItem = (props) => {
       taskAddingStatus,
       isRightPanelOpened,
       isActionSheetOpened,
+      isOffline,
       lockedTaskField,
       command
     },
@@ -65,8 +66,8 @@ const TaskItem = (props) => {
 
   const getReadOnly = (user, projects, selectedProject) => {
     return user.state === AuthState.SignedIn &&
-    projects[selectedProject]?.owner !== user.data.username &&
-    projects[selectedProject]?.permissions === "r"
+    ((projects[selectedProject]?.owner !== user.data.username &&
+    projects[selectedProject]?.permissions === "r") || isOffline)
   }
 
   const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])

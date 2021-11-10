@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./Assign.module.scss"
 import { connect } from "react-redux";
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../../actions/app"
 import * as tasksActions from "../../actions/tasks"
 import { AuthState } from "../../constants";
 import Avatar from '../UI/Avatar';
+import execGraphQL from '../../utils/execGraphQL';
 
 const Assign = (props) => {
   const {
@@ -53,7 +54,7 @@ const Assign = (props) => {
         }]) || []),
         { email: { matchPhrasePrefix: commandParam } }
       ]}
-      API.graphql(graphqlOperation(query, { filter })).then(res => setResults(res.data.searchUsers.items || []))
+      execGraphQL(graphqlOperation(query, { filter })).then(res => setResults(res.data.searchUsers.items || []))
     } else {
       setResults([])
     }

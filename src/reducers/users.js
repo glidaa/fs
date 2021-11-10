@@ -1,4 +1,4 @@
-import { ADD_USERS } from "../actions/users"
+import { ADD_CACHED_USERS, ADD_USERS } from "../actions/users"
 
 export default function (state = {}, action) {
   const stateClone = {...state}
@@ -8,6 +8,8 @@ export default function (state = {}, action) {
         stateClone[username] = userData
       }
       return stateClone
+    case ADD_CACHED_USERS:
+      return action.users
     default:
       return state
   }

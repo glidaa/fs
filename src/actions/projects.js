@@ -1,4 +1,4 @@
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import { listOwnedProjects, listAssignedProjects, listWatchedProjects } from "../graphql/queries"
 import * as appActions from "./app"
 import * as mutationsActions from "./mutations"
@@ -8,6 +8,7 @@ import * as cacheController from "../controllers/cache"
 import { OK, PENDING, AuthState } from "../constants";
 import prepareProjectToBeSent from "../utils/prepareProjectToBeSent";
 import generateMutationID from "../utils/generateMutationID";
+import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_PROJECT = "CREATE_PROJECT";
 export const UPDATE_PROJECT = "UPDATE_PROJECT";
@@ -58,15 +59,14 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
   if (user.state === AuthState.SignedIn) {
     const dataToSend = prepareProjectToBeSent(projectState)
     dispatch(appActions.setProjectAddingStatus(PENDING))
-    return API.graphql(graphqlOperation(mutations.createProject, { input: dataToSend }))
+    return execGraphQL(graphqlOperation(mutations.createProject, { input: dataToSend }))
       .then((incoming) => {
         dispatch(createProject(incoming.data.createProject, OWNED))
         dispatch(appActions.handleSetProject(incoming.data.createProject.id))
         dispatch(appActions.handleSetLeftPanel(false))
         dispatch(appActions.handleSetProjectTitle(true))
         dispatch(appActions.setProjectAddingStatus(OK))
-      }).catch((err) => {
-        console.error(err)
+      }).catch(() => {
         dispatch(appActions.setProjectAddingStatus(OK))
       })
   } else {
@@ -84,9 +84,8 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
     const mutationID = generateMutationID(user.data.username)
     dispatch(mutationsActions.addMutation(mutationID))
     dispatch(updateProject(updateWithID, OWNED))
-    return API.graphql(graphqlOperation(mutations.updateProject, { input: { ...updateWithID, mutationID } }))
-      .catch((err) => {
-        console.error(err)
+    return execGraphQL(graphqlOperation(mutations.updateProject, { input: { ...updateWithID, mutationID } }))
+      .catch(() => {
         return dispatch(updateProject(prevProjectState, OWNED))
       })
   } else {
@@ -101,7 +100,7 @@ export const handleRemoveProject = (projectState) => (dispatch, getState) => {
   }
   if (user.state === AuthState.SignedIn) {
     dispatch(removeProject(projectState.id, OWNED))
-    return API.graphql(graphqlOperation(mutations.deleteProjectAndTasks, { projectID: projectState.id }))
+    return execGraphQL(graphqlOperation(mutations.deleteProjectAndTasks, { projectID: projectState.id }))
       .catch((err) => {
         console.log(err)
         dispatch(createProject(projectState, OWNED))
@@ -116,16 +115,17 @@ export const handleFetchOwnedProjects = () => async (dispatch, getState) => {
   dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
-      const res = await API.graphql(graphqlOperation(listOwnedProjects))
+      const res = await execGraphQL(graphqlOperation(listOwnedProjects))
       dispatch(fetchProjects(res.data.listOwnedProjects.items, OWNED))
-      return getState().projects
     } catch (err) {
-      console.error(err)
+      if (err.errors[0].message === 'Network Error') {
+        dispatch(fetchCachedProjects(cacheController.getProjects()))
+      }
     }
   } else {
     dispatch(fetchCachedProjects(cacheController.getProjects()))
-    return getState().projects
   }
+  return getState().projects
 }
 
 export const handleFetchAssignedProjects = () => async (dispatch, getState) => {
@@ -133,20 +133,21 @@ export const handleFetchAssignedProjects = () => async (dispatch, getState) => {
   dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
-      const res = await API.graphql(graphqlOperation(listAssignedProjects))
+      const res = await execGraphQL(graphqlOperation(listAssignedProjects))
       const fetchedAssignedProjects = res.data.listAssignedProjects.items
       dispatch(fetchProjects(fetchedAssignedProjects, ASSIGNED))
       for (const fetchedAssignedProject of fetchedAssignedProjects) {
         await dispatch(observersActions.handleSetProjectObservers(fetchedAssignedProject.id))
       }
-      return getState().projects
     } catch(err) {
-      console.error(err)
+      if (err.errors.message === 'Network Error') {
+        dispatch(fetchCachedProjects(cacheController.getProjects()))
+      }
     }
   } else {
     dispatch(fetchProjects([], ASSIGNED))
-    return getState().projects
   }
+  return getState().projects
 }
 
 export const handleFetchWatchedProjects = () => async (dispatch, getState) => {
@@ -154,20 +155,21 @@ export const handleFetchWatchedProjects = () => async (dispatch, getState) => {
   dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
-      const res = await API.graphql(graphqlOperation(listWatchedProjects))
+      const res = await execGraphQL(graphqlOperation(listWatchedProjects))
       const fetchedWatchedProjects = res.data.listWatchedProjects.items
       dispatch(fetchProjects(fetchedWatchedProjects, WATCHED))
       for (const fetchedWatchedProject of fetchedWatchedProjects) {
         await dispatch(observersActions.handleSetProjectObservers(fetchedWatchedProject.id))
       }
-      return getState().projects
     } catch(err) {
-      console.error(err)
+      if (err.errors.message === 'Network Error') {
+        dispatch(fetchCachedProjects(cacheController.getProjects()))
+      }
     }
   } else {
     dispatch(fetchProjects([], WATCHED))
-    return getState().projects
   }
+  return getState().projects
 }
 
 export const handleUpdateTaskCount = (projectID, prevStatus, nextStatus) => (dispatch, getState) => {

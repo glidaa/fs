@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
 import styles from "./AccountSettings.module.scss"
@@ -12,6 +12,7 @@ import Button from '../UI/Button';
 import Select from '../UI/fields/Select';
 import TextField from '../UI/fields/TextField';
 import Avatar from '../UI/Avatar';
+import execGraphQL from '../../utils/execGraphQL';
 
 const AccountSettings = (props) => {
   const {
@@ -81,7 +82,7 @@ const AccountSettings = (props) => {
     
 	}
   const saveChanges = () => {
-    API.graphql(graphqlOperation(mutations.updateUser, {
+    execGraphQL(graphqlOperation(mutations.updateUser, {
       input: {
         username,
         ...(newFirstName !== firstName && { firstName: newFirstName }),

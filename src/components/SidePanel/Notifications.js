@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from "react-redux";
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
 import styles from "./Notifications.module.scss"
@@ -9,6 +9,7 @@ import { ReactComponent as NoNotificationsIllustration } from "../../assets/undr
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import Notification from '../UI/Notification';
+import execGraphQL from '../../utils/execGraphQL';
 
 const Notifications = (props) => {
   const {
@@ -24,7 +25,7 @@ const Notifications = (props) => {
   }
   const dismissNotification = (e, id) => {
     e.stopPropagation()
-    API.graphql(
+    execGraphQL(
       graphqlOperation(
         mutations.dismissNotification,
         { notificationID: id }

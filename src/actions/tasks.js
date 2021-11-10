@@ -1,4 +1,4 @@
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from '../constants';
 import { listTasksForProject } from "../graphql/queries"
 import * as appActions from "./app"
@@ -11,6 +11,7 @@ import * as cacheController from "../controllers/cache"
 import { CREATING, REMOVING, READY, LOADING } from "../constants";
 import prepareTaskToBeSent from "../utils/prepareTaskToBeSent";
 import generateMutationID from "../utils/generateMutationID";
+import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_TASK = "CREATE_TASK";
 export const UPDATE_TASK = "UPDATE_TASK";
@@ -54,7 +55,7 @@ export const handleCreateTask = (taskState) => (dispatch, getState) => {
   if (user.state === AuthState.SignedIn) {
     dispatch(statusActions.setTasksStatus(CREATING))
     const dataToSend = prepareTaskToBeSent(taskState)
-    return API.graphql(graphqlOperation(mutations.createTask, { input: dataToSend }))
+    return execGraphQL(graphqlOperation(mutations.createTask, { input: dataToSend }))
       .then((incoming) => {
         if (taskState.projectID === getState().app.selectedProject) {
           dispatch(createTask(incoming.data.createTask))
@@ -65,8 +66,7 @@ export const handleCreateTask = (taskState) => (dispatch, getState) => {
         }
         dispatch(statusActions.setTasksStatus(READY))
       })
-      .catch((err) => {
-        console.error(err)
+      .catch(() => {
         dispatch(statusActions.setTasksStatus(READY))
       })
   } else {
@@ -97,9 +97,8 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
     if (tasks[prevTaskState.id]) {
       dispatch(updateTask(updateWithID))
     }
-    return API.graphql(graphqlOperation(mutations.updateTask, { input: { ...updateWithID, mutationID } }))
-      .catch((err) => {
-        console.error(err)
+    return execGraphQL(graphqlOperation(mutations.updateTask, { input: { ...updateWithID, mutationID } }))
+      .catch(() => {
         if (tasks[prevTaskState.id]) {
           dispatch(appActions.setCommand(prevCommands))
           return dispatch(updateTask(prevTaskState))
@@ -122,12 +121,11 @@ export const handleRemoveTask = (taskState) => (dispatch, getState) => {
   }
   if (user.state === AuthState.SignedIn) {
     dispatch(statusActions.setTasksStatus(REMOVING))
-    return API.graphql(graphqlOperation(mutations.deleteTaskAndComments, { taskId: taskState.id }))
+    return execGraphQL(graphqlOperation(mutations.deleteTaskAndComments, { taskId: taskState.id }))
       .then(() => {
         dispatch(statusActions.setTasksStatus(READY))
       })
-      .catch((err) => {
-        console.error(err)
+      .catch(() => {
         dispatch(statusActions.setTasksStatus(READY))
       })
   } else {
@@ -155,7 +153,7 @@ export const handleAssignTask = (taskID, username) => async (dispatch, getState)
       }))
       const mutationID = generateMutationID(user.data.username)
       dispatch(mutationsActions.addMutation(mutationID))
-      await API.graphql(graphqlOperation(mutations.assignTask, {
+      await execGraphQL(graphqlOperation(mutations.assignTask, {
         taskID: taskID,
         assignee: username,
         mutationID: mutationID
@@ -189,13 +187,12 @@ export const handleAddWatcher = (taskID, username) => async (dispatch, getState)
       await dispatch(usersActions.handleAddUsers([username]))
       const mutationID = generateMutationID(user.data.username)
       dispatch(mutationsActions.addMutation(mutationID))
-      await API.graphql(graphqlOperation(mutations.addWatcher, {
+      await execGraphQL(graphqlOperation(mutations.addWatcher, {
         taskID: taskID,
         watcher: username,
         mutationID: mutationID
       }))
-    } catch (err) {
-      console.error(err)
+    } catch {
       dispatch(updateTask({
         id: taskID,
         watchers: prevWatchers
@@ -218,7 +215,7 @@ export const handleUnassignTask = (taskID, username) => async (dispatch, getStat
     try {
       const mutationID = generateMutationID(user.data.username)
       dispatch(mutationsActions.addMutation(mutationID))
-      await API.graphql(graphqlOperation(mutations.unassignTask, {
+      await execGraphQL(graphqlOperation(mutations.unassignTask, {
         taskID: taskID,
         assignee: username,
         mutationID: mutationID
@@ -232,7 +229,7 @@ export const handleUnassignTask = (taskID, username) => async (dispatch, getStat
   }
 }
 
-export const handleRemoveWatcher= (taskID, username) => async (dispatch, getState) => {
+export const handleRemoveWatcher = (taskID, username) => async (dispatch, getState) => {
   const {
     tasks,
     user
@@ -246,7 +243,7 @@ export const handleRemoveWatcher= (taskID, username) => async (dispatch, getStat
     try {
       const mutationID = generateMutationID(user.data.username)
       dispatch(mutationsActions.addMutation(mutationID))
-      await API.graphql(graphqlOperation(mutations.removeWatcher, {
+      await execGraphQL(graphqlOperation(mutations.removeWatcher, {
         taskID: taskID,
         watcher: username,
         mutationID: mutationID
@@ -260,7 +257,7 @@ export const handleRemoveWatcher= (taskID, username) => async (dispatch, getStat
   }
 }
 
-export const handleFetchTasks = (projectID, isInitial = false, isSync = false) => async (dispatch, getState) => {
+export const handleFetchTasks = (projectID, isInitial = false) => async (dispatch, getState) => {
   const { user } = getState()
   if (!isInitial) {
     dispatch(appActions.handleSetTask(null))
@@ -268,7 +265,7 @@ export const handleFetchTasks = (projectID, isInitial = false, isSync = false) =
   if (user.state === AuthState.SignedIn) {
     try {
       dispatch(statusActions.setTasksStatus(LOADING))
-      const res = await API.graphql(graphqlOperation(listTasksForProject, { projectID }))
+      const res = await execGraphQL(graphqlOperation(listTasksForProject, { projectID }))
       const items = res.data.listTasksForProject.items
       let usersToBeFetched = []
       for (const item of items) {
@@ -281,13 +278,14 @@ export const handleFetchTasks = (projectID, isInitial = false, isSync = false) =
       await dispatch(usersActions.handleAddUsers(usersToBeFetched))
       dispatch(fetchTasks(items, projectID))
       dispatch(statusActions.setTasksStatus(READY))
-      return getState().tasks
     } catch (err) {
-      console.error(err)
       dispatch(statusActions.setTasksStatus(READY))
+      if (err.errors[0].message === 'Network Error') {
+        dispatch(fetchCachedTasks(cacheController.getTasksByProjectID(projectID)))
+      }
     }
   } else {
     dispatch(fetchCachedTasks(cacheController.getTasksByProjectID(projectID)))
-    return getState().tasks
   }
+  return getState().tasks
 }

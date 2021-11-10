@@ -1,7 +1,8 @@
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import * as observersActions from "../actions/observers";
 import * as projectsActions from "../actions/projects"
 import * as queries from "../graphql/queries"
+import execGraphQL from "../utils/execGraphQL";
 
 const updateAssignedTasks = async (dispatch, getState, pushedUpdate) => {
   const { watchedTasks } = pushedUpdate
@@ -22,7 +23,7 @@ const updateAssignedTasks = async (dispatch, getState, pushedUpdate) => {
       dispatch(projectsActions.createProject(projects[newAssignedProject], "assigned"))
     } else {
       try {
-        const newAssignedProjectData = (await API.graphql(graphqlOperation(queries.getProjectById, {
+        const newAssignedProjectData = (await execGraphQL(graphqlOperation(queries.getProjectById, {
           projectID: newAssignedProject
         }))).data.getProjectByID
         if (newAssignedProjectData) {

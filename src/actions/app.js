@@ -1,4 +1,5 @@
 import { panelPages, AuthState } from "../constants"
+import * as projectsActions from "./projects"
 import * as tasksActions from "./tasks"
 import * as observersActions from "./observers"
 import * as commentsActions from "./comments"
@@ -10,6 +11,7 @@ export const SET_PROJECT_ADDING_STATUS = "SET_PROJECT_ADDING_STATUS";
 export const SET_TASK_ADDING_STATUS = "SET_TASK_ADDING_STATUS";
 export const SET_NAVIGATE = "SET_NAVIGATE";
 export const SET_LOADING = "SET_LOADING";
+export const SET_OFFLINE = "SET_OFFLINE";
 export const SET_PROJECT_PANEL = "SET_PROJECT_PANEL";
 export const SET_DETAILS_PANEL = "SET_DETAILS_PANEL";
 export const SET_ACTION_SHEET = "SET_ACTION_SHEET";
@@ -46,6 +48,11 @@ const setRightPanel = (status) => ({
 export const setCommand = (command) => ({
   type: SET_COMMAND,
   command
+});
+
+const setOffline = (isOffline) => ({
+  type: SET_OFFLINE,
+  isOffline
 });
 
 export const setRightPanelPage = (page) => ({
@@ -178,4 +185,39 @@ export const handleSetLeftPanel = (status) => (dispatch, getState) => {
     dispatch(setRightPanel(false))
   }
   return dispatch(setLeftPanel(status))
+}
+
+export const handleSetOffline = (isOffline) => async (dispatch, getState) => {
+  const {
+    app: {
+      selectedProject,
+      selectedTask,
+    },
+    projects
+  } = getState()
+  const wasOffline = getState().app.isOffline
+  if (!wasOffline && isOffline) {
+    dispatch(setOffline(true))
+    dispatch(observersActions.handleClearNotificationsObservers())
+    dispatch(observersActions.handleClearUserObservers())
+    dispatch(observersActions.handleClearOwnedProjectsObservers())
+    dispatch(observersActions.handleClearProjectObservers())
+    dispatch(observersActions.handleClearTasksObservers())
+    dispatch(observersActions.handleClearCommentsObservers())
+  } else if (wasOffline && !isOffline) {
+    dispatch(setOffline(false))
+    // dispatch(observersActions.handleSetNotificationsObservers())
+    // dispatch(observersActions.handleSetUserObservers())
+    // await dispatch(projectsActions.handleFetchOwnedProjects())
+    // await dispatch(projectsActions.handleFetchAssignedProjects())
+    // await dispatch(projectsActions.handleFetchWatchedProjects())
+    // dispatch(observersActions.handleSetOwnedProjectsObservers())
+    // if (selectedProject) {
+    //   await dispatch(tasksActions.handleFetchTasks(selectedProject))
+    //   dispatch(observersActions.handleSetTasksObservers(selectedProject))
+    // }
+    // if (selectedTask) {
+    //   dispatch(observersActions.handleSetTasksObservers(selectedTask))
+    // }
+  }
 }

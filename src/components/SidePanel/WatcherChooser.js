@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../../actions/app";
 import styles from "./WatcherChooser.module.scss"
 import * as tasksActions from "../../actions/tasks"
@@ -10,6 +10,7 @@ import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
 import { ReactComponent as WatcherSearchIllustartion } from "../../assets/undraw_People_search_re_5rre.svg"
 import { ReactComponent as NoResultsIllustartion } from "../../assets/undraw_not_found_60pq.svg"
 import Avatar from '../UI/Avatar';
+import execGraphQL from '../../utils/execGraphQL';
 
 const WatcherChooser = (props) => {
   const {
@@ -82,7 +83,7 @@ const WatcherChooser = (props) => {
         }]) || []),
         { email: { matchPhrasePrefix: nextKeyword } }
       ]}
-      API.graphql(graphqlOperation(query, { filter })).then(res => setResults(res.data.searchUsers.items || []))
+      execGraphQL(graphqlOperation(query, { filter })).then(res => setResults(res.data.searchUsers.items || []))
     } else {
       setResults([])
     }

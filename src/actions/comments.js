@@ -1,4 +1,4 @@
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from '../constants';
 import { listCommentsForTask } from "../graphql/queries"
 import * as mutations from "../graphql/mutations"
@@ -6,6 +6,7 @@ import * as usersActions from "./users"
 import * as mutationsActions from "./mutations"
 import * as cacheController from "../controllers/cache"
 import generateMutationID from "../utils/generateMutationID";
+import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_COMMENT = "CREATE_COMMENT";
 export const UPDATE_COMMENT = "UPDATE_COMMENT";
@@ -47,10 +48,7 @@ const fetchCachedComments = (comments) => ({
 export const handleCreateComment = (commentState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    return API.graphql(graphqlOperation(mutations.createComment, { input: commentState }))
-      .catch((err) => {
-        console.error(err)
-      })
+    return execGraphQL(graphqlOperation(mutations.createComment, { input: commentState }))
   }
 }
 
@@ -64,9 +62,8 @@ export const handleUpdateComment = (update) => (dispatch, getState) => {
     if (comments[prevCommentState.id]) {
       dispatch(updateComment(updateWithID))
     }
-    return API.graphql(graphqlOperation(mutations.updateComment, { input: { ...updateWithID, mutationID } }))
-      .catch((err) => {
-        console.error(err)
+    return execGraphQL(graphqlOperation(mutations.updateComment, { input: { ...updateWithID, mutationID } }))
+      .catch(() => {
         if (comments[prevCommentState.id]) {
           return dispatch(updateComment(prevCommentState))
         }
@@ -80,9 +77,8 @@ export const handleRemoveComment = (commentState) => (dispatch, getState) => {
     if (comments[commentState.id]) {
       dispatch(removeComment(commentState.id))
     }
-    return API.graphql(graphqlOperation(mutations.deleteComment, { commentID: commentState.id }))
-      .catch((err) => {
-        console.error(err)
+    return execGraphQL(graphqlOperation(mutations.deleteComment, { commentID: commentState.id }))
+      .catch(() => {
         if (comments[commentState.id]) {
           dispatch(createComment(commentState))
         }
@@ -94,7 +90,7 @@ export const handleFetchComments = (taskID) => async (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
     try {
-      const res = await API.graphql(graphqlOperation(listCommentsForTask, { taskID }))
+      const res = await execGraphQL(graphqlOperation(listCommentsForTask, { taskID }))
       const items = res.data.listCommentsForTask.items;
       let usersToBeFetched = []
       for (const item of items) {
@@ -106,7 +102,10 @@ export const handleFetchComments = (taskID) => async (dispatch, getState) => {
       await dispatch(usersActions.handleAddUsers(usersToBeFetched))
       dispatch(fetchComments(items, taskID))
     } catch (err) {
-      console.error(err)
+      if (err.errors[0].message === 'Network Error') {
+        dispatch(fetchCachedComments(cacheController.getCommentsByTaskID(taskID)))
+      }
     }
+    return getState().comments
   }
 }

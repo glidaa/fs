@@ -2,8 +2,7 @@ import React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import styles from "./Loading.module.scss"
-import { API, graphqlOperation } from "@aws-amplify/api";
-import { Auth } from "@aws-amplify/auth";
+import { graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
 import * as tasksActions from "../actions/tasks"
@@ -13,11 +12,11 @@ import * as queries from "../graphql/queries"
 import { Navigate, useNavigate, useParams, useLocation } from "react-router-dom"
 import { panelPages, AuthState } from '../constants';
 import ProgressBar from "./UI/ProgressBar";
-import isLoggedIn from "../utils/isLoggedIn";
 import uploadLocal from "../utils/uploadLocal";
+import execGraphQL from "../utils/execGraphQL";
 
 const Loading = (props) => {
-  const { user, dispatch } = props
+  const { dispatch } = props
   const [shouldLogin, setShouldLogin] = useState(false)
   const [progressMax, setProgressMax] = useState(100)
   const [progressValue, setProgressValue] = useState(0)
@@ -27,25 +26,7 @@ const Loading = (props) => {
   const routeLocation = useLocation()
   useEffect(() => {
     (async () => {
-
-    const authData = await isLoggedIn() && await Auth.currentUserInfo()
-    let currUser = {...user}
-    if (authData) {
-      const userData = (await API.graphql(
-        graphqlOperation(
-          queries.getUserByUsername, {
-            username: authData.username
-          }
-        )
-      )).data.getUserByUsername
-      dispatch(userActions.handleSetData(userData))
-      dispatch(userActions.handleSetState(AuthState.SignedIn))
-      await dispatch(observersActions.handleSetOwnedProjectsObservers())
-      currUser = {
-        state: AuthState.SignedIn,
-        data:userData
-      }
-    }
+    let currUser = await dispatch(userActions.handleFetchUser())
     if (currUser.state === AuthState.SignedIn) {
       setLoadingMsg("We Are Importing Your Local Projects")
       await uploadLocal()
@@ -88,7 +69,7 @@ const Loading = (props) => {
         let reqProject = Object.values(projects).filter(x => x.permalink === `${routeParams.username}/${routeParams.projectPermalink}`)[0]
         if (!reqProject) {
           try {
-            reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
+            reqProject = (await execGraphQL(graphqlOperation(queries.getProjectByPermalink, {
               permalink: `${routeParams.username}/${routeParams.projectPermalink}`
             }))).data.getProjectByPermalink
             dispatch(projectsActions.createProject(reqProject, "temp"))

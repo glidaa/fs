@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { API, graphqlOperation } from "@aws-amplify/api";
+import { graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from "../constants";
 import * as projectsActions from "../actions/projects";
 import * as tasksActions from "../actions/tasks";
@@ -14,6 +14,8 @@ import Toolbar from "./Toolbar";
 import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
 import Notifications from "./Notifications";
+import execGraphQL from "../utils/execGraphQL";
+import isOnline from "../utils/isOnline";
 
 const Home = (props) => {
   const {
@@ -25,6 +27,7 @@ const Home = (props) => {
   const navigate = useNavigate();
   const routeParams = useParams();
   const routeLocation = useLocation();
+  const checkConnectionInterval = useRef(null);
 
   const fetchLocalProjects = () => {
     if (user.state !== AuthState.SignedIn) {
@@ -35,13 +38,27 @@ const Home = (props) => {
   useEffect(() => {
     if (user.state === AuthState.SignedIn) {
       window.removeEventListener("storage", fetchLocalProjects)
+      if (!checkConnectionInterval.current) {
+        checkConnectionInterval.current = setInterval(async () => {
+          const result = await isOnline();
+          if (result && app.isOffline) {
+            dispatch(appActions.handleSetOffline(false));
+          } else if (!result && !app.isOffline) {
+            dispatch(appActions.handleSetOffline(true));
+          }
+        }, 3000);
+      }
     } else {
       window.addEventListener("storage", fetchLocalProjects);
+      clearInterval(checkConnectionInterval.current);
+      checkConnectionInterval.current = null;
     }
     return () => {
       window.removeEventListener("storage", fetchLocalProjects)
+      clearInterval(checkConnectionInterval.current);
+      checkConnectionInterval.current = null;
     }
-  }, [user.state]);
+  }, [user.state, checkConnectionInterval.current]);
 
   useEffect(() => {
     (async () => {
@@ -53,7 +70,7 @@ const Home = (props) => {
         let reqProject = Object.values(projects).filter(x => x.permalink === `${username}/${projectPermalink}`)[0]
         if (!reqProject) {
           try {
-            reqProject = (await API.graphql(graphqlOperation(queries.getProjectByPermalink, {
+            reqProject = (await execGraphQL(graphqlOperation(queries.getProjectByPermalink, {
               permalink: `${username}/${projectPermalink}`
             }))).data.getProjectByPermalink
             dispatch(projectsActions.createProject(reqProject, "temp"))
