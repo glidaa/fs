@@ -25,13 +25,13 @@ const Details = (props) => {
     dispatch
   } = props;
 
-  const getReadOnly = (user, projects, selectedProject) => {
+  const getReadOnly = (user, projects, selectedProject, isOffline) => {
     return user.state === AuthState.SignedIn &&
     ((projects[selectedProject]?.owner !== user.data.username &&
     projects[selectedProject]?.permissions === "r") || isOffline)
   }
 
-  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])
+  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject, isOffline), [user, projects, selectedProject, isOffline])
   
   const handleChange = (e) => {
     dispatch(

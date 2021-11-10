@@ -6,6 +6,6 @@ export default (projectState) => {
     privacy: projectState.privacy,
     permissions: projectState.permissions,
     members: projectState.members,
-    title: projectState.title
-  }
-}
+    title: projectState.title,
+  };
+};

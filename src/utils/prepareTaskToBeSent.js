@@ -8,6 +8,6 @@ export default (taskState) => {
     due: taskState.due,
     tags: taskState.tags,
     status: taskState.status,
-    priority: taskState.priority
-  }
-}
+    priority: taskState.priority,
+  };
+};

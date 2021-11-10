@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export default (taskState, projectID, prevTask = null, nextTask = null) => {
   return {
@@ -12,6 +12,6 @@ export default (taskState, projectID, prevTask = null, nextTask = null) => {
     tags: taskState.tags,
     status: taskState.status,
     priority: taskState.priority,
-    assignees: []
-  }
-}
+    assignees: [],
+  };
+};

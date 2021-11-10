@@ -81,35 +81,37 @@ const clearNotificationsObservers = () => ({
 });
 
 export const handleSetNotificationsObservers = () => async (dispatch, getState) => {
-  const { user } = getState()
-  const observers = [];
-  const data = {
-    owner: user.data.username
+  const { user, app: { isOffline } } = getState()
+  if (!isOffline) {
+    const observers = [];
+    const data = {
+      owner: user.data.username
+    }
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onPushNotification, data)).subscribe({
+      next: async e => {
+        const { notifications } = getState()
+        const incoming = e.value.data.onPushNotification
+        if (!notifications.stored.filter(x => x.id === incoming.id).length) {
+          await dispatch(usersActions.handleAddUsers([incoming.sender]))
+          dispatch(notificationsActions.add(incoming))
+          dispatch(notificationsActions.push(incoming))
+        }
+      },
+      error: error => console.warn(error)
+    }))
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onDismissNotification, data)).subscribe({
+      next: e => {
+        const { notifications } = getState()
+        const incoming = e.value.data.onDismissNotification
+        if (notifications.stored.filter(x => x.id === incoming.id).length) {
+          dispatch(notificationsActions.dismiss(incoming.id))
+          dispatch(notificationsActions.remove(incoming.id))
+        }
+      },
+      error: error => console.warn(error)
+    }))
+    return dispatch(setNotificationsObservers(observers))
   }
-  observers.push(await API.graphql(graphqlOperation(subscriptions.onPushNotification, data)).subscribe({
-    next: async e => {
-      const { notifications } = getState()
-      const incoming = e.value.data.onPushNotification
-      if (!notifications.stored.filter(x => x.id === incoming.id).length) {
-        await dispatch(usersActions.handleAddUsers([incoming.sender]))
-        dispatch(notificationsActions.add(incoming))
-        dispatch(notificationsActions.push(incoming))
-      }
-    },
-    error: error => console.warn(error)
-  }))
-  observers.push(await API.graphql(graphqlOperation(subscriptions.onDismissNotification, data)).subscribe({
-    next: e => {
-      const { notifications } = getState()
-      const incoming = e.value.data.onDismissNotification
-      if (notifications.stored.filter(x => x.id === incoming.id).length) {
-        dispatch(notificationsActions.dismiss(incoming.id))
-        dispatch(notificationsActions.remove(incoming.id))
-      }
-    },
-    error: error => console.warn(error)
-  }))
-  return dispatch(setNotificationsObservers(observers))
 }
 
 export const handleClearNotificationsObservers = () => (dispatch, getState) => {
@@ -123,21 +125,23 @@ export const handleClearNotificationsObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetUserObservers = () => async (dispatch, getState) => {
-  const { user } = getState()
-  const observers = [];
-  const data = {
-    username: user.data.username
+  const { user, app: { isOffline } } = getState()
+  if (!isOffline) {
+    const observers = [];
+    const data = {
+      username: user.data.username
+    }
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onPushUserUpdate, data)).subscribe({
+      next: e => {
+        const incoming = e.value.data.onPushUserUpdate
+        dispatch(userActions.handleSetData(incoming))
+        updateAssignedTasks(dispatch, getState, incoming)
+        updateWatchedTasks(dispatch, getState, incoming)
+      },
+      error: error => console.warn(error)
+    }))
+    return dispatch(setUserObservers(observers))
   }
-  observers.push(await API.graphql(graphqlOperation(subscriptions.onPushUserUpdate, data)).subscribe({
-    next: e => {
-      const incoming = e.value.data.onPushUserUpdate
-      dispatch(userActions.handleSetData(incoming))
-      updateAssignedTasks(dispatch, getState, incoming)
-      updateWatchedTasks(dispatch, getState, incoming)
-    },
-    error: error => console.warn(error)
-  }))
-  return dispatch(setUserObservers(observers))
 }
 
 export const handleClearUserObservers = () => (dispatch, getState) => {
@@ -151,70 +155,72 @@ export const handleClearUserObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetOwnedProjectsObservers = () => async (dispatch, getState) => {
-  const { user } = getState()
-  const observers = [];
-  const data = {
-    owner: user.data.username
-  }
-  observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateOwnedProject, data)).subscribe({
-    next: e => {
-      const { projects } = getState()
-      const ownedProjects = filterObj(projects, x => x.isOwned)
-      const incoming = e.value.data.onCreateOwnedProject
-      if (!Object.keys(ownedProjects).includes(incoming.id)) {
-        dispatch(projectsActions.createProject(incoming, "owned"))
-      }
-    },
-    error: error => console.warn(error)
-  }))
-  observers.push(await API.graphql(graphqlOperation(subscriptions.onImportOwnedProjects, data)).subscribe({
-    next: e => {
-      const { projects } = getState()
-      const ownedProjects = filterObj(projects, x => x.isOwned)
-      const incoming = e.value.data.onImportOwnedProjects.items
-      for (const project of incoming) {
-        if (!Object.keys(ownedProjects).includes(project.id)) {
-          dispatch(projectsActions.createProject(project))
+  const { user, app: { isOffline } } = getState()
+  if (!isOffline) {
+    const observers = [];
+    const data = {
+      owner: user.data.username
+    }
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateOwnedProject, data)).subscribe({
+      next: e => {
+        const { projects } = getState()
+        const ownedProjects = filterObj(projects, x => x.isOwned)
+        const incoming = e.value.data.onCreateOwnedProject
+        if (!Object.keys(ownedProjects).includes(incoming.id)) {
+          dispatch(projectsActions.createProject(incoming, "owned"))
         }
-      }
-    },
-    error: error => console.warn(error)
-  }))
-  observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateOwnedProject, data)).subscribe({
-    next: e => {
-      const { projects, mutations } = getState()
-      const ownedProjects = filterObj(projects, x => x.isOwned)
-      const incoming = e.value.data.onUpdateOwnedProject
-      if (!mutations.includes(incoming.mutationID)) {
-        if (Object.keys(ownedProjects).includes(incoming.id)) {
-          const lastMutationDate = projects[incoming.id].mutatedAt || null
-          const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
-          if (!mutationDate || (mutationDate && lastMutationDate < mutationDate)) {
-            dispatch(projectsActions.updateProject({
-              ...incoming,
-              mutatedAt: mutationDate
-            }))
+      },
+      error: error => console.warn(error)
+    }))
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onImportOwnedProjects, data)).subscribe({
+      next: e => {
+        const { projects } = getState()
+        const ownedProjects = filterObj(projects, x => x.isOwned)
+        const incoming = e.value.data.onImportOwnedProjects.items
+        for (const project of incoming) {
+          if (!Object.keys(ownedProjects).includes(project.id)) {
+            dispatch(projectsActions.createProject(project))
           }
         }
-      }
-    },
-    error: error => console.warn(error)
-  }))
-  observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteOwnedProject, data)).subscribe({
-    next: e => {
-      const { app, projects } = getState()
-      const ownedProjects = filterObj(projects, x => x.isOwned)
-      const removedItemID = e.value.data.onDeleteOwnedProject.id;
-      if (Object.keys(ownedProjects).includes(removedItemID)) {
-        if (app.selectedProject === removedItemID) {
-          dispatch(appActions.handleSetTask(null))
+      },
+      error: error => console.warn(error)
+    }))
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateOwnedProject, data)).subscribe({
+      next: e => {
+        const { projects, mutations } = getState()
+        const ownedProjects = filterObj(projects, x => x.isOwned)
+        const incoming = e.value.data.onUpdateOwnedProject
+        if (!mutations.includes(incoming.mutationID)) {
+          if (Object.keys(ownedProjects).includes(incoming.id)) {
+            const lastMutationDate = projects[incoming.id].mutatedAt || null
+            const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
+            if (!mutationDate || (mutationDate && lastMutationDate < mutationDate)) {
+              dispatch(projectsActions.updateProject({
+                ...incoming,
+                mutatedAt: mutationDate
+              }))
+            }
+          }
         }
-        dispatch(projectsActions.removeProject(removedItemID))
-      }
-    },
-    error: error => console.warn(error)
-  }))
-  return dispatch(setOwnedProjectsObservers(observers))
+      },
+      error: error => console.warn(error)
+    }))
+    observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteOwnedProject, data)).subscribe({
+      next: e => {
+        const { app, projects } = getState()
+        const ownedProjects = filterObj(projects, x => x.isOwned)
+        const removedItemID = e.value.data.onDeleteOwnedProject.id;
+        if (Object.keys(ownedProjects).includes(removedItemID)) {
+          if (app.selectedProject === removedItemID) {
+            dispatch(appActions.handleSetTask(null))
+          }
+          dispatch(projectsActions.removeProject(removedItemID))
+        }
+      },
+      error: error => console.warn(error)
+    }))
+    return dispatch(setOwnedProjectsObservers(observers))
+  }
 }
 
 export const handleClearOwnedProjectsObservers = () => (dispatch, getState) => {
@@ -228,8 +234,8 @@ export const handleClearOwnedProjectsObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetProjectObservers = (projectID) => async (dispatch, getState) => {
-  const { projects, observers } = getState()
-  if (!projects[projectID]?.isAssigned && !observers.projects.others[projectID]) {
+  const { projects, observers, app: { isOffline } } = getState()
+  if (!isOffline && !projects[projectID]?.isAssigned && !observers.projects.others[projectID]) {
     const observers = [];
     const data = { id: projectID }
     observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateProject, data)).subscribe({
@@ -280,8 +286,8 @@ export const handleClearProjectObservers = (projectID) => (dispatch, getState) =
 }
 
 export const handleSetTasksObservers = (projectID) => async (dispatch, getState) => {
-  const { app } = getState()
-  if (app.selectedProject === projectID) {
+  const { app: { selectedProject, isOffline } } = getState()
+  if (!isOffline && selectedProject === projectID) {
     const observers = [];
     observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateTaskByProjectId, { projectID })).subscribe({
       next: async (e) => {
@@ -350,8 +356,8 @@ export const handleClearTasksObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetCommentsObservers = (taskID) => async (dispatch, getState) => {
-  const { app } = getState()
-    if (app.selectedTask === taskID) {
+  const { app: { selectedTask, isOffline } } = getState()
+    if (!isOffline && selectedTask === taskID) {
     const observers = [];
     observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateCommentByTaskId, { taskID })).subscribe({
       next: async (e) => {

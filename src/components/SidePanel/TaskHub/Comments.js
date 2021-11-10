@@ -52,13 +52,13 @@ const Comments = (props) => {
     }
     return results.length ? results : null
   }
-  const getReadOnly = (user, projects, selectedProject) => {
+  const getReadOnly = (user, projects, selectedProject, isOffline) => {
     return user.state === AuthState.SignedIn &&
     ((projects[selectedProject]?.owner !== user.data.username &&
     projects[selectedProject]?.permissions === "r") || isOffline)
   }
   const processedComments = useMemo(() => processComments(comments), [comments])
-  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject), [user, projects, selectedProject])
+  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject, isOffline), [user, projects, selectedProject, isOffline])
   const openNewComment = () => {
     if (!isNewCommentOpened) {
       setIsNewCommentOpened(true);

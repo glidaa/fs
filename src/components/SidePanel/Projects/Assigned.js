@@ -18,7 +18,7 @@ const Projects = (props) => {
         <div key={project.id}>
           <ProjectItem
             project={project}
-            readOnly={false}
+            readOnly={true}
           />
         </div>
       )) : (

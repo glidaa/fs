@@ -14,7 +14,8 @@ import CardSelect from '../UI/fields/CardSelect';
 const ProjectSettings = (props) => {
   const {
     app: {
-      selectedProject
+      selectedProject,
+      isOffline
     },
     user,
     projects,
@@ -30,6 +31,13 @@ const ProjectSettings = (props) => {
       permissions
     }
   } = projects
+
+  const getReadOnly = (user, projects, selectedProject, isOffline) => {
+    return user.state === AuthState.SignedIn &&
+    ((projects[selectedProject]?.owner !== user.data.username &&
+    projects[selectedProject]?.permissions === "r") || isOffline)
+  }
+  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject, isOffline), [user, projects, selectedProject, isOffline])
 
   const [newTitle, setNewTitle] = useState(title || "")
   const [newPermalink, setNewPermalink] = useState(/\w+\/(.*)/.exec(permalink)?.[1] || permalink)
@@ -121,6 +129,7 @@ const ProjectSettings = (props) => {
             placeholder="title…"
             onChange={(e) => setNewTitle(e.target.value)}
             value={newTitle}
+            readOnly={readOnly}
           />
           <TextField
             type="text"
@@ -129,6 +138,7 @@ const ProjectSettings = (props) => {
             placeholder="permalink…"
             onChange={(e) => setNewPermalink(e.target.value)}
             value={newPermalink}
+            readOnly={readOnly}
             prefix={() => (
               <span>
                 {/(\w+\/).*/.exec(permalink)?.[1]}
@@ -148,6 +158,7 @@ const ProjectSettings = (props) => {
                   "Make this project not visible to anyone other than you."
                 ]}
                 onChange={(e) => setNewPrivacy(e.target.value)}
+                readOnly={readOnly}
               />
               <CardSelect
                 name="permissions"
@@ -160,21 +171,16 @@ const ProjectSettings = (props) => {
                   "Prevent other users who have the permission to access this project from modifying its contents."
                 ]}
                 onChange={(e) => setNewPermissions(e.target.value)}
+                readOnly={readOnly}
               />
             </>
           )}
-          <input
-            className={styles.NonPrefixedInputField}
-            type="submit"
-            name="submit" 
-            value="Submit"
-          />
         </form>
       </SimpleBar>
       <Button
         style={{margin: "0 25px 25px 25px"}}
         onClick={saveChanges}
-        disabled={!isChanged}
+        disabled={!isChanged || readOnly}
       >
         Save Changes
       </Button>

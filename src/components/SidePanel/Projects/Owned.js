@@ -91,7 +91,7 @@ const SortableItem = (props) => {
   const {
     index,
     value,
-    readOnly
+    sortable
   } = props
 
   const {
@@ -101,7 +101,7 @@ const SortableItem = (props) => {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({id: value.id});
+  } = useSortable({id: value.id, disabled: !sortable});
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -116,7 +116,7 @@ const SortableItem = (props) => {
       <ProjectItem
         key={index}
         project={value}
-        readOnly={readOnly}
+        readOnly={!sortable}
         isSorting={isSorting}
         isDragging={isDragging}
         listeners={listeners}
@@ -127,6 +127,9 @@ const SortableItem = (props) => {
 
 const Owned = (props) => {
   const {
+    app: {
+      isOffline
+    },
     projects,
     dispatch
   } = props
@@ -157,6 +160,7 @@ const Owned = (props) => {
           key={value.id}
           index={index}
           value={value}
+          sortable={!isOffline}
         />
       ))}
     </Sortable>

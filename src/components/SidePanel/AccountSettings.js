@@ -29,6 +29,9 @@ const AccountSettings = (props) => {
         abbr
       },
     },
+    app: {
+      isOffline
+    },
     dispatch
   } = props;
 
@@ -129,6 +132,7 @@ const AccountSettings = (props) => {
             placeholder="first name…"
             onChange={(e) => setNewFirstName(e.target.value)}
             value={newFirstName}
+            readOnly={isOffline}
           />
           <TextField
             type="text"
@@ -137,6 +141,7 @@ const AccountSettings = (props) => {
             placeholder="last name…"
             onChange={(e) => setNewLastName(e.target.value)}
             value={newLastName}
+            readOnly={isOffline}
           />
           <TextField
             type="email"
@@ -146,6 +151,7 @@ const AccountSettings = (props) => {
             disabled
             onChange={(e) => setNewEmail(e.target.value)}
             value={newEmail}
+            readOnly={isOffline}
           />
           <DateField
             name="dateOfBirth"
@@ -153,6 +159,7 @@ const AccountSettings = (props) => {
             onChange={(e) => setNewBirthdate(e.target.value)}
             placeholder="no date selected"
             value={newBirthdate}
+            readOnly={isOffline}
           />
           <Select
             name="gender"
@@ -161,14 +168,14 @@ const AccountSettings = (props) => {
             options={["Male", "Female"]}
             onChange={(e) => setNewGender(e.target.value)}
             value={newGender}
+            readOnly={isOffline}
           />
-          <input type="submit" name="submit" value="Submit"></input>
         </form>
       </SimpleBar>
       <Button
         style={{ margin: "0 25px 25px 25px" }}
         onClick={saveChanges}
-        disabled={!isChanged}
+        disabled={!isChanged || isOffline}
       >
         Save Changes
       </Button>

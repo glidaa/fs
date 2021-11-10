@@ -16,6 +16,7 @@ const ProjectItem = (props) => {
       selectedProject
     },
     project,
+    readOnly,
     dispatch,
     listeners
   } = props
@@ -26,7 +27,9 @@ const ProjectItem = (props) => {
   }
   const removeProject = (e) => {
     e.stopPropagation()
-    dispatch(projectsActions.handleRemoveProject(project))
+    if (!readOnly) {
+      dispatch(projectsActions.handleRemoveProject(project))
+    }
   }
   const selectProject = (id) => {
     if (selectedProject !== project.id) {
@@ -114,13 +117,15 @@ const ProjectItem = (props) => {
                 width={20}
               />
             </button>
-            <button className={styles.ProjectItemAction}>
-              <RemoveIcon
-                onClick={removeProject}
-                height={20}
-                width={20}
-              />
-            </button>
+            {!readOnly && (
+              <button className={styles.ProjectItemAction}>
+                <RemoveIcon
+                  onClick={removeProject}
+                  height={20}
+                  width={20}
+                />
+              </button>
+            )}
           </div>
         </div>
       </div>

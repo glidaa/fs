@@ -2,7 +2,7 @@ import React from 'react';
 import styles from "./ProjectToolbar.module.scss"
 import { connect } from "react-redux";
 import * as appActions from "../../actions/app";
-import { panelPages } from "../../constants";
+import { AuthState, panelPages } from "../../constants";
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
 import { ReactComponent as SettingsIcon } from "../../assets/settings-outline.svg"
 
@@ -11,8 +11,10 @@ const ProjectToolbar = (props) => {
     app: {
       selectedProject,
       isLeftPanelOpened,
-      leftPanelPage
+      leftPanelPage,
+      isOffline
     },
+    user,
     projects,
     dispatch,
   } = props;
@@ -38,7 +40,13 @@ const ProjectToolbar = (props) => {
         <span>Share</span>
       </button>
       <span>
-        {projects[selectedProject].permalink}
+        {projects[selectedProject].permalink + " "}
+        ({user.state !== AuthState.SignedIn ? "local" :
+          isOffline ? "offline" :
+          projects[selectedProject].owner === user.data.username ? "owned":
+          projects[selectedProject].permissions === "r" ? "read only" :
+          projects[selectedProject].permissions === "rw" ? "read write" : null
+        })
       </span>
       <button
         className={styles.ToolbarAction}
@@ -56,6 +64,7 @@ const ProjectToolbar = (props) => {
 
 export default connect((state) => ({
   app: state.app,
+  user: state.user,
   projects: state.projects,
   appSettings: state.appSettings
 }))(ProjectToolbar);

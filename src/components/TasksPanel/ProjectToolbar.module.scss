@@ -5,8 +5,9 @@
   flex-direction: row;
   margin: 0 12px;
   & > span {
-    @include themify(color, "txtColor");
     font-size: 12px;
+    text-align: center;
+    @include themify(color, "txtColor");
   }
   @media only screen and (max-width: 768px) {
     margin: 20px 20px 10px 20px;

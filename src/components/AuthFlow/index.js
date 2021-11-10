@@ -19,7 +19,7 @@ const AuthFlow = (props) => {
   useEffect(() => {
     setReferrer(routeLocation.state?.referrer)
     isLoggedIn().then(res => res && (
-      Auth.currentUserInfo().then((authData) => {
+      Auth.currentAuthenticatedUser().then((authData) => {
         if (authData) {
           dispatch(appActions.setLoading(true))
           setShouldRedirect(true)
