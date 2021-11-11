@@ -14,6 +14,7 @@ import { panelPages, AuthState } from '../constants';
 import ProgressBar from "./UI/ProgressBar";
 import uploadLocal from "../utils/uploadLocal";
 import execGraphQL from "../utils/execGraphQL";
+import store from "../store";
 
 const Loading = (props) => {
   const { dispatch } = props
@@ -26,7 +27,7 @@ const Loading = (props) => {
   const routeLocation = useLocation()
   useEffect(() => {
     (async () => {
-    let currUser = await dispatch(userActions.handleFetchUser())
+    const currUser = await dispatch(userActions.handleFetchUser())
     if (currUser.state === AuthState.SignedIn) {
       setLoadingMsg("We Are Importing Your Local Projects")
       await uploadLocal()
@@ -124,6 +125,13 @@ const Loading = (props) => {
             dispatch(appActions.handleSetProject(firstProject.id, false))
             navigate(`/local/${firstProject.permalink}`, { replace: true })
           }
+        }
+      }
+      if (currUser.state === AuthState.SignedIn) {
+        if (store.getState().app.isOffline) {
+          dispatch(appActions.setSynced(false))
+        } else {
+          dispatch(appActions.setSynced(true))
         }
       }
       dispatch(appActions.setLoading(false))

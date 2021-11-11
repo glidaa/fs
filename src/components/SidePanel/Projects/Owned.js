@@ -128,7 +128,7 @@ const SortableItem = (props) => {
 const Owned = (props) => {
   const {
     app: {
-      isOffline
+      isSynced
     },
     projects,
     dispatch
@@ -160,7 +160,7 @@ const Owned = (props) => {
           key={value.id}
           index={index}
           value={value}
-          sortable={!isOffline}
+          sortable={isSynced}
         />
       ))}
     </Sortable>

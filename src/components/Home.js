@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from "../constants";
@@ -15,7 +15,7 @@ import ActionSheet from "./ActionSheet"
 import SidePanel from "./SidePanel";
 import Notifications from "./Notifications";
 import execGraphQL from "../utils/execGraphQL";
-import isOnline from "../utils/isOnline";
+import SyncManager from "./SyncManager";
 
 const Home = (props) => {
   const {
@@ -27,7 +27,6 @@ const Home = (props) => {
   const navigate = useNavigate();
   const routeParams = useParams();
   const routeLocation = useLocation();
-  const checkConnectionInterval = useRef(null);
 
   const fetchLocalProjects = () => {
     if (user.state !== AuthState.SignedIn) {
@@ -38,27 +37,13 @@ const Home = (props) => {
   useEffect(() => {
     if (user.state === AuthState.SignedIn) {
       window.removeEventListener("storage", fetchLocalProjects)
-      if (!checkConnectionInterval.current) {
-        checkConnectionInterval.current = setInterval(async () => {
-          const result = await isOnline();
-          if (result && app.isOffline) {
-            dispatch(appActions.handleSetOffline(false));
-          } else if (!result && !app.isOffline) {
-            dispatch(appActions.handleSetOffline(true));
-          }
-        }, 3000);
-      }
     } else {
       window.addEventListener("storage", fetchLocalProjects);
-      clearInterval(checkConnectionInterval.current);
-      checkConnectionInterval.current = null;
     }
     return () => {
       window.removeEventListener("storage", fetchLocalProjects)
-      clearInterval(checkConnectionInterval.current);
-      checkConnectionInterval.current = null;
     }
-  }, [user.state, checkConnectionInterval.current]);
+  }, [user.state]);
 
   useEffect(() => {
     (async () => {
@@ -111,6 +96,7 @@ const Home = (props) => {
         <Loading />
       ) : (
 				<>
+          <SyncManager />
 					<ActionSheet />
 					<Toolbar />
 					<div className={styles.MainPage}>
@@ -125,8 +111,7 @@ const Home = (props) => {
 };
 
 export default connect((state) => ({
-  user: state.user,
-  projects: state.projects,
-  tasks: state.tasks,
   app: state.app,
+  user: state.user,
+  projects: state.projects
 }))(Home);

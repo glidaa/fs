@@ -5,9 +5,11 @@ import * as appSettingsActions from "../actions/appSettings";
 import { useNavigate, useRoutes } from "react-router-dom";
 import AuthFlow from "./AuthFlow";
 import Home from "./Home";
+import isOnline from "../utils/isOnline";
 
 const App = (props) => {
   const {
+    app,
     appSettings,
     dispatch
   } = props;
@@ -23,7 +25,16 @@ const App = (props) => {
   useEffect(() => {
     dispatch(appActions.setNavigate(navigate));
     window.addEventListener("storage", fetchAppSettings);
+    const checkConnectionInterval = setInterval(async () => {
+      const result = await isOnline();
+      if (result && app.isOffline) {
+        dispatch(appActions.setOffline(false));
+      } else if (!result && !app.isOffline) {
+        dispatch(appActions.setOffline(true));
+      }
+    }, 3000);
     return () => {
+      clearInterval(checkConnectionInterval);
       window.removeEventListener("storage", fetchAppSettings)
     }
   }, []);
@@ -71,5 +82,6 @@ const App = (props) => {
 };
 
 export default connect((state) => ({
+  app: state.app,
   appSettings: state.appSettings
 }))(App);

@@ -12,7 +12,7 @@ const ProjectToolbar = (props) => {
       selectedProject,
       isLeftPanelOpened,
       leftPanelPage,
-      isOffline
+      isSynced
     },
     user,
     projects,
@@ -42,7 +42,7 @@ const ProjectToolbar = (props) => {
       <span>
         {projects[selectedProject].permalink + " "}
         ({user.state !== AuthState.SignedIn ? "local" :
-          isOffline ? "offline" :
+          !isSynced ? "offline" :
           projects[selectedProject].owner === user.data.username ? "owned":
           projects[selectedProject].permissions === "r" ? "read only" :
           projects[selectedProject].permissions === "rw" ? "read write" : null

@@ -81,8 +81,8 @@ const clearNotificationsObservers = () => ({
 });
 
 export const handleSetNotificationsObservers = () => async (dispatch, getState) => {
-  const { user, app: { isOffline } } = getState()
-  if (!isOffline) {
+  const { user, app: { isSynced } } = getState()
+  if (isSynced) {
     const observers = [];
     const data = {
       owner: user.data.username
@@ -125,8 +125,8 @@ export const handleClearNotificationsObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetUserObservers = () => async (dispatch, getState) => {
-  const { user, app: { isOffline } } = getState()
-  if (!isOffline) {
+  const { user, app: { isSynced } } = getState()
+  if (isSynced) {
     const observers = [];
     const data = {
       username: user.data.username
@@ -155,8 +155,8 @@ export const handleClearUserObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetOwnedProjectsObservers = () => async (dispatch, getState) => {
-  const { user, app: { isOffline } } = getState()
-  if (!isOffline) {
+  const { user, app: { isSynced } } = getState()
+  if (isSynced) {
     const observers = [];
     const data = {
       owner: user.data.username
@@ -234,8 +234,8 @@ export const handleClearOwnedProjectsObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetProjectObservers = (projectID) => async (dispatch, getState) => {
-  const { projects, observers, app: { isOffline } } = getState()
-  if (!isOffline && !projects[projectID]?.isAssigned && !observers.projects.others[projectID]) {
+  const { projects, observers, app: { isSynced } } = getState()
+  if (isSynced && !projects[projectID]?.isAssigned && !observers.projects.others[projectID]) {
     const observers = [];
     const data = { id: projectID }
     observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateProject, data)).subscribe({
@@ -286,8 +286,8 @@ export const handleClearProjectObservers = (projectID) => (dispatch, getState) =
 }
 
 export const handleSetTasksObservers = (projectID) => async (dispatch, getState) => {
-  const { app: { selectedProject, isOffline } } = getState()
-  if (!isOffline && selectedProject === projectID) {
+  const { app: { selectedProject, isSynced } } = getState()
+  if (isSynced && selectedProject === projectID) {
     const observers = [];
     observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateTaskByProjectId, { projectID })).subscribe({
       next: async (e) => {
@@ -356,8 +356,8 @@ export const handleClearTasksObservers = () => (dispatch, getState) => {
 }
 
 export const handleSetCommentsObservers = (taskID) => async (dispatch, getState) => {
-  const { app: { selectedTask, isOffline } } = getState()
-    if (!isOffline && selectedTask === taskID) {
+  const { app: { selectedTask, isSynced } } = getState()
+    if (isSynced && selectedTask === taskID) {
     const observers = [];
     observers.push(await API.graphql(graphqlOperation(subscriptions.onCreateCommentByTaskId, { taskID })).subscribe({
       next: async (e) => {

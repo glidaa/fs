@@ -30,7 +30,7 @@ const AccountSettings = (props) => {
       },
     },
     app: {
-      isOffline
+      isSynced
     },
     dispatch
   } = props;
@@ -132,7 +132,7 @@ const AccountSettings = (props) => {
             placeholder="first name…"
             onChange={(e) => setNewFirstName(e.target.value)}
             value={newFirstName}
-            readOnly={isOffline}
+            readOnly={!isSynced}
           />
           <TextField
             type="text"
@@ -141,7 +141,7 @@ const AccountSettings = (props) => {
             placeholder="last name…"
             onChange={(e) => setNewLastName(e.target.value)}
             value={newLastName}
-            readOnly={isOffline}
+            readOnly={!isSynced}
           />
           <TextField
             type="email"
@@ -151,7 +151,7 @@ const AccountSettings = (props) => {
             disabled
             onChange={(e) => setNewEmail(e.target.value)}
             value={newEmail}
-            readOnly={isOffline}
+            readOnly={!isSynced}
           />
           <DateField
             name="dateOfBirth"
@@ -159,7 +159,7 @@ const AccountSettings = (props) => {
             onChange={(e) => setNewBirthdate(e.target.value)}
             placeholder="no date selected"
             value={newBirthdate}
-            readOnly={isOffline}
+            readOnly={!isSynced}
           />
           <Select
             name="gender"
@@ -168,14 +168,14 @@ const AccountSettings = (props) => {
             options={["Male", "Female"]}
             onChange={(e) => setNewGender(e.target.value)}
             value={newGender}
-            readOnly={isOffline}
+            readOnly={!isSynced}
           />
         </form>
       </SimpleBar>
       <Button
         style={{ margin: "0 25px 25px 25px" }}
         onClick={saveChanges}
-        disabled={!isChanged || isOffline}
+        disabled={!isChanged || !isSynced}
       >
         Save Changes
       </Button>

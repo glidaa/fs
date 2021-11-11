@@ -20,18 +20,18 @@ const Details = (props) => {
     app: {
       selectedProject,
       selectedTask,
-      isOffline
+      isSynced
     },
     dispatch
   } = props;
 
-  const getReadOnly = (user, projects, selectedProject, isOffline) => {
+  const getReadOnly = (user, projects, selectedProject, isSynced) => {
     return user.state === AuthState.SignedIn &&
     ((projects[selectedProject]?.owner !== user.data.username &&
-    projects[selectedProject]?.permissions === "r") || isOffline)
+    projects[selectedProject]?.permissions === "r") || !isSynced)
   }
 
-  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject, isOffline), [user, projects, selectedProject, isOffline])
+  const readOnly = useMemo(() => getReadOnly(user, projects, selectedProject, isSynced), [user, projects, selectedProject, isSynced])
   
   const handleChange = (e) => {
     dispatch(
