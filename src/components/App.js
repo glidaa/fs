@@ -5,11 +5,11 @@ import * as appSettingsActions from "../actions/appSettings";
 import { useNavigate, useRoutes } from "react-router-dom";
 import AuthFlow from "./AuthFlow";
 import Home from "./Home";
+import store from "../store";
 import isOnline from "../utils/isOnline";
 
 const App = (props) => {
   const {
-    app,
     appSettings,
     dispatch
   } = props;
@@ -27,10 +27,11 @@ const App = (props) => {
     window.addEventListener("storage", fetchAppSettings);
     const checkConnectionInterval = setInterval(async () => {
       const result = await isOnline();
-      if (result && app.isOffline) {
-        dispatch(appActions.setOffline(false));
-      } else if (!result && !app.isOffline) {
-        dispatch(appActions.setOffline(true));
+      const { app: { isOffline }} = store.getState()
+      if (result && isOffline) {
+        store.dispatch(appActions.setOffline(false));
+      } else if (!result && !isOffline) {
+        store.dispatch(appActions.setOffline(true));
       }
     }, 3000);
     return () => {
@@ -82,6 +83,5 @@ const App = (props) => {
 };
 
 export default connect((state) => ({
-  app: state.app,
   appSettings: state.appSettings
 }))(App);

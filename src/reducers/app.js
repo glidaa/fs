@@ -1,4 +1,4 @@
-import { SET_PROJECT, SET_TASK, SET_COMMAND, SET_LOADING, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_NAVIGATE, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE, SET_OFFLINE, SET_SYNCED } from "../actions/app"
+import { SET_PROJECT, SET_TASK, SET_COMMAND, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_NAVIGATE, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE, SET_OFFLINE, SET_SYNCED } from "../actions/app"
 import { panelPages, OK } from "../constants"
 
 const initState = {
@@ -9,7 +9,6 @@ const initState = {
   projectAddingStatus: OK,
   taskAddingStatus: OK,
   navigate: null,
-  isLoading: true,
   isOffline: false,
   isSynced: true,
   isLeftPanelOpened: false,
@@ -49,8 +48,6 @@ export default function (state = initState, action) {
       return {...state, rightPanelPage: action.page}
     case SET_LEFT_PANEL_PAGE:
       return {...state, leftPanelPage: action.page}
-    case SET_LOADING:
-      return {...state, isLoading: action.isLoading}
     case SET_OFFLINE:
       return {...state, isOffline: action.isOffline}
     case SET_SYNCED:

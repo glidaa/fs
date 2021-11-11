@@ -160,19 +160,21 @@ const ProjectSettings = (props) => {
                 onChange={(e) => setNewPrivacy(e.target.value)}
                 readOnly={readOnly}
               />
-              <CardSelect
-                name="permissions"
-                value={newPermissions}
-                label="Permissions"
-                values={["rw", "r"]}
-                options={["Read Write", "Read Only"]}
-                descriptions={[
-                  "Make this project writable by other users who have the permission to access its tasks.",
-                  "Prevent other users who have the permission to access this project from modifying its contents."
-                ]}
-                onChange={(e) => setNewPermissions(e.target.value)}
-                readOnly={readOnly}
-              />
+              {(privacy !== "public" || newPrivacy !== "public") && (
+                <CardSelect
+                  name="permissions"
+                  value={newPermissions}
+                  label="Permissions"
+                  values={["rw", "r"]}
+                  options={["Read Write", "Read Only"]}
+                  descriptions={[
+                    "Make this project writable by other users who have the permission to access its tasks.",
+                    "Prevent other users who have the permission to access this project from modifying its contents."
+                  ]}
+                  onChange={(e) => setNewPermissions(e.target.value)}
+                  readOnly={readOnly}
+                />
+              )}
             </>
           )}
         </form>
@@ -182,7 +184,7 @@ const ProjectSettings = (props) => {
         onClick={saveChanges}
         disabled={!isChanged || readOnly}
       >
-        Save Changes
+        {!isSynced ? "No Connection!" : "Save Changes"}
       </Button>
     </>
   );

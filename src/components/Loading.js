@@ -7,8 +7,10 @@ import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
 import * as tasksActions from "../actions/tasks"
 import * as userActions from "../actions/user"
+import * as usersActions from "../actions/users"
 import * as observersActions from "../actions/observers"
 import * as queries from "../graphql/queries"
+import * as cacheController from "../controllers/cache"
 import { Navigate, useNavigate, useParams, useLocation } from "react-router-dom"
 import { panelPages, AuthState } from '../constants';
 import ProgressBar from "./UI/ProgressBar";
@@ -17,7 +19,7 @@ import execGraphQL from "../utils/execGraphQL";
 import store from "../store";
 
 const Loading = (props) => {
-  const { dispatch } = props
+  const { onFinish, dispatch } = props
   const [shouldLogin, setShouldLogin] = useState(false)
   const [progressMax, setProgressMax] = useState(100)
   const [progressValue, setProgressValue] = useState(0)
@@ -130,11 +132,12 @@ const Loading = (props) => {
       if (currUser.state === AuthState.SignedIn) {
         if (store.getState().app.isOffline) {
           dispatch(appActions.setSynced(false))
+          dispatch(usersActions.addCachedUsers(cacheController.getUsers()))
         } else {
           dispatch(appActions.setSynced(true))
         }
       }
-      dispatch(appActions.setLoading(false))
+      onFinish()
     })()
   }, [])
   return (

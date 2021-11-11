@@ -35,7 +35,7 @@ const TextField = (props) => {
           ...(disabled && [styles.disabled] || []),
           ...(error && [styles.error] || []),
           ...(isFocused && [styles.focused] || []),
-          ...(value && [styles.filled] || [])
+          ...((value || prefix) && [styles.filled] || [])
         ].join(" ")}
       >
         {label && (
@@ -43,6 +43,7 @@ const TextField = (props) => {
             {label}
           </label>
         )}
+        {prefix && React.createElement(prefix)}
         <input
           type={type}
           name={name}

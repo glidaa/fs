@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from "../constants";
@@ -24,6 +24,7 @@ const Home = (props) => {
     projects,
     dispatch
   } = props;
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const routeParams = useParams();
   const routeLocation = useLocation();
@@ -92,8 +93,8 @@ const Home = (props) => {
   return (
     <div>
       <Notifications />
-      {app.isLoading ? (
-        <Loading />
+      {isLoading ? (
+        <Loading onFinish={() => setIsLoading(false)} />
       ) : (
 				<>
           <SyncManager />

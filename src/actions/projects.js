@@ -110,9 +110,9 @@ export const handleRemoveProject = (projectState) => (dispatch, getState) => {
   }
 }
 
-export const handleFetchOwnedProjects = () => async (dispatch, getState) => {
+export const handleFetchOwnedProjects = (isSync = false) => async (dispatch, getState) => {
   const { user } = getState()
-  dispatch(appActions.handleSetProject(null))
+  if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
       const res = await execGraphQL(graphqlOperation(listOwnedProjects))
@@ -128,9 +128,9 @@ export const handleFetchOwnedProjects = () => async (dispatch, getState) => {
   return getState().projects
 }
 
-export const handleFetchAssignedProjects = () => async (dispatch, getState) => {
+export const handleFetchAssignedProjects = (isSync = false) => async (dispatch, getState) => {
   const { user } = getState()
-  dispatch(appActions.handleSetProject(null))
+  if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
       const res = await execGraphQL(graphqlOperation(listAssignedProjects))
@@ -150,9 +150,9 @@ export const handleFetchAssignedProjects = () => async (dispatch, getState) => {
   return getState().projects
 }
 
-export const handleFetchWatchedProjects = () => async (dispatch, getState) => {
+export const handleFetchWatchedProjects = (isSync = false) => async (dispatch, getState) => {
   const { user } = getState()
-  dispatch(appActions.handleSetProject(null))
+  if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
       const res = await execGraphQL(graphqlOperation(listWatchedProjects))

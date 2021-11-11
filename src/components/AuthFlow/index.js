@@ -21,7 +21,6 @@ const AuthFlow = (props) => {
     isLoggedIn().then(res => res && (
       Auth.currentAuthenticatedUser().then((authData) => {
         if (authData) {
-          dispatch(appActions.setLoading(true))
           setShouldRedirect(true)
         }
       })

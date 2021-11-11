@@ -4,7 +4,7 @@ import { API } from "@aws-amplify/api";
 
 export default (options) => {
   return new Promise((resolve, reject) => {
-    if (store.getState().app.isSynced && !store.getState().app.isOffline) {
+    if (!store.getState().app.isOffline) {
       API.graphql(options)
         .then(resolve)
         .catch((err) => {

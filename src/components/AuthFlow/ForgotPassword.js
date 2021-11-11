@@ -3,12 +3,11 @@ import styles from "./ForgotPassword.module.scss"
 import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
-import * as appActions from "../../actions/app"
 import SubmitBtn from '../UI/fields/SubmitBtn';
 import TextField from '../UI/fields/TextField';
 
 const ForgotPassword = (props) => {
-  const { setShouldRedirect, dispatch } = props
+  const { app: { isOffline }, setShouldRedirect } = props
   const [username, setUsername] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [verificationCode, setVerificationCode] = useState("")
@@ -80,7 +79,6 @@ const ForgotPassword = (props) => {
     try {
       await Auth.forgotPasswordSubmit(username, verificationCode, newPassword)
       await Auth.signIn(username, newPassword)
-      dispatch(appActions.setLoading(true))
       setShouldRedirect(true)
     } catch (error) {
       console.log('error signing in', error);
@@ -199,11 +197,13 @@ const ForgotPassword = (props) => {
         <SubmitBtn
           type="submit"
           style={{width: "100%"}}
-          value={isBusy ? "Processing" : "Submit"}
-          disabled={isBusy || !verificationCode.trim() || !newPassword.trim() || newPasswordError}
+          value={isBusy ? "Processing" : isOffline ? "No Connection!" : "Submit"}
+          disabled={isBusy || !verificationCode.trim() || !newPassword.trim() || newPasswordError || isOffline}
         />
       </form>
     </div>
   )
 }
-export default connect()(ForgotPassword);
+export default connect((state) => ({
+  app: state.app
+}))(ForgotPassword);

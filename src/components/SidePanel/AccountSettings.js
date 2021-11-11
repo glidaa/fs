@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { graphqlOperation } from "@aws-amplify/api";
 import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
+import * as userActions from "../../actions/user";
 import styles from "./AccountSettings.module.scss"
 import SimpleBar from 'simplebar-react';
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
@@ -82,7 +83,7 @@ const AccountSettings = (props) => {
     return dispatch(appActions.handleSetLeftPanel(false))
   }
 	const logOut = () => {
-    
+    return dispatch(userActions.handleSignOut(true))
 	}
   const saveChanges = () => {
     execGraphQL(graphqlOperation(mutations.updateUser, {
@@ -177,7 +178,7 @@ const AccountSettings = (props) => {
         onClick={saveChanges}
         disabled={!isChanged || !isSynced}
       >
-        Save Changes
+        {isSynced ? "Save Changes" : "No Connection!"}
       </Button>
     </>
   );

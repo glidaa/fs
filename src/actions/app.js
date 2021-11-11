@@ -9,7 +9,6 @@ export const SET_COMMAND = "SET_COMMAND";
 export const SET_PROJECT_ADDING_STATUS = "SET_PROJECT_ADDING_STATUS";
 export const SET_TASK_ADDING_STATUS = "SET_TASK_ADDING_STATUS";
 export const SET_NAVIGATE = "SET_NAVIGATE";
-export const SET_LOADING = "SET_LOADING";
 export const SET_OFFLINE = "SET_OFFLINE";
 export const SET_SYNCED = "SET_SYNCED";
 export const SET_PROJECT_PANEL = "SET_PROJECT_PANEL";
@@ -88,11 +87,6 @@ export const setTaskAddingStatus = (status) => ({
 export const setNavigate = (navigate) => ({
   type: SET_NAVIGATE,
   navigate
-});
-
-export const setLoading = (isLoading) => ({
-  type: SET_LOADING,
-  isLoading
 });
 
 export const setActionSheet = (status) => ({

@@ -78,3 +78,11 @@ export const handleFetchUser = () => async (dispatch, getState) => {
   }
   return getState().user
 }
+
+export const handleSignOut = (shouldResetCache = false) => async (dispatch, getState) => {
+  if (shouldResetCache) cacheController.resetCache();
+  await Auth.signOut()
+  dispatch(handleSetState(AuthState.SignedOut))
+  dispatch(handleSetData(null))
+  return getState().user
+}

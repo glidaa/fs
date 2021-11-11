@@ -4,15 +4,13 @@ import { useState } from "react"
 import { connect } from "react-redux"
 import { Auth } from "@aws-amplify/auth";
 import * as userActions from "../../actions/user"
-import * as appActions from "../../actions/app"
 import * as cacheController from "../../controllers/cache"
-import { AuthState } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import SubmitBtn from '../UI/fields/SubmitBtn';
 import TextField from '../UI/fields/TextField';
 
 const Login = (props) => {
-  const { setShouldRedirect, dispatch } = props
+  const { app: { isOffline }, setShouldRedirect, dispatch } = props
   const [verificationCode, setVerificationCode] = useState("")
   const [currStep, setCurrStep] = useState(0)
   const [username, setUsername] = useState("")
@@ -30,7 +28,6 @@ const Login = (props) => {
     try {
       await Auth.signIn(username, password);
       cacheController.resetCache(true)
-      dispatch(appActions.setLoading(true))
       setShouldRedirect(true)
     } catch (error) {
       console.log('error signing in', error);
@@ -49,8 +46,7 @@ const Login = (props) => {
           break
       }
       setIsBusy(false)
-      dispatch(userActions.handleSetData(null))
-      dispatch(userActions.handleSetState(AuthState.SignedOut))
+      dispatch(userActions.handleSignOut())
     }
   }
   const handleConfirmAccount = async (e) => {
@@ -60,7 +56,6 @@ const Login = (props) => {
     try {
       await Auth.confirmSignUp(username, verificationCode)
       await Auth.signIn(username, password);
-      dispatch(appActions.setLoading(true))
       setShouldRedirect(true)
     } catch (error) {
       console.log('error signing in', error);
@@ -167,12 +162,14 @@ const Login = (props) => {
         <SubmitBtn
           type="submit"
           style={{width: "100%"}}
-          value={isBusy ? "Processing" : "Submit"}
-          disabled={isBusy || !verificationCode.trim()}
+          value={isBusy ? "Processing" : isOffline ? "No Connection!" : "Submit"}
+          disabled={isBusy || !verificationCode.trim() || isOffline}
         />
       </form>
     </div>
   )
 }
 
-export default connect()(Login);
+export default connect((state) => ({
+  app: state.app
+}))(Login);

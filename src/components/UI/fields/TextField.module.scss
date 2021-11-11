@@ -78,6 +78,6 @@
     background-color: #FFFFFF2E!important;
   }
   & *:not(input):not(label) {
-    color: #C0C0C0!important;
+    @include themify(color, "outline");
   }
 }
