@@ -27,11 +27,11 @@
 
 .Selection {
   position: relative;
-  padding: 5px 10px;
+  padding: 3px 10px;
   border: 2px solid transparent;
   font-weight: 600;
   font-size: 14px;
-  border-radius: 8px;
+  border-radius: 100000000000000px;
   @include themify(color, "txtColor");
   @include themify(background-color, "primaryLightSurface");
   transition: color 0.2s, background-color 0.2s;

@@ -23,12 +23,12 @@
     & > button {
       @include themify(color, "onPrimaryColor");
       @include themify(background-color, "primary");
-      border-radius: 8px;
+      border-radius: 100000000000000px;
       max-width: fit-content;
       outline: none;
       border: none;
       cursor: pointer;
-      padding: 5px 10px;
+      padding: 5px 15px;
       font-weight: 600;
       font-size: 18px;
     }

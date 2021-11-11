@@ -9,12 +9,11 @@ const TagField = (props) => {
     onChange,
     readOnly,
     label,
-    placeholder,
     style
   } = props
   const tagFieldRef = useRef(null)
   const tagFieldInputRef = useRef(null)
-  const [isEntering, setIsEntering] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
 
   const handleTagClick = (e) => {
     const tag = e.target.innerText;
@@ -22,74 +21,78 @@ const TagField = (props) => {
 
   const handleTagSubmit = (e) => {
     e.preventDefault();
-    const inputElem = e.target.querySelector('input');
-    if (e.code === "Enter" && inputElem.value.trim()) {
-      const tagsSet = new Set(value || [])
-      tagsSet.add(inputElem.value.trim())
-      inputElem.value = ""
-      onChange({ target: {
-        value: Array.from(tagsSet),
-        name: name
-      }})
+    const elemValue = e.target.innerText;
+    const newValue = elemValue.split(',').map(tag => tag.trim()).filter(tag => tag);
+    if (newValue[0] === elemValue.trim()) return;
+    e.target.innerText = ""
+    onChange({ target: {
+      value: [...new Set([...value, ...newValue])],
+      name: name
+    }})
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.code === "Backspace") {
+      if (e.target.innerText === "" && value.length > 0) {
+        const newValue = value.slice(0, value.length - 1);
+        onChange({ target: {
+          value: newValue,
+          name: name
+        }})
+      }
     }
   }
 
   useOuterClick(tagFieldRef, () => {
-    if (isEntering && !tagFieldInputRef.current.value.trim()) {
-      setIsEntering(false);
+    if (isFocused) {
+      setIsFocused(false);
+      tagFieldInputRef.current.innerText = ""
     }
   })
 
   return (
     <div className={styles.TagFieldShell} style={style}>
-      {label && (
-        <label htmlFor={name}>
-          {label}
-        </label>
-      )}
       <div
-        className={styles.TagFieldContainer}
-        ref={tagFieldRef}
+        className={[
+          styles.TagFieldContainer,
+          ...(isFocused && [styles.focused] || []),
+          ...((value || []).length && [styles.filled] || [])
+        ].join(" ")}
       >
-        {!readOnly && (
-          <button
-            className={styles.NewTagBtn}
-            onClick={() => setIsEntering(true)}
-          >+</button>
+        {label && (
+          <label htmlFor={name}>
+            {label}
+          </label>
         )}
-        {(value.length || isEntering) ? value.map(x => (
-          <span className={styles.TagItem} key={x}>
-            <span onClick={handleTagClick}>{x}</span>
-            <span onClick={() => {
-              const tagsSet = new Set(value || [])
-              tagsSet.delete(x)
-              onChange({ target: {
-                value: Array.from(tagsSet),
-                name: name
-              }})
-            }}>
-              ×
+        <div
+          className={styles.TagFieldValues}
+          ref={tagFieldRef}
+        >
+          {(value || []).map(x => (
+            <span className={styles.TagItem} key={x}>
+              <span onClick={handleTagClick}>{x}</span>
+              <span onClick={() => {
+                const tagsSet = new Set(value || [])
+                tagsSet.delete(x)
+                onChange({ target: {
+                  value: Array.from(tagsSet),
+                  name: name
+                }})
+              }}>
+                ×
+              </span>
             </span>
-          </span>
-        )) : (
-          <span className={styles.NoTags}>
-            No tags added 😢
-          </span>
-        )}
-        {(!readOnly && isEntering) && (
-          <form
-            action="."
+          ))}
+          <span
             className={styles.TagInput}
-            onSubmit={handleTagSubmit}
-          >
-            <input
-              ref={tagFieldInputRef}
-              placeholder={placeholder}
-              enterKeyHint="done"
-              autoFocus
-            />
-          </form>
-        )}
+            ref={tagFieldInputRef}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onInput={handleTagSubmit}
+            contentEditable={!readOnly}
+          />
+        </div>
       </div>
     </div>
   )

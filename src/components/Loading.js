@@ -41,7 +41,7 @@ const Loading = (props) => {
       setLoadingMsg("We Are Fetching Your Own Projects")
       const projects = await dispatch(projectsActions.handleFetchOwnedProjects())
       const reqProject = Object.values(projects)
-        .filter(x => x.permalink === `${routeParams.username}/${routeParams.projectPermalink}`)[0]
+        .filter(x => x.permalink === `${routeParams.projectPermalink}`)[0]
       if (reqProject) {
         dispatch(appActions.handleSetProject(reqProject.id, false))
         setProgressValue(progressValue + 1)

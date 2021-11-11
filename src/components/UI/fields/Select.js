@@ -8,7 +8,6 @@ const Select = (props) => {
 		value,
     values,
     options,
-    colors,
 		onChange,
     label,
     readOnly,

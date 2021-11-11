@@ -82,7 +82,7 @@
     font-weight: 600;
     font-size: 12px;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 100000000000000px;
     @include themify(color, "onPrimaryColor");
     @include themify(background-color, "primary");
   }
