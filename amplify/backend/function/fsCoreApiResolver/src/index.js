@@ -90,6 +90,9 @@ exports.handler = async function (ctx) {
       dismissNotification: (ctx) => {
         return dismissNotification(ctx);
       },
+      dismissNotifications: (ctx) => {
+        return dismissNotifications(ctx);
+      },
       assignTask: (ctx) => {
         return assignTask(ctx);
       },
@@ -1759,6 +1762,21 @@ exports.handler = async function (ctx) {
     }
   }
 
+  async function dismissNotifications(ctx) {
+    const client = ctx.identity.username
+    if (client) {
+      try {
+        const notifications = await listNotifications(ctx)
+        await batchRemove(notifications.items || [], NOTIFICATIONTABLE);
+        return { items: [] }
+      } catch (err) {
+        throw new Error(err);
+      }
+    } else {
+      throw new Error(UNAUTHORIZED)
+    }
+  }
+
   async function deleteProjectAndTasks(ctx) {
     const projectID = ctx.arguments.projectID
     const client = ctx.identity.username
@@ -2134,7 +2152,7 @@ exports.handler = async function (ctx) {
 
   async function removeCommentsOfTask(taskId) {
     const comments = await _listCommentsForTask(taskId);
-    await deleteComments(comments);
+    await batchRemove(comments, COMMENTTABLE);
   }
 
   async function _listTasksForProject(projectID) {
@@ -2194,9 +2212,9 @@ exports.handler = async function (ctx) {
     }
   }
 
-  async function deleteComments(comments) {
+  async function batchRemove(items, table) {
     // format data for docClient
-    const seedData = comments.map((item) => {
+    const seedData = items.map((item) => {
       return {
         DeleteRequest: {
           Key: {
@@ -2220,7 +2238,7 @@ exports.handler = async function (ctx) {
         await docClient
           .batchWrite({
               RequestItems: {
-                [COMMENTTABLE]: seedData.slice(i, 25 * batchMultiplier),
+                [table]: seedData.slice(i, 25 * batchMultiplier),
               },
             },
             (err, data) => {
@@ -2241,7 +2259,7 @@ exports.handler = async function (ctx) {
       await docClient
         .batchWrite({
             RequestItems: {
-              [COMMENTTABLE]: seedData.slice(seedData.length - remainder),
+              [table]: seedData.slice(seedData.length - remainder),
             },
           },
           (err, data) => {

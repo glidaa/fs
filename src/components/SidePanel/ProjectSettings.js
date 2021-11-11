@@ -113,6 +113,7 @@ const ProjectSettings = (props) => {
         <button
           className={styles.PanelPageToolbarAction}
           onClick={removeProject}
+          disabled={readOnly}
         >
           <RemoveIcon
             width={24}

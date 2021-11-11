@@ -114,5 +114,6 @@ const Home = (props) => {
 export default connect((state) => ({
   app: state.app,
   user: state.user,
+  tasks: state.tasks,
   projects: state.projects
 }))(Home);

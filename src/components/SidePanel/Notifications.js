@@ -14,6 +14,9 @@ import execGraphQL from '../../utils/execGraphQL';
 const Notifications = (props) => {
   const {
     notifications,
+    app: {
+      isSynced
+    },
     dispatch
   } = props;
 
@@ -21,7 +24,11 @@ const Notifications = (props) => {
     return dispatch(appActions.handleSetLeftPanel(false))
   }
   const dismissNotifications = () => {
-    
+    execGraphQL(
+      graphqlOperation(
+        mutations.dismissNotifications
+      )
+    )
   }
   const dismissNotification = (e, id) => {
     e.stopPropagation()
@@ -54,6 +61,7 @@ const Notifications = (props) => {
         <button
           className={styles.PanelPageToolbarAction}
           onClick={dismissNotifications}
+          disabled={!isSynced}
         >
           <RemoveIcon
             width={24}
@@ -82,5 +90,6 @@ const Notifications = (props) => {
 };
 
 export default connect((state) => ({
+  app: state.app,
   notifications: state.notifications,
 }))(Notifications);

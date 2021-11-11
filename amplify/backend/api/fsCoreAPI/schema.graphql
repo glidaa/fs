@@ -139,6 +139,9 @@ type Mutation {
 	dismissNotification(notificationID: ID!): Notification
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
+	dismissNotifications: NotificationsList
+		@function(name: "fsCoreApiResolver-${env}")
+		@aws_cognito_user_pools
 	assignTask(taskID: ID!, assignee: String!, mutationID: String): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools

@@ -18,7 +18,8 @@ const Projects = (props) => {
   const {
     user,
     app: {
-      projectAddingStatus
+      projectAddingStatus,
+      isSynced
     },
     projects,
     dispatch
@@ -62,6 +63,7 @@ const Projects = (props) => {
           <button
             className={styles.PanelPageToolbarAction}
             onClick={createNewProject}
+            disabled={!isSynced}
           >
             <AddIcon
               width={24}

@@ -247,6 +247,21 @@ export const dismissNotification = /* GraphQL */ `
     }
   }
 `;
+export const dismissNotifications = /* GraphQL */ `
+  mutation DismissNotifications {
+    dismissNotifications {
+      items {
+        id
+        type
+        payload
+        createdAt
+        updatedAt
+        owner
+        sender
+      }
+    }
+  }
+`;
 export const assignTask = /* GraphQL */ `
   mutation AssignTask($taskID: ID!, $assignee: String!, $mutationID: String) {
     assignTask(taskID: $taskID, assignee: $assignee, mutationID: $mutationID) {

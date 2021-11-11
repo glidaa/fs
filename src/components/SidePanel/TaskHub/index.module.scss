@@ -25,4 +25,8 @@
   background-color: transparent;
   cursor: pointer;
   @include themify(color, "primary");
+  &:disabled {
+    cursor: not-allowed;
+    color: #CCCCCC!important;
+  }
 }
