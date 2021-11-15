@@ -10,6 +10,7 @@ import { ReactComponent as CommentsIllustartion } from "../../../assets/undraw_P
 import { ReactComponent as RemoveIcon } from "../../../assets/trash-outline.svg"
 import * as commentsActions from "../../../actions/comments";
 import Avatar from '../../UI/Avatar';
+import generateID from '../../../utils/generateID';
 
 const Comments = (props) => {
   const {
@@ -74,6 +75,7 @@ const Comments = (props) => {
     e.stopPropagation()
     const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
     dispatch(commentsActions.handleCreateComment({
+      id: generateID(),
       taskID: selectedTask,
       content: content
     }))
@@ -126,7 +128,9 @@ const Comments = (props) => {
                     })}
                   />
                   <span className={styles.CommentTime}>
-                    {new Date(x.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {!x.isVirtual ? (
+                      new Date(x.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    ) : "Sending…"}
                   </span>
                 </div>
               </div>

@@ -7,7 +7,7 @@ import * as mutations from "../graphql/mutations"
 import * as cacheController from "../controllers/cache"
 import { OK, PENDING, AuthState } from "../constants";
 import prepareProjectToBeSent from "../utils/prepareProjectToBeSent";
-import generateMutationID from "../utils/generateMutationID";
+import generateID from "../utils/generateID";
 import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_PROJECT = "CREATE_PROJECT";
@@ -57,18 +57,31 @@ const fetchCachedProjects = (projects) => ({
 export const handleCreateProject = (projectState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
+    dispatch(createProject({
+      ...projectState,
+      owner: user.data.username,
+      isVirtual: true
+    }, OWNED))
+    dispatch(appActions.handleSetProject(projectState.id))
+    dispatch(appActions.handleSetLeftPanel(false))
+    dispatch(appActions.handleSetProjectTitle(true))
     const dataToSend = prepareProjectToBeSent(projectState)
-    dispatch(appActions.setProjectAddingStatus(PENDING))
-    return execGraphQL(graphqlOperation(mutations.createProject, { input: dataToSend }))
-      .then((incoming) => {
-        dispatch(createProject(incoming.data.createProject, OWNED))
-        dispatch(appActions.handleSetProject(incoming.data.createProject.id))
-        dispatch(appActions.handleSetLeftPanel(false))
-        dispatch(appActions.handleSetProjectTitle(true))
-        dispatch(appActions.setProjectAddingStatus(OK))
-      }).catch(() => {
-        dispatch(appActions.setProjectAddingStatus(OK))
-      })
+    dispatch(mutationsActions.scheduleMutation(
+      "createProject",
+      dataToSend,
+      (incoming) => {
+        dispatch(updateProject({
+          ...incoming.data.createProject,
+          isVirtual: false
+        }))
+      },
+      () => {
+        if (getState().app.selectedProject === projectState.id) {
+          dispatch(appActions.handleSetProject(null))
+        }
+        dispatch(removeProject(projectState.id))
+      }
+    ))
   } else {
     dispatch(createProject(projectState, OWNED))
     dispatch(appActions.handleSetProject(null))
@@ -79,17 +92,18 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
 export const handleUpdateProject = (update) => (dispatch, getState) => {
   const { user, projects } = getState()
   const prevProjectState = {...projects[update.id]}
-  const updateWithID = {id: prevProjectState.id, ...update };
+  dispatch(updateProject(update, OWNED))
   if (user.state === AuthState.SignedIn) {
-    const mutationID = generateMutationID(user.data.username)
-    dispatch(mutationsActions.addMutation(mutationID))
-    dispatch(updateProject(updateWithID, OWNED))
-    return execGraphQL(graphqlOperation(mutations.updateProject, { input: { ...updateWithID, mutationID } }))
-      .catch(() => {
-        return dispatch(updateProject(prevProjectState, OWNED))
-      })
-  } else {
-    dispatch(updateProject(updateWithID, OWNED));
+    return dispatch(mutationsActions.scheduleMutation(
+      "updateProject",
+      update,
+      null,
+      () => {
+        if (getState().projects[update.id]) {
+          dispatch(updateProject(prevProjectState))
+        }
+      }
+    ))
   }
 }
 
@@ -98,15 +112,16 @@ export const handleRemoveProject = (projectState) => (dispatch, getState) => {
   if (app.selectedProject === projectState.id) {
     dispatch(appActions.handleSetProject(projectState.prevProject))
   }
+  dispatch(removeProject(projectState.id, OWNED))
   if (user.state === AuthState.SignedIn) {
-    dispatch(removeProject(projectState.id, OWNED))
-    return execGraphQL(graphqlOperation(mutations.deleteProjectAndTasks, { projectID: projectState.id }))
-      .catch((err) => {
-        console.log(err)
+    return dispatch(mutationsActions.scheduleMutation(
+      "deleteProjectAndTasks",
+      { id: projectState.id },
+      null,
+      () => {
         dispatch(createProject(projectState, OWNED))
-      })
-  } else {
-    dispatch(removeProject(projectState.id, OWNED))
+      }
+    ))
   }
 }
 

@@ -1,14 +1,26 @@
-import { ADD_MUTATION, REMOVE_MUTATION } from "../actions/mutations"
+import { SCHEDULE_MUTATION, NEXT_MUTATION } from "../actions/mutations";
 
 export default function (state = [], action) {
-  const stateClone = [...state]
-  if (stateClone.length >= 100) stateClone.shift()
-  switch(action.type) {
-    case ADD_MUTATION:
-      return [...new Set([...stateClone, action.mutation])]
-    case REMOVE_MUTATION:
-        return stateClone.filter(x => x !== action.mutation)
+  let stateClone = [...state];
+  switch (action.type) {
+    case SCHEDULE_MUTATION:
+      const { mutationType, data, successCallback, errorCallback } = action;
+      const newMutation = [mutationType, data, successCallback, errorCallback];
+      if (/^update\w+$/.test(mutationType)) {
+        for (let i = stateClone.length - 1; i > 0; i--) {
+          if (stateClone[i][0] === mutationType && stateClone[i][1].id === data.id) {
+            const redundantMutation = stateClone.splice(i--, 1);
+            newMutation[1] = { ...newMutation[1], ...redundantMutation[1] };
+          } else {
+            break
+          }
+        }
+      }
+      return [...stateClone, newMutation];
+    case NEXT_MUTATION:
+      stateClone.shift();
+      return stateClone;
     default:
-      return state
+      return state;
   }
 }

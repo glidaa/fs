@@ -1,12 +1,15 @@
-export const ADD_MUTATION = "ADD_MUTATION";
-export const REMOVE_MUTATION = "REMOVE_MUTATION";
+export const SCHEDULE_MUTATION = "SCHEDULE_MUTATION";
+export const NEXT_MUTATION = "NEXT_MUTATION";
 
-export const addMutation = (mutation) => ({
-  type: ADD_MUTATION,
-  mutation
-})
+export const scheduleMutation = (mutationType, data, sucessCallback = null, errorCallback = null) => ({
+  type: SCHEDULE_MUTATION,
+  mutationType,
+  data,
+  sucessCallback,
+  errorCallback,
+});
 
-export const removeMutation = (mutation) => ({
-  type: REMOVE_MUTATION,
-  mutation
-})
+export const nextMutation = (mutation) => ({
+  type: NEXT_MUTATION,
+  mutation,
+});

@@ -7,6 +7,7 @@ import * as appActions from "./app"
 import * as userActions from "./user"
 import * as usersActions from "./users"
 import * as subscriptions from "../graphql/subscriptions"
+import * as mutationID from "../utils/mutationID"
 import filterObj from "../utils/filterObj";
 import updateAssignedTasks from "../pushedUpdates/updateAssignedTasks";
 import updateWatchedTasks from "../pushedUpdates/updateWatchedTasks";
@@ -166,8 +167,10 @@ export const handleSetOwnedProjectsObservers = () => async (dispatch, getState) 
         const { projects } = getState()
         const ownedProjects = filterObj(projects, x => x.isOwned)
         const incoming = e.value.data.onCreateOwnedProject
-        if (!Object.keys(ownedProjects).includes(incoming.id)) {
-          dispatch(projectsActions.createProject(incoming, "owned"))
+        if (!mutationID.isLocal(incoming.mutationID)) {
+          if (!Object.keys(ownedProjects).includes(incoming.id)) {
+            dispatch(projectsActions.createProject(incoming, "owned"))
+          }
         }
       },
       error: error => console.warn(error)
@@ -187,10 +190,10 @@ export const handleSetOwnedProjectsObservers = () => async (dispatch, getState) 
     }))
     observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateOwnedProject, data)).subscribe({
       next: e => {
-        const { projects, mutations } = getState()
+        const { projects } = getState()
         const ownedProjects = filterObj(projects, x => x.isOwned)
         const incoming = e.value.data.onUpdateOwnedProject
-        if (!mutations.includes(incoming.mutationID)) {
+        if (!mutationID.isLocal(incoming.mutationID)) {
           if (Object.keys(ownedProjects).includes(incoming.id)) {
             const lastMutationDate = projects[incoming.id].mutatedAt || null
             const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
@@ -209,12 +212,14 @@ export const handleSetOwnedProjectsObservers = () => async (dispatch, getState) 
       next: e => {
         const { app, projects } = getState()
         const ownedProjects = filterObj(projects, x => x.isOwned)
-        const removedItemID = e.value.data.onDeleteOwnedProject.id;
-        if (Object.keys(ownedProjects).includes(removedItemID)) {
-          if (app.selectedProject === removedItemID) {
-            dispatch(appActions.handleSetTask(null))
+        const incoming = e.value.data.onDeleteOwnedProject;
+        if (!mutationID.isLocal(incoming.mutationID)) {
+          if (Object.keys(ownedProjects).includes(incoming.id)) {
+            if (app.selectedProject === incoming.id) {
+              dispatch(appActions.handleSetTask(null))
+            }
+            dispatch(projectsActions.removeProject(incoming.id))
           }
-          dispatch(projectsActions.removeProject(removedItemID))
         }
       },
       error: error => console.warn(error)
@@ -240,10 +245,10 @@ export const handleSetProjectObservers = (projectID) => async (dispatch, getStat
     const data = { id: projectID }
     observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateProject, data)).subscribe({
       next: e => {
-        const { projects, mutations } = getState()
+        const { projects } = getState()
         const incoming = e.value.data.onUpdateProject
-        if (!mutations.includes(incoming.mutationID)) {
-          if (projects[incoming.id]) {
+        if (projects[incoming.id]) {
+          if (!mutationID.isLocal(incoming.mutationID)) {
             const lastMutationDate = projects[incoming.id].mutatedAt || null
             const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
             if (!mutationDate || (mutationDate && lastMutationDate < mutationDate)) {
@@ -260,13 +265,15 @@ export const handleSetProjectObservers = (projectID) => async (dispatch, getStat
     observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteProject, data)).subscribe({
       next: e => {
         const { app, projects } = getState()
-        const removedItemID = e.value.data.onDeleteProject.id;
-        if (projects[removedItemID]) {
-          dispatch(handleClearProjectObservers(removedItemID))
-          if (app.selectedProject === removedItemID) {
-            dispatch(appActions.handleSetTask(null))
+        const incoming = e.value.data.onDeleteProject;
+        if (projects[incoming.id]) {
+          if (!mutationID.isLocal(incoming.mutationID)) {
+            dispatch(handleClearProjectObservers(incoming.id))
+            if (app.selectedProject === incoming.id) {
+              dispatch(appActions.handleSetTask(null))
+            }
+            dispatch(projectsActions.removeProject(incoming.id))
           }
-          dispatch(projectsActions.removeProject(removedItemID))
         }
       },
       error: error => console.warn(error)
@@ -293,22 +300,25 @@ export const handleSetTasksObservers = (projectID) => async (dispatch, getState)
       next: async (e) => {
         const { tasks } = getState()
         const incoming = e.value.data.onCreateTaskByProjectID
-        if (!Object.keys(tasks).includes(incoming.id)) {
-          const usersToBeFetched = [...new Set([
-            ...incoming.assignees.filter(x => /^user:.*$/.test(x)).map(x => x.replace(/^user:/, "")),
-            ...incoming.watchers
-          ])]
-          await dispatch(usersActions.handleAddUsers(usersToBeFetched))
-          dispatch(tasksActions.createTask(incoming))
+        console.log(incoming)
+        if (!mutationID.isLocal(incoming.mutationID)) {
+          if (!Object.keys(tasks).includes(incoming.id)) {
+            const usersToBeFetched = [...new Set([
+              ...incoming.assignees.filter(x => /^user:.*$/.test(x)).map(x => x.replace(/^user:/, "")),
+              ...incoming.watchers
+            ])]
+            await dispatch(usersActions.handleAddUsers(usersToBeFetched))
+            dispatch(tasksActions.createTask(incoming))
+          }
         }
       },
       error: error => console.warn(error)
     }))
     observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateTaskByProjectId, { projectID })).subscribe({
       next: async (e) => {
-        const { tasks, mutations } = getState()
+        const { tasks } = getState()
         const incoming = e.value.data.onUpdateTaskByProjectID
-        if (!mutations.includes(incoming.mutationID)) {
+        if (!mutationID.isLocal(incoming.mutationID)) {
           if (Object.keys(tasks).includes(incoming.id)) {
             const lastMutationDate = tasks[incoming.id].mutatedAt || null
             const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
@@ -331,12 +341,14 @@ export const handleSetTasksObservers = (projectID) => async (dispatch, getState)
     observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteTaskByProjectId, { projectID })).subscribe({
       next: e => {
         const { tasks, app } = getState()
-        const removedItemID = e.value.data.onDeleteTaskByProjectID.id;
-        if (Object.keys(tasks).includes(removedItemID)) {
-          if (app.selectedTask === removedItemID) {
-            dispatch(appActions.handleSetTask(null))
+        const incoming = e.value.data.onDeleteTaskByProjectID;
+        if (!mutationID.isLocal(incoming.mutationID)) {
+          if (Object.keys(tasks).includes(incoming.id)) {
+            if (app.selectedTask === incoming.id) {
+              dispatch(appActions.handleSetTask(null))
+            }
+            dispatch(tasksActions.removeTask(incoming.id))
           }
-          dispatch(tasksActions.removeTask(removedItemID))
         }
       },
       error: error => console.warn(error)
@@ -363,18 +375,20 @@ export const handleSetCommentsObservers = (taskID) => async (dispatch, getState)
       next: async (e) => {
         const { comments } = getState()
         const incoming = e.value.data.onCreateCommentByTaskID
-        if (!Object.keys(comments).includes(incoming.id)) {
-          await dispatch(usersActions.handleAddUsers([incoming.owner]))
-          dispatch(commentsActions.createComment(incoming))
+        if (!mutationID.isLocal(incoming.mutationID)) {
+          if (!Object.keys(comments).includes(incoming.id)) {
+            await dispatch(usersActions.handleAddUsers([incoming.owner]))
+            dispatch(commentsActions.createComment(incoming))
+          }
         }
       },
       error: error => console.warn(error)
     }))
     observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateCommentByTaskId, { taskID })).subscribe({
       next: e => {
-        const { comments, mutations } = getState()
+        const { comments } = getState()
         const incoming = e.value.data.onUpdateCommentByTaskID
-        if (!mutations.includes(incoming.mutationID)) {
+        if (!mutationID.isLocal(incoming.mutationID)) {
           if (Object.keys(comments).includes(incoming.id)) {
             const lastMutationDate = comments[incoming.id].mutatedAt || null
             const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
@@ -392,9 +406,11 @@ export const handleSetCommentsObservers = (taskID) => async (dispatch, getState)
     observers.push(await API.graphql(graphqlOperation(subscriptions.onDeleteCommentByTaskId, { taskID })).subscribe({
       next: e => {
         const { comments } = getState()
-        const removedItemID = e.value.data.onDeleteCommentByTaskID.id;
-        if (Object.keys(comments).includes(removedItemID)) {
-          dispatch(commentsActions.removeComment(removedItemID))
+        const incoming = e.value.data.onDeleteCommentByTaskID;
+        if (!mutationID.isLocal(incoming.mutationID)) {
+          if (Object.keys(comments).includes(incoming.id)) {
+            dispatch(commentsActions.removeComment(incoming.id))
+          }
         }
       },
       error: error => console.warn(error)

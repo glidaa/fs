@@ -156,9 +156,11 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
     }
     dispatch(setTask(id))
     dispatch(setLockedTaskField(null))
-    dispatch(commentsActions.handleFetchComments(id))
-    if (user.state === AuthState.SignedIn) {
-      dispatch(observersActions.handleSetCommentsObservers(id))
+    if (!tasks[id].isVirtual) {
+      dispatch(commentsActions.handleFetchComments(id))
+      if (user.state === AuthState.SignedIn) {
+        dispatch(observersActions.handleSetCommentsObservers(id))
+      }
     }
   }
 }

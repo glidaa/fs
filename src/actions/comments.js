@@ -1,11 +1,9 @@
 import { graphqlOperation } from "@aws-amplify/api";
 import { AuthState } from '../constants';
 import { listCommentsForTask } from "../graphql/queries"
-import * as mutations from "../graphql/mutations"
 import * as usersActions from "./users"
 import * as mutationsActions from "./mutations"
 import * as cacheController from "../controllers/cache"
-import generateMutationID from "../utils/generateMutationID";
 import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_COMMENT = "CREATE_COMMENT";
@@ -48,26 +46,46 @@ const fetchCachedComments = (comments) => ({
 export const handleCreateComment = (commentState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    return execGraphQL(graphqlOperation(mutations.createComment, { input: commentState }))
+    dispatch(createComment({
+      ...commentState,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: user.data.username,
+      isVirtual: true
+    }))
+    dispatch(mutationsActions.scheduleMutation(
+      "createComment",
+      commentState,
+      (incoming) => {
+        dispatch(updateComment({
+          ...incoming.data.createComment,
+          isVirtual: false
+        }))
+      },
+      () => {
+        dispatch(removeComment(commentState.id))
+      }
+    ))
   }
 }
 
 export const handleUpdateComment = (update) => (dispatch, getState) => {
   const { user, comments } = getState()
   const prevCommentState = {...comments[update.id]}
-  const updateWithID = {id: prevCommentState.id, ...update };
   if (user.state === AuthState.SignedIn) {
-    const mutationID = generateMutationID(user.data.username)
-    dispatch(mutationsActions.addMutation(mutationID))
-    if (comments[prevCommentState.id]) {
-      dispatch(updateComment(updateWithID))
+    if (comments[update.id]) {
+      dispatch(updateComment(update))
     }
-    return execGraphQL(graphqlOperation(mutations.updateComment, { input: { ...updateWithID, mutationID } }))
-      .catch(() => {
-        if (comments[prevCommentState.id]) {
-          return dispatch(updateComment(prevCommentState))
+    return dispatch(mutationsActions.scheduleMutation(
+      "updateComment",
+      update,
+      null,
+      () => {
+        if (getState().comments[update.id]) {
+          dispatch(updateComment(prevCommentState))
         }
-      })
+      }
+    ))
   }
 }
 
@@ -77,12 +95,16 @@ export const handleRemoveComment = (commentState) => (dispatch, getState) => {
     if (comments[commentState.id]) {
       dispatch(removeComment(commentState.id))
     }
-    return execGraphQL(graphqlOperation(mutations.deleteComment, { commentID: commentState.id }))
-      .catch(() => {
-        if (comments[commentState.id]) {
+    return dispatch(mutationsActions.scheduleMutation(
+      "deleteComment",
+      { id: commentState.id },
+      null,
+      () => {
+        if (getState().app.selectedTask === commentState.taskID) {
           dispatch(createComment(commentState))
         }
-      })
+      }
+    ))
   }
 }
 

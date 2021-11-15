@@ -100,40 +100,40 @@ type Mutation {
 	pushUserUpdate(input: PushUserUpdateInput!): UserUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
-	pushProjectUpdate(input: PushProjectUpdateInput!): ProjectUpdate
+	pushProjectUpdate(input: PushProjectUpdateInput!): UpdatedProject
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 	pushNotification(input: PushNotificationInput!): Notification
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
-	createProject(input: CreateProjectInput!): Project
+	createProject(input: CreateProjectInput!): CreatedProject
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	createTask(input: CreateTaskInput!): Task
+	createTask(input: CreateTaskInput!): CreatedTask
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	createComment(input: CreateCommentInput!): Comment
+	createComment(input: CreateCommentInput!): CreatedComment
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	updateProject(input: UpdateProjectInput!): ProjectUpdate
+	updateProject(input: UpdateProjectInput!): UpdatedProject
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	updateTask(input: UpdateTaskInput!): TaskUpdate
+	updateTask(input: UpdateTaskInput!): UpdatedTask
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	updateComment(input: UpdateCommentInput!): CommentUpdate
+	updateComment(input: UpdateCommentInput!): UpdatedComment
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	updateUser(input: UpdateUserInput!): UserUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	deleteProjectAndTasks(projectID: ID!): Project
+	deleteProjectAndTasks(input: DeleteProjectInput!): DeletedProject
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	deleteTaskAndComments(taskId: ID!): Task
+	deleteTaskAndComments(input: DeleteTaskInput!): DeletedTask
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	deleteComment(commentID: ID!): Comment
+	deleteComment(input: DeleteCommentInput!): DeletedComment
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	dismissNotification(notificationID: ID!): Notification
@@ -142,16 +142,16 @@ type Mutation {
 	dismissNotifications: NotificationsList
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	assignTask(taskID: ID!, assignee: String!, mutationID: String): TaskUpdate
+	assignTask(taskID: ID!, assignee: String!, mutationID: String): UpdatedTask
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	unassignTask(taskID: ID!, assignee: String!, mutationID: String): TaskUpdate
+	unassignTask(taskID: ID!, assignee: String!, mutationID: String): UpdatedTask
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	addWatcher(taskID: ID!, watcher: String!, mutationID: String): TaskUpdate
+	addWatcher(taskID: ID!, watcher: String!, mutationID: String): UpdatedTask
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	removeWatcher(taskID: ID!, watcher: String!, mutationID: String): TaskUpdate
+	removeWatcher(taskID: ID!, watcher: String!, mutationID: String): UpdatedTask
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	importData(data: String!): ImportedProjectsList
@@ -211,7 +211,7 @@ type Subscription {
 		@aws_subscribe(mutations: ["dismissNotification"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onCreateOwnedProject(owner: String!): Project
+	onCreateOwnedProject(owner: String!): CreatedProject
 		@aws_subscribe(mutations: ["createProject"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -219,43 +219,43 @@ type Subscription {
 		@aws_subscribe(mutations: ["importData"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateOwnedProject(owner: String!): ProjectUpdate
+	onUpdateOwnedProject(owner: String!): UpdatedProject
 		@aws_subscribe(mutations: ["updateProject", "pushProjectUpdate"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onDeleteOwnedProject(owner: String!): Project
+	onDeleteOwnedProject(owner: String!): DeletedProject
 		@aws_subscribe(mutations: ["deleteProjectAndTasks"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateProject(id: String!): ProjectUpdate
+	onUpdateProject(id: String!): UpdatedProject
 		@aws_subscribe(mutations: ["updateProject", "pushProjectUpdate"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onDeleteProject(id: String!): Project
+	onDeleteProject(id: String!): DeletedProject
 		@aws_subscribe(mutations: ["deleteProjectAndTasks"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onCreateTaskByProjectID(projectID: ID!): Task
+	onCreateTaskByProjectID(projectID: ID!): CreatedTask
 		@aws_subscribe(mutations: ["createTask"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateTaskByProjectID(projectID: ID!): TaskUpdate
+	onUpdateTaskByProjectID(projectID: ID!): UpdatedTask
 		@aws_subscribe(mutations: ["updateTask", "assignTask", "unassignTask", "addWatcher", "removeWatcher"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onDeleteTaskByProjectID(projectID: ID!): Task
+	onDeleteTaskByProjectID(projectID: ID!): DeletedTask
 		@aws_subscribe(mutations: ["deleteTaskAndComments"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onCreateCommentByTaskID(taskID: ID!): Comment
+	onCreateCommentByTaskID(taskID: ID!): CreatedComment
 		@aws_subscribe(mutations: ["createComment"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateCommentByTaskID(taskID: ID!): CommentUpdate
+	onUpdateCommentByTaskID(taskID: ID!): UpdatedComment
 		@aws_subscribe(mutations: ["updateComment"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onDeleteCommentByTaskID(taskID: ID!): Comment
+	onDeleteCommentByTaskID(taskID: ID!): DeletedComment
 		@aws_subscribe(mutations: ["deleteComment"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -306,6 +306,7 @@ input PushNotificationInput {
 }
 
 input CreateProjectInput {
+	id: ID!
 	prevProject: ID
 	nextProject: ID
 	permalink: String!
@@ -313,9 +314,11 @@ input CreateProjectInput {
 	permissions: Permissions!
 	members: [String!]
 	title: String
+	mutationID: ID
 }
 
 input CreateTaskInput {
+	id: ID!
 	projectID: ID!
 	prevTask: ID
 	nextTask: ID
@@ -325,11 +328,14 @@ input CreateTaskInput {
 	tags: [String!]
 	status: TaskStatus
 	priority: TaskPriority
+	mutationID: ID
 }
 
 input CreateCommentInput {
+	id: ID!
 	taskID: ID!
 	content: AWSJSON!
+	mutationID: ID
 }
 
 input UpdateProjectInput {
@@ -340,7 +346,7 @@ input UpdateProjectInput {
 	privacy: ProjectPrivacy
 	permissions: Permissions
 	title: String
-	mutationID: String
+	mutationID: ID
 }
 
 input UpdateTaskInput {
@@ -353,7 +359,28 @@ input UpdateTaskInput {
 	tags: [String!]
 	status: TaskStatus
 	priority: TaskPriority
-	mutationID: String
+	mutationID: ID
+}
+
+input UpdateCommentInput {
+	id: ID!
+	content: AWSJSON
+	mutationID: ID
+}
+
+input DeleteProjectInput {
+	id: ID!
+	mutationID: ID
+}
+
+input DeleteTaskInput {
+	id: ID!
+	mutationID: ID
+}
+
+input DeleteCommentInput {
+	id: ID!
+	mutationID: ID
 }
 
 input UpdateUserInput {
@@ -362,12 +389,6 @@ input UpdateUserInput {
 	lastName: String
 	gender: Gender
 	birthdate: String
-}
-
-input UpdateCommentInput {
-	id: ID!
-	content: AWSJSON
-	mutationID: String
 }
 
 type UserUpdate
@@ -388,7 +409,62 @@ type UserUpdate
 	updatedAt: AWSDateTime!
 }
 
-type ProjectUpdate
+type CreatedProject
+	@aws_iam
+	@aws_cognito_user_pools {
+	id: ID!
+	prevProject: ID
+	nextProject: ID
+	permalink: String!
+	title: String
+	tasksCount: Int!
+	todoCount: Int!
+	pendingCount: Int!
+	doneCount: Int!
+	privacy: ProjectPrivacy!
+	permissions: Permissions!
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	members: [String!]
+	mutationID: ID
+}
+
+type CreatedTask
+	@aws_iam
+	@aws_cognito_user_pools {
+	id: ID!
+	projectID: ID!
+	prevTask: ID
+	nextTask: ID
+	permalink: Int!
+	task: String
+	description: String
+	due: AWSTimestamp
+	tags: [String!]
+	status: TaskStatus!
+	priority: TaskPriority!
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	watchers: [String!]
+	assignees: [String!]
+	mutationID: ID
+}
+
+type CreatedComment
+	@aws_iam
+	@aws_cognito_user_pools {
+	id: ID!
+	taskID: ID!
+	content: AWSJSON!
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	mutationID: ID
+}
+
+type UpdatedProject
 	@aws_iam
 	@aws_cognito_user_pools {
 	id: ID!
@@ -404,10 +480,10 @@ type ProjectUpdate
 	permissions: Permissions
 	updatedAt: AWSDateTime!
 	owner: String!
-	mutationID: String
+	mutationID: ID
 }
 
-type TaskUpdate
+type UpdatedTask
 	@aws_iam
 	@aws_cognito_user_pools {
 	id: ID!
@@ -424,17 +500,72 @@ type TaskUpdate
 	watchers: [String!]
 	assignees: [String!]
 	updatedAt: AWSDateTime!
-	mutationID: String
+	mutationID: ID
 }
 
-type CommentUpdate
+type UpdatedComment
 	@aws_iam
 	@aws_cognito_user_pools {
 	id: ID!
 	taskID: ID!
 	content: AWSJSON
 	updatedAt: AWSDateTime!
-	mutationID: String
+	mutationID: ID
+}
+
+type DeletedProject
+	@aws_iam
+	@aws_cognito_user_pools {
+	id: ID!
+	prevProject: ID
+	nextProject: ID
+	permalink: String!
+	title: String
+	tasksCount: Int!
+	todoCount: Int!
+	pendingCount: Int!
+	doneCount: Int!
+	privacy: ProjectPrivacy!
+	permissions: Permissions!
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	members: [String!]
+	mutationID: ID
+}
+
+type DeletedTask
+	@aws_iam
+	@aws_cognito_user_pools {
+	id: ID!
+	projectID: ID!
+	prevTask: ID
+	nextTask: ID
+	permalink: Int!
+	task: String
+	description: String
+	due: AWSTimestamp
+	tags: [String!]
+	status: TaskStatus!
+	priority: TaskPriority!
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	watchers: [String!]
+	assignees: [String!]
+	mutationID: ID
+}
+
+type DeletedComment
+	@aws_iam
+	@aws_cognito_user_pools {
+	id: ID!
+	taskID: ID!
+	content: AWSJSON!
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+	owner: String!
+	mutationID: ID
 }
 
 type UsersList

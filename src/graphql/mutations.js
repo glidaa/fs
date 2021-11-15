@@ -71,6 +71,7 @@ export const createProject = /* GraphQL */ `
       updatedAt
       owner
       members
+      mutationID
     }
   }
 `;
@@ -93,6 +94,7 @@ export const createTask = /* GraphQL */ `
       owner
       watchers
       assignees
+      mutationID
     }
   }
 `;
@@ -105,6 +107,7 @@ export const createComment = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      mutationID
     }
   }
 `;
@@ -180,8 +183,8 @@ export const updateUser = /* GraphQL */ `
   }
 `;
 export const deleteProjectAndTasks = /* GraphQL */ `
-  mutation DeleteProjectAndTasks($projectID: ID!) {
-    deleteProjectAndTasks(projectID: $projectID) {
+  mutation DeleteProjectAndTasks($input: DeleteProjectInput!) {
+    deleteProjectAndTasks(input: $input) {
       id
       prevProject
       nextProject
@@ -197,12 +200,13 @@ export const deleteProjectAndTasks = /* GraphQL */ `
       updatedAt
       owner
       members
+      mutationID
     }
   }
 `;
 export const deleteTaskAndComments = /* GraphQL */ `
-  mutation DeleteTaskAndComments($taskId: ID!) {
-    deleteTaskAndComments(taskId: $taskId) {
+  mutation DeleteTaskAndComments($input: DeleteTaskInput!) {
+    deleteTaskAndComments(input: $input) {
       id
       projectID
       prevTask
@@ -219,18 +223,20 @@ export const deleteTaskAndComments = /* GraphQL */ `
       owner
       watchers
       assignees
+      mutationID
     }
   }
 `;
 export const deleteComment = /* GraphQL */ `
-  mutation DeleteComment($commentID: ID!) {
-    deleteComment(commentID: $commentID) {
+  mutation DeleteComment($input: DeleteCommentInput!) {
+    deleteComment(input: $input) {
       id
       taskID
       content
       createdAt
       updatedAt
       owner
+      mutationID
     }
   }
 `;

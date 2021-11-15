@@ -7,15 +7,18 @@ import * as tasksActions from "../actions/tasks"
 import * as userActions from "../actions/user"
 import * as usersActions from "../actions/users"
 import * as observersActions from "../actions/observers"
+import * as mutationsActions from "../actions/mutations"
 import * as queries from "../graphql/queries"
+import * as mutationsGraphQL from "../graphql/mutations"
 import * as cacheController from "../controllers/cache"
 import { useNavigate, useParams } from "react-router-dom"
 import { panelPages, AuthState } from '../constants';
 import execGraphQL from "../utils/execGraphQL";
-import store from "../store"
+import store from "../store";
+import * as mutationID from "../utils/mutationID";
 
 const SyncManager = (props) => {
-  const { app, user, dispatch } = props
+  const { app, mutations, user, dispatch } = props
   const [isInitial, setIsInitial] = useState(true)
   const navigate = useNavigate()
   const routeParams = useParams()
@@ -91,10 +94,28 @@ const SyncManager = (props) => {
       }
     }
   }, [app.isOffline])
+  useEffect(() => {
+    if (mutations[0]) {
+      const [mutationType, data, successCallback, errorCallback] = mutations[0];
+      const generatedMutationID = mutationID.generate(user.data.username);
+      const query = mutationsGraphQL[mutationType];
+      const queryData = { input: { ...data, mutationID: generatedMutationID } };
+      execGraphQL(graphqlOperation(query, queryData))
+        .then((res) => {
+          dispatch(mutationsActions.nextMutation());
+          if (successCallback) successCallback(res);
+        })
+        .catch((err) => {
+          console.error(err);
+          if (errorCallback) errorCallback(err);
+        });
+    }
+  }, [mutations[0]])
   return null
 }
 
 export default connect((state) => ({
   app: state.app,
+  mutations: state.mutations,
   user: state.user
 }))(SyncManager);

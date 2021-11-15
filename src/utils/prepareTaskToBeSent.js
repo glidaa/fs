@@ -1,5 +1,6 @@
 export default (taskState) => {
   return {
+    id: taskState.id,
     projectID: taskState.projectID,
     prevTask: taskState.prevTask,
     nextTask: taskState.nextTask,

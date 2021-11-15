@@ -5,7 +5,7 @@ export default function (state = {}, action) {
     case CREATE_COMMENT:
       return {...state, [action.commentState.id]: action.commentState}
     case UPDATE_COMMENT:
-      const update = Object.fromEntries(Object.entries(action.update).filter(item => item[1]))
+      const { update } = action
       return {
         ...state,
         [update.id]: {

@@ -22,9 +22,19 @@ const App = (props) => {
     }
   }
 
+  const checkReloadAbility = (e) => {
+    e.preventDefault();
+    if (store.getState().mutations.length > 0) {
+      e.returnValue = "Dude, are you sure you want to leave? Think of the kittens!";
+    } else {
+      delete e['returnValue'];
+    }
+  }
+
   useEffect(() => {
     dispatch(appActions.setNavigate(navigate));
     window.addEventListener("storage", fetchAppSettings);
+    window.addEventListener("beforeunload", checkReloadAbility);
     const checkConnectionInterval = setInterval(async () => {
       const result = await isOnline();
       const { app: { isOffline }} = store.getState()
@@ -37,6 +47,7 @@ const App = (props) => {
     return () => {
       clearInterval(checkConnectionInterval);
       window.removeEventListener("storage", fetchAppSettings)
+      window.removeEventListener("beforeunload", checkReloadAbility);
     }
   }, []);
 

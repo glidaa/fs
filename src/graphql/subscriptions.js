@@ -64,6 +64,7 @@ export const onCreateOwnedProject = /* GraphQL */ `
       updatedAt
       owner
       members
+      mutationID
     }
   }
 `;
@@ -129,6 +130,7 @@ export const onDeleteOwnedProject = /* GraphQL */ `
       updatedAt
       owner
       members
+      mutationID
     }
   }
 `;
@@ -170,6 +172,7 @@ export const onDeleteProject = /* GraphQL */ `
       updatedAt
       owner
       members
+      mutationID
     }
   }
 `;
@@ -192,6 +195,7 @@ export const onCreateTaskByProjectId = /* GraphQL */ `
       owner
       watchers
       assignees
+      mutationID
     }
   }
 `;
@@ -235,6 +239,7 @@ export const onDeleteTaskByProjectId = /* GraphQL */ `
       owner
       watchers
       assignees
+      mutationID
     }
   }
 `;
@@ -247,6 +252,7 @@ export const onCreateCommentByTaskId = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      mutationID
     }
   }
 `;
@@ -270,6 +276,7 @@ export const onDeleteCommentByTaskId = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      mutationID
     }
   }
 `;

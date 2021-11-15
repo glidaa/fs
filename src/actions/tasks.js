@@ -5,12 +5,14 @@ import * as appActions from "./app"
 import * as statusActions from "./status"
 import * as projectsActions from "./projects"
 import * as usersActions from "./users"
+import * as commentsActions from "./comments"
+import * as observersActions from "./observers"
 import * as mutationsActions from "./mutations"
 import * as mutations from "../graphql/mutations"
 import * as cacheController from "../controllers/cache"
-import { CREATING, REMOVING, READY, LOADING } from "../constants";
+import { READY, LOADING } from "../constants";
 import prepareTaskToBeSent from "../utils/prepareTaskToBeSent";
-import generateMutationID from "../utils/generateMutationID";
+import generateID from "../utils/generateID";
 import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_TASK = "CREATE_TASK";
@@ -53,60 +55,69 @@ const fetchCachedTasks = (tasks) => ({
 export const handleCreateTask = (taskState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    dispatch(statusActions.setTasksStatus(CREATING))
-    const dataToSend = prepareTaskToBeSent(taskState)
-    return execGraphQL(graphqlOperation(mutations.createTask, { input: dataToSend }))
-      .then((incoming) => {
-        if (taskState.projectID === getState().app.selectedProject) {
-          dispatch(createTask(incoming.data.createTask))
-          if (taskState.projectID === getState().app.selectedProject) {
-            dispatch(appActions.handleSetTask(null))
-          }
-          dispatch(appActions.handleSetTask(incoming.data.createTask.id))
+    const dataToSend = prepareTaskToBeSent(taskState, user.data.username)
+    if (taskState.projectID === getState().app.selectedProject) {
+      dispatch(createTask({
+        watchers: [],
+        owner: user.data.username,
+        isVirtual: true,
+        ...taskState
+      }))
+      dispatch(appActions.handleSetTask(taskState.id))
+    }
+    dispatch(mutationsActions.scheduleMutation(
+      "createTask",
+      dataToSend,
+      (incoming) => {
+        dispatch(updateTask({
+          ...incoming.data.createTask,
+          isVirtual: false
+        }))
+        if (getState().app.selectedTask === taskState.id) {
+          dispatch(commentsActions.handleFetchComments(taskState.id))
+          dispatch(observersActions.handleSetCommentsObservers(taskState.id))
         }
-        dispatch(statusActions.setTasksStatus(READY))
-      })
-      .catch(() => {
-        dispatch(statusActions.setTasksStatus(READY))
-      })
+      },
+      () => {
+        if (getState().app.selectedTask === taskState.id) {
+          dispatch(appActions.handleSetTask(null))
+        }
+        dispatch(removeTask(taskState.id))
+      }
+    ))
   } else {
     if (taskState.projectID === getState().app.selectedProject) {
       dispatch(createTask(taskState))
       dispatch(projectsActions.handleUpdateTaskCount(taskState.projectID, null, taskState.status))
-      if (taskState.projectID === getState().app.selectedProject) {
-        dispatch(appActions.handleSetTask(null))
-      }
       dispatch(appActions.handleSetTask(taskState.id))
     }
   }
 }
 
 export const handleUpdateTask = (update) => (dispatch, getState) => {
-  const { user, tasks, app } = getState()
+  const { user, tasks } = getState()
   const prevTaskState = {...tasks[update.id]}
-  const prevCommands = app.commands
   if (update.task) {
     const tREADYens = /^(.*?)(\/.*||)$/m.exec(update.task)
     update.task = tREADYens[1];
     dispatch(appActions.setCommand(tREADYens[2]))
   }
-  const updateWithID = {id: prevTaskState.id, ...update };
+  if (tasks[update.id]) {
+    dispatch(updateTask(update))
+  }
   if (user.state === AuthState.SignedIn) {
-    const mutationID = generateMutationID(user.data.username)
-    dispatch(mutationsActions.addMutation(mutationID))
-    if (tasks[prevTaskState.id]) {
-      dispatch(updateTask(updateWithID))
-    }
-    return execGraphQL(graphqlOperation(mutations.updateTask, { input: { ...updateWithID, mutationID } }))
-      .catch(() => {
-        if (tasks[prevTaskState.id]) {
-          dispatch(appActions.setCommand(prevCommands))
-          return dispatch(updateTask(prevTaskState))
+    return dispatch(mutationsActions.scheduleMutation(
+      "updateTask",
+      update,
+      null,
+      () => {
+        if (getState().tasks[update.id]) {
+          dispatch(updateTask(prevTaskState))
         }
-      })
+      }
+    ))
   } else {
-    if (tasks[prevTaskState.id]) {
-      dispatch(updateTask(updateWithID));
+    if (tasks[update.id]) {
       if (update.status && prevTaskState.status !== update.status) {
         dispatch(projectsActions.handleUpdateTaskCount(prevTaskState.projectID, prevTaskState.status, update.status))
       }
@@ -117,20 +128,24 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
 export const handleRemoveTask = (taskState) => (dispatch, getState) => {
   const { user, tasks, app } = getState()
   if (app.selectedTask === taskState.id) {
-    dispatch(appActions.handleSetTask(null))
+    dispatch(appActions.handleSetTask(taskState.prevTask))
+  }
+  if (tasks[taskState.id]) {
+    dispatch(removeTask(taskState.id))
   }
   if (user.state === AuthState.SignedIn) {
-    dispatch(statusActions.setTasksStatus(REMOVING))
-    return execGraphQL(graphqlOperation(mutations.deleteTaskAndComments, { taskId: taskState.id }))
-      .then(() => {
-        dispatch(statusActions.setTasksStatus(READY))
-      })
-      .catch(() => {
-        dispatch(statusActions.setTasksStatus(READY))
-      })
+    return dispatch(mutationsActions.scheduleMutation(
+      "deleteTaskAndComments",
+      { id: taskState.id },
+      null,
+      () => {
+        if (getState().app.selectedProject === taskState.projectID) {
+          dispatch(createTask(taskState))
+        }
+      }
+    ))
   } else {
     if (tasks[taskState.id]) {
-      dispatch(removeTask(taskState.id))
       dispatch(projectsActions.handleUpdateTaskCount(taskState.projectID, taskState.status, null))
     }
   }
@@ -151,8 +166,8 @@ export const handleAssignTask = (taskID, username) => async (dispatch, getState)
         id: taskID,
         assignees: [...new Set([...prevAssignees, username])]
       }))
-      const mutationID = generateMutationID(user.data.username)
-      dispatch(mutationsActions.addMutation(mutationID))
+      const mutationID = generateID(user.data.username)
+      dispatch(mutationsActions.scheduleMutation(mutationID))
       await execGraphQL(graphqlOperation(mutations.assignTask, {
         taskID: taskID,
         assignee: username,
@@ -185,8 +200,8 @@ export const handleAddWatcher = (taskID, username) => async (dispatch, getState)
     }))
     try {
       await dispatch(usersActions.handleAddUsers([username]))
-      const mutationID = generateMutationID(user.data.username)
-      dispatch(mutationsActions.addMutation(mutationID))
+      const mutationID = generateID(user.data.username)
+      dispatch(mutationsActions.scheduleMutation(mutationID))
       await execGraphQL(graphqlOperation(mutations.addWatcher, {
         taskID: taskID,
         watcher: username,
@@ -213,8 +228,8 @@ export const handleUnassignTask = (taskID, username) => async (dispatch, getStat
   }))
   if (user.state === AuthState.SignedIn) {
     try {
-      const mutationID = generateMutationID(user.data.username)
-      dispatch(mutationsActions.addMutation(mutationID))
+      const mutationID = generateID(user.data.username)
+      dispatch(mutationsActions.scheduleMutation(mutationID))
       await execGraphQL(graphqlOperation(mutations.unassignTask, {
         taskID: taskID,
         assignee: username,
@@ -241,8 +256,8 @@ export const handleRemoveWatcher = (taskID, username) => async (dispatch, getSta
       watchers: [...prevWatchers].filter(x => x !== username)
     }))
     try {
-      const mutationID = generateMutationID(user.data.username)
-      dispatch(mutationsActions.addMutation(mutationID))
+      const mutationID = generateID(user.data.username)
+      dispatch(mutationsActions.scheduleMutation(mutationID))
       await execGraphQL(graphqlOperation(mutations.removeWatcher, {
         taskID: taskID,
         watcher: username,

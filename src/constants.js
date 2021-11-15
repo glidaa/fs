@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import generateID from './utils/generateID'
 import generateRandomWords from './utils/generateRandomWords';
 
 export const PENDING = "PENDING"
@@ -70,7 +70,7 @@ export const panelPages = {
 
 export const initProjectState = (prevProject = null, nextProject = null) => {
   return {
-    id: uuidv4(),
+    id: generateID(),
     title: null,
     permalink: generateRandomWords().join("-"),
     prevProject: prevProject,
@@ -86,7 +86,7 @@ export const initProjectState = (prevProject = null, nextProject = null) => {
 }
 
 export const initTaskState = (projectID, prevTask = null, nextTask = null) => ({
-  id: uuidv4(),
+  id: generateID(),
   projectID: projectID,
   task: "",
   prevTask: prevTask,

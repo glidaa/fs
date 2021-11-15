@@ -1,8 +1,8 @@
-import { v4 as uuidv4 } from "uuid";
+import generateID from "./generateID";
 
 export default (taskState, projectID, prevTask = null, nextTask = null) => {
   return {
-    id: uuidv4(),
+    id: generateID(),
     projectID: projectID,
     prevTask: prevTask,
     nextTask: nextTask,

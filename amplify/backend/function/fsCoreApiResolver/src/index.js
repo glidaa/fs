@@ -511,15 +511,15 @@ exports.handler = async function (ctx) {
 
   async function createProject(ctx) {
     const client = ctx.identity.username
+    const claimedClient = ctx.arguments.input.id.match(/(.*)-.*/)[1]
     for (const incomingAttr in ctx.arguments.input) {
       if (!ctx.arguments.input[incomingAttr]) {
         delete ctx.arguments.input[incomingAttr]
       }
     }
-    if (client) {
+    if (client && client === claimedClient) {
       const projectData = {
         ...ctx.arguments.input,
-        id: uuidv4(),
         tasksCount: 0,
         todoCount: 0,
         pendingCount: 0,
@@ -667,16 +667,16 @@ exports.handler = async function (ctx) {
   async function createTask(ctx) {
     const projectID = ctx.arguments.input.projectID
     const client = ctx.identity.username
+    const claimedClient = ctx.arguments.input.id.match(/(.*)-.*/)[1]
     for (const incomingAttr in ctx.arguments.input) {
       if (!ctx.arguments.input[incomingAttr]) {
         delete ctx.arguments.input[incomingAttr]
       }
     }
-    if (await isProjectEditableByClient(projectID, client)) {
+    if (client === claimedClient && await isProjectEditableByClient(projectID, client)) {
       const projectData = await getProject(projectID)
       const taskData = {
         ...ctx.arguments.input,
-        id: uuidv4(),
         status: ctx.arguments.input.status || TODO,
         priority: ctx.arguments.input.priority || "normal",
         assignees: ctx.arguments.input.assignees || [],
@@ -735,15 +735,15 @@ exports.handler = async function (ctx) {
   async function createComment(ctx) {
     const taskID = ctx.arguments.input.taskID
     const client = ctx.identity.username
+    const claimedClient = ctx.arguments.input.id.match(/(.*)-.*/)[1]
     for (const incomingAttr in ctx.arguments.input) {
       if (!ctx.arguments.input[incomingAttr]) {
         delete ctx.arguments.input[incomingAttr]
       }
     }
-    if (await isTaskSharedWithClient(taskID, client)) {
+    if (client === claimedClient && await isTaskSharedWithClient(taskID, client)) {
       const commentData = {
         ...ctx.arguments.input,
-        id: uuidv4(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         owner: client
@@ -1461,6 +1461,7 @@ exports.handler = async function (ctx) {
           },
           arguments: {
             input: {
+              id: client + "-" + project.id,
               permalink: project.permalink,
               title: project.title,
               prevProject: project.prevProject,
@@ -1481,10 +1482,11 @@ exports.handler = async function (ctx) {
             },
             arguments: {
               input: {
+                id: client + "-" + task.id,
                 projectID: projectData.id,
                 task: task.task,
-                prevTask: project.prevTask,
-                nextTask: project.nextTask,
+                prevTask: task.prevTask,
+                nextTask: task.nextTask,
                 description: task.description,
                 due: task.due,
                 tags: task.tags,
@@ -1719,7 +1721,7 @@ exports.handler = async function (ctx) {
   }
 
   async function deleteComment(ctx) {
-    const commentID = ctx.arguments.commentID
+    const { id: commentID, mutationID } = ctx.arguments.input
     const client = ctx.identity.username
     if (await isCommentOwner(commentID, client)) {
       const params = {
@@ -1731,7 +1733,7 @@ exports.handler = async function (ctx) {
       }
       try {
         const data = await docClient.delete(params).promise();
-        return data.Attributes
+        return { ...data.Attributes, mutationID }
       } catch (err) {
         throw new Error(err);
       }
@@ -1778,7 +1780,7 @@ exports.handler = async function (ctx) {
   }
 
   async function deleteProjectAndTasks(ctx) {
-    const projectID = ctx.arguments.projectID
+    const { id: projectID, mutationID } = ctx.arguments.input
     const client = ctx.identity.username
     if (await isProjectOwner(projectID, client)) {
       const removeTasksProm = removeTasksOfProject(projectID);
@@ -1788,14 +1790,14 @@ exports.handler = async function (ctx) {
         removeProjectProm,
       ]);
       await removeProjectOrder(projectID)
-      return deletedProject
+      return { ...deletedProject, mutationID }
     } else {
       throw new Error(UNAUTHORIZED)
     }
   }
 
   async function deleteTaskAndComments(ctx) {
-    const taskID = ctx.arguments.taskId
+    const { id: taskID, mutationID } = ctx.arguments.input
     const client = ctx.identity.username
     if (await isTaskEditableByClient(taskID, client)) {
       const removeCommentsProm = removeCommentsOfTask(taskID);
@@ -1830,7 +1832,6 @@ exports.handler = async function (ctx) {
               },
               ReturnValues: "ALL_NEW"
             }
-            console.log(userData.Item.assignedTasks)
             const userUpdate = await docClient.update(userUpdateParams).promise();
             await _pushUserUpdate(userUpdate.Attributes)
           }
@@ -1841,7 +1842,7 @@ exports.handler = async function (ctx) {
         removeCommentsProm,
         removeTaskProm,
       ]);
-      return deletedTask
+      return { ...deletedTask, mutationID }
     } else {
       throw new Error(UNAUTHORIZED)
     }
@@ -1971,7 +1972,8 @@ exports.handler = async function (ctx) {
         permissions: "rw",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        owner: client
+        owner: client,
+        mutationID: "DUMMY_MUTATION_ID"
       }
     } else {
       throw new Error(UNAUTHORIZED)
@@ -1983,7 +1985,10 @@ exports.handler = async function (ctx) {
     const projectID = ctx.arguments.id
     try {
       if (await isProjectSharedWithClient(projectID, client)) {
-        return cachedProjects[projectID]
+        return {
+          ...cachedProjects[projectID],
+          mutationID: "DUMMY_MUTATION_ID"
+        }
       } else {
         throw new Error(UNAUTHORIZED)
       }
@@ -1997,7 +2002,10 @@ exports.handler = async function (ctx) {
     const projectID = ctx.arguments.id
     try {
       if (await isProjectSharedWithClient(projectID, client)) {
-        return cachedProjects[projectID]
+        return {
+          ...cachedProjects[projectID],
+          mutationID: "DUMMY_MUTATION_ID"
+        }
       } else {
         throw new Error(UNAUTHORIZED)
       }
@@ -2019,7 +2027,8 @@ exports.handler = async function (ctx) {
         priority: "normal",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        owner: client
+        owner: client,
+        mutationID: "DUMMY_MUTATION_ID"
       }
     } else {
       throw new Error(UNAUTHORIZED)
@@ -2054,7 +2063,8 @@ exports.handler = async function (ctx) {
         priority: "normal",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        owner: client
+        owner: client,
+        mutationID: "DUMMY_MUTATION_ID"
       }
     } else {
       throw new Error(UNAUTHORIZED)
@@ -2071,7 +2081,8 @@ exports.handler = async function (ctx) {
         content: {},
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        owner: client
+        owner: client,
+        mutationID: "DUMMY_MUTATION_ID"
       }
     } else {
       throw new Error(UNAUTHORIZED)
@@ -2106,7 +2117,8 @@ exports.handler = async function (ctx) {
         content: {},
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        owner: client
+        owner: client,
+        mutationID: "DUMMY_MUTATION_ID"
       }
     } else {
       throw new Error(UNAUTHORIZED)
