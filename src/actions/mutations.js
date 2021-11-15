@@ -1,11 +1,11 @@
 export const SCHEDULE_MUTATION = "SCHEDULE_MUTATION";
 export const NEXT_MUTATION = "NEXT_MUTATION";
 
-export const scheduleMutation = (mutationType, data, sucessCallback = null, errorCallback = null) => ({
+export const scheduleMutation = (mutationType, data, successCallback = null, errorCallback = null) => ({
   type: SCHEDULE_MUTATION,
   mutationType,
   data,
-  sucessCallback,
+  successCallback,
   errorCallback,
 });
 

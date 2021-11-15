@@ -161,7 +161,7 @@ const ProjectSettings = (props) => {
                 onChange={(e) => setNewPrivacy(e.target.value)}
                 readOnly={readOnly}
               />
-              {(privacy !== "public" || newPrivacy !== "public") && (
+              {(privacy === "public" || newPrivacy === "public") && (
                 <CardSelect
                   name="permissions"
                   value={newPermissions}
