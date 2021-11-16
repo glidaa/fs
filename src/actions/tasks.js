@@ -106,7 +106,7 @@ export const handleUpdateTask = (update) => (dispatch, getState) => {
     dispatch(updateTask(update))
   }
   if (user.state === AuthState.SignedIn) {
-    return dispatch(mutationsActions.scheduleMutation(
+    dispatch(mutationsActions.scheduleMutation(
       "updateTask",
       update,
       null,
@@ -134,7 +134,7 @@ export const handleRemoveTask = (taskState) => (dispatch, getState) => {
     dispatch(removeTask(taskState.id))
   }
   if (user.state === AuthState.SignedIn) {
-    return dispatch(mutationsActions.scheduleMutation(
+    dispatch(mutationsActions.scheduleMutation(
       "deleteTaskAndComments",
       { id: taskState.id },
       null,
@@ -152,33 +152,29 @@ export const handleRemoveTask = (taskState) => (dispatch, getState) => {
 }
 
 export const handleAssignTask = (taskID, username) => async (dispatch, getState) => {
-  const {
-    tasks,
-    user
-  } = getState()
+  const { tasks, user } = getState()
   const prevAssignees = [...tasks[taskID].assignees]
   if (user.state === AuthState.SignedIn) {
-    try {
-      if (/^user:.*$/.test(username)) {
-        await dispatch(usersActions.handleAddUsers([username.replace(/^user:/, "")]))
-      }
-      dispatch(updateTask({
-        id: taskID,
-        assignees: [...new Set([...prevAssignees, username])]
-      }))
-      const mutationID = generateID(user.data.username)
-      dispatch(mutationsActions.scheduleMutation(mutationID))
-      await execGraphQL(graphqlOperation(mutations.assignTask, {
-        taskID: taskID,
-        assignee: username,
-        mutationID: mutationID
-      }))
-    } catch {
-      dispatch(updateTask({
-        id: taskID,
-        assignees: prevAssignees
-      }))
+    if (/^user:.*$/.test(username)) {
+      await dispatch(usersActions.handleAddUsers([username.replace(/^user:/, "")]))
     }
+    dispatch(updateTask({
+      id: taskID,
+      assignees: [...new Set([...prevAssignees, username])]
+    }))
+    dispatch(mutationsActions.scheduleMutation(
+      "assignTask",
+      { id: taskID, assignee: username },
+      null,
+      () => {
+        if (getState().tasks[taskID]) {
+          dispatch(updateTask({
+            id: taskID,
+            assignees: prevAssignees
+          }))
+        }
+      }
+    ))
   } else if (/^anonymous:.*$/.test(username)) {
     dispatch(updateTask({
       id: taskID,
@@ -188,87 +184,75 @@ export const handleAssignTask = (taskID, username) => async (dispatch, getState)
 }
 
 export const handleAddWatcher = (taskID, username) => async (dispatch, getState) => {
-  const {
-    tasks,
-    user
-  } = getState()
+  const { tasks, user } = getState()
   if (user.state === AuthState.SignedIn) {
     const prevWatchers = [...tasks[taskID].watchers]
     dispatch(updateTask({
       id: taskID,
       watchers: [...new Set([...prevWatchers, username])]
     }))
-    try {
-      await dispatch(usersActions.handleAddUsers([username]))
-      const mutationID = generateID(user.data.username)
-      dispatch(mutationsActions.scheduleMutation(mutationID))
-      await execGraphQL(graphqlOperation(mutations.addWatcher, {
-        taskID: taskID,
-        watcher: username,
-        mutationID: mutationID
-      }))
-    } catch {
-      dispatch(updateTask({
-        id: taskID,
-        watchers: prevWatchers
-      }))
-    }
+    await dispatch(usersActions.handleAddUsers([username]))
+    dispatch(mutationsActions.scheduleMutation(
+      "addWatcher",
+      { id: taskID, watcher: username },
+      null,
+      () => {
+        if (getState().tasks[taskID]) {
+          dispatch(updateTask({
+            id: taskID,
+            watchers: prevWatchers
+          }))
+        }
+      }
+    ))
   }
 }
 
 export const handleUnassignTask = (taskID, username) => async (dispatch, getState) => {
-  const {
-    tasks,
-    user
-  } = getState()
+  const { tasks, user } = getState()
   const prevAssignees = [...tasks[taskID].assignees]
   dispatch(updateTask({
     id: taskID,
     assignees: [...prevAssignees].filter(x => x !== username)
   }))
   if (user.state === AuthState.SignedIn) {
-    try {
-      const mutationID = generateID(user.data.username)
-      dispatch(mutationsActions.scheduleMutation(mutationID))
-      await execGraphQL(graphqlOperation(mutations.unassignTask, {
-        taskID: taskID,
-        assignee: username,
-        mutationID: mutationID
-      }))
-    } catch {
-      dispatch(updateTask({
-        id: taskID,
-        assignees: prevAssignees
-      }))
-    }
+    dispatch(mutationsActions.scheduleMutation(
+      "unassignTask",
+      { id: taskID, assignee: username },
+      null,
+      () => {
+        if (getState().tasks[taskID]) {
+          dispatch(updateTask({
+            id: taskID,
+            assignees: prevAssignees
+          }))
+        }
+      }
+    ))
   }
 }
 
 export const handleRemoveWatcher = (taskID, username) => async (dispatch, getState) => {
-  const {
-    tasks,
-    user
-  } = getState()
+  const { tasks, user } = getState()
   if (user.state === AuthState.SignedIn) {
     const prevWatchers = [...tasks[taskID].watchers]
     dispatch(updateTask({
       id: taskID,
       watchers: [...prevWatchers].filter(x => x !== username)
     }))
-    try {
-      const mutationID = generateID(user.data.username)
-      dispatch(mutationsActions.scheduleMutation(mutationID))
-      await execGraphQL(graphqlOperation(mutations.removeWatcher, {
-        taskID: taskID,
-        watcher: username,
-        mutationID: mutationID
-      }))
-    } catch {
-      dispatch(updateTask({
-        id: taskID,
-        watchers: prevWatchers
-      }))
-    }
+    dispatch(mutationsActions.scheduleMutation(
+      "removeWatcher",
+      { id: taskID, watcher: username },
+      null,
+      () => {
+        if (getState().tasks[taskID]) {
+          dispatch(updateTask({
+            id: taskID,
+            watchers: prevWatchers
+          }))
+        }
+      }
+    ))
   }
 }
 

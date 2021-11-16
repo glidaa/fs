@@ -100,7 +100,7 @@ type Mutation {
 	pushUserUpdate(input: PushUserUpdateInput!): UserUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
-	pushProjectUpdate(input: PushProjectUpdateInput!): UpdatedProject
+	pushProjectUpdate(input: PushProjectUpdateInput!): ProjectUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_iam
 	pushNotification(input: PushNotificationInput!): Notification
@@ -115,13 +115,13 @@ type Mutation {
 	createComment(input: CreateCommentInput!): CreatedComment
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	updateProject(input: UpdateProjectInput!): UpdatedProject
+	updateProject(input: UpdateProjectInput!): ProjectUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	updateTask(input: UpdateTaskInput!): UpdatedTask
+	updateTask(input: UpdateTaskInput!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	updateComment(input: UpdateCommentInput!): UpdatedComment
+	updateComment(input: UpdateCommentInput!): CommentUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	updateUser(input: UpdateUserInput!): UserUpdate
@@ -142,16 +142,16 @@ type Mutation {
 	dismissNotifications: NotificationsList
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	assignTask(taskID: ID!, assignee: String!, mutationID: String): UpdatedTask
+	assignTask(input: AssignTaskInput!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	unassignTask(taskID: ID!, assignee: String!, mutationID: String): UpdatedTask
+	unassignTask(input: UnassignTaskInput!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	addWatcher(taskID: ID!, watcher: String!, mutationID: String): UpdatedTask
+	addWatcher(input: AddWatcherInput!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	removeWatcher(taskID: ID!, watcher: String!, mutationID: String): UpdatedTask
+	removeWatcher(input: RemoveWatcherInput!): TaskUpdate
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
 	importData(data: String!): ImportedProjectsList
@@ -219,7 +219,7 @@ type Subscription {
 		@aws_subscribe(mutations: ["importData"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateOwnedProject(owner: String!): UpdatedProject
+	onUpdateOwnedProject(owner: String!): ProjectUpdate
 		@aws_subscribe(mutations: ["updateProject", "pushProjectUpdate"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -227,7 +227,7 @@ type Subscription {
 		@aws_subscribe(mutations: ["deleteProjectAndTasks"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateProject(id: String!): UpdatedProject
+	onUpdateProject(id: String!): ProjectUpdate
 		@aws_subscribe(mutations: ["updateProject", "pushProjectUpdate"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -239,7 +239,7 @@ type Subscription {
 		@aws_subscribe(mutations: ["createTask"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateTaskByProjectID(projectID: ID!): UpdatedTask
+	onUpdateTaskByProjectID(projectID: ID!): TaskUpdate
 		@aws_subscribe(mutations: ["updateTask", "assignTask", "unassignTask", "addWatcher", "removeWatcher"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -251,7 +251,7 @@ type Subscription {
 		@aws_subscribe(mutations: ["createComment"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
-	onUpdateCommentByTaskID(taskID: ID!): UpdatedComment
+	onUpdateCommentByTaskID(taskID: ID!): CommentUpdate
 		@aws_subscribe(mutations: ["updateComment"])
 		@function(name: "fsCoreApiResolver-${env}")
 		@aws_cognito_user_pools
@@ -383,6 +383,30 @@ input DeleteCommentInput {
 	mutationID: ID
 }
 
+input AssignTaskInput {
+	id: ID!
+	assignee: String!
+	mutationID: ID
+}
+
+input UnassignTaskInput {
+	id: ID!
+	assignee: String!
+	mutationID: ID
+}
+
+input AddWatcherInput {
+	id: ID!
+	watcher: String!
+	mutationID: ID
+}
+
+input RemoveWatcherInput {
+	id: ID!
+	watcher: String!
+	mutationID: ID
+}
+
 input UpdateUserInput {
 	username: String!
 	firstName: String
@@ -464,7 +488,7 @@ type CreatedComment
 	mutationID: ID
 }
 
-type UpdatedProject
+type ProjectUpdate
 	@aws_iam
 	@aws_cognito_user_pools {
 	id: ID!
@@ -483,7 +507,7 @@ type UpdatedProject
 	mutationID: ID
 }
 
-type UpdatedTask
+type TaskUpdate
 	@aws_iam
 	@aws_cognito_user_pools {
 	id: ID!
@@ -503,7 +527,7 @@ type UpdatedTask
 	mutationID: ID
 }
 
-type UpdatedComment
+type CommentUpdate
 	@aws_iam
 	@aws_cognito_user_pools {
 	id: ID!

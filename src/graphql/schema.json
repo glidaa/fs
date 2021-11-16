@@ -2191,7 +2191,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedProject",
+            "name" : "ProjectUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -2311,7 +2311,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedProject",
+            "name" : "ProjectUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -2335,7 +2335,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedTask",
+            "name" : "TaskUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -2359,7 +2359,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedComment",
+            "name" : "CommentUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -2499,44 +2499,22 @@
           "name" : "assignTask",
           "description" : null,
           "args" : [ {
-            "name" : "taskID",
+            "name" : "input",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
               "name" : null,
               "ofType" : {
-                "kind" : "SCALAR",
-                "name" : "ID",
+                "kind" : "INPUT_OBJECT",
+                "name" : "AssignTaskInput",
                 "ofType" : null
               }
-            },
-            "defaultValue" : null
-          }, {
-            "name" : "assignee",
-            "description" : null,
-            "type" : {
-              "kind" : "NON_NULL",
-              "name" : null,
-              "ofType" : {
-                "kind" : "SCALAR",
-                "name" : "String",
-                "ofType" : null
-              }
-            },
-            "defaultValue" : null
-          }, {
-            "name" : "mutationID",
-            "description" : null,
-            "type" : {
-              "kind" : "SCALAR",
-              "name" : "String",
-              "ofType" : null
             },
             "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedTask",
+            "name" : "TaskUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -2545,44 +2523,22 @@
           "name" : "unassignTask",
           "description" : null,
           "args" : [ {
-            "name" : "taskID",
+            "name" : "input",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
               "name" : null,
               "ofType" : {
-                "kind" : "SCALAR",
-                "name" : "ID",
+                "kind" : "INPUT_OBJECT",
+                "name" : "UnassignTaskInput",
                 "ofType" : null
               }
-            },
-            "defaultValue" : null
-          }, {
-            "name" : "assignee",
-            "description" : null,
-            "type" : {
-              "kind" : "NON_NULL",
-              "name" : null,
-              "ofType" : {
-                "kind" : "SCALAR",
-                "name" : "String",
-                "ofType" : null
-              }
-            },
-            "defaultValue" : null
-          }, {
-            "name" : "mutationID",
-            "description" : null,
-            "type" : {
-              "kind" : "SCALAR",
-              "name" : "String",
-              "ofType" : null
             },
             "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedTask",
+            "name" : "TaskUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -2591,44 +2547,22 @@
           "name" : "addWatcher",
           "description" : null,
           "args" : [ {
-            "name" : "taskID",
+            "name" : "input",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
               "name" : null,
               "ofType" : {
-                "kind" : "SCALAR",
-                "name" : "ID",
+                "kind" : "INPUT_OBJECT",
+                "name" : "AddWatcherInput",
                 "ofType" : null
               }
-            },
-            "defaultValue" : null
-          }, {
-            "name" : "watcher",
-            "description" : null,
-            "type" : {
-              "kind" : "NON_NULL",
-              "name" : null,
-              "ofType" : {
-                "kind" : "SCALAR",
-                "name" : "String",
-                "ofType" : null
-              }
-            },
-            "defaultValue" : null
-          }, {
-            "name" : "mutationID",
-            "description" : null,
-            "type" : {
-              "kind" : "SCALAR",
-              "name" : "String",
-              "ofType" : null
             },
             "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedTask",
+            "name" : "TaskUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -2637,44 +2571,22 @@
           "name" : "removeWatcher",
           "description" : null,
           "args" : [ {
-            "name" : "taskID",
+            "name" : "input",
             "description" : null,
             "type" : {
               "kind" : "NON_NULL",
               "name" : null,
               "ofType" : {
-                "kind" : "SCALAR",
-                "name" : "ID",
+                "kind" : "INPUT_OBJECT",
+                "name" : "RemoveWatcherInput",
                 "ofType" : null
               }
-            },
-            "defaultValue" : null
-          }, {
-            "name" : "watcher",
-            "description" : null,
-            "type" : {
-              "kind" : "NON_NULL",
-              "name" : null,
-              "ofType" : {
-                "kind" : "SCALAR",
-                "name" : "String",
-                "ofType" : null
-              }
-            },
-            "defaultValue" : null
-          }, {
-            "name" : "mutationID",
-            "description" : null,
-            "type" : {
-              "kind" : "SCALAR",
-              "name" : "String",
-              "ofType" : null
             },
             "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedTask",
+            "name" : "TaskUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -3060,7 +2972,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "UpdatedProject",
+        "name" : "ProjectUpdate",
         "description" : null,
         "fields" : [ {
           "name" : "id",
@@ -4482,7 +4394,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "UpdatedTask",
+        "name" : "TaskUpdate",
         "description" : null,
         "fields" : [ {
           "name" : "id",
@@ -4803,7 +4715,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "UpdatedComment",
+        "name" : "CommentUpdate",
         "description" : null,
         "fields" : [ {
           "name" : "id",
@@ -5668,6 +5580,182 @@
         "enumValues" : null,
         "possibleTypes" : null
       }, {
+        "kind" : "INPUT_OBJECT",
+        "name" : "AssignTaskInput",
+        "description" : null,
+        "fields" : null,
+        "inputFields" : [ {
+          "name" : "id",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "ID",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "assignee",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "mutationID",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "ID",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        } ],
+        "interfaces" : null,
+        "enumValues" : null,
+        "possibleTypes" : null
+      }, {
+        "kind" : "INPUT_OBJECT",
+        "name" : "UnassignTaskInput",
+        "description" : null,
+        "fields" : null,
+        "inputFields" : [ {
+          "name" : "id",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "ID",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "assignee",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "mutationID",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "ID",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        } ],
+        "interfaces" : null,
+        "enumValues" : null,
+        "possibleTypes" : null
+      }, {
+        "kind" : "INPUT_OBJECT",
+        "name" : "AddWatcherInput",
+        "description" : null,
+        "fields" : null,
+        "inputFields" : [ {
+          "name" : "id",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "ID",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "watcher",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "mutationID",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "ID",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        } ],
+        "interfaces" : null,
+        "enumValues" : null,
+        "possibleTypes" : null
+      }, {
+        "kind" : "INPUT_OBJECT",
+        "name" : "RemoveWatcherInput",
+        "description" : null,
+        "fields" : null,
+        "inputFields" : [ {
+          "name" : "id",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "ID",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "watcher",
+          "description" : null,
+          "type" : {
+            "kind" : "NON_NULL",
+            "name" : null,
+            "ofType" : {
+              "kind" : "SCALAR",
+              "name" : "String",
+              "ofType" : null
+            }
+          },
+          "defaultValue" : null
+        }, {
+          "name" : "mutationID",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "ID",
+            "ofType" : null
+          },
+          "defaultValue" : null
+        } ],
+        "interfaces" : null,
+        "enumValues" : null,
+        "possibleTypes" : null
+      }, {
         "kind" : "OBJECT",
         "name" : "ImportedProjectsList",
         "description" : null,
@@ -5853,7 +5941,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedProject",
+            "name" : "ProjectUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -5901,7 +5989,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedProject",
+            "name" : "ProjectUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -5973,7 +6061,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedTask",
+            "name" : "TaskUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -6045,7 +6133,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "UpdatedComment",
+            "name" : "CommentUpdate",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -7051,6 +7139,23 @@
         "onFragment" : false,
         "onField" : true
       }, {
+        "name" : "deprecated",
+        "description" : null,
+        "locations" : [ "FIELD_DEFINITION", "ENUM_VALUE" ],
+        "args" : [ {
+          "name" : "reason",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "String",
+            "ofType" : null
+          },
+          "defaultValue" : "\"No longer supported\""
+        } ],
+        "onOperation" : false,
+        "onFragment" : false,
+        "onField" : false
+      }, {
         "name" : "aws_auth",
         "description" : "Directs the schema to enforce authorization on a field",
         "locations" : [ "FIELD_DEFINITION" ],
@@ -7076,23 +7181,6 @@
         "description" : "Tells the service this field/object has access authorized by an API key.",
         "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
         "args" : [ ],
-        "onOperation" : false,
-        "onFragment" : false,
-        "onField" : false
-      }, {
-        "name" : "deprecated",
-        "description" : null,
-        "locations" : [ "FIELD_DEFINITION", "ENUM_VALUE" ],
-        "args" : [ {
-          "name" : "reason",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : "\"No longer supported\""
-        } ],
         "onOperation" : false,
         "onFragment" : false,
         "onField" : false

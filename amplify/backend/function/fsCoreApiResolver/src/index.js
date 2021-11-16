@@ -1083,7 +1083,7 @@ exports.handler = async function (ctx) {
   }
 
   async function assignTask(ctx) {
-    const { assignee, taskID, mutationID } = ctx.arguments
+    const { id: taskID, assignee, mutationID } = ctx.arguments.input
     const client = ctx.identity.username
     const isValidAssignee = /^(user|anonymous):(.*)$/.test(assignee)
     if (isValidAssignee) {
@@ -1178,12 +1178,7 @@ exports.handler = async function (ctx) {
                 ]
               })
             }
-            return {
-              id: taskID,
-              projectID: cachedTasks[taskID].projectID,
-              mutationID: mutationID,
-              ...updatedTask.Attributes
-            }
+            return { ...updatedTask.Attributes, mutationID }
           } catch (err) {
             throw new Error(err);
           }
@@ -1199,7 +1194,7 @@ exports.handler = async function (ctx) {
   }
 
   async function unassignTask(ctx) {
-    const { assignee, taskID, mutationID } = ctx.arguments
+    const { id: taskID, assignee, mutationID } = ctx.arguments.input
     const client = ctx.identity.username
     const isValidAssignee = /^(user|anonymous):(.*)$/.test(assignee)
     if (isValidAssignee) {
@@ -1246,12 +1241,7 @@ exports.handler = async function (ctx) {
               const userUpdate = await docClient.update(userUpdateParams).promise();
               await _pushUserUpdate(userUpdate.Attributes)
             }
-            return {
-              id: taskID,
-              projectID: cachedTasks[taskID].projectID,
-              mutationID: mutationID,
-              ...updatedTask.Attributes
-            }
+            return { ...updatedTask.Attributes, mutationID }
           } catch (err) {
             throw new Error(err);
           }
@@ -1267,7 +1257,7 @@ exports.handler = async function (ctx) {
   }
 
   async function addWatcher(ctx) {
-    const { watcher, taskID, mutationID } = ctx.arguments
+    const { id: taskID, watcher, mutationID } = ctx.arguments.input
     const client = ctx.identity.username
     const userGetParams = {
       TableName: USERTABLE,
@@ -1308,12 +1298,7 @@ exports.handler = async function (ctx) {
           const updatedTask = await docClient.update(taskUpdateParams).promise();
           const userUpdate = await docClient.update(userUpdateParams).promise();
           await _pushUserUpdate(userUpdate.Attributes)
-          return {
-            id: taskID,
-            projectID: cachedTasks[taskID].projectID,
-            mutationID: mutationID,
-            ...updatedTask.Attributes
-          }
+          return { ...updatedTask.Attributes, mutationID }
         } catch (err) {
           throw new Error(err);
         }
@@ -1326,7 +1311,7 @@ exports.handler = async function (ctx) {
   }
 
   async function removeWatcher(ctx) {
-    const { watcher, taskID, mutationID } = ctx.arguments
+    const { id: taskID, watcher, mutationID } = ctx.arguments
     const client = ctx.identity.username
     const userGetParams = {
       TableName: USERTABLE,
@@ -1367,12 +1352,7 @@ exports.handler = async function (ctx) {
           const updatedTask = await docClient.update(taskUpdateParams).promise();
           const userUpdate = await docClient.update(userUpdateParams).promise();
           await _pushUserUpdate(userUpdate.Attributes)
-          return {
-            id: taskID,
-            projectID: cachedTasks[taskID].projectID,
-            mutationID: mutationID,
-            ...updatedTask.Attributes
-          }
+          return { ...updatedTask.Attributes, mutationID }
         } catch (err) {
           throw new Error(err);
         }
@@ -2368,7 +2348,6 @@ exports.handler = async function (ctx) {
         httpRequest.write(req.body);
         httpRequest.end();
       });
-      console.log(data)
     } catch (err) {
       throw new Error(err)
     }
@@ -2423,7 +2402,6 @@ exports.handler = async function (ctx) {
         httpRequest.write(req.body);
         httpRequest.end();
       });
-      console.log(data)
     } catch (err) {
       throw new Error(err)
     }
@@ -2482,7 +2460,6 @@ async function _pushNotification({ owners, ...notification }) {
         httpRequest.write(req.body);
         httpRequest.end();
       });
-      console.log(data)
     } catch (err) {
       throw new Error(err)
     }
