@@ -59,9 +59,11 @@ const TasksPanel = (props) => {
                 searchKeyword={searchKeyword}
                 setSearchKeyword={setSearchKeyword}
               />
-              {searchKeyword.trim() ? (
-                <TasksSearch searchKeyword={searchKeyword} />
-              ) : React.createElement(sortedTasks[tasksSortingCriteria])}
+              <div>
+                {searchKeyword.trim() ? (
+                  <TasksSearch searchKeyword={searchKeyword} />
+                ) : React.createElement(sortedTasks[tasksSortingCriteria])}
+              </div>
             </>
           )}
         </>

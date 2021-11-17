@@ -7,10 +7,8 @@ import TaskItem from "./TaskItem";
 const TasksSearch = (props) => {
   const { tasks, searchKeyword } = props;
   const getSearchResults = (tasks, searchKeyword) => {
-    const sortedTasks = parseLinkedList(tasks, "prevTask", "nextTask").sort(
-      (a, b) => (b.due || 0) - (a.due || 0)
-    )
-    const fuse = new Fuse(sortedTasks, {
+    const tasksArr = parseLinkedList(tasks, "prevTask", "nextTask")
+    const fuse = new Fuse(tasksArr, {
         keys: ['task', 'description']
     })
     return fuse.search(searchKeyword).map(x => x.item)

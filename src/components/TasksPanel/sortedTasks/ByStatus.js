@@ -18,8 +18,8 @@ const ByStatus = (props) => {
   return (
     <>
       {sortedTasks.todo.length > 0 && (
-        <div>
-          <span className={styles.StatusHeader}>
+        <div className={styles.Section}>
+          <span className={styles.SectionHeader}>
             Todo
           </span>
           {sortedTasks.todo.map((value, index) => (
@@ -41,8 +41,8 @@ const ByStatus = (props) => {
         </div>
       )}
       {sortedTasks.pending.length > 0 && (
-        <div>
-          <span className={styles.StatusHeader}>
+        <div className={styles.Section}>
+          <span className={styles.SectionHeader}>
             Pending
           </span>
           {sortedTasks.pending.map((value, index) => (
@@ -67,8 +67,8 @@ const ByStatus = (props) => {
         </div>
       )}
       {sortedTasks.done.length > 0 && (
-        <div>
-          <span className={styles.StatusHeader}>
+        <div className={styles.Section}>
+          <span className={styles.SectionHeader}>
             Finished
           </span>
           {sortedTasks.done.map((value, index) => (

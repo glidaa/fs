@@ -18,8 +18,8 @@ const ByPriority = (props) => {
   return (
     <>
       {sortedTasks.high.length > 0 && (
-        <div>
-          <span className={styles.PriorityHeader}>
+        <div className={styles.Section}>
+          <span className={styles.SectionHeader}>
             High
           </span>
           {sortedTasks.high.map((value, index) => (
@@ -41,8 +41,8 @@ const ByPriority = (props) => {
         </div>
       )}
       {sortedTasks.normal.length > 0 && (
-        <div>
-          <span className={styles.PriorityHeader}>
+        <div className={styles.Section}>
+          <span className={styles.SectionHeader}>
             Normal
           </span>
           {sortedTasks.normal.map((value, index) => (
@@ -67,8 +67,8 @@ const ByPriority = (props) => {
         </div>
       )}
       {sortedTasks.low.length > 0 && (
-        <div>
-          <span className={styles.PriorityHeader}>
+        <div className={styles.Section}>
+          <span className={styles.SectionHeader}>
             Low
           </span>
           {sortedTasks.low.map((value, index) => (
