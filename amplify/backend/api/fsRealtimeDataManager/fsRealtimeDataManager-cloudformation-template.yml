@@ -111,7 +111,7 @@ Resources:
             - "  const putParams = {"
             - "    TableName: process.env.TABLE_NAME,"
             - "    Item: {"
-            - "      id: event.requestContext.connectionId",
+            - "      id: event.requestContext.connectionId,"
             - "      projectID: projectID,"
             - "      username: username"
             - "    }"
