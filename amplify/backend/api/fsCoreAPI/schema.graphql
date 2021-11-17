@@ -1,8 +1,7 @@
 type Connection
 	@model(queries: null, mutations: null, subscriptions: null)
 	@aws_iam
-	@aws_cognito_user_pools
-	@key(fields: ["id", "projectID"]) {
+	@aws_cognito_user_pools {
 	id: ID!
 	projectID: ID!
 	owner: String!
