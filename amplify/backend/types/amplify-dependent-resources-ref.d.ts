@@ -3,6 +3,12 @@ export type AmplifyDependentResourcesAttributes = {
         "fsCoreAPI": {
             "GraphQLAPIIdOutput": "string",
             "GraphQLAPIEndpointOutput": "string"
+        },
+        "fsRealtimeDataManager": {
+            "OnConnectFunctionArn": "string",
+            "OnDisconnectFunctionArn": "string",
+            "SendMessageFunctionArn": "string",
+            "WebSocketURI": "string"
         }
     },
     "auth": {

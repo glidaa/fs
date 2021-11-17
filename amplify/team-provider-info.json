@@ -20,11 +20,11 @@
         "fsCognitoPostConfirmation": {
           "GROUP": "free",
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsCognitoPostConfirmation-634a3165387a76566863-build.zip"
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-47577561796663755154-build.zip"
         },
         "fsCoreApiResolver": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsCoreApiResolver-775031506c394765612b-build.zip"
+          "s3Key": "amplify-builds/fsCoreApiResolver-444e6475714332493563-build.zip"
         },
         "fsCognitoPostConfirmationInvoker": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
@@ -32,7 +32,7 @@
         },
         "fsDailyReport": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsDailyReport-6f473765765949575734-build.zip"
+          "s3Key": "amplify-builds/fsDailyReport-45476977466f41396b59-build.zip"
         }
       },
       "hosting": {
