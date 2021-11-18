@@ -1,0 +1,3 @@
+apifsCoreAPIGraphQLAPIIdOutput: !GetAtt
+  - apifsCoreAPI
+  - Outputs.GraphQLAPIIdOutput

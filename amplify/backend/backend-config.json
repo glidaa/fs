@@ -22,7 +22,17 @@
     "fsRealtimeDataManager": {
       "service": "API Gateway",
       "providerPlugin": "awscloudformation",
-      "authorizationType": "NONE"
+      "authorizationType": "NONE",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ]
+        }
+      ]
     }
   },
   "auth": {

@@ -9,6 +9,9 @@ Description: >
 Parameters:
   env:
     Type: String
+  apifsCoreAPIGraphQLAPIIdOutput:
+    Type: String
+    Default: 'apifsCoreAPIGraphQLAPIIdOutput'
   TableName:
     Type: String
     Default: 'ConnectionTable'
@@ -63,6 +66,46 @@ Resources:
       IntegrationUri: 
         Fn::Sub:
             arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnDisconnectFunction.Arn}/invocations
+  JoinRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref fsRealtimeDataManager
+      RouteKey: joinproject
+      AuthorizationType: NONE
+      OperationName: JoinRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref JoinInteg
+  JoinInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref fsRealtimeDataManager
+      Description: Join Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${JoinProjectFunction.Arn}/invocations
+  LeaveRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref fsRealtimeDataManager
+      RouteKey: leaveproject
+      AuthorizationType: NONE
+      OperationName: LeaveRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref LeaveInteg
+  LeaveInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref fsRealtimeDataManager
+      Description: Leave Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LeaveProjectFunction.Arn}/invocations
   SendRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -87,6 +130,8 @@ Resources:
     Type: AWS::ApiGatewayV2::Deployment
     DependsOn:
     - ConnectRoute
+    - JoinRoute
+    - LeaveRoute
     - SendRoute
     - DisconnectRoute
     Properties:
@@ -104,25 +149,7 @@ Resources:
       Code:
         ZipFile: !Join
           - |+
-          - - "const AWS = require('aws-sdk');"
-            - "const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });"
-            - "exports.handler = async event => {"
-            - "  const { projectID, username } = JSON.parse(event.body).data"
-            - "  const putParams = {"
-            - "    TableName: process.env.TABLE_NAME,"
-            - "    Item: {"
-            - "      id: event.requestContext.connectionId,"
-            - "      projectID: projectID,"
-            - "      username: username"
-            - "    }"
-            - "  };"
-            - "  try {"
-            - "    await ddb.put(putParams).promise();"
-            - "  } catch (err) {"
-            - "    return { statusCode: 500, body: 'Failed to connect: ' + JSON.stringify(err) };"
-            - "  }"
-            - "  return { statusCode: 200, body: 'Connected.' };"
-            - "};"
+          - - "exports.handler = (event, context, callback) => callback(null, { statusCode: 200, body: 'Connected.' });"
       Handler: index.handler
       MemorySize: 256
       Runtime: nodejs12.x
@@ -187,28 +214,13 @@ Resources:
       Code:
         ZipFile: !Join
           - |+
-          - - "const AWS = require('aws-sdk');"
-            - "const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });"
-            - "exports.handler = async event => {"
-            - "  const deleteParams = {"
-            - "    TableName: process.env.TABLE_NAME,"
-            - "    Key: {"
-            - "      id: event.requestContext.connectionId"
-            - "    }"
-            - "  };"
-            - "  try {"
-            - "    await ddb.delete(deleteParams).promise();"
-            - "  } catch (err) {"
-            - "    return { statusCode: 500, body: 'Failed to disconnect: ' + JSON.stringify(err) };"
-            - "  }"
-            - "  return { statusCode: 200, body: 'Disconnected.' };"
-            - "};"
+          - - "exports.handler = (event, context, callback) => callback(null, { statusCode: 200, body: 'Disconnected.' });"
       Handler: index.handler
       MemorySize: 256
       Runtime: nodejs12.x
       Environment:
         Variables:
-          TABLE_NAME: !Ref TableName
+          TABLE_NAME: !Ref apifsCoreAPIGraphQLAPIIdOutput
       Role: !GetAtt
         - OnDisconnectLambdaRole
         - Arn
@@ -261,6 +273,187 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref OnDisconnectFunction
       Principal: apigateway.amazonaws.com
+  JoinProjectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: !Join
+          - |+
+          - - "const AWS = require('aws-sdk');"
+            - "const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });"
+            - "exports.handler = async (event, context, callback) => {"
+            - "  const { projectID, username } = event.body.data;"
+            - "  const putParams = {"
+            - "    TableName: process.env.TABLE_NAME,"
+            - "    Item: {"
+            - "      id: event.requestContext.connectionId,"
+            - "      projectID: projectID,"
+            - "      username: username"
+            - "    }"
+            - "  };"
+            - "  try {"
+            - "    await ddb.put(putParams).promise();"
+            - "  } catch (err) {"
+            - "    callback(null, { statusCode: 500, body: 'Failed to connect: ' + JSON.stringify(err) });"
+            - "  }"
+            - "  callback(null, { statusCode: 200, body: 'Connected.' });"
+            - "};"
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Role: !GetAtt
+        - JoinProjLambdaRole
+        - Arn
+    DependsOn: JoinProjLambdaRole
+    
+  JoinProjLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName:
+        !If [
+          ShouldNotCreateEnvResources,
+          "fstest9ae96471_joinproj_lambda_role",
+          !Join ["", ["fstest9ae96471_joinproj_lambda_role", "-", !Ref env]],
+        ]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: fstest9ae96471-joinproj-dynamodb-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                - 'dynamodb:GetItem'
+                - 'dynamodb:DeleteItem'
+                - 'dynamodb:PutItem'
+                - 'dynamodb:Scan'
+                - 'dynamodb:Query'
+                - 'dynamodb:UpdateItem'
+                - 'dynamodb:BatchWriteItem'
+                - 'dynamodb:BatchGetItem'
+                - 'dynamodb:DescribeTable'
+                - 'dynamodb:ConditionCheckItem'
+                Resource:
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}'
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}/index/*'
+        - PolicyName: fstest9ae96471-joinproj-executeapi-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                - 'execute-api:ManageConnections'
+                Resource:
+                - !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${fsRealtimeDataManager}/*'
+
+  JoinProjectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - fsRealtimeDataManager
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref JoinProjectFunction
+      Principal: apigateway.amazonaws.com
+  LeaveProjectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: !Join
+          - |+
+          - - "const AWS = require('aws-sdk');"
+            - "const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });"
+            - "exports.handler = async (event, context, callback) => {"
+            - "  const deleteParams = {"
+            - "    TableName: process.env.TABLE_NAME,"
+            - "    Key: {"
+            - "      id: event.requestContext.connectionId"
+            - "    }"
+            - "  };"
+            - "  try {"
+            - "    await ddb.delete(deleteParams).promise();"
+            - "  } catch (err) {"
+            - "    callback(null, { statusCode: 500, body: 'Failed to disconnect: ' + JSON.stringify(err) });"
+            - "  }"
+            - "  callback(null, { statusCode: 200, body: 'Disconnected.' });"
+            - "};"
+      Handler: index.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Role: !GetAtt
+        - LeaveProjLambdaRole
+        - Arn
+    DependsOn: LeaveProjLambdaRole
+    
+  LeaveProjLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName:
+        !If [
+          ShouldNotCreateEnvResources,
+          "fstest9ae96471_leaveproj_lambda_role",
+          !Join ["", ["fstest9ae96471_leaveproj_lambda_role", "-", !Ref env]],
+        ]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: fstest9ae96471-leaveproj-dynamodb-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                - 'dynamodb:GetItem'
+                - 'dynamodb:DeleteItem'
+                - 'dynamodb:PutItem'
+                - 'dynamodb:Scan'
+                - 'dynamodb:Query'
+                - 'dynamodb:UpdateItem'
+                - 'dynamodb:BatchWriteItem'
+                - 'dynamodb:BatchGetItem'
+                - 'dynamodb:DescribeTable'
+                - 'dynamodb:ConditionCheckItem'
+                Resource:
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}'
+                - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}/index/*'
+        - PolicyName: fstest9ae96471-leaveproj-executeapi-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                - 'execute-api:ManageConnections'
+                Resource:
+                - !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${fsRealtimeDataManager}/*'
+
+  LeaveProjectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - fsRealtimeDataManager
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LeaveProjectFunction
+      Principal: apigateway.amazonaws.com
   SendMessageFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -270,7 +463,7 @@ Resources:
           - - "const AWS = require('aws-sdk');"
             - "const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });"
             - "const { TABLE_NAME } = process.env;"
-            - "exports.handler = async event => {"
+            - "exports.handler = async (event, context, callback) => {"
             - "  let connectionData;"
             - "  try {"
             - "    connectionData = await ddb.scan({ TableName: TABLE_NAME, ProjectionExpression: 'id' }).promise();"
@@ -297,9 +490,9 @@ Resources:
             - "  try {"
             - "    await Promise.all(postCalls);"
             - "  } catch (e) {"
-            - "    return { statusCode: 500, body: e.stack };"
+            - "    callback(null, { statusCode: 500, body: e.stack });"
             - "  }"
-            - "  return { statusCode: 200, body: 'Data sent.' };"
+            - "  callback(null, { statusCode: 200, body: 'Data sent.' });"
             - "};"
       Handler: index.handler
       MemorySize: 256
@@ -377,6 +570,14 @@ Outputs:
   OnDisconnectFunctionArn:
     Description: "OnDisconnect function ARN"
     Value: !GetAtt OnDisconnectFunction.Arn
+
+  JoinProjectFunctionArn:
+    Description: "JoinProject function ARN"
+    Value: !GetAtt JoinProjectFunction.Arn
+
+  LeaveProjectFunctionArn:
+    Description: "LeaveProject function ARN"
+    Value: !GetAtt LeaveProjectFunction.Arn
 
   SendMessageFunctionArn:
     Description: "SendMessage function ARN"

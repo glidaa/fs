@@ -12,9 +12,11 @@
       "AmplifyAppId": "dq757k0acraow"
     },
     "categories": {
-      "auth": {
-        "fsCognito": {},
-        "userPoolGroups": {}
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "dq757k0acraow",
+          "type": "manual"
+        }
       },
       "function": {
         "fsCognitoPostConfirmation": {
@@ -35,11 +37,9 @@
           "s3Key": "amplify-builds/fsDailyReport-45476977466f41396b59-build.zip"
         }
       },
-      "hosting": {
-        "amplifyhosting": {
-          "appId": "dq757k0acraow",
-          "type": "manual"
-        }
+      "auth": {
+        "userPoolGroups": {},
+        "fsCognito": {}
       }
     }
   }

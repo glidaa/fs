@@ -7,6 +7,8 @@ export type AmplifyDependentResourcesAttributes = {
         "fsRealtimeDataManager": {
             "OnConnectFunctionArn": "string",
             "OnDisconnectFunctionArn": "string",
+            "JoinProjectFunctionArn": "string",
+            "LeaveProjectFunctionArn": "string",
             "SendMessageFunctionArn": "string",
             "WebSocketURI": "string"
         }
