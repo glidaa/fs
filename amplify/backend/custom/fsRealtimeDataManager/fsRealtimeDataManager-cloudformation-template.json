@@ -1,0 +1,391 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"Amplify\",\"createdWith\":\"7.4.0\",\"stackType\":\"custom-customCloudformation\",\"metadata\":{}}",
+  "Parameters": {
+    "env": {
+      "Type": "String"
+    },
+    "functionfsUserConnectionName": {
+      "Type": "String",
+      "Description": "Input parameter describing Name attribute for function/fsUserConnection resource"
+    },
+    "functionfsUserConnectionArn": {
+      "Type": "String",
+      "Description": "Input parameter describing Arn attribute for function/fsUserConnection resource"
+    },
+    "functionfsUserConnectionRegion": {
+      "Type": "String",
+      "Description": "Input parameter describing Region attribute for function/fsUserConnection resource"
+    },
+    "functionfsUserConnectionLambdaExecutionRole": {
+      "Type": "String",
+      "Description": "Input parameter describing LambdaExecutionRole attribute for function/fsUserConnection resource"
+    },
+    "functionfsUserDisconnectionName": {
+      "Type": "String",
+      "Description": "Input parameter describing Name attribute for function/fsUserDisconnection resource"
+    },
+    "functionfsUserDisconnectionArn": {
+      "Type": "String",
+      "Description": "Input parameter describing Arn attribute for function/fsUserDisconnection resource"
+    },
+    "functionfsUserDisconnectionRegion": {
+      "Type": "String",
+      "Description": "Input parameter describing Region attribute for function/fsUserDisconnection resource"
+    },
+    "functionfsUserDisconnectionLambdaExecutionRole": {
+      "Type": "String",
+      "Description": "Input parameter describing LambdaExecutionRole attribute for function/fsUserDisconnection resource"
+    },
+    "functionfsJoinProjectName": {
+      "Type": "String",
+      "Description": "Input parameter describing Name attribute for function/fsJoinProject resource"
+    },
+    "functionfsJoinProjectArn": {
+      "Type": "String",
+      "Description": "Input parameter describing Arn attribute for function/fsJoinProject resource"
+    },
+    "functionfsJoinProjectRegion": {
+      "Type": "String",
+      "Description": "Input parameter describing Region attribute for function/fsJoinProject resource"
+    },
+    "functionfsJoinProjectLambdaExecutionRole": {
+      "Type": "String",
+      "Description": "Input parameter describing LambdaExecutionRole attribute for function/fsJoinProject resource"
+    },
+    "functionfsLeaveProjectName": {
+      "Type": "String",
+      "Description": "Input parameter describing Name attribute for function/fsLeaveProject resource"
+    },
+    "functionfsLeaveProjectArn": {
+      "Type": "String",
+      "Description": "Input parameter describing Arn attribute for function/fsLeaveProject resource"
+    },
+    "functionfsLeaveProjectRegion": {
+      "Type": "String",
+      "Description": "Input parameter describing Region attribute for function/fsLeaveProject resource"
+    },
+    "functionfsLeaveProjectLambdaExecutionRole": {
+      "Type": "String",
+      "Description": "Input parameter describing LambdaExecutionRole attribute for function/fsLeaveProject resource"
+    },
+    "functionfsSendRealtimeDataName": {
+      "Type": "String",
+      "Description": "Input parameter describing Name attribute for function/fsSendRealtimeData resource"
+    },
+    "functionfsSendRealtimeDataArn": {
+      "Type": "String",
+      "Description": "Input parameter describing Arn attribute for function/fsSendRealtimeData resource"
+    },
+    "functionfsSendRealtimeDataRegion": {
+      "Type": "String",
+      "Description": "Input parameter describing Region attribute for function/fsSendRealtimeData resource"
+    },
+    "functionfsSendRealtimeDataLambdaExecutionRole": {
+      "Type": "String",
+      "Description": "Input parameter describing LambdaExecutionRole attribute for function/fsSendRealtimeData resource"
+    }
+  },
+  "Conditions": {
+    "ShouldNotCreateEnvResources": {
+      "Fn::Equals": [
+        {
+          "Ref": "env"
+        },
+        "NONE"
+      ]
+    }
+  },
+  "Resources": {
+    "fsRealtimeDataManager": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "fsRealtimeDataManager",
+        "ProtocolType": "WEBSOCKET",
+        "RouteSelectionExpression": "$request.body.action"
+      }
+    },
+    "ConnectRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "RouteKey": "$connect",
+        "AuthorizationType": "NONE",
+        "OperationName": "ConnectRoute",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "ConnectInteg"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "ConnectInteg": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "Description": "Connect Integration",
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${functionfsUserConnectionArn}/invocations"
+        }
+      }
+    },
+    "DisconnectRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "RouteKey": "$disconnect",
+        "AuthorizationType": "NONE",
+        "OperationName": "DisconnectRoute",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "DisconnectInteg"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "DisconnectInteg": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "Description": "Disconnect Integration",
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${functionfsUserDisconnectionArn}/invocations"
+        }
+      }
+    },
+    "JoinRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "RouteKey": "joinproject",
+        "AuthorizationType": "NONE",
+        "OperationName": "JoinRoute",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "JoinInteg"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "JoinInteg": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "Description": "Join Integration",
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${functionfsJoinProjectArn}/invocations"
+        }
+      }
+    },
+    "LeaveRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "RouteKey": "leaveproject",
+        "AuthorizationType": "NONE",
+        "OperationName": "LeaveRoute",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "LeaveInteg"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "LeaveInteg": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "Description": "Leave Integration",
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${functionfsLeaveProjectArn}/invocations"
+        }
+      }
+    },
+    "SendRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "RouteKey": "sendmessage",
+        "AuthorizationType": "NONE",
+        "OperationName": "SendRoute",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SendInteg"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "SendInteg": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        },
+        "Description": "Send Integration",
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${functionfsSendRealtimeDataArn}/invocations"
+        }
+      }
+    },
+    "UserConnectionPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "DependsOn": ["fsRealtimeDataManager"],
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "functionfsUserConnectionName"
+        },
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
+    "UserDisconnectionPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "DependsOn": ["fsRealtimeDataManager"],
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "functionfsUserDisconnectionName"
+        },
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
+    "JoinProjectPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "DependsOn": ["fsRealtimeDataManager"],
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "functionfsJoinProjectName"
+        },
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
+    "LeaveProjectPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "DependsOn": ["fsRealtimeDataManager"],
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "functionfsLeaveProjectName"
+        },
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
+    "SendRealtimeDataPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "DependsOn": ["fsRealtimeDataManager"],
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "functionfsSendRealtimeDataName"
+        },
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
+    "Deployment": {
+      "Type": "AWS::ApiGatewayV2::Deployment",
+      "DependsOn": [
+        "ConnectRoute",
+        "JoinRoute",
+        "LeaveRoute",
+        "SendRoute",
+        "DisconnectRoute"
+      ],
+      "Properties": {
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        }
+      }
+    },
+    "Stage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "StageName": "Prod",
+        "Description": "Prod Stage",
+        "DeploymentId": {
+          "Ref": "Deployment"
+        },
+        "ApiId": {
+          "Ref": "fsRealtimeDataManager"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "WebSocketURI": {
+      "Description": "The WSS Protocol URI to connect to",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "wss://",
+            {
+              "Ref": "fsRealtimeDataManager"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".amazonaws.com/",
+            {
+              "Ref": "Stage"
+            }
+          ]
+        ]
+      }
+    }
+  }
+}

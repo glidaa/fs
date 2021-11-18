@@ -67,6 +67,7 @@ export const handleFetchUser = () => async (dispatch, getState) => {
       )).data.getUserByUsername
       dispatch(handleSetData(userData))
       dispatch(handleSetState(AuthState.SignedIn))
+      console.log((await Auth.currentSession()).getAccessToken().getJwtToken())
     } catch (err) {
       if (err.errors?.[0]?.message === 'Network Error') {
         dispatch(fetchCachedUser(cacheController.getUser()))

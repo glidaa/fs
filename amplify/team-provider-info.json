@@ -35,6 +35,26 @@
         "fsDailyReport": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
           "s3Key": "amplify-builds/fsDailyReport-45476977466f41396b59-build.zip"
+        },
+        "fsUserDisconnection": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsUserDisconnection-6d707758376d36537666-build.zip"
+        },
+        "fsLeaveProject": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsLeaveProject-61463779516779417570-build.zip"
+        },
+        "fsUserConnection": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsUserConnection-625a7464423576674246-build.zip"
+        },
+        "fsSendRealtimeData": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsSendRealtimeData-6e39562b412b72477452-build.zip"
+        },
+        "fsJoinProject": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsJoinProject-2f4e4579636577314e56-build.zip"
         }
       },
       "auth": {

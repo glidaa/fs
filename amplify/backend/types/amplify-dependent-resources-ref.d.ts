@@ -3,14 +3,6 @@ export type AmplifyDependentResourcesAttributes = {
         "fsCoreAPI": {
             "GraphQLAPIIdOutput": "string",
             "GraphQLAPIEndpointOutput": "string"
-        },
-        "fsRealtimeDataManager": {
-            "OnConnectFunctionArn": "string",
-            "OnDisconnectFunctionArn": "string",
-            "JoinProjectFunctionArn": "string",
-            "LeaveProjectFunctionArn": "string",
-            "SendMessageFunctionArn": "string",
-            "WebSocketURI": "string"
         }
     },
     "auth": {
@@ -54,6 +46,41 @@ export type AmplifyDependentResourcesAttributes = {
             "Region": "string",
             "LambdaExecutionRole": "string",
             "CloudWatchEventRule": "string"
+        },
+        "fsUserConnection": {
+            "Name": "string",
+            "Arn": "string",
+            "Region": "string",
+            "LambdaExecutionRole": "string"
+        },
+        "fsUserDisconnection": {
+            "Name": "string",
+            "Arn": "string",
+            "Region": "string",
+            "LambdaExecutionRole": "string"
+        },
+        "fsJoinProject": {
+            "Name": "string",
+            "Arn": "string",
+            "Region": "string",
+            "LambdaExecutionRole": "string"
+        },
+        "fsLeaveProject": {
+            "Name": "string",
+            "Arn": "string",
+            "Region": "string",
+            "LambdaExecutionRole": "string"
+        },
+        "fsSendRealtimeData": {
+            "Name": "string",
+            "Arn": "string",
+            "Region": "string",
+            "LambdaExecutionRole": "string"
+        }
+    },
+    "custom": {
+        "fsRealtimeDataManager": {
+            "WebSocketURI": "string"
         }
     }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { connect } from "react-redux"
 import { graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../actions/app"
@@ -20,6 +20,7 @@ import * as mutationID from "../utils/mutationID";
 const SyncManager = (props) => {
   const { app, mutations, user, dispatch } = props
   const [isInitial, setIsInitial] = useState(true)
+  const ws = useRef(null)
   const navigate = useNavigate()
   const routeParams = useParams()
   useEffect(() => {
@@ -111,6 +112,47 @@ const SyncManager = (props) => {
         });
     }
   }, [mutations[0]])
+  // useEffect(() => {
+  //   if (app.selectedProject) {
+  //     const ws = new WebSocket("wss://0ly6ezq1tc.execute-api.us-east-1.amazonaws.com/Prod");
+
+  //     ws.onmessage = function(e) {
+  //       console.log("Response: " + e.data);
+  //     };
+
+  //     ws.onclose = function(e) {
+  //       console.log("Disconnected");
+  //     };
+
+  //     ws.onerror = function(e) {
+  //       console.error("Error: " + e.data);
+  //     };
+
+  //     window.ws = ws;
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   const ws = window.ws;
+  //   if (ws?.readyState === WebSocket.OPEN) {
+  //     console.log("informed")
+  //     if (app.selectedProject) {
+  //       const dataToSend = {
+  //         action: "joinproject",
+  //         data: {
+  //           projectID: app.selectedProject,
+  //           username: user.data.username
+  //         }
+  //       }
+  //       ws.send(JSON.stringify(dataToSend));
+  //     } else {
+  //       const dataToSend = {
+  //         action: "leaveproject"
+  //       }
+  //       ws.send(JSON.stringify(dataToSend));
+  //     }
+  //   }
+  // }, [app.selectedProject, ws])
   return null
 }
 

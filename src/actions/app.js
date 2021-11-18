@@ -111,9 +111,11 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
           }
         }
       }
-      dispatch(tasksActions.handleFetchTasks(id))
-      if (user.state === AuthState.SignedIn) {
-        dispatch(observersActions.handleSetTasksObservers(id))
+      if (!getState().projects[id].isVirtual) {
+        dispatch(tasksActions.handleFetchTasks(id))
+        if (user.state === AuthState.SignedIn) {
+          dispatch(observersActions.handleSetTasksObservers(id))
+        }
       }
     } else {
       if (shouldChangeURL) {

@@ -59,6 +59,7 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
   if (user.state === AuthState.SignedIn) {
     dispatch(createProject({
       ...projectState,
+      permalink: user.data.username + "/" + projectState.permalink,
       owner: user.data.username,
       isVirtual: true
     }, OWNED))
