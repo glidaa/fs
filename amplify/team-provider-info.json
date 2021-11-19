@@ -38,23 +38,23 @@
         },
         "fsUserDisconnection": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsUserDisconnection-6d707758376d36537666-build.zip"
+          "s3Key": "amplify-builds/fsUserDisconnection-6a7a725178726e68326c-build.zip"
         },
         "fsLeaveProject": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsLeaveProject-61463779516779417570-build.zip"
+          "s3Key": "amplify-builds/fsLeaveProject-505334564937317a3857-build.zip"
         },
         "fsUserConnection": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsUserConnection-625a7464423576674246-build.zip"
+          "s3Key": "amplify-builds/fsUserConnection-44412f7a763879394765-build.zip"
         },
         "fsSendRealtimeData": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsSendRealtimeData-6e39562b412b72477452-build.zip"
+          "s3Key": "amplify-builds/fsSendRealtimeData-767638654478644d3977-build.zip"
         },
         "fsJoinProject": {
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/fsJoinProject-2f4e4579636577314e56-build.zip"
+          "s3Key": "amplify-builds/fsJoinProject-614172414d3070766c45-build.zip"
         }
       },
       "auth": {

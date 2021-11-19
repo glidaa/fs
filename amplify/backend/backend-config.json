@@ -154,8 +154,7 @@
           "category": "auth",
           "resourceName": "fsCognito",
           "attributes": [
-            "UserPoolId",
-            "AppClientID"
+            "UserPoolId"
           ]
         },
         {

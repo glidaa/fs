@@ -24,7 +24,10 @@ exports.handler = async (event, context, callback) => {
     apiVersion: '2018-11-29',
     endpoint: event.requestContext.domainName + '/' + event.requestContext.stage
   });
-  const postData = JSON.parse(event.body).data;
+  const postData = JSON.stringify({
+    ...JSON.parse(event.body).data,
+    username: username
+  });
   const postCalls = availConnections.Items.map(async ({ id }) => {
     try {
       if (id !== connectionId) {

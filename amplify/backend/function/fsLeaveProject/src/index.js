@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const CONNECTIONTABLE = process.env.API_FSCOREAPI_CONNECTIONTABLE_NAME;
-const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });
+const docClient = new AWS.DynamoDB.DocumentClient();
 exports.handler = async (event, context, callback) => {
   const deleteParams = {
     TableName: CONNECTIONTABLE,
@@ -9,7 +9,7 @@ exports.handler = async (event, context, callback) => {
     }
   };
   try {
-    await ddb.delete(deleteParams).promise();
+    await docClient.delete(deleteParams).promise();
   } catch (err) {
     callback(null, {
       statusCode: 500,

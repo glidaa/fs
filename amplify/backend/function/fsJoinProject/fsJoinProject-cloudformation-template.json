@@ -23,10 +23,6 @@
     "authfsCognitoUserPoolId": {
       "Type": "String",
       "Default": "authfsCognitoUserPoolId"
-    },
-    "authfsCognitoAppClientID": {
-      "Type": "String",
-      "Default": "authfsCognitoAppClientID"
     }
   },
   "Conditions": {
@@ -114,8 +110,31 @@
             "AUTH_FSCOGNITO_USERPOOLID": {
               "Ref": "authfsCognitoUserPoolId"
             },
-            "AUTH_FSCOGNITO_APPCLIENTID": {
-              "Ref": "authfsCognitoAppClientID"
+            "API_FSCOREAPI_PROJECTTABLE_NAME": {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${apifsCoreAPIGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
+              }
+            },
+            "API_FSCOREAPI_PROJECTTABLE_ARN": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:aws:dynamodb:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":table/",
+                  {
+                    "Fn::ImportValue": {
+                      "Fn::Sub": "${apifsCoreAPIGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
+                    }
+                  }
+                ]
+              ]
             }
           }
         },
@@ -388,6 +407,62 @@
                       {
                         "Fn::ImportValue": {
                           "Fn::Sub": "${apifsCoreAPIGraphQLAPIIdOutput}:GetAtt:ConnectionTable:Name"
+                        }
+                      },
+                      "/index/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:dynamodb:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":table/",
+                      {
+                        "Fn::ImportValue": {
+                          "Fn::Sub": "${apifsCoreAPIGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
+                        }
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:dynamodb:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":table/",
+                      {
+                        "Fn::ImportValue": {
+                          "Fn::Sub": "${apifsCoreAPIGraphQLAPIIdOutput}:GetAtt:ProjectTable:Name"
                         }
                       },
                       "/index/*"

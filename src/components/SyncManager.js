@@ -23,8 +23,30 @@ const SyncManager = (props) => {
   const ws = useRef(null)
   const navigate = useNavigate()
   const routeParams = useParams()
+  const establishWebsocket = () => new Promise((resolve, reject) => {
+    if (ws.current?.readyState !== WebSocket.OPEN) {
+      ws.current = new WebSocket(`wss://0ly6ezq1tc.execute-api.us-east-1.amazonaws.com/Prod`)
+
+      ws.current.onopen = () => {
+        console.log("Websocket opened")
+        resolve()
+      }
+      ws.current.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        console.log("Websocket message", data)
+      }
+      ws.current.onerror = () => {
+        console.log("Websocket error")
+        reject()
+      }
+      ws.current.onclose = () => {
+        console.log("Websocket closed")
+      }
+    }
+  })
   useEffect(() => {
     if (user.state === AuthState.SignedIn) {
+      establishWebsocket()
       if (isInitial) {
         setIsInitial(false)
       } else if (app.isOffline) {
@@ -112,47 +134,52 @@ const SyncManager = (props) => {
         });
     }
   }, [mutations[0]])
-  // useEffect(() => {
-  //   if (app.selectedProject) {
-  //     const ws = new WebSocket("wss://0ly6ezq1tc.execute-api.us-east-1.amazonaws.com/Prod");
 
-  //     ws.onmessage = function(e) {
-  //       console.log("Response: " + e.data);
-  //     };
+  useEffect(() => {
+    if (ws.current?.readyState === WebSocket.OPEN) {
+      console.log("informed")
+      if (app.selectedProject) {
+        const dataToSend = {
+          action: "joinproject",
+          data: {
+            projectID: app.selectedProject,
+            jwt: user.data.jwt
+          }
+        }
+        console.log(JSON.stringify(dataToSend))
+        ws.current.send(JSON.stringify(dataToSend));
+      } else {
+        const dataToSend = {
+          action: "leaveproject"
+        }
+        ws.current.send(JSON.stringify(dataToSend));
+      }
+    }
+  }, [app.selectedProject, ws.current, ws.current?.readyState])
 
-  //     ws.onclose = function(e) {
-  //       console.log("Disconnected");
-  //     };
-
-  //     ws.onerror = function(e) {
-  //       console.error("Error: " + e.data);
-  //     };
-
-  //     window.ws = ws;
-  //   }
-  // }, [])
-
-  // useEffect(() => {
-  //   const ws = window.ws;
-  //   if (ws?.readyState === WebSocket.OPEN) {
-  //     console.log("informed")
-  //     if (app.selectedProject) {
-  //       const dataToSend = {
-  //         action: "joinproject",
-  //         data: {
-  //           projectID: app.selectedProject,
-  //           username: user.data.username
-  //         }
-  //       }
-  //       ws.send(JSON.stringify(dataToSend));
-  //     } else {
-  //       const dataToSend = {
-  //         action: "leaveproject"
-  //       }
-  //       ws.send(JSON.stringify(dataToSend));
-  //     }
-  //   }
-  // }, [app.selectedProject, ws])
+  useEffect(() => {
+    if (ws.current?.readyState === WebSocket.OPEN) {
+      console.log("informed task")
+      if (app.selectedTask) {
+        const dataToSend = {
+          action: "sendmessage",
+          data: {
+            action: "focustask",
+            taskID: app.selectedTask
+          }
+        }
+        ws.current.send(JSON.stringify(dataToSend));
+      } else {
+        const dataToSend = {
+          action: "sendmessage",
+          data: {
+            action: "unfocustask"
+          }
+        }
+        ws.current.send(JSON.stringify(dataToSend));
+      }
+    }
+  }, [app.selectedTask, ws.current, ws.current?.readyState])
   return null
 }
 
