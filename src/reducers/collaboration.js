@@ -1,4 +1,4 @@
-import { SET_SESSION, JOIN_PROEJCT, LEAVE_PROJECT, FOCUS_TASK, UNFOCUS_TASK, SET_TXT_CURSOR } from "../actions/collaboration"
+import { SET_SESSION, JOIN_PROEJCT, LEAVE_PROJECT, FOCUS_TASK, UNFOCUS_TASK, SET_TXT_CURSOR, RESET_COLLAB_DATA } from "../actions/collaboration"
 
 const initState = {
   session: null,
@@ -47,6 +47,12 @@ export default function (state = initState, action) {
       return {...state}
     case SET_TXT_CURSOR:
       return {...state}
+    case RESET_COLLAB_DATA:
+      return {
+        ...state,
+        projectViewers: [],
+        taskViewers: {}
+      }
     default:
       return state
   }

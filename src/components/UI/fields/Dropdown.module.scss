@@ -35,15 +35,16 @@
   top: 5px;
   flex-direction: column;
   border: 1px solid #c0c0c0;
-  @include themify(background-color, "secondaryBg");
   width: 100%;
   font-size: 12px;
   border-radius: 8px;
+  z-index: 10;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  @include themify(background-color, "secondaryBg");
   & > span {
-    @include themify(color, "txtColor");
     padding: 8px;
     cursor: pointer;
+    @include themify(color, "txtColor");
   }
   & > span:first-child {
     border-radius: 8px 8px 0 0;

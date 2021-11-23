@@ -36,6 +36,7 @@ const AccountSettings = (props) => {
     dispatch
   } = props;
 
+  const [isBusy, setIsBusy] = useState(false)
   const [newFirstName, setNewFirstName] = useState(firstName)
   const [newLastName, setNewLastName] = useState(lastName)
   const [newEmail, setNewEmail] = useState(email)
@@ -86,13 +87,20 @@ const AccountSettings = (props) => {
     return dispatch(userActions.handleSignOut(true))
 	}
   const saveChanges = () => {
+    setIsBusy(true)
     execGraphQL(graphqlOperation(mutations.updateUser, {
       input: {
         username,
         ...(newFirstName !== firstName && { firstName: newFirstName }),
-        ...(newLastName !== lastName && { lastName: newLastName })
+        ...(newLastName !== lastName && { lastName: newLastName }),
+        ...(newBirthdate !== birthdate && { birthdate: newBirthdate }),
+        ...(newGender !== gender && { gender: newGender })
       }
-    }))
+    })).then(() => {
+      setIsBusy(false)
+    }).catch(() => {
+      setIsBusy(false)
+    })
   }
   return (
     <>
@@ -176,9 +184,9 @@ const AccountSettings = (props) => {
       <Button
         style={{ margin: "0 25px 25px 25px" }}
         onClick={saveChanges}
-        disabled={!isChanged || !isSynced}
+        disabled={isBusy || !isChanged || !isSynced}
       >
-        {isSynced ? "Save Changes" : "No Connection!"}
+        {isBusy ? "Saving Changes" : isSynced ? "Save Changes" : "No Connection!"}
       </Button>
     </>
   );

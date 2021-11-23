@@ -1,16 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { connect } from "react-redux";
-import { graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../../actions/app";
 import styles from "./WatcherChooser.module.scss"
 import * as tasksActions from "../../actions/tasks"
+import * as usersActions from "../../actions/users"
 import { panelPages, AuthState } from "../../constants";
 import { ReactComponent as BackArrowIcon } from "../../assets/chevron-back-outline.svg";
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
 import { ReactComponent as WatcherSearchIllustartion } from "../../assets/undraw_People_search_re_5rre.svg"
 import { ReactComponent as NoResultsIllustartion } from "../../assets/undraw_not_found_60pq.svg"
 import Avatar from '../UI/Avatar';
-import execGraphQL from '../../utils/execGraphQL';
 
 const WatcherChooser = (props) => {
   const {
@@ -19,6 +18,7 @@ const WatcherChooser = (props) => {
     },
     tasks,
     user,
+    users,
     dispatch
   } = props;
 
@@ -43,7 +43,7 @@ const WatcherChooser = (props) => {
   }
   const filterResults = (results, tasks, selectedTask) => {
     const currWatchers = tasks[selectedTask].watchers.filter(x => x !== pendingUser)
-    return results.filter(x => !currWatchers.includes(x.username))
+    return results.filter(x => !currWatchers.includes(users[x].username))
   }
   const filteredResults = useMemo(
     () => filterResults(results, tasks, selectedTask),
@@ -55,35 +55,8 @@ const WatcherChooser = (props) => {
       setResults([])
     }
     setKeyword(nextKeyword)
-    const firstLastName = nextKeyword.split(/\s+/)
     if (user.state === AuthState.SignedIn && nextKeyword.trim()) {
-      const query = `
-        query SearchUsers($filter: SearchableUserFilterInput!) {
-          searchUsers(filter: $filter) {
-            items {
-              username
-              firstName
-              lastName
-              email
-              avatar
-            }
-          }
-        }
-      `
-      const filter = {or: [
-        { username: { matchPhrasePrefix: nextKeyword } },
-        ...((firstLastName.length !== 2 && [{
-          firstName: { matchPhrasePrefix: nextKeyword }
-        }]) || []),
-        ...((firstLastName.length === 2 && [{
-          and: [
-            { firstName: { matchPhrasePrefix: firstLastName[0] } },
-            { lastName: { matchPhrasePrefix: firstLastName[1] } },
-          ]
-        }]) || []),
-        { email: { matchPhrasePrefix: nextKeyword } }
-      ]}
-      execGraphQL(graphqlOperation(query, { filter })).then(res => setResults(res.data.searchUsers.items || []))
+      dispatch(usersActions.handleSearchUsers(nextKeyword)).then(res => setResults(res))
     } else {
       setResults([])
     }
@@ -132,14 +105,14 @@ const WatcherChooser = (props) => {
         {keyword && filteredResults.map(x => (
           <button
             className={styles.SearchResultsItem}
-            key={x.username}
+            key={users[x].username}
             disabled={isBusy}
-            onClick={() => handleAddWatcher(x.username)}
+            onClick={() => handleAddWatcher(users[x].username)}
           >
             <Avatar user={x} size={32} circular />
             <div>
-              <span>{`${x.firstName} ${x.lastName}`}</span>
-              <span>@{x.username}</span>
+              <span>{`${users[x].firstName} ${users[x].lastName}`}</span>
+              <span>@{users[x].username}</span>
             </div>
           </button>
         ))}

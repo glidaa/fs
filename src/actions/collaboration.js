@@ -6,6 +6,7 @@ export const LEAVE_PROJECT = "LEAVE_PROJECT";
 export const FOCUS_TASK = "FOCUS_TASK";
 export const UNFOCUS_TASK = "UNFOCUS_TASK";
 export const SET_TXT_CURSOR = "SET_TXT_CURSOR";
+export const RESET_COLLAB_DATA = "RESET_COLLAB_DATA";
 
 const setSession = (session) => ({
   type: SET_SESSION,
@@ -41,6 +42,10 @@ const setTxtCursor = (taskID, pos, username) => ({
   taskID,
   pos,
   username
+});
+
+const resetCollabData = () => ({
+  type: RESET_COLLAB_DATA
 });
 
 export const handleInitSession = () => async (dispatch, getState) => {
@@ -99,6 +104,7 @@ export const handleJoinProject = (projectID) => async (dispatch, getState) => {
   const session = getState().collaboration.session;
   const userData = getState().user.data;
   await dispatch(usersActions.handleAddUsers([userData.username]))
+  dispatch(resetCollabData())
   dispatch(setJoinedProject(projectID, userData.username))
   if (session?.readyState === WebSocket.OPEN) {
     const dataToSend = {

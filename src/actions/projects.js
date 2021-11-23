@@ -94,9 +94,12 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
 }
 
 export const handleUpdateProject = (update) => (dispatch, getState) => {
-  const { user, projects } = getState()
+  const { app, user, projects } = getState()
   const prevProjectState = {...projects[update.id]}
   dispatch(updateProject(update, OWNED))
+  if (app.selectedProject === update.id && update.permalink !== prevProjectState.permalink) {
+    app?.navigate("/" + (user.state !== AuthState.SignedIn ? "local/" : "") + update.permalink, { replace: true })
+  }
   if (user.state === AuthState.SignedIn) {
     return dispatch(mutationsActions.scheduleMutation(
       "updateProject",
@@ -105,6 +108,9 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
       () => {
         if (getState().projects[update.id]) {
           dispatch(updateProject(prevProjectState))
+          if (getState().app.selectedProject === update.id && update.permalink !== prevProjectState.permalink) {
+            app?.navigate("/" + prevProjectState.permalink, { replace: true })
+          }
         }
       }
     ))

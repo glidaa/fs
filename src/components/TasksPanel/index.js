@@ -29,6 +29,7 @@ const TasksPanel = (props) => {
   const [searchKeyword, setSearchKeyword] = useState("")
   const addNewTask = (e) => {
     (e.target.getAttribute("name") === "TasksPanelContainer" ||
+    (e.target.className === "simplebar-content-wrapper" && document.querySelector("[name='TasksView']")?.contains(e.target)) ||
     document.querySelector("[name='NoTasks']")?.contains(e.target) && !Object.keys(tasks).length) &&
     status.tasks === READY &&
     isSynced &&
@@ -67,7 +68,7 @@ const TasksPanel = (props) => {
                 {searchKeyword.trim() ? (
                   <TasksSearch searchKeyword={searchKeyword} />
                 ) : Object.keys(tasks).length ? (
-                  <SimpleBar className={styles.TasksView}>
+                  <SimpleBar name="TasksView" className={styles.TasksView}>
                     {React.createElement(sortedTasks[tasksSortingCriteria])}
                   </SimpleBar>
                  ) : isSynced ? (

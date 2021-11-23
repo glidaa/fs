@@ -511,7 +511,9 @@ exports.handler = async function (ctx) {
 
   async function createProject(ctx) {
     const client = ctx.identity.username
+    const mutationID = ctx.arguments.input.mutationID || null
     const claimedClient = ctx.arguments.input.id.match(/(.*)-.*/)[1]
+    delete ctx.arguments.input.mutationID
     for (const incomingAttr in ctx.arguments.input) {
       if (!ctx.arguments.input[incomingAttr]) {
         delete ctx.arguments.input[incomingAttr]
@@ -549,7 +551,7 @@ exports.handler = async function (ctx) {
         } else {
           await injectProjectOrder(projectData.id, projectData.prevProject, projectData.nextProject)
         }
-        return projectData;
+        return { ...projectData, mutationID };
       } catch (err) {
         throw new Error(err);
       }
@@ -666,8 +668,10 @@ exports.handler = async function (ctx) {
 
   async function createTask(ctx) {
     const projectID = ctx.arguments.input.projectID
+    const mutationID = ctx.arguments.input.mutationID || null
     const client = ctx.identity.username
     const claimedClient = ctx.arguments.input.id.match(/(.*)-.*/)[1]
+    delete ctx.arguments.input.mutationID
     for (const incomingAttr in ctx.arguments.input) {
       if (!ctx.arguments.input[incomingAttr]) {
         delete ctx.arguments.input[incomingAttr]
@@ -723,7 +727,7 @@ exports.handler = async function (ctx) {
         const updatedProject = await docClient.update(projectUpdateParams).promise()
         await _pushProjectUpdate(updatedProject.Attributes)
         cachedProjects[projectID] = {...updatedProject.Attributes}
-        return taskData;
+        return { ...taskData, mutationID };
       } catch (err) {
         throw new Error(err);
       }
@@ -734,8 +738,10 @@ exports.handler = async function (ctx) {
 
   async function createComment(ctx) {
     const taskID = ctx.arguments.input.taskID
+    const mutationID = ctx.arguments.input.mutationID || null
     const client = ctx.identity.username
     const claimedClient = ctx.arguments.input.id.match(/(.*)-.*/)[1]
+    delete ctx.arguments.input.mutationID
     for (const incomingAttr in ctx.arguments.input) {
       if (!ctx.arguments.input[incomingAttr]) {
         delete ctx.arguments.input[incomingAttr]
@@ -765,7 +771,7 @@ exports.handler = async function (ctx) {
           sender: client,
           owners: [...taskData.watchers]
         })
-        return commentData;
+        return { ...commentData, mutationID };
       } catch (err) {
         throw new Error(err);
       }
@@ -777,7 +783,7 @@ exports.handler = async function (ctx) {
   async function updateProject(ctx) {
     const updateData = ctx.arguments.input
     const projectID = updateData.id
-    const mutationID = updateData.mutationID
+    const mutationID = updateData.mutationID || null
     const client = ctx.identity.username
     if (await isProjectOwner(projectID, client)) {
       delete updateData.id
@@ -869,7 +875,7 @@ exports.handler = async function (ctx) {
   async function updateTask(ctx) {
     const updateData = ctx.arguments.input
     const taskID = updateData.id
-    const mutationID = updateData.mutationID
+    const mutationID = updateData.mutationID || null
     const client = ctx.identity.username
     if (await isTaskEditableByClient(taskID, client)) {
       const prevData = await getTask(taskID)
@@ -977,7 +983,7 @@ exports.handler = async function (ctx) {
   async function updateComment(ctx) {
     const updateData = ctx.arguments.input
     const commentID = updateData.id
-    const mutationID = updateData.mutationID
+    const mutationID = updateData.mutationID || null
     const client = ctx.identity.username
     if (await isCommentOwner(commentID, client)) {
       delete updateData.id
@@ -1058,11 +1064,11 @@ exports.handler = async function (ctx) {
             Name: 'family_name',
             Value: updateData.lastName
           }]) || []),
-          ...((updateData.lastName && [{
+          ...((updateData.birthdate && [{
             Name: 'birthdate',
             Value: updateData.birthdate
           }]) || []),
-          ...((updateData.lastName && [{
+          ...((updateData.gender && [{
             Name: 'gender',
             Value: updateData.gender
           }]) || [])
@@ -1701,7 +1707,8 @@ exports.handler = async function (ctx) {
   }
 
   async function deleteComment(ctx) {
-    const { id: commentID, mutationID } = ctx.arguments.input
+    const commentID = ctx.arguments.input.id
+    const mutationID = ctx.arguments.input.mutationID || null
     const client = ctx.identity.username
     if (await isCommentOwner(commentID, client)) {
       const params = {
@@ -1760,7 +1767,8 @@ exports.handler = async function (ctx) {
   }
 
   async function deleteProjectAndTasks(ctx) {
-    const { id: projectID, mutationID } = ctx.arguments.input
+    const projectID = ctx.arguments.input.id
+    const mutationID = ctx.arguments.input.mutationID || null
     const client = ctx.identity.username
     if (await isProjectOwner(projectID, client)) {
       const removeTasksProm = removeTasksOfProject(projectID);
@@ -1777,7 +1785,8 @@ exports.handler = async function (ctx) {
   }
 
   async function deleteTaskAndComments(ctx) {
-    const { id: taskID, mutationID } = ctx.arguments.input
+    const taskID = ctx.arguments.input.id
+    const mutationID = ctx.arguments.input.mutationID || null
     const client = ctx.identity.username
     if (await isTaskEditableByClient(taskID, client)) {
       const removeCommentsProm = removeCommentsOfTask(taskID);

@@ -245,17 +245,21 @@ export const handleSetProjectObservers = (projectID) => async (dispatch, getStat
     const data = { id: projectID }
     observers.push(await API.graphql(graphqlOperation(subscriptions.onUpdateProject, data)).subscribe({
       next: e => {
-        const { projects } = getState()
+        const { projects, app } = getState()
         const incoming = e.value.data.onUpdateProject
         if (projects[incoming.id]) {
           if (!mutationID.isLocal(incoming.mutationID)) {
             const lastMutationDate = projects[incoming.id].mutatedAt || null
             const mutationDate = parseInt(/.?_(\d+)_.*/.exec(incoming.mutationID)?.[1], 10)
             if (!mutationDate || (mutationDate && lastMutationDate < mutationDate)) {
+              const prevPermalink = projects[incoming.id].permalink
               dispatch(projectsActions.updateProject({
                 ...incoming,
                 mutatedAt: mutationDate
               }))
+              if (app.selectedProject === incoming.id && incoming.permalink !== prevPermalink) {
+                app?.navigate("/" + incoming.permalink, { replace: true })
+              }
             }
           }
         }
