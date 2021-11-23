@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { connect } from "react-redux";
 import parseLinkedList from "../../../utils/parseLinkedList";
+import Accordion from '../../UI/Accordion';
 import TaskItem from "../TaskItem";
-import styles from "./ByPriority.module.scss";
 
 const ByPriority = (props) => {
   const { tasks } = props;
@@ -18,10 +18,7 @@ const ByPriority = (props) => {
   return (
     <>
       {sortedTasks.high.length > 0 && (
-        <div className={styles.Section}>
-          <span className={styles.SectionHeader}>
-            High
-          </span>
+        <Accordion title="High">
           {sortedTasks.high.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -38,13 +35,10 @@ const ByPriority = (props) => {
               />
             </div>
           ))}
-        </div>
+        </Accordion>
       )}
       {sortedTasks.normal.length > 0 && (
-        <div className={styles.Section}>
-          <span className={styles.SectionHeader}>
-            Normal
-          </span>
+        <Accordion title="Normal">
           {sortedTasks.normal.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -64,13 +58,10 @@ const ByPriority = (props) => {
               />
             </div>
           ))}
-        </div>
+        </Accordion>
       )}
       {sortedTasks.low.length > 0 && (
-        <div className={styles.Section}>
-          <span className={styles.SectionHeader}>
-            Low
-          </span>
+        <Accordion title="Low">
           {sortedTasks.low.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -87,7 +78,7 @@ const ByPriority = (props) => {
               />
             </div>
           ))}
-        </div>
+        </Accordion>
       )}
     </>
   )

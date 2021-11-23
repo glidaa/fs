@@ -855,8 +855,8 @@ exports.handler = async function (ctx) {
         return {
           id: projectID,
           owner: client,
-          mutationID: mutationID,
-          ...data.Attributes
+          ...data.Attributes,
+          mutationID: mutationID
         }
       } catch (err) {
         throw new Error(err);
@@ -963,8 +963,8 @@ exports.handler = async function (ctx) {
         return {
           id: taskID,
           projectID: cachedTasks[taskID].projectID,
-          mutationID: mutationID,
-          ...data.Attributes
+          ...data.Attributes,
+          mutationID: mutationID
         }
       } catch (err) {
         throw new Error(err);
@@ -1013,8 +1013,8 @@ exports.handler = async function (ctx) {
         return {
           id: commentID,
           taskID: cachedComments[commentID].taskID,
-          mutationID: mutationID,
-          ...data.Attributes
+          ...data.Attributes,
+          mutationID: mutationID
         }
       } catch (err) {
         throw new Error(err);

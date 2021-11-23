@@ -9,6 +9,7 @@ export const PUSH_NOTIFICATION = "PUSH_NOTIFICATION";
 export const DISMISS_NOTIFICATION = "DISMISS_NOTIFICATION";
 export const REMOVE_NOTIFICATION = "REMOVE_NOTIFICATION";
 export const FETCH_NOTIFICATIONS = "FETCH_NOTIFICATIONS";
+export const EMPTY_NOTIFICATIONS = "EMPTY_NOTIFICATIONS";
 
 export const add = (notification) => ({
   type: ADD_NOTIFICATION,
@@ -27,6 +28,11 @@ export const dismiss = (id) => ({
 
 export const remove = (id) => ({
   type: REMOVE_NOTIFICATION,
+  id
+})
+
+export const emptyNotifications = (id) => ({
+  type: EMPTY_NOTIFICATIONS,
   id
 })
 

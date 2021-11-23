@@ -5,17 +5,18 @@ import parseLinkedList from "../../utils/parseLinkedList";
 import ProjectNotSelected from "./ProjectNotSelected";
 import * as tasksActions from "../../actions/tasks";
 import { READY, LOADING, initTaskState } from "../../constants";
-import ProjectTitle from './ProjectTitle';
 import sortedTasks from './sortedTasks';
 import ProjectToolbar from './ProjectToolbar';
 import TasksToolbar from './TasksToolbar';
-import TasksLoading from './TasksLoading';
+import NoTasks from './NoTasks';
 import TasksSearch from './TasksSearch';
+import ProjectHeader from './ProjectHeader';
 
 const TasksPanel = (props) => {
   const {
     app: {
-      selectedProject
+      selectedProject,
+      isSynced
     },
     appSettings: {
       tasksSortingCriteria
@@ -26,8 +27,10 @@ const TasksPanel = (props) => {
   } = props;
   const [searchKeyword, setSearchKeyword] = useState("")
   const addNewTask = (e) => {
-    e.target.getAttribute("name") === "TasksPanelContainer" &&
+    (e.target.getAttribute("name") === "TasksPanelContainer" ||
+    document.querySelector("[name='NoTasks']")?.contains(e.target) && !Object.keys(tasks).length) &&
     status.tasks === READY &&
+    isSynced &&
     dispatch(
       tasksActions.handleCreateTask(
         initTaskState(
@@ -51,19 +54,26 @@ const TasksPanel = (props) => {
         <>
           <ProjectToolbar />
           {status.tasks === LOADING ? (
-            <TasksLoading />
+            <NoTasks msgID="LOADING" />
           ) : (
             <>
-              <ProjectTitle />
+              <ProjectHeader />
               <TasksToolbar
                 searchKeyword={searchKeyword}
                 setSearchKeyword={setSearchKeyword}
               />
-              <div>
+              
                 {searchKeyword.trim() ? (
                   <TasksSearch searchKeyword={searchKeyword} />
-                ) : React.createElement(sortedTasks[tasksSortingCriteria])}
-              </div>
+                ) : Object.keys(tasks).length ? (
+                  <div>
+                    {React.createElement(sortedTasks[tasksSortingCriteria])}
+                  </div>
+                 ) : isSynced ? (
+                  <NoTasks msgID="EMPTY" />
+                 ) : (
+                   <NoTasks msgID="OFFLINE" />
+                 )}
             </>
           )}
         </>

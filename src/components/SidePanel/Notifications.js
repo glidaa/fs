@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from "react-redux";
 import { graphqlOperation } from "@aws-amplify/api";
 import * as mutations from "../../graphql/mutations"
 import * as appActions from "../../actions/app";
+import * as notificationsActions from "../../actions/notifications";
 import styles from "./Notifications.module.scss"
 import SimpleBar from 'simplebar-react';
 import { ReactComponent as NoNotificationsIllustration } from "../../assets/undraw_notify_re_65on.svg";
@@ -28,7 +29,9 @@ const Notifications = (props) => {
       graphqlOperation(
         mutations.dismissNotifications
       )
-    )
+    ).then(() => {
+      dispatch(notificationsActions.emptyNotifications())
+    })
   }
   const dismissNotification = (e, id) => {
     e.stopPropagation()

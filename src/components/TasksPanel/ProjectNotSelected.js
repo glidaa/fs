@@ -6,7 +6,7 @@ import * as projectsActions from "../../actions/projects"
 import { panelPages, initProjectState, OK } from "../../constants"
 import parseLinkedList from "../../utils/parseLinkedList"
 import { ReactComponent as NotFoundIllustartion } from "../../assets/undraw_empty_xct9.svg"
-import { ReactComponent as TasksIllustartion} from "../../assets/undraw_Add_notes_re_ln36.svg"
+import { ReactComponent as TasksIllustartion} from "../../assets/undraw_teamwork_hpdk.svg"
 import filterObj from '../../utils/filterObj';
 import { useParams } from "react-router-dom"
 

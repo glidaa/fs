@@ -1,6 +1,7 @@
 import { graphqlOperation } from "@aws-amplify/api";
 import { listUsersByUsernames } from "../graphql/queries"
 import execGraphQL from "../utils/execGraphQL";
+import generateRandomColor from "../utils/generateRandomColor";
 import getGravatar from '../utils/getGravatar';
 
 export const ADD_USERS = "ADD_USERS";
@@ -31,10 +32,11 @@ export const handleAddUsers = (usernames) => async (dispatch, getState) => {
       if (!x.avatar) {
         shouldDispatch = true
         x.avatar = await getGravatar(x.email)
+        x.color = generateRandomColor({ l: 50 })
       }
     }
     if (shouldDispatch) {
-      dispatch(addUsers({...itemsWithAvatar}))
+      dispatch(addUsers([...itemsWithAvatar]))
     }
   })(itemsWithAbbr, dispatch)
   return dispatch(addUsers(itemsWithAbbr))

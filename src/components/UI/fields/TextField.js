@@ -49,7 +49,7 @@ const TextField = (props) => {
           name={name}
           autoComplete={autoComplete}
           onChange={onChange}
-          value={value}
+          value={value || ""}
           placeholder={label ? null : placeholder}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}

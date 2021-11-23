@@ -86,5 +86,6 @@ export const handleSignOut = (shouldResetCache = false) => async (dispatch, getS
   await Auth.signOut()
   dispatch(handleSetState(AuthState.SignedOut))
   dispatch(handleSetData(null))
+  window.location.reload()
   return getState().user
 }

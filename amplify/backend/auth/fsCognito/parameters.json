@@ -8,8 +8,8 @@
   "mfaTypes": ["SMS Text Message", "TOTP"],
   "smsAuthenticationMessage": "Your authentication code is {####}",
   "smsVerificationMessage": "Your verification code is {####}",
-  "emailVerificationSubject": "Your verification code",
-  "emailVerificationMessage": "Your verification code is {####}",
+  "emailVerificationSubject": "Forwardslash Account Verification",
+  "emailVerificationMessage": "Hi,<br><br>We are excited for your first step to control your productivity.First you need to confirm your account.<br><br>Your verification code is {####}<br><br>If you have any questions please let us know.<br>Regards,<br><br>The Team<br>Giving Focus to Your Work",
   "defaultPasswordPolicy": true,
   "passwordPolicyMinLength": "8",
   "passwordPolicyCharacters": [

@@ -9,6 +9,7 @@ import * as tasksActions from "../actions/tasks"
 import * as userActions from "../actions/user"
 import * as usersActions from "../actions/users"
 import * as observersActions from "../actions/observers"
+import * as collaborationActions from "../actions/collaboration"
 import * as queries from "../graphql/queries"
 import * as cacheController from "../controllers/cache"
 import { Navigate, useNavigate, useParams, useLocation } from "react-router-dom"
@@ -33,6 +34,8 @@ const Loading = (props) => {
     if (currUser.state === AuthState.SignedIn) {
       setLoadingMsg("We Are Importing Your Local Projects")
       await uploadLocal()
+      setLoadingMsg("Setting Up A New Session")
+      await dispatch(collaborationActions.handleInitSession());
     }
     if (routeParams.projectPermalink &&
         !routeParams.username &&

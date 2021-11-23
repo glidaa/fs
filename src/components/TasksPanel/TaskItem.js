@@ -25,6 +25,7 @@ const TaskItem = (props) => {
     users,
     user,
     projects,
+    collaboration,
     app: {
       selectedTask,
       selectedProject,
@@ -227,8 +228,12 @@ const TaskItem = (props) => {
           styles.TaskItemCore,
           ...(isSorting && [styles.sorting] || []),
           ...(isDragging && [styles.dragging] || []),
+          ...(collaboration.taskViewers[item.id] && [styles.collaborativeFocused] || []),
           ...(item.id === selectedTask && [styles.focused] || [])
         ].join(" ")}
+        style={{
+          borderColor: collaboration.taskViewers[item.id] && users[collaboration.taskViewers[item.id][0]].color,
+        }}
       >
         <div className={styles.TaskItemLeftPart}>
           <div className={styles.TaskItemLeftLeftPart}>
@@ -306,7 +311,7 @@ const TaskItem = (props) => {
         <div
           className={[
             styles.TaskItemRightPart,
-            ...(item.id === selectedTask && [styles.focused] || [])
+            ...(item.id === selectedTask && [styles.focused] || []),
           ].join(" ")}
         >
           <span className={styles.TaskItemDueDate}>
@@ -334,5 +339,6 @@ export default connect((state) => ({
   tasks: state.tasks,
   app: state.app,
   users: state.users,
-  projects: state.projects
+  projects: state.projects,
+  collaboration: state.collaboration
 }))(TaskItem);

@@ -1,12 +1,22 @@
-.TasksLoadingContainer {
+.NoTasksContainer {
   display: flex;
   flex-direction: column;
   width: 100%;
   flex: 1;
   align-items: center;
   justify-content: center;
+  &.loader {
+    & > svg {
+      width: 150px;
+    }
+    @media only screen and (max-width: 768px) {
+      & > svg {
+        width: 180px;
+      }
+    }
+  }
   & > svg {
-    width: 150px;
+    width: 250px;
     height: auto;
     @include themify(color, "primary");
   }
@@ -41,7 +51,7 @@
   }
   @media only screen and (max-width: 768px) {
     & > svg {
-      width: 180px;
+      width: 240px;
     }
     & > div {
       & > span {

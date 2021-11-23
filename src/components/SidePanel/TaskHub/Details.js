@@ -65,7 +65,7 @@ const Details = (props) => {
           label="Task"
           placeholder="task…"
           onChange={handleChange}
-          value={tasks[selectedTask].task || ""}
+          value={tasks[selectedTask].task}
           readOnly={readOnly}
         />
         <Textarea
@@ -73,7 +73,7 @@ const Details = (props) => {
           placeholder="description…"
           label="Description"
           onChange={handleChange}
-          value={tasks[selectedTask].description || ""}
+          value={tasks[selectedTask].description}
           readOnly={readOnly}
         />
         <DateField
@@ -90,7 +90,7 @@ const Details = (props) => {
           label="Tags"
           onChange={handleChange}
           placeholder="tag…"
-          value={tasks[selectedTask].tags || []}
+          value={tasks[selectedTask].tags}
           readOnly={readOnly}
         />
         <Select

@@ -48,6 +48,7 @@ async function isProjectSharedWithClient(projectID, client) {
 }
 
 exports.handler = async (event, context, callback) => {
+  const connectionId = event.requestContext.connectionId
   const { projectID, jwt } = JSON.parse(event.body).data;
   let username;
   try {
@@ -60,12 +61,44 @@ exports.handler = async (event, context, callback) => {
       const putParams = {
         TableName: CONNECTIONTABLE,
         Item: {
-          id: event.requestContext.connectionId,
+          id: connectionId,
           projectID: projectID,
           username: username
         },
       };
       await docClient.put(putParams).promise();
+      const getAvailConnectionsParams = {
+        TableName: CONNECTIONTABLE,
+        IndexName: "byProject",
+        KeyConditionExpression: "projectID = :projectID",
+        ExpressionAttributeValues: {
+          ":projectID": projectID
+        }
+      }
+      const availConnections = await docClient.query(getAvailConnectionsParams).promise()
+      const apigwManagementApi = new AWS.ApiGatewayManagementApi({
+        apiVersion: '2018-11-29',
+        endpoint: event.requestContext.domainName + '/' + event.requestContext.stage
+      });
+      const postData = JSON.stringify({
+        action: "JOIN_PROJECT",
+        username: username
+      });
+      const postCalls = availConnections.Items.map(async ({ id }) => {
+        try {
+          if (id !== connectionId) {
+            await apigwManagementApi.postToConnection({ ConnectionId: id, Data: postData }).promise();
+          }
+        } catch (e) {
+          if (e.statusCode === 410) {
+            console.log(`Found stale connection, deleting ${id}`);
+            await docClient.delete({ TableName: CONNECTIONTABLE, Key: { id } }).promise();
+          }
+        }
+      });
+      try {
+        await Promise.all(postCalls);
+      } catch {}
       callback(null, { statusCode: 200, body: 'Connected.' });
     } else {
       callback(null, { statusCode: 401, body: UNAUTHORIZED });

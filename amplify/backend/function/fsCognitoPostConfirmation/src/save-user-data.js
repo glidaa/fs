@@ -1,11 +1,15 @@
 /* eslint-disable-line */ 
 
 const aws = require('aws-sdk');
+const sgMail = require('@sendgrid/mail');
+const getEmailContent = require("./email/index").getContent;
+require('dotenv').config();
 
 const docClient = new aws.DynamoDB.DocumentClient();
 const cognitoidentityserviceprovider = new aws.CognitoIdentityServiceProvider({
   apiVersion: '2016-04-18',
 });
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const USERTABLE = process.env.API_FSCOREAPI_USERTABLE_NAME;
 
@@ -38,6 +42,15 @@ exports.handler = async (event) => {
     };
     await cognitoidentityserviceprovider.adminAddUserToGroup(addUserParams).promise();
     await docClient.put(userParams).promise();
+    const emailToBeSent = getEmailContent("accountCreation", {
+      FIRST_NAME: userData.firstName,
+    })
+    await sgMail.send({
+      to: userData.email,
+      from: "notify@forwardslash.ch",
+      subject: emailToBeSent.subject,
+      html: emailToBeSent.body
+    })
     return event;
   } catch (err) {
     throw new Error(err)

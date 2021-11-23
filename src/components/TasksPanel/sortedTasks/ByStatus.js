@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { connect } from "react-redux";
 import parseLinkedList from "../../../utils/parseLinkedList";
+import Accordion from '../../UI/Accordion';
 import TaskItem from "../TaskItem";
-import styles from "./ByStatus.module.scss";
 
 const ByStatus = (props) => {
   const { tasks } = props;
@@ -18,10 +18,7 @@ const ByStatus = (props) => {
   return (
     <>
       {sortedTasks.todo.length > 0 && (
-        <div className={styles.Section}>
-          <span className={styles.SectionHeader}>
-            Todo
-          </span>
+        <Accordion title="Started">
           {sortedTasks.todo.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -38,13 +35,10 @@ const ByStatus = (props) => {
               />
             </div>
           ))}
-        </div>
+        </Accordion>
       )}
       {sortedTasks.pending.length > 0 && (
-        <div className={styles.Section}>
-          <span className={styles.SectionHeader}>
-            Pending
-          </span>
+        <Accordion title="Pending">
           {sortedTasks.pending.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -64,13 +58,10 @@ const ByStatus = (props) => {
               />
             </div>
           ))}
-        </div>
+        </Accordion>
       )}
       {sortedTasks.done.length > 0 && (
-        <div className={styles.Section}>
-          <span className={styles.SectionHeader}>
-            Finished
-          </span>
+        <Accordion title="Finished">
           {sortedTasks.done.map((value, index) => (
             <div key={value.id}>
               <TaskItem
@@ -87,7 +78,7 @@ const ByStatus = (props) => {
               />
             </div>
           ))}
-        </div>
+        </Accordion>
       )}
     </>
   )

@@ -1,6 +1,7 @@
 import { panelPages, AuthState } from "../constants"
 import * as tasksActions from "./tasks"
 import * as observersActions from "./observers"
+import * as collaborationActions from "./collaboration"
 import * as commentsActions from "./comments"
 
 export const SET_PROJECT = "SET_PROJECT";
@@ -114,6 +115,7 @@ export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getSt
       if (!getState().projects[id].isVirtual) {
         dispatch(tasksActions.handleFetchTasks(id))
         if (user.state === AuthState.SignedIn) {
+          dispatch(collaborationActions.handleJoinProject(id))
           dispatch(observersActions.handleSetTasksObservers(id))
         }
       }
@@ -132,6 +134,12 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
   dispatch(commentsActions.emptyComments())
   dispatch(setProjectTitle(false))
   if (!id && app.selectedTask) {
+    if (user.state === AuthState.SignedIn) {
+      dispatch(collaborationActions.handleSendAction({
+        action: "UNFOCUS_TASK",
+        taskID: app.selectedTask
+      }))
+    }
     if (app.isRightPanelOpened) {
       dispatch(setRightPanel(false))
     }
@@ -161,6 +169,10 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
     if (!tasks[id].isVirtual) {
       dispatch(commentsActions.handleFetchComments(id))
       if (user.state === AuthState.SignedIn) {
+        dispatch(collaborationActions.handleSendAction({
+          action: "FOCUS_TASK",
+          taskID: id
+        }))
         dispatch(observersActions.handleSetCommentsObservers(id))
       }
     }

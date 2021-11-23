@@ -8,6 +8,7 @@ import * as userActions from "../actions/user"
 import * as usersActions from "../actions/users"
 import * as observersActions from "../actions/observers"
 import * as mutationsActions from "../actions/mutations"
+import * as collaborationActions from "../actions/collaboration"
 import * as queries from "../graphql/queries"
 import * as mutationsGraphQL from "../graphql/mutations"
 import * as cacheController from "../controllers/cache"
@@ -23,30 +24,8 @@ const SyncManager = (props) => {
   const ws = useRef(null)
   const navigate = useNavigate()
   const routeParams = useParams()
-  const establishWebsocket = () => new Promise((resolve, reject) => {
-    if (ws.current?.readyState !== WebSocket.OPEN) {
-      ws.current = new WebSocket(`wss://0ly6ezq1tc.execute-api.us-east-1.amazonaws.com/Prod`)
-
-      ws.current.onopen = () => {
-        console.log("Websocket opened")
-        resolve()
-      }
-      ws.current.onmessage = (event) => {
-        const data = JSON.parse(event.data)
-        console.log("Websocket message", data)
-      }
-      ws.current.onerror = () => {
-        console.log("Websocket error")
-        reject()
-      }
-      ws.current.onclose = () => {
-        console.log("Websocket closed")
-      }
-    }
-  })
   useEffect(() => {
     if (user.state === AuthState.SignedIn) {
-      establishWebsocket()
       if (isInitial) {
         setIsInitial(false)
       } else if (app.isOffline) {
@@ -61,6 +40,7 @@ const SyncManager = (props) => {
       } else {
         (async () => {
           const currUser = await dispatch(userActions.handleFetchUser())
+          await dispatch(collaborationActions.handleInitSession());
           if (routeParams.projectPermalink &&
             routeParams.username &&
             currUser.state === AuthState.SignedIn) {
@@ -121,6 +101,7 @@ const SyncManager = (props) => {
     if (mutations[0]) {
       const [mutationType, data, successCallback, errorCallback] = mutations[0];
       const generatedMutationID = mutationID.generate(user.data.username);
+      console.log(generatedMutationID)
       const query = mutationsGraphQL[mutationType];
       const queryData = { input: { ...data, mutationID: generatedMutationID } };
       execGraphQL(graphqlOperation(query, queryData))
@@ -134,52 +115,6 @@ const SyncManager = (props) => {
         });
     }
   }, [mutations[0]])
-
-  useEffect(() => {
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      console.log("informed")
-      if (app.selectedProject) {
-        const dataToSend = {
-          action: "joinproject",
-          data: {
-            projectID: app.selectedProject,
-            jwt: user.data.jwt
-          }
-        }
-        console.log(JSON.stringify(dataToSend))
-        ws.current.send(JSON.stringify(dataToSend));
-      } else {
-        const dataToSend = {
-          action: "leaveproject"
-        }
-        ws.current.send(JSON.stringify(dataToSend));
-      }
-    }
-  }, [app.selectedProject, ws.current, ws.current?.readyState])
-
-  useEffect(() => {
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      console.log("informed task")
-      if (app.selectedTask) {
-        const dataToSend = {
-          action: "sendmessage",
-          data: {
-            action: "focustask",
-            taskID: app.selectedTask
-          }
-        }
-        ws.current.send(JSON.stringify(dataToSend));
-      } else {
-        const dataToSend = {
-          action: "sendmessage",
-          data: {
-            action: "unfocustask"
-          }
-        }
-        ws.current.send(JSON.stringify(dataToSend));
-      }
-    }
-  }, [app.selectedTask, ws.current, ws.current?.readyState])
   return null
 }
 

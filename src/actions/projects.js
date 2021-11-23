@@ -75,6 +75,9 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
           ...incoming.data.createProject,
           isVirtual: false
         }))
+        if (getState().app.selectedProject === projectState.id) {
+          dispatch(observersActions.handleSetTasksObservers(projectState.id))
+        }
       },
       () => {
         if (getState().app.selectedProject === projectState.id) {

@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import getTitleCase from '../../../utils/getTitleCase';
 import parseLinkedList from "../../../utils/parseLinkedList";
 import sortObj from '../../../utils/sortObj';
+import Accordion from '../../UI/Accordion';
 import TaskItem from "../TaskItem";
-import styles from "./ByTag.module.scss";
 
 const ByTag = (props) => {
   const { tasks } = props;
@@ -35,10 +35,7 @@ const ByTag = (props) => {
   return (
     <>
       {sortedTasks.map((x, tagIndex) => (
-        <div key={x[0]} className={styles.Section}>
-          <span className={styles.SectionHeader}>
-            { x[0] }
-          </span>
+        <Accordion title={x[0]} key={x[0]}>
           {x[1].map((value, taskIndex) => (
             <div key={value.id}>
               <TaskItem
@@ -58,7 +55,7 @@ const ByTag = (props) => {
               />
             </div>
           ))}
-        </div>
+        </Accordion>
       ))}
     </>
   )

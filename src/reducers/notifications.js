@@ -1,4 +1,4 @@
-import { ADD_NOTIFICATION, PUSH_NOTIFICATION, DISMISS_NOTIFICATION, REMOVE_NOTIFICATION, FETCH_NOTIFICATIONS } from "../actions/notifications"
+import { ADD_NOTIFICATION, PUSH_NOTIFICATION, DISMISS_NOTIFICATION, REMOVE_NOTIFICATION, FETCH_NOTIFICATIONS, EMPTY_NOTIFICATIONS } from "../actions/notifications"
 
 const initState = {
   stored: [],
@@ -43,6 +43,11 @@ export default function (state = initState, action) {
       return {
         ...state,
         stored: newStored.sort((a, b) => b.createdAt - a.createdAt)
+      }
+    case EMPTY_NOTIFICATIONS:
+      return {
+        ...state,
+        stored: []
       }
     default:
       return state
