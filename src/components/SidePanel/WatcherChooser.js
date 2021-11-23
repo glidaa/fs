@@ -43,7 +43,7 @@ const WatcherChooser = (props) => {
   }
   const filterResults = (results, tasks, selectedTask) => {
     const currWatchers = tasks[selectedTask].watchers.filter(x => x !== pendingUser)
-    return results.filter(x => !currWatchers.includes(users[x].username))
+    return results.filter(x => !currWatchers.includes(x))
   }
   const filteredResults = useMemo(
     () => filterResults(results, tasks, selectedTask),
@@ -105,14 +105,14 @@ const WatcherChooser = (props) => {
         {keyword && filteredResults.map(x => (
           <button
             className={styles.SearchResultsItem}
-            key={users[x].username}
+            key={x}
             disabled={isBusy}
-            onClick={() => handleAddWatcher(users[x].username)}
+            onClick={() => handleAddWatcher(x)}
           >
             <Avatar user={x} size={32} circular />
             <div>
               <span>{`${users[x].firstName} ${users[x].lastName}`}</span>
-              <span>@{users[x].username}</span>
+              <span>@{x}</span>
             </div>
           </button>
         ))}

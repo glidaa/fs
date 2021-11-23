@@ -121,14 +121,14 @@ const AssigneeChooser = (props) => {
         {keyword && filteredResults.map(x => (
           <button
             className={styles.SearchResultsItem}
-            key={users[x].username}
+            key={x}
             disabled={isBusy}
-            onClick={() => handleAssignTask(`user:${users[x].username}`)}
+            onClick={() => handleAssignTask(`user:${x}`)}
           >
             <Avatar user={users[x]} size={32} circular />
             <div>
               <span>{`${users[x].firstName} ${users[x].lastName}`}</span>
-              <span>@{users[x].username}</span>
+              <span>@{x}</span>
             </div>
           </button>
         ))}
