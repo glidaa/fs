@@ -101,7 +101,6 @@ const SyncManager = (props) => {
     if (mutations[0]) {
       const [mutationType, data, successCallback, errorCallback] = mutations[0];
       const generatedMutationID = mutationID.generate(user.data.username);
-      console.log(generatedMutationID)
       const query = mutationsGraphQL[mutationType];
       const queryData = { input: { ...data, mutationID: generatedMutationID } };
       execGraphQL(graphqlOperation(query, queryData))

@@ -317,7 +317,6 @@ export const handleSetTasksObservers = (projectID) => async (dispatch, getState)
       next: async (e) => {
         const { tasks } = getState()
         const incoming = e.value.data.onUpdateTaskByProjectID
-        console.log(incoming)
         if (!mutationID.isLocal(incoming.mutationID)) {
           if (Object.keys(tasks).includes(incoming.id)) {
             const lastMutationDate = tasks[incoming.id].mutatedAt || null
