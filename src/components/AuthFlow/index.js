@@ -6,7 +6,6 @@ import { Auth } from "@aws-amplify/auth";
 import SimpleBar from 'simplebar-react';
 import Login from './Login';
 import NewAccount from './NewAccount';
-import * as appActions from "../../actions/app"
 import ForgotPassword from './ForgotPassword';
 import isLoggedIn from '../../utils/isLoggedIn';
 

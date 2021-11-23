@@ -11,6 +11,7 @@ import TasksToolbar from './TasksToolbar';
 import NoTasks from './NoTasks';
 import TasksSearch from './TasksSearch';
 import ProjectHeader from './ProjectHeader';
+import SimpleBar from 'simplebar-react';
 
 const TasksPanel = (props) => {
   const {
@@ -66,9 +67,9 @@ const TasksPanel = (props) => {
                 {searchKeyword.trim() ? (
                   <TasksSearch searchKeyword={searchKeyword} />
                 ) : Object.keys(tasks).length ? (
-                  <div>
+                  <SimpleBar className={styles.TasksView}>
                     {React.createElement(sortedTasks[tasksSortingCriteria])}
-                  </div>
+                  </SimpleBar>
                  ) : isSynced ? (
                   <NoTasks msgID="EMPTY" />
                  ) : (
