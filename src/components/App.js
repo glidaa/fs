@@ -52,7 +52,20 @@ const App = (props) => {
   }, []);
 
   useEffect(() => {
+    const availColors = {
+      "red": "#FB1515",
+      "rose": "#FF969C",
+      "orange": "#FE6000",
+      "green": "#15fb3b",
+      "turquoise": "#15fbd9",
+      "cyan": "#15dcfb",
+      "blue": "#1560FB",
+      "pink": "#fb15b2",
+      "purple": "#5615fb",
+      "black": "#000000",
+    }
     document.documentElement.className = appSettings.theme + " " + (appSettings.isDarkMode ? "dark" : "light");
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', availColors[appSettings.theme])
   }, [appSettings.theme, appSettings.isDarkMode]);
   return useRoutes([
     {

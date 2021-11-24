@@ -65,14 +65,14 @@
       }
     }
   }
-  &.focused, &.filled {
+  &.focused:not(.readOnly:not(.filled)), &.filled {
     & > div {
       & > label {
         transform: scale(0.9) translate3d(10px, -14px, 0);
       }
     }
   }
-  &.focused {
+  &.focused:not(.readOnly:not(.filled)) {
     & > div {
       @include themify(border-color, "primary");
       & > label {

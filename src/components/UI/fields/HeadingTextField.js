@@ -5,6 +5,7 @@ const HeadingTextField = (props) => {
   const {
     value = "",
     onChange,
+    onFocus,
     autoComplete,
     placeholder,
     type,
@@ -17,6 +18,10 @@ const HeadingTextField = (props) => {
     style
   } = props
   const [isFocused, setIsFocused] = useState(false)
+  const handleFocus = (e) => {
+    setIsFocused(true)
+    if (onFocus) onFocus(e)
+  }
   return (
     <div className={styles.HeadingTextFieldShell} style={style}>
       <div
@@ -35,7 +40,7 @@ const HeadingTextField = (props) => {
           autoComplete={autoComplete}
           onChange={onChange}
           value={value}
-          onFocus={() => setIsFocused(true)}
+          onFocus={handleFocus}
           onBlur={() => setIsFocused(false)}
           readOnly={readOnly}
           disabled={disabled}

@@ -59,12 +59,12 @@
       color: #C0C0C0;
     }
   }
-  &.focused, &.filled {
+  &.focused:not(.readOnly:not(.filled)), &.filled {
     & > label {
       transform: scale(0.9) translate3d(0, -25px, 0);
     }
   }
-  &.focused {
+  &.focused:not(.readOnly:not(.filled)) {
     @include themify(border-color, "primary");
     & > label {
       @include themify(color, "primary");

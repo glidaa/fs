@@ -35,6 +35,7 @@ const TextField = (props) => {
           ...(disabled && [styles.disabled] || []),
           ...(error && [styles.error] || []),
           ...(isFocused && [styles.focused] || []),
+          ...(readOnly && [styles.readOnly] || []),
           ...((value || prefix) && [styles.filled] || [])
         ].join(" ")}
       >

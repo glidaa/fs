@@ -2,6 +2,7 @@ import React from 'react';
 import styles from "./TasksToolbar.module.scss";
 import { connect } from "react-redux";
 import * as tasksActions from "../../actions/tasks"
+import * as appActions from "../../actions/app";
 import * as appSettingsActions from "../../actions/appSettings";
 import parseLinkedList from "../../utils/parseLinkedList"
 import copyTask from "../../utils/copyTask"
@@ -68,6 +69,7 @@ const TasksToolbar = (props) => {
         placeholder="Search tasks…"
         value={searchKeyword}
         onChange={(e) => setSearchKeyword(e.target.value)}
+        onFocus={() => dispatch(appActions.handleSetTask(null))}
         prefix={() => (
           <SearchIcon
             width={18}

@@ -32,7 +32,8 @@ const TagField = (props) => {
   }
 
   const handleKeyDown = (e) => {
-    if (e.code === "Backspace") {
+    console.log(e)
+    if (e.code === "Backspace" || e.key === "Backspace" || e.keyCode === 8 || e.which === 8) {
       if (e.target.innerText === "" && value.length > 0) {
         const newValue = value.slice(0, value.length - 1);
         onChange({ target: {
@@ -40,6 +41,15 @@ const TagField = (props) => {
           name: name
         }})
       }
+    } else if (e.code === "Enter" || e.code === "NumpadEnter" || e.key === "Enter" || e.keyCode === 13 || e.which === 13) {
+      e.preventDefault();
+      const newValue = e.target.innerText.trim();
+      if (!newValue) return;
+      e.target.innerText = ""
+      onChange({ target: {
+        value: [...new Set([...value, newValue])],
+        name: name
+      }})
     }
   }
 

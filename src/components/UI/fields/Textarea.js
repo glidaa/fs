@@ -30,6 +30,7 @@ const Textarea = (props) => {
         styles.TextareaContainer,
         ...(error && [styles.error] || []),
         ...(isFocused && [styles.focused] || []),
+        ...(readOnly && [styles.readOnly] || []),
         ...(value && [styles.filled] || [])
       ].join(" ")}
     >

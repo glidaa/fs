@@ -70,6 +70,7 @@ export const handleFetchUser = () => async (dispatch, getState) => {
       dispatch(handleSetData(userData))
       dispatch(handleSetState(AuthState.SignedIn))
     } catch (err) {
+      console.error(err)
       if (err.errors?.[0]?.message === 'Network Error') {
         dispatch(fetchCachedUser(cacheController.getUser()))
       }
