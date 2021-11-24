@@ -40,14 +40,14 @@ export const handleSetState = (userState) => (dispatch) => {
   }
 }
 
-export const handleSetData = (userData) => (dispatch) => {
+export const handleSetData = (userData) => (dispatch, getState) => {
   if (userData) {
     const { firstName, lastName } = userData
     const abbr = firstName[0].toUpperCase() + lastName[0].toUpperCase()
     dispatch(setData({...userData, abbr}))
     if (!userData.avatar) {
       getGravatar(userData.email).then((avatar) => {
-        dispatch(setData({...userData, avatar}))
+        dispatch(setData({...getState().user.data, avatar}))
       })
     }
   } else {
