@@ -847,7 +847,7 @@ exports.handler = async function (ctx) {
         },
         UpdateExpression: updateExp,
         ExpressionAttributeValues: expAttrVal,
-        ReturnValues: "UPDATED_NEW"
+        ReturnValues: "ALL_NEW"
       };
       if (Object.keys(expAttrNames).length) {
         params.ExpressionAttributeNames = expAttrNames
@@ -1012,7 +1012,7 @@ exports.handler = async function (ctx) {
         },
         UpdateExpression: updateExp,
         ExpressionAttributeValues: expAttrVal,
-        ReturnValues: "UPDATED_NEW"
+        ReturnValues: "ALL_NEW"
       };
       try {
         const data = await docClient.update(params).promise();
@@ -1137,13 +1137,13 @@ exports.handler = async function (ctx) {
               const emailToBeSentToAssignee = getEmailContent("assignment", {
                 ASSIGNEE_FIRST_NAME: userUpdate.Attributes.firstName,
                 ASSIGNER_USERNAME: client,
-                TASK: updatedTask.Attributes.task,
+                TASK: updatedTask.Attributes.task || "",
                 TASK_PERMALINK: `https://forwardslash.ch/${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}`,
               })
               const emailToBeSentToWatchers = getEmailContent("assignmentWatching", {
                 ASSIGNEE_USERNAME: userUpdate.Attributes.username,
                 ASSIGNER_USERNAME: client,
-                TASK: updatedTask.Attributes.task,
+                TASK: updatedTask.Attributes.task || "",
                 TASK_PERMALINK: `https://forwardslash.ch/${cachedProjects[updatedTask.Attributes.projectID].permalink}/${updatedTask.Attributes.permalink}`,
               })
               let watchersEmails = []
@@ -1227,7 +1227,7 @@ exports.handler = async function (ctx) {
               ":assignees": assignees.filter(x => x !== assignee),
               ":updatedAt": new Date().toISOString()
             },
-            ReturnValues: "UPDATED_NEW"
+            ReturnValues: "ALL_NEW"
           };
           const userUpdateParams = isUser && {
             TableName: USERTABLE,
@@ -1286,7 +1286,7 @@ exports.handler = async function (ctx) {
             ":watchers": [...watchers, watcher],
             ":updatedAt": new Date().toISOString()
           },
-          ReturnValues: "UPDATED_NEW"
+          ReturnValues: "ALL_NEW"
         };
         const userUpdateParams = {
           TableName: USERTABLE,
@@ -1340,7 +1340,7 @@ exports.handler = async function (ctx) {
             ":watchers": watchers.filter(x => x !== watcher),
             ":updatedAt": new Date().toISOString()
           },
-          ReturnValues: "UPDATED_NEW"
+          ReturnValues: "ALL_NEW"
         };
         const userUpdateParams = {
           TableName: USERTABLE,

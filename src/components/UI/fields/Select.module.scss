@@ -11,6 +11,8 @@
   @include themify(border-color, "outline");
   & > label {
     position: absolute;
+    top: 15px;
+    left: 10px;
     margin-bottom: 0;
     width: max-content;
     font-size: 14px;

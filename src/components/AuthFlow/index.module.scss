@@ -1,5 +1,5 @@
 .AuthFlowContainer {
-  position: fixed!important;
+  position: fixed !important;
   overflow: auto;
   width: 100%;
   height: 100%;
@@ -9,5 +9,9 @@
     align-items: center;
     justify-content: center;
     min-height: 100%;
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      /* IE10+ CSS styles go here */
+      height: 100%;
+    }
   }
 }

@@ -43,11 +43,12 @@
 
 .LoginStepOneForm {
   display: grid;
-  grid-template-areas:
-    'username username'
-    'password password'
-    'newAccount ForgotPassword'
-    'signIn signIn';
+  grid-template:
+    'username username' auto
+    'password password' auto
+    'newAccount ForgotPassword' auto
+    'signIn signIn' auto /
+    3fr 2fr;
   gap: 15px;
   & > *:nth-child(1) {
     grid-area: username;
@@ -74,11 +75,14 @@
 
 .LoginStepTwoForm {
   display: grid;
-  grid-template-areas:
-    'code code'
-    'submit submit';
+  grid-template:
+    'code code' auto
+    'submit submit' auto /
+    1fr 1fr;
   gap: 15px;
-  align-items: start;
+  & > * {
+    align-self: start;
+  }
   & > *:nth-child(1) {
     grid-area: code;
   }
@@ -97,6 +101,7 @@
 }
 
 .ForgotPasswordLink {
+  display: block;
   font-size: 14px;
   justify-self: flex-end;
   @include themify(color, "primary");

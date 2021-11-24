@@ -1,5 +1,7 @@
-import 'react-app-polyfill/ie9';
-import 'react-app-polyfill/stable';
+import "smap/smap-shim"
+import "core-js";
+import 'regenerator-runtime/runtime';
+import './utils/nanoidIE'
 import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from "react-redux"

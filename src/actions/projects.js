@@ -137,7 +137,7 @@ export const handleRemoveProject = (projectState) => (dispatch, getState) => {
 
 export const handleFetchOwnedProjects = (isSync = false) => async (dispatch, getState) => {
   const { user } = getState()
-  if (!isSync) dispatch(appActions.handleSetProject(null))
+  // if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
       const res = await execGraphQL(graphqlOperation(listOwnedProjects))
@@ -155,7 +155,7 @@ export const handleFetchOwnedProjects = (isSync = false) => async (dispatch, get
 
 export const handleFetchAssignedProjects = (isSync = false) => async (dispatch, getState) => {
   const { user } = getState()
-  if (!isSync) dispatch(appActions.handleSetProject(null))
+  // if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
       const res = await execGraphQL(graphqlOperation(listAssignedProjects))
@@ -177,7 +177,7 @@ export const handleFetchAssignedProjects = (isSync = false) => async (dispatch, 
 
 export const handleFetchWatchedProjects = (isSync = false) => async (dispatch, getState) => {
   const { user } = getState()
-  if (!isSync) dispatch(appActions.handleSetProject(null))
+  // if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
       const res = await execGraphQL(graphqlOperation(listWatchedProjects))

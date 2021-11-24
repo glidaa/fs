@@ -10,7 +10,7 @@
   width: 100%;
   & > svg {
     width: 250px;
-    height: auto;
+    height: 163px;
     margin-top: 25px;
     @include themify(color, "primary");
   }
@@ -19,6 +19,7 @@
     font-size: 18px;
     @include themify(color, "txtColor");
     margin-top: 25px;
+    width: max-content;
   }
   & > *:not(:last-child) {
     margin-bottom: 40px;

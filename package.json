@@ -43,9 +43,9 @@
     "workbox-streams": "^6.4.1"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
+    "start": "cross-env AUTOPREFIXER_GRID=autoplace craco start",
+    "build": "cross-env AUTOPREFIXER_GRID=autoplace craco build",
+    "test": "cross-env AUTOPREFIXER_GRID=autoplace craco test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
@@ -74,19 +74,17 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all",
-      "ie 9"
+      "cover 100%"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version",
-      "ie 9"
+      "cover 100%"
     ]
   },
   "devDependencies": {
+    "smap": "^0.2.0",
+    "core-js": "^3.19.1",
+    "autoprefixer": "^10.4.0",
+    "cross-env": "^7.0.3",
     "@babel/core": "^7.16.0",
     "@babel/eslint-parser": "^7.16.0",
     "@craco/craco": "^6.4.1",

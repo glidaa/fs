@@ -101,11 +101,11 @@ export const handleInitSession = () => async (dispatch, getState) => {
 }
 
 export const handleJoinProject = (projectID) => async (dispatch, getState) => {
-  const session = getState().collaboration.session;
   const userData = getState().user.data;
   await dispatch(usersActions.handleAddUsers([userData.username]))
   dispatch(resetCollabData())
   dispatch(setJoinedProject(projectID, userData.username))
+  const session = getState().collaboration.session;
   if (session?.readyState === WebSocket.OPEN) {
     const dataToSend = {
       action: "joinproject",

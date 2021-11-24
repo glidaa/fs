@@ -25,8 +25,7 @@
   width: 100%;
   padding: 10px;
   display: grid;
-  justify-content: center;
-  align-items: center;
+  grid-template-rows: repeat(2, 1fr);
   grid-template-columns: repeat(5, 50px);
   gap: 10px;
   border-radius: 8px;
@@ -35,6 +34,10 @@
   border: 1px solid transparent;
   box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
   @include themify(background-color, "fieldBg");
+  & > * {
+    align-self: center;
+    justify-self: center;
+  }
   &.error {
     border-color: #FF0000;
   }

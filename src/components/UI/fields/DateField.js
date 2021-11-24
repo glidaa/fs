@@ -32,7 +32,7 @@ const DateField = (props) => {
   const pickValue = ({ day, month, year }) => {
     if (!readOnly) {
       togglePicker()
-      onChange({ target: { value: new Date(`${month}-${day}-${year}`).getTime(), name: name }})
+      onChange({ target: { value: new Date(`${month}-${day}-${year} GMT`).getTime(), name: name }})
     }
   }
   const getPickerValue = (value) => {

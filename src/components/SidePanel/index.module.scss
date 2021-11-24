@@ -27,12 +27,13 @@
   @media only screen and (max-width: 768px) {
     position: fixed;
     width: 100vw;
+    min-width: 0;
     max-width: 100vw;
     height: 100%;
     margin: 0;
     transform: translateX(-100%);
     &.right.opened, &.opened {
-      transform: initial;
+      transform: translateX(0%);
     }
     &.right {
       transform: translateX(100%);

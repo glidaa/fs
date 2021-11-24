@@ -43,16 +43,19 @@
 
 .NewAccountStepOneForm {
   display: grid;
-  grid-template-areas:
-    'firstName lastName'
-    'username username'
-    'email email'
-    'password password'
-    'dateOfBirth dateOfBirth'
-    'gender gender'
-    'signUp signUp';
+  grid-template:
+    'firstName lastName' auto 
+    'username username' auto 
+    'email email' auto 
+    'password password' auto 
+    'dateOfBirth dateOfBirth' auto 
+    'gender gender' auto 
+    'signUp signUp' auto /
+    1fr 1fr;
   gap: 15px;
-  align-items: start;
+  & > * {
+    align-self: start;
+  }
   & > *:nth-child(1) {
     grid-area: firstName;
   }
@@ -81,11 +84,14 @@
 
 .NewAccountStepTwoForm {
   display: grid;
-  grid-template-areas:
-    'code code'
-    'submit submit';
+  grid-template:
+    'code code' auto
+    'submit submit' auto /
+    1fr 1fr;
   gap: 15px;
-  align-items: start;
+  & > * {
+    align-self: start;
+  }
   & > *:nth-child(1) {
     grid-area: code;
   }

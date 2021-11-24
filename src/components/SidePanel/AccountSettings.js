@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { connect } from "react-redux";
 import { graphqlOperation } from "@aws-amplify/api";
 import * as mutations from "../../graphql/mutations"
@@ -96,7 +96,7 @@ const AccountSettings = (props) => {
         ...(newBirthdate !== birthdate && { birthdate: newBirthdate }),
         ...(newGender !== gender && { gender: newGender })
       }
-    })).then(() => {
+    })).then((res) => {
       setIsBusy(false)
     }).catch(() => {
       setIsBusy(false)
@@ -165,7 +165,7 @@ const AccountSettings = (props) => {
           <DateField
             name="dateOfBirth"
             label="Date Of Birth"
-            onChange={(e) => setNewBirthdate(e.target.value)}
+            onChange={(e) => setNewBirthdate(new Date(e.target.value).toISOString().substring(0, 10))}
             placeholder="no date selected"
             value={newBirthdate}
             readOnly={!isSynced}
