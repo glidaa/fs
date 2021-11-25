@@ -14,12 +14,12 @@
   @media only screen and (max-width: 768px) {
     padding: 15px 20px;
     flex-direction: row;
-    bottom: 10px;
+    bottom: 0;
     top: auto;
-    margin: 0 10px;
-    width: calc(100vw - 40px - 20px);
-    height: 40px;
-    border-radius: 16px;
+    margin: 0;
+    width: calc(100% - 40px);
+    height: 60px;
+    border-radius: 0;
   }
 }
 
@@ -33,9 +33,10 @@
   }
   @media only screen and (max-width: 768px) {
     flex-direction: row;
+    flex: 4;
+    justify-content: space-evenly;
     & > *:not(:last-child) {
       margin-bottom: 0px;
-      margin-right: 20px;
     }
   }
 }
@@ -50,6 +51,7 @@
   }
   @media only screen and (max-width: 768px) {
     flex-direction: row;
+    flex: 1;
     & > *:not(:last-child) {
       display: none;
       margin-bottom: 0px;
@@ -61,6 +63,7 @@
 .ToolbarAction {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   border: none;
@@ -68,24 +71,34 @@
   margin: 0;
   padding: 10px;
   border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
   background-color: transparent;
   cursor: pointer;
   @include themify(color, "txtColor");
-}
-
-.ToolbarAction.selected {
-  @include themify(color, "onPrimaryColor");
-  @include themify(background-color, "primary");
-}
-
-.ToolbarAction.LoginBtn {
-  @include themify(background-color, "primary");
-  @include themify(color, "onPrimaryColor");
+  & > svg {
+    padding: 2px 0;
+    width: 52px;
+    border-radius: 50px;
+  }
+  &.selected {
+    & > svg {
+      @include themify(color, "onPrimaryColor");
+      @include themify(background-color, "primary");
+    }
+  }
+  &.LoginBtn {
+    @include themify(background-color, "primary");
+    @include themify(color, "onPrimaryColor");
+  }
 }
 
 .Spacer {
   border-top: 10px solid transparent;
   width: 100%;
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
 }
 
 .Logo {

@@ -52,6 +52,7 @@ const Toolbar = (props) => {
             width={24}
             height={24}
           />
+          <span>Updates</span>
         </button>
         <button
           className={[
@@ -64,6 +65,7 @@ const Toolbar = (props) => {
             width={24}
             height={24}
           />
+          <span>Projects</span>
         </button>
         <button
           className={[
@@ -76,6 +78,7 @@ const Toolbar = (props) => {
             width={24}
             height={24}
           />
+          <span>Settings</span>
         </button>
       </div>
       <div className={styles.BottomControls}>

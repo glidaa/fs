@@ -31,6 +31,7 @@ const Loading = (props) => {
   useEffect(() => {
     (async () => {
     const currUser = await dispatch(userActions.handleFetchUser())
+    console.log(currUser)
     if (currUser.state === AuthState.SignedIn) {
       setLoadingMsg("We Are Importing Your Local Projects")
       await uploadLocal()
