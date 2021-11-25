@@ -1,0 +1,149 @@
+.ProjectItemShell {
+  background-origin: border-box !important;
+  border: none;
+  padding: 20px;
+  margin: 0 25px;
+  overflow: hidden;
+  border-radius: 10px;
+  position: relative;
+  border: 4px solid transparent;
+  @include themify(background-color, "primary");
+  &.selected {
+    border: 4px solid;
+    @include themify(color, "txtColor");
+  }
+}
+
+.ProjectItemContainer {
+  display: flex;
+  flex-direction: row;
+  transition: background-color 0.3s;
+  & * {
+    z-index: 2;
+  }
+}
+
+.ProjectItemLeftPart {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex: 2;
+  & > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
+}
+
+.ProjectItemRightPart {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.ProjectItemHeader {
+  display: flex;
+  flex-direction: column;
+}
+
+.ProjectItemTitle {
+  font-weight: 600;
+  font-size: 20px;
+  max-width: 197.08px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  @include themify(color, "onPrimaryColor");
+}
+
+.ProjectItemPermalink {
+  font-size: 12px;
+  font-weight: 500;
+  max-width: 197.08px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  @include themify(color, "onPrimaryColor");
+}
+
+.TasksCount {
+  display: flex;
+  flex-direction: row;
+  color: #5d6969;
+  font-size: 14px;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.TasksCountItem {
+  padding: 1px 10px;
+  border-radius: 10px;
+  &::before {
+    content: "⬤ ";
+    white-space: pre;
+  }
+  &.TodoTasksCount {
+    background-color: #ffebe5;
+    &::before {
+      color: #ff1744;
+    }
+  }
+  &.PendingTasksCount {
+    background-color: #fdf1db;
+    &::before {
+      color: #ff9100;
+    }
+  }
+  &.DoneTasksCount {
+    background-color: #daf6f4;
+    &::before {
+      color: #00e676;
+    }
+  }
+}
+
+.ProjectItemActions {
+  display: flex;
+  flex-direction: row;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.ProjectItemAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 1px 6px;
+  @include themify(color, "onPrimaryColor");
+}
+
+.ProjectItemPermission {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  right: 0;
+  bottom: 0;
+  opacity: 0.15;
+  z-index: 1;
+  & > svg {
+    @include themify(color, "onPrimaryColor");
+    @include themify(fill, "onPrimaryColor");
+  }
+}
+
+.ProjectItemDate {
+  font-size: 12px;
+  font-weight: 500;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  @include themify(color, "onPrimaryColor");
+}

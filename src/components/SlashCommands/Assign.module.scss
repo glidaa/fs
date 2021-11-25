@@ -1,0 +1,38 @@
+.AssigneeSuggestion {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: transparent;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  &.selected {
+    @include themify(background-color, "hover");
+  }
+  & > div {
+    display: flex;
+    flex-direction: column;
+    & > span:nth-child(1) {
+      @include themify(color, "txtColor");
+      font-weight: 600;
+      font-size: 14px;
+    }
+    & > span:nth-child(2) {
+      @include themify(color, "txtColor");
+      font-weight: 400;
+      font-size: 12px;
+    }
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.NoKeyword {
+  display: flex;
+  width: 100%;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  @include themify(color, "txtColor");
+}

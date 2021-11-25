@@ -1,17 +1,27 @@
 import user from "./user"
 import projects from "./projects"
-import notes from "./notes"
+import tasks from "./tasks"
 import comments from "./comments"
 import app from "./app"
+import mutations from "./mutations"
 import observers from "./observers"
 import users from "./users"
+import appSettings from "./appSettings"
+import notifications from "./notifications"
+import status from "./status"
+import collaboration from "./collaboration"
 
 export default {
   user,
   projects,
-  notes,
+  tasks,
   comments,
   app,
   observers,
-  users
+  users,
+  status,
+  mutations,
+  appSettings,
+  notifications,
+  collaboration
 }

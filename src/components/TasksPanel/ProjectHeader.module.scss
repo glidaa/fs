@@ -1,0 +1,12 @@
+.ProjectHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  margin: 4px 0;
+  padding: 8px 12px;
+  @media only screen and (max-width: 768px) {
+    padding: 5px 20px 5px 20px;
+  }
+}

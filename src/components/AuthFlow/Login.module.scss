@@ -1,0 +1,109 @@
+.LoginFormContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 40px 0;
+  justify-content: center;
+  @include themify(background-color, "secondaryBg");
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 25px;
+  height: fit-content;
+  width: 350px;
+  padding: 35px;
+  & > *:not(:last-child) {
+    margin-bottom: 15px;
+  }
+  @media only screen and (max-width: 768px) {
+    position: absolute;
+    width: calc(100% - 70px);
+    height: calc(100% - 70px);
+    border-radius: 0;
+    margin: 0;
+  }
+}
+
+.LoginFormHeader {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  @include themify(color, "txtColor");
+  & > span:nth-child(1) {
+    font-weight: bold;
+    font-size: 24px;
+    @include themify(color, "primary");
+  }
+  & > span:nth-child(2) {
+    font-weight: 600;
+    font-size: 24px;
+  }
+  & > span:nth-child(3) {
+    font-weight: 400;
+    font-size: 16px;
+  }
+}
+
+.LoginStepOneForm {
+  display: grid;
+  grid-template:
+    'username username' auto
+    'password password' auto
+    'newAccount ForgotPassword' auto
+    'signIn signIn' auto /
+    3fr 2fr;
+  gap: 15px;
+  & > *:nth-child(1) {
+    grid-area: username;
+  }
+  & > *:nth-child(2) {
+    grid-area: password;
+  }
+  & > *:nth-child(3) {
+    grid-area: newAccount;
+  }
+  & > *:nth-child(4) {
+    grid-area: ForgotPassword;
+  }
+  & > *:nth-child(5) {
+    grid-area: signIn;
+  }
+  & > *:nth-child(3) > span:first-child {
+    @include themify(color, "txtColor");
+  }
+  & > h2 > span {
+    cursor: pointer;
+  }
+}
+
+.LoginStepTwoForm {
+  display: grid;
+  grid-template:
+    'code code' auto
+    'submit submit' auto /
+    1fr 1fr;
+  gap: 15px;
+  & > * {
+    align-self: start;
+  }
+  & > *:nth-child(1) {
+    grid-area: code;
+  }
+  & > *:nth-child(2) {
+    grid-area: submit;
+  }
+}
+
+.NewAccountLink {
+  font-size: 14px;
+  justify-self: flex-start;
+  cursor: pointer;
+  & > span:nth-child(2) {
+    @include themify(color, "primary");
+  }
+}
+
+.ForgotPasswordLink {
+  display: block;
+  font-size: 14px;
+  justify-self: flex-end;
+  @include themify(color, "primary");
+  cursor: pointer;
+}

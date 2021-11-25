@@ -1,0 +1,4 @@
+{
+  "modules": "save-user-data",
+  "resourceName": "fsCognitoPostConfirmation"
+}

@@ -1,0 +1,53 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  will-change: auto;
+}
+
+.Calendar {
+  @include themify-global(--cl-color-primary, "primary", true);
+  @include themify-global(--cl-color-primary-light, "primaryLight", true);
+}
+
+body {
+  width: 100vw;
+  height: 100%;
+  margin: 0;
+  @include themify-global(background-color, "primaryBg");
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+label,
+.noselect {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -khtml-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+input:read-only {
+  color: transparent;
+  text-shadow: 0 0 0 #222222;
+}
+
+input:-webkit-autofill::first-line,
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  font-family: "Poppins", sans-serif !important;
+  box-shadow: 0 0 0 30px white inset !important;
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+input, textarea, select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+}

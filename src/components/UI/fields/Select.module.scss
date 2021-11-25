@@ -1,0 +1,59 @@
+.SelectShell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: transparent;
+  @include themify(border-color, "outline");
+  & > label {
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 3px;
+    margin-left: -3px;
+    transform-origin: bottom left;
+    transform: scale(0.9) translate3d(0, -32.2px, 0);
+    transition: transform 150ms cubic-bezier(0.4,0,0.2,1);
+    @include themify(color, "outline");
+    @include themify(background-color, "secondaryBg");
+  }
+}
+
+.Selection {
+  position: relative;
+  padding: 3px 10px;
+  border: 2px solid transparent;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 100000000000000px;
+  @include themify(color, "txtColor");
+  @include themify(background-color, "primaryLightSurface");
+  transition: color 0.2s, background-color 0.2s;
+  &.selected {
+    cursor: default;
+    @include themify(color, "onPrimaryColor", true);
+    @include themify(background-color, "primary");
+  }
+}
+
+.SelectContainer {
+  display: flex;
+  flex-direction: row;
+  & > .Selection {
+    cursor: pointer;
+  }
+  &.readOnly > .Selection {
+    cursor: default;
+  }
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}

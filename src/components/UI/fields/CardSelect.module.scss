@@ -1,0 +1,67 @@
+.SelectShell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  & > label {
+    @include themify(color, "txtColor");
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
+}
+
+.Selection {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  text-align: left;
+  padding: 12px;
+  border: 2px solid transparent;
+  outline: none;
+  cursor: pointer;
+  border-radius: 8px;
+  @include themify(background-color, "fieldBg");
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  transition: color 0.2s, border-color 0.2s;
+  & > span:nth-child(1) {
+    font-size: 24px;
+    font-weight: 600;
+    @include themify(color, "primaryLight");
+  }
+  & > span:nth-child(2) {
+    font-size: 14px;
+    font-weight: 400;
+    color: #aaa8ac;
+  }
+  &.selected {
+    @include themify(border-color, "primary");
+    & > span:nth-child(1) {
+      @include themify(color, "primary");
+    }
+    & > span:nth-child(2) {
+      color: #5d6969;
+    }
+  }
+}
+
+.SelectContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  opacity: 1;
+  transition: opacity 0.3s;
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
+  &.disabled {
+    opacity: 0.6;
+  }
+}

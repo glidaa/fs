@@ -1,0 +1,108 @@
+.ToolbarContainer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 30px 15px;
+  width: 40px;
+  height: calc(100vh - 60px);
+  @include themify(background-color, "secondaryBg");
+  transition: background-color 0.2s ease;
+  @media only screen and (max-width: 768px) {
+    padding: 15px 20px;
+    flex-direction: row;
+    bottom: 0;
+    top: auto;
+    margin: 0;
+    width: calc(100% - 40px);
+    height: 60px;
+    border-radius: 0;
+  }
+}
+
+.TopControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  & > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
+  @media only screen and (max-width: 768px) {
+    flex-direction: row;
+    flex: 4;
+    justify-content: space-evenly;
+    & > *:not(:last-child) {
+      margin-bottom: 0px;
+    }
+  }
+}
+
+.BottomControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  & > *:not(:last-child) {
+    margin-bottom: 15px;
+  }
+  @media only screen and (max-width: 768px) {
+    flex-direction: row;
+    flex: 1;
+    & > *:not(:last-child) {
+      display: none;
+      margin-bottom: 0px;
+      margin-right: 15px;
+    }
+  }
+}
+
+.ToolbarAction {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: transparent;
+  cursor: pointer;
+  @include themify(color, "txtColor");
+  & > svg {
+    padding: 2px 0;
+    width: 52px;
+    border-radius: 50px;
+  }
+  &.selected {
+    & > svg {
+      @include themify(color, "onPrimaryColor");
+      @include themify(background-color, "primary");
+    }
+  }
+  &.LoginBtn {
+    @include themify(background-color, "primary");
+    @include themify(color, "onPrimaryColor");
+  }
+}
+
+.Spacer {
+  border-top: 10px solid transparent;
+  width: 100%;
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
+}
+
+.Logo {
+  @include themify(color, "primary");
+  font-weight: 900;
+  font-size: 22px;
+}

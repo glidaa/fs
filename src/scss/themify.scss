@@ -1,0 +1,72 @@
+@use "sass:map";
+@use "sass:color";
+
+@function construct-theme($variant, $onPrimaryColor) {
+  @return (
+    "light": (
+      "primary": $variant,
+      "primaryDark": color.scale($variant, $lightness: -10%),
+      "primaryLight": color.scale($variant, $lightness: 80%),
+      "primaryLightSurface": color.scale($variant, $lightness: 80%),
+      "onPrimaryColor": $onPrimaryColor,
+      "txtColor": color.scale($variant, $lightness: -80%),
+      "primaryBg": color.scale($variant, $lightness: 95%),
+      "secondaryBg": color.scale($variant, $lightness: 90%),
+      "fieldBg": color.scale($variant, $lightness: 99%),
+      "outline": #79747E,
+      "hover": #F5F5F5
+    ),
+    "dark": (
+      "primary": color.scale($variant, $lightness: 40%),
+      "primaryDark": color.scale($variant, $lightness: 20%),
+      "primaryLight": color.scale($variant, $lightness: 80%),
+      "primaryLightSurface": #444746,
+      "onPrimaryColor": $onPrimaryColor,
+      "txtColor": #FFFFFF,
+      "primaryBg": #1F1F1F,
+      "secondaryBg": #282A2D,
+      "fieldBg": #444746,
+      "outline": #938F99,
+      "hover": #444746
+    )
+  )
+}
+
+$themes: (
+  "red": construct-theme(#FB1515, #FFFFFF),
+  "rose": construct-theme(#FF969C, #000000),
+  "orange": construct-theme(#FE6000, #FFFFFF),
+  "green": construct-theme(#15fb3b, #000000),
+  "turquoise": construct-theme(#15fbd9, #000000),
+  "cyan": construct-theme(#15dcfb, #000000),
+  "blue": construct-theme(#1560FB, #FFFFFF),
+  "pink": construct-theme(#fb15b2, #FFFFFF),
+  "purple": construct-theme(#5615fb, #FFFFFF),
+  "black": construct-theme(#000000, #FFFFFF),
+);
+
+@function if-important($important){
+  @return #{if($important, '!important', '')};
+}
+
+@mixin themify($property, $value, $important: false) {
+  @each $themeName, $theme in $themes {
+    html:global(.#{$themeName}) & {
+      #{$property}: map.get($theme, "light", $value) if-important($important);
+    }
+    html:global(.#{$themeName}.dark) & {
+      #{$property}: map.get($theme, "dark", $value) if-important($important);
+    }
+  }
+}
+
+@mixin themify-global($property, $value, $important: false) {
+  @each $themeName, $theme in $themes {
+    html.#{$themeName} & {
+      #{$property}: map.get($theme, "light", $value) if-important($important);
+    }
+    html.#{$themeName}.dark & {
+      #{$property}: map.get($theme, "dark", $value) if-important($important);
+    }
+  }
+}

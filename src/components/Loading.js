@@ -1,187 +1,175 @@
+import React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
-import styledComponents from "styled-components"
-import { API, graphqlOperation } from "aws-amplify";
+import styles from "./Loading.module.scss"
+import { graphqlOperation } from "@aws-amplify/api";
 import * as appActions from "../actions/app"
 import * as projectsActions from "../actions/projects"
-import * as notesActions from "../actions/notes"
+import * as tasksActions from "../actions/tasks"
+import * as userActions from "../actions/user"
+import * as usersActions from "../actions/users"
 import * as observersActions from "../actions/observers"
-import * as mutations from "../graphql/mutations"
-import { AuthState } from '@aws-amplify/ui-components';
-import { Redirect, useHistory } from "react-router-dom"
+import * as collaborationActions from "../actions/collaboration"
+import * as queries from "../graphql/queries"
+import * as cacheController from "../controllers/cache"
+import { Navigate, useNavigate, useParams, useLocation } from "react-router-dom"
+import { panelPages, AuthState } from '../constants';
+import ProgressBar from "./UI/ProgressBar";
+import uploadLocal from "../utils/uploadLocal";
+import execGraphQL from "../utils/execGraphQL";
+import store from "../store";
 
 const Loading = (props) => {
-  const { user, route, dispatch } = props
+  const { onFinish, dispatch } = props
   const [shouldLogin, setShouldLogin] = useState(false)
+  const [progressMax, setProgressMax] = useState(100)
+  const [progressValue, setProgressValue] = useState(0)
   const [loadingMsg, setLoadingMsg] = useState("Please Wait A Moment")
-  const history = useHistory()
+  const navigate = useNavigate()
+  const routeParams = useParams()
+  const routeLocation = useLocation()
   useEffect(() => {
     (async () => {
-    const { match: { params } } = route
-    if (user.state === AuthState.SignedIn) {
-      const localProjectsList = JSON.parse(window.localStorage.getItem("projects"))
-      if (localProjectsList) {
-        const localProjects = Object.values(localProjectsList)
-        if (localProjects && localProjects.length > 0) {
-          try {
-            setLoadingMsg("We Are Importing Your Local Projects")
-            const data = await API.graphql(graphqlOperation(mutations.importData, {
-              data: JSON.stringify(localProjects)
-            }))
-            window.localStorage.removeItem('projects')
-          } catch (err) {
-            console.error(err)
-          }
-        }
-      }
+    const currUser = await dispatch(userActions.handleFetchUser())
+    console.log(currUser)
+    if (currUser.state === AuthState.SignedIn) {
+      setLoadingMsg("We Are Importing Your Local Projects")
+      await uploadLocal()
+      setLoadingMsg("Setting Up A New Session")
+      await dispatch(collaborationActions.handleInitSession());
     }
-    if (params.projectPermalink &&
-        !params.username &&
-        user.state === AuthState.SignedOut) {
+    if (routeParams.projectPermalink &&
+        !routeParams.username &&
+        currUser.state === AuthState.SignedOut) {
+      setProgressMax(2)
       setLoadingMsg("We Are Fetching Your Own Projects")
       const projects = await dispatch(projectsActions.handleFetchOwnedProjects())
-      const reqProject = Object.values(projects.owned)
-        .filter(x => x.permalink === params.projectPermalink)[0]
+      const reqProject = Object.values(projects)
+        .filter(x => x.permalink === `${routeParams.projectPermalink}`)[0]
       if (reqProject) {
         dispatch(appActions.handleSetProject(reqProject.id, false))
-        setLoadingMsg("We Are Getting The Requested Notes")
-        await dispatch(notesActions.handleFetchNotes(reqProject.id))
-        dispatch(appActions.setLoading(false))
-      } else {
-        history.replace("/")
-        dispatch(appActions.setLoading(false))
+        setProgressValue(progressValue + 1)
+        setLoadingMsg("We Are Getting The Requested Tasks")
+        await dispatch(tasksActions.handleFetchTasks(reqProject.id))
       }
-    } else if (params.projectPermalink &&
-      params.username &&
-      user.state === AuthState.SignedOut) {
+      setProgressValue(progressValue + 2)
+    } else if (routeParams.projectPermalink &&
+      routeParams.username &&
+      currUser.state === AuthState.SignedOut) {
         setShouldLogin(true)
-    } else if (params.projectPermalink &&
-      params.username &&
-      user.state === AuthState.SignedIn) {
+        return 0
+    } else if (routeParams.projectPermalink &&
+      routeParams.username &&
+      currUser.state === AuthState.SignedIn) {
+        setProgressMax(5)
+        setProgressValue(progressValue + 1)
         setLoadingMsg("We Are Fetching Your Own Projects")
         await dispatch(projectsActions.handleFetchOwnedProjects())
+        setProgressValue(progressValue + 2)
         setLoadingMsg("We Are Fetching Projects Assigned To You")
-        const projects = await dispatch(projectsActions.handleFetchAssignedProjects())
-        dispatch(observersActions.handleSetProjectsObservers())
-        const allProjects = Object.values({...projects.owned, ...projects.assigned})
-        const reqUserProjects = allProjects.filter(x => x.owner === params.username)
-        if (reqUserProjects.length > 0) {
-          const reqProject = reqUserProjects.filter(x => x.permalink === params.projectPermalink)[0]
-          if (reqProject) {
-            dispatch(appActions.handleSetProject(reqProject.id, false))
-            setLoadingMsg("We Are Getting The Requested Notes")
-            const notes = await dispatch(notesActions.handleFetchNotes(reqProject.id))
-            if (params.notePermalink) {
-              const reqNote = Object.values(notes).filter(x => x.permalink === parseInt(params.notePermalink, 10))[0]
-              if (reqNote) {
-                dispatch(appActions.handleSetNote(reqNote.id, false))
-                dispatch(appActions.setLoading(false))
-              } else {
-                dispatch(appActions.setLoading(false))
-              }
-            } else {
-              history.replace(`/${params.username}/${params.projectPermalink}`)
-              dispatch(appActions.setLoading(false))
+        await dispatch(projectsActions.handleFetchAssignedProjects())
+        setProgressValue(progressValue + 3)
+        setLoadingMsg("We Are Fetching Projects Watched By You")
+        const projects = await dispatch(projectsActions.handleFetchWatchedProjects())
+        setProgressValue(progressValue + 4)
+        await dispatch(observersActions.handleSetOwnedProjectsObservers())
+        let reqProject = Object.values(projects).filter(x => x.permalink === `${routeParams.username}/${routeParams.projectPermalink}`)[0]
+        if (!reqProject) {
+          try {
+            reqProject = (await execGraphQL(graphqlOperation(queries.getProjectByPermalink, {
+              permalink: `${routeParams.username}/${routeParams.projectPermalink}`
+            }))).data.getProjectByPermalink
+            dispatch(projectsActions.createProject(reqProject, "temp"))
+          } catch {
+            reqProject = null
+            if (routeParams.taskPermalink) {
+              navigate(`/${routeParams.username}/${routeParams.projectPermalink}`, { replace: true })
+            }
+          }
+        }
+        if (reqProject) {
+          dispatch(appActions.handleSetProject(reqProject.id, false))
+          setLoadingMsg("We Are Getting The Requested Tasks")
+          const tasks = await dispatch(tasksActions.handleFetchTasks(reqProject.id, true))
+          if (routeParams.taskPermalink) {
+            const reqTask = Object.values(tasks).filter(x => x.permalink === parseInt(routeParams.taskPermalink, 10))[0]
+            if (reqTask) {
+              dispatch(appActions.handleSetTask(reqTask.id, false))
+              dispatch(appActions.setRightPanelPage(panelPages.TASK_HUB))
+              dispatch(appActions.handleSetRightPanel(true))
             }
           } else {
-            history.replace("/")
-            dispatch(appActions.setLoading(false))
+            navigate(`/${routeParams.username}/${routeParams.projectPermalink}`, { replace: true })
           }
-        } else {
-          history.replace("/")
-          dispatch(appActions.setLoading(false))
         }
+        setProgressValue(progressValue + 5)
       } else {
-        if (user.state === AuthState.SignedIn) {
+        if (currUser.state === AuthState.SignedIn) {
+          setProgressMax(3)
           setLoadingMsg("We Are Fetching Your Own Projects")
           await dispatch(projectsActions.handleFetchOwnedProjects())
+          setProgressValue(progressValue + 1)
           setLoadingMsg("We Are Fetching Projects Assigned To You")
           await dispatch(projectsActions.handleFetchAssignedProjects())
-          dispatch(observersActions.handleSetProjectsObservers())
-          dispatch(appActions.setLoading(false))
+          setProgressValue(progressValue + 2)
+          setLoadingMsg("We Are Fetching Projects Watched By You")
+          const projects = await dispatch(projectsActions.handleFetchWatchedProjects())
+          setProgressValue(progressValue + 3)
+          await dispatch(observersActions.handleSetOwnedProjectsObservers())
+          const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
+          if (firstProject) {
+            dispatch(appActions.handleSetProject(firstProject.id, false))
+            navigate(`/${firstProject.permalink}`, { replace: true })
+          }
         } else {
+          setProgressMax(1)
           setLoadingMsg("We Are Fetching Your Own Projects")
-          await dispatch(projectsActions.handleFetchOwnedProjects())
-          dispatch(appActions.setLoading(false))
+          const projects = await dispatch(projectsActions.handleFetchOwnedProjects())
+          setProgressValue(progressValue + 1)
+          const firstProject = Object.values(projects).filter(x => !x.prevProject && x.isOwned)?.[0]
+          if (firstProject) {
+            dispatch(appActions.handleSetProject(firstProject.id, false))
+            navigate(`/local/${firstProject.permalink}`, { replace: true })
+          }
         }
       }
+      if (currUser.state === AuthState.SignedIn) {
+        if (store.getState().app.isOffline) {
+          dispatch(appActions.setSynced(false))
+          dispatch(usersActions.addCachedUsers(cacheController.getUsers()))
+        } else {
+          dispatch(appActions.setSynced(true))
+        }
+      }
+      onFinish()
     })()
   }, [])
   return (
     <>
       {shouldLogin ? (
-        <Redirect
+        <Navigate
           to={{
             pathname: "/login",
-            state: { referrer: route.location.pathname }
+            state: { referrer: routeLocation.pathname }
           }}
         />
       ) : (
-        <LoadingContainer>
-          <Logo>
-            <div>
-              <div />
-              <div />
-              <div />
-            </div>
-          </Logo>
-          <span>Forward Slash</span>
+        <div className={styles.LoadingContainer}>
+          <span>forwardslash</span>
+          <ProgressBar
+            max={progressMax}
+            value={progressValue}
+          />
           <span>{loadingMsg}</span>
-        </LoadingContainer>
+        </div>
       )}
     </>
   )
 }
 
-const LoadingContainer = styledComponents.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background-color: #E0E0E0;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-  & > span:nth-child(2) {
-    font-weight: bold;
-    font-size: 2.5em;
-    color: grey;
-  }
-  & > span:nth-child(3) {
-    font-weight: bold;
-    font-size: 1.2em;
-    color: #222222;
-  }
-`
-
-const Logo = styledComponents.div`
-  margin: 35px;
-  border-radius: 50px;
-  background: #e0e0e0;
-  box-shadow:  20px 20px 60px #bebebe,
-              -20px -20px 60px #ffffff;
-  width: 250px;
-  height: 250px;
-  padding: 50px;
-  & > div {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    & > * {
-      width: 200px;
-      height: 35px;
-      border-radius: 10px;
-      background: #e0e0e0;
-      box-shadow: inset 20px 20px 60px #bebebe,
-                  inset -20px -20px 60px #ffffff;
-    }
-  }
-`
-
 export default connect((state) => ({
   user: state.user,
   projects: state.projects,
-  notes: state.notes,
+  tasks: state.tasks,
   comments: state.comments
 }))(Loading);

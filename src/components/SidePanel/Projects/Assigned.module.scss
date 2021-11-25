@@ -1,0 +1,27 @@
+.NoAssignedProjects {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin-top: -25px;
+  width: 100%;
+  & > svg {
+    width: 250px;
+    height: 163px;
+    margin-top: 25px;
+    @include themify(color, "primary");
+  }
+  & > span {
+    font-weight: bold;
+    font-size: 18px;
+    @include themify(color, "txtColor");
+    margin-top: 25px;
+    width: max-content;
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 40px;
+  }
+}

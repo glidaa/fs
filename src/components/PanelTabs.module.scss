@@ -1,0 +1,37 @@
+.PanelTabsShell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.PanelTabsContainer {
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  border: none;
+  height: fit-content;
+  width: fit-content;
+  border-radius: 24px;
+  @include themify(background-color, "primaryLightSurface");
+  position: relative;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.PanelTab {
+  border-radius: 24px;
+  padding: 4px 15px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+  @include themify(color, "primary");
+  cursor: pointer;
+  &.selected {
+    @include themify(background-color, "primary");
+    @include themify(color, "onPrimaryColor");
+    cursor: default;
+  }
+}

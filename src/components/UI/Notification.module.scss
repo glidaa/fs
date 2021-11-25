@@ -1,0 +1,157 @@
+@keyframes enteringAnim {
+  from {
+    margin-right: -330px;
+  }
+
+  to {
+    margin-right: 10px;
+  }
+}
+
+@keyframes exitingAnim {
+  from {
+    margin-right: 10px;
+  }
+
+  to {
+    margin-right: -330px;
+  }
+}
+
+@keyframes enteringAnimMobile {
+  from {
+    margin-top: -48px;
+  }
+
+  to {
+    margin-top: 10px;
+  }
+}
+
+@keyframes exitingAnimMobile {
+  from {
+    margin-top: 10px;
+  }
+
+  to {
+    margin-top: -48px;
+  }
+}
+
+.NotificationShell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  width: calc(100% - 80px);
+  margin: 0 25px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(background-color, "fieldBg");
+  @include themify(color, "txtColor");
+  animation: 0.4s ease-in-out forwards;
+  &.entering {
+    animation-name: enteringAnim;
+  }
+  &.exiting {
+    animation-name: exitingAnim;
+  }
+  &.clickable {
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+  }
+  &.headsUp {
+    width: 300px;
+    margin: 10px 10px 10px 0;
+  }
+  &.expanded {
+    & .NotificationBottomPart > span {
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: initial;
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    &.headsUp {
+      width: calc(100% - 50px);
+      margin: auto;
+    }
+    &.entering {
+      animation-name: enteringAnimMobile;
+    }
+    &.exiting {
+      animation-name: exitingAnimMobile;
+    }
+  }
+}
+
+.NotificationControls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5px;
+  & > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    & > *:not(:last-child) {
+      margin-right: 5px;
+    }
+  }
+}
+
+.NotificationCloseBtn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  border: none;
+  background-color: transparent;
+  @include themify(color, "txtColor");
+}
+
+.NotificationContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  & > div {
+    width: 100%;
+    min-width: 0;
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.NotificationTopPart {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.NotificationBottomPart {
+  font-size: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  & > span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+  

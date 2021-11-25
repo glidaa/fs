@@ -1,0 +1,69 @@
+.ActionSheetShell {
+  display: block;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: #222222aa;
+  z-index: 99999;
+}
+
+.ActionSheetContainer {
+  position: fixed;
+  display: flex;
+  touch-action: none;
+  flex-direction: column;
+  bottom: 0;
+  width: calc(100% - 40px);
+  @include themify(background-color, "secondaryBg");
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  & > *:not(:last-child) {
+    margin-bottom: 10px;
+  }
+}
+
+.ActionSheetHeader {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  @include themify(color, "txtColor");
+}
+
+.Actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+}
+
+.Action {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 10px;
+  font-size: 14px;
+  @include themify(color, "txtColor");
+  font-weight: bold;
+  padding: 15px;
+  @include themify(background-color, "primaryLightSurface");
+  cursor: pointer;
+  outline: none;
+  border: none;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.CloseBtn {
+  outline: none;
+  border: none;
+  width: 100%;
+  font-weight: bold;
+  padding: 10px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  @include themify(background-color, "primary");
+  @include themify(color, "onPrimaryColor");
+}

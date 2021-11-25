@@ -1,0 +1,71 @@
+.ColorPickerShell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: calc(100% - 20px);
+  & > *:not(:last-child) {
+    margin-bottom: 5px;
+  }
+  & > label {
+    @include themify(color, "txtColor");
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & > span {
+    color: #FF0000;
+    font-size: 12px;
+  }
+}
+  
+.ColorPickerContainer {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  border: 1px solid transparent;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(background-color, "fieldBg");
+  & > * {
+    align-self: center;
+    justify-self: center;
+  }
+  &.error {
+    border-color: #FF0000;
+  }
+  &.focused {
+    @include themify(border-color, "primary");
+  }
+  &.disabled {
+    background-color: #FFFFFF2E;
+  }
+}
+.ColorPickerOption {
+  width: 48px;
+  height: 48px;
+  border-radius: 100%;
+  border: 1px solid transparent;
+  transition: border 0.3s, border-color 0.3s;
+  & > div {
+    width: 48px;
+    height: 48px;
+    border-radius: 100%;
+    transition: width 0.3s, height 0.3s, margin 0.3s;
+  }
+  &.selected {
+    @include themify(border-color, "txtColor");
+    & > div {
+      width: 38px;
+      height: 38px;
+      margin: 5px;
+    }
+  }
+}

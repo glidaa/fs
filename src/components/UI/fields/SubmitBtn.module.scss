@@ -1,0 +1,19 @@
+.SubmitBtn {
+  padding: 14px 0;
+  @include themify(background-color, "primary");
+  @include themify(color, "onPrimaryColor", true);
+  border-radius: 100000000000000px;
+  font-size: 16px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  &:hover {
+    @include themify(background-color, "primaryDark");
+  }
+  &:disabled {
+    background-color: #CCCCCC!important;
+    color: #FFFFFF!important;
+    cursor: not-allowed;
+  }
+}

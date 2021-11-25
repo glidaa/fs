@@ -1,0 +1,199 @@
+.CommentsContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
+  padding: 0 25px 25px 25px;
+  & > *:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+.CommentContent {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 42px);
+}
+
+.CommentHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.RemoveBtn {
+  outline: none;
+  border: none;
+  line-height: 0;
+  padding: 0;
+  background-color: transparent;
+  cursor: pointer;
+  @include themify(color, "primary");
+}
+
+.CommenterName {
+  font-weight: 600;
+}
+
+.CommentBox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: 14px;
+  width: calc(100% - 20px);
+  padding: 10px;
+}
+
+.CommentBody {
+  width: 100%;
+  & > *:first-child {
+    margin-block-start: 0;
+  }
+  & > *:last-child {
+    margin-block-end: 10px;
+  }
+}
+
+.CommentUnits {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1;
+  & > *:not(:last-child) {
+    margin-bottom: 8px;
+  }
+}
+
+.CommentUnit {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+  &.self {
+    flex-direction: row-reverse;
+    & .CommentBox {
+      border-radius: 16px 16px 0 16px;
+      @include themify(background-color, "primaryLight");
+      @include themify(color, "primary");
+    }
+  }
+  & .CommentBox {
+    border-radius: 16px 16px 16px 0;
+    @include themify(background-color, "primary");
+    @include themify(color, "txtColor");
+  }
+}
+
+.NewComment {
+  display: flex;
+  flex-direction: row;
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.CommentField {
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(background-color, "fieldBg");
+  @include themify(color, "txtColor");
+  width: 100%;
+  border-radius: 8px;
+  transition: border 0.3s, height 0.3s;
+}
+
+.CommentInput {
+  min-height: 16px;
+  max-height: 100px;
+  outline: none;
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  overflow: auto;
+  &.expanded {
+    min-height: 50px;
+  }
+}
+
+.CommentControls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  & > div {
+    display: flex;
+    flex-direction: row;
+    &:nth-child(2) {
+      & > button {
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 8px;
+        @include themify(background-color, "primary");
+        @include themify(color, "onPrimaryColor");
+        cursor: pointer;
+        border: none;
+        outline: none;
+        transition: background-color 0.3s;
+        &:hover {
+          @include themify(background-color, "primaryDark");
+        }
+        &:disabled {
+          @include themify(background-color, "primaryLight");
+        }
+      }
+    }
+    & > *:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+}
+
+.CommentTime {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-weight: 600;
+  font-size: 12px;
+  width: fit-content;
+}
+
+.CommentDay {
+  font-weight: 600;
+  font-size: 12px;
+  @include themify(color, "txtColor");
+  text-align: center;
+  width: 100%;
+}
+
+.CommentNotAllowed {
+  font-weight: 600;
+  font-size: 12px;
+  color: #c0c0c0;
+  text-align: center;
+  width: 100%;
+}
+
+.NoComments {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  & > svg {
+    width: 250px;
+    height: auto;
+    @include themify(color, "primary");
+  }
+  & > span {
+    font-weight: bold;
+    font-size: 18px;
+    @include themify(color, "txtColor");
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 40px;
+  }
+}

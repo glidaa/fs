@@ -1,0 +1,58 @@
+.ToggleShell {
+  width: calc(100% - 20px);
+  & > span {
+    color: #FF0000;
+    font-size: 12px;
+  }
+}
+  
+.ToggleContainer {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  border: 1px solid transparent;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(background-color, "fieldBg");
+  & > label {
+    @include themify(color, "txtColor");
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  &.error {
+    border-color: #FF0000;
+  }
+  &.disabled {
+    background-color: #FFFFFF2E;
+  }
+}
+.ToggleHandle {
+  @include themify(background-color, "primaryLight");
+  border-radius: 50px;
+  width: 45px;
+  padding: 5px;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+  &.selected {
+    @include themify(background-color, "primary");
+    & > div {
+      transform: translateX(200%);
+    }
+  }
+  & > div {
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+    transform: translateX(0);
+    transition: transform 0.2s ease-in-out;
+    @include themify(background-color, "onPrimaryColor");
+  }
+}

@@ -1,25 +1,29 @@
+import "smap/smap-shim"
+import "core-js";
+import 'regenerator-runtime/runtime';
+import './utils/nanoidIE'
 import React from 'react';
-import ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom';
 import { Provider } from "react-redux"
 import { BrowserRouter } from "react-router-dom"
 import store from "./store"
-import './index.css';
+import './index.scss';
+import 'simplebar/dist/simplebar.min.css';
 import App from './components/App';
-import reportWebVitals from './reportWebVitals';
-import Amplify from 'aws-amplify';
+import { API } from "@aws-amplify/api";
+import { Auth } from "@aws-amplify/auth";
 import awsconfig from './aws-exports';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-Amplify.configure(awsconfig);
-ReactDOM.render(
+API.configure(awsconfig);
+Auth.configure(awsconfig);
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
+root.render(
   <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </Provider>,
-  document.getElementById('root')
+  </Provider>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-//reportWebVitals();
+serviceWorkerRegistration.register();
