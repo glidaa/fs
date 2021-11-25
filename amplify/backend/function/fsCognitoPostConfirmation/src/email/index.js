@@ -10,8 +10,7 @@ const getTemplate = (templateID) => {
 }
 
 const templates = {
-    assignment: getTemplate("assignment"),
-    assignmentWatching: getTemplate("assignmentWatching")
+    accountCreation: getTemplate("accountCreation")
 }
 
 const getContent = (templateID, entities) => {
