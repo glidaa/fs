@@ -1,0 +1,21 @@
+.MainPage {
+  position: fixed;
+  right: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  padding-left: 70px;
+  padding-bottom: 0;
+  width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  z-index: -1;
+  @media only screen and (max-width: 768px) {
+    top: 0;
+    width: 100vw;
+    padding-left: 0;
+    padding-bottom: 90px;
+    height: 100%;
+  }
+}

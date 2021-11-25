@@ -1,50 +1,78 @@
-import { Auth } from "aws-amplify";
-import { AuthState } from '@aws-amplify/ui-components';
-import * as notesActions from "./notes"
+import { panelPages, AuthState } from "../constants"
+import * as tasksActions from "./tasks"
 import * as observersActions from "./observers"
+import * as collaborationActions from "./collaboration"
 import * as commentsActions from "./comments"
-import * as userActions from "./user"
-import {
-  SIGNIN,
-  SIGNUP,
-  MARKASDONE,
-  SIGNOUT,
-  MARKASUNDONE,
-  DESCRIPTION,
-  DUPLICATE,
-  COPY
-} from "../constants";
-import copyNote from "../utils/copyNote";
-import parseLinkedList from "../utils/parseLinkedList";
 
 export const SET_PROJECT = "SET_PROJECT";
-export const SET_NOTE = "SELECT_NOTE";
+export const SET_TASK = "SET_TASK";
 export const SET_COMMAND = "SET_COMMAND";
-export const SET_DROPDOWN = "OPEN_DROPDOWN";
 export const SET_PROJECT_ADDING_STATUS = "SET_PROJECT_ADDING_STATUS";
-export const SET_NOTE_ADDING_STATUS = "SET_NOTE_ADDING_STATUS";
-export const SET_HISTORY = "SET_HISTORY";
-export const SET_LOADING = "SET_LOADING";
+export const SET_TASK_ADDING_STATUS = "SET_TASK_ADDING_STATUS";
+export const SET_NAVIGATE = "SET_NAVIGATE";
+export const SET_OFFLINE = "SET_OFFLINE";
+export const SET_SYNCED = "SET_SYNCED";
+export const SET_PROJECT_PANEL = "SET_PROJECT_PANEL";
+export const SET_DETAILS_PANEL = "SET_DETAILS_PANEL";
+export const SET_ACTION_SHEET = "SET_ACTION_SHEET";
+export const SET_PROJECT_TITLE = "SET_PROJECT_TITLE";
+export const SET_LOCKED_TASK_FIELD = "SET_LOCKED_TASK_FIELD";
+export const SET_RIGHT_PANEL_PAGE = "SET_RIGHT_PANEL_PAGE";
+export const SET_LEFT_PANEL_PAGE = "SET_LEFT_PANEL_PAGE";
 
-const setProject = (id, scope) => ({
+const setProject = (id) => ({
   type: SET_PROJECT,
-  id,
-  scope
-});
-
-const setNote = (id) => ({
-  type: SET_NOTE,
   id
 });
 
-const setCommand = (command) => ({
+const setTask = (id) => ({
+  type: SET_TASK,
+  id
+});
+
+const setProjectTitle = (status) => ({
+  type: SET_PROJECT_TITLE,
+  status
+});
+
+const setLeftPanel = (status) => ({
+  type: SET_PROJECT_PANEL,
+  status
+});
+
+const setRightPanel = (status) => ({
+  type: SET_DETAILS_PANEL,
+  status
+});
+
+export const setCommand = (command) => ({
   type: SET_COMMAND,
   command
 });
 
-export const setDropdown = (status) => ({
-  type: SET_DROPDOWN,
-  status
+export const setOffline = (isOffline) => ({
+  type: SET_OFFLINE,
+  isOffline
+});
+
+export const setSynced = (isSynced) => ({
+  type: SET_SYNCED,
+  isSynced
+});
+
+export const setRightPanelPage = (page) => ({
+  type: SET_RIGHT_PANEL_PAGE,
+  page
+});
+
+export const setLeftPanelPage = (page) => ({
+  type: SET_LEFT_PANEL_PAGE,
+  page
+});
+
+export const setLockedTaskField = (fieldName) => ({
+  type: SET_LOCKED_TASK_FIELD,
+  fieldName
 });
 
 export const setProjectAddingStatus = (status) => ({
@@ -52,164 +80,124 @@ export const setProjectAddingStatus = (status) => ({
   status
 });
 
-export const setNoteAddingStatus = (status) => ({
-  type: SET_NOTE_ADDING_STATUS,
+export const setTaskAddingStatus = (status) => ({
+  type: SET_TASK_ADDING_STATUS,
   status
 });
 
-export const setHistory = (history) => ({
-  type: SET_HISTORY,
-  history
+export const setNavigate = (navigate) => ({
+  type: SET_NAVIGATE,
+  navigate
 });
 
-export const setLoading = (isLoading) => ({
-  type: SET_LOADING,
-  isLoading
+export const setActionSheet = (status) => ({
+  type: SET_ACTION_SHEET,
+  status
 });
 
 export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getState) => {
   const { user, app, projects } = getState()
   if (app.selectedProject !== id) {
-    dispatch(observersActions.handleClearNotesObservers())
-    dispatch(handleSetNote(null));
-    dispatch(notesActions.emptyNotes());
+    dispatch(observersActions.handleClearTasksObservers())
+    dispatch(handleSetTask(null, shouldChangeURL));
+    dispatch(tasksActions.emptyTasks());
     if (id) {
-      if (projects["owned"][id]) {
-        dispatch(setProject(id, "owned"))
+      if (projects[id]) {
+        dispatch(setProject(id))
         if (shouldChangeURL) {
           if (user.state === AuthState.SignedIn) {
-            app.history.push(`/${projects["owned"][id].owner}/${projects["owned"][id].permalink}`)
+            app.navigate(`/${projects[id].permalink}`)
           } else {
-            app.history.push(`/local/${projects["owned"][id].permalink}`)
+            app.navigate(`/local/${projects[id].permalink}`)
           }
         }
-      } else if (projects["assigned"][id]) {
-        dispatch(setProject(id, "assigned"))
-        if (shouldChangeURL) {
-          app.history.push(`/${projects["assigned"][id].owner}/${projects["assigned"][id].permalink}`)
-        }
       }
-      dispatch(notesActions.handleFetchNotes(id))
-      if (user.state === AuthState.SignedIn) {
-        dispatch(observersActions.handleSetNotesObservers(id))
+      if (!getState().projects[id].isVirtual) {
+        dispatch(tasksActions.handleFetchTasks(id))
+        if (user.state === AuthState.SignedIn) {
+          dispatch(collaborationActions.handleJoinProject(id))
+          dispatch(observersActions.handleSetTasksObservers(id))
+        }
       }
     } else {
       if (shouldChangeURL) {
-        app.history.push("/")
+        app.navigate("/")
       }
-      dispatch(setProject(null, null))
+      dispatch(setProject(null))
     }
   }
 }
 
-export const handleSetNote = (id, shouldChangeURL = true) => (dispatch, getState) => {
-  const { user, projects, notes, app } = getState()
+export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState) => {
+  const { user, projects, tasks, app } = getState()
   dispatch(observersActions.handleClearCommentsObservers())
-  if (!id && app.selectedNote) {
+  dispatch(commentsActions.emptyComments())
+  dispatch(setProjectTitle(false))
+  if (!id && app.selectedTask) {
+    if (user.state === AuthState.SignedIn) {
+      dispatch(collaborationActions.handleSendAction({
+        action: "UNFOCUS_TASK",
+        taskID: app.selectedTask
+      }))
+    }
+    if (app.isRightPanelOpened) {
+      dispatch(setRightPanel(false))
+    }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].owner}/${projects[app.selectedProjectScope][app.selectedProject].permalink}`)
+        app.navigate(`/${projects[app.selectedProject].permalink}`)
       }
     }
     dispatch(setCommand(""))
-    dispatch(setDropdown(false))
-    dispatch(setNote(null))
+    dispatch(setTask(null))
   } else if (!id) {
-    dispatch(setNote(null))
+    if (app.isRightPanelOpened) {
+      dispatch(setRightPanel(false))
+    }
+    dispatch(setTask(null))
   } else {
+    if (app.selectedTask && app.isRightPanelOpened && app.rightPanelPage !== panelPages.TASK_HUB) {
+      dispatch(setRightPanelPage(panelPages.TASK_HUB))
+    }
     if (shouldChangeURL) {
       if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.history.push(`/${projects[app.selectedProjectScope][app.selectedProject].owner}/${projects[app.selectedProjectScope][app.selectedProject].permalink}/${notes[id].permalink}`)
+        app.navigate(`/${projects[app.selectedProject].permalink}/${tasks[id].permalink}`)
       }
     }
-    dispatch(setNote(id))
-    dispatch(commentsActions.handleFetchComments(id))
-    if (user.state === AuthState.SignedIn) {
-      dispatch(observersActions.handleSetCommentsObservers(id))
+    dispatch(setTask(id))
+    dispatch(setLockedTaskField(null))
+    if (!tasks[id].isVirtual) {
+      dispatch(commentsActions.handleFetchComments(id))
+      if (user.state === AuthState.SignedIn) {
+        dispatch(collaborationActions.handleSendAction({
+          action: "FOCUS_TASK",
+          taskID: id
+        }))
+        dispatch(observersActions.handleSetCommentsObservers(id))
+      }
     }
   }
 }
 
-export const handleSetCommand = (command) => (dispatch, getState) => {
-  const { user, notes, app } = getState()
-  if (command) {
-    const tokens = /^(\/\w?)(.*)$/m.exec(command)
-    dispatch(setDropdown(false))
-    switch (tokens[1]) {
-      case SIGNIN:
-        if (user.state !== AuthState.SignedIn) {
-          dispatch(setCommand(command))
-          dispatch(handleSetNote(null))
-          return app.history.push("/login")
-        }
-        return dispatch(setCommand(command.slice(0, -1)))
-      case SIGNUP:
-        if (user.state !== AuthState.SignedIn) {
-          dispatch(setCommand(command))
-          dispatch(handleSetNote(null))
-          return app.history.push("/login")
-        }
-        return dispatch(setCommand(command.slice(0, -1)))
-      case SIGNOUT:
-        if (user.state === AuthState.SignedIn) {
-          dispatch(setCommand(command))
-          dispatch(handleSetNote(null))
-          dispatch(observersActions.handleClearNotesObservers())
-          dispatch(userActions.setState(AuthState.signOut))
-          dispatch(userActions.handleSetData(null))
-          Auth.signOut()
-          return dispatch(notesActions.emptyNotes())
-        }
-        return dispatch(setCommand(command.slice(0, -1)))
-      case MARKASDONE:
-        dispatch(setCommand(command))
-        dispatch(notesActions.handleUpdateNote({
-          id: app.selectedNote,
-          isDone: true
-        }))
-        return dispatch(handleSetNote(null))
-      case MARKASUNDONE:
-        dispatch(setCommand(command))
-        dispatch(notesActions.handleUpdateNote({
-          id: app.selectedNote,
-          isDone: false
-        }))
-        return dispatch(handleSetNote(null))
-      case DESCRIPTION:
-        dispatch(setCommand(command))
-        return dispatch(notesActions.handleUpdateNote({
-          id: app.selectedNote,
-          description: tokens[2].trim()
-        }))
-      case DUPLICATE:
-        dispatch(setCommand(command))
-        dispatch(notesActions.handleCreateNote(
-          copyNote(
-            notes[app.selectedNote],
-            app.selectedProject,
-            parseLinkedList(
-              notes,
-              "prevNote",
-              "nextNote"
-            ).reverse()[0]?.id
-          )
-        ))
-        return dispatch(handleSetNote(null))
-      case COPY:
-        dispatch(setCommand(command))
-        window.localStorage.setItem("notesClipboard",
-          "COPIEDNOTESTART=>" +
-          JSON.stringify(notes[app.selectedNote]) +
-          "<=COPIEDNOTEEND"
-        )
-        return dispatch(handleSetNote(null))
-      case "/":
-        dispatch(setDropdown(true))
-        return dispatch(setCommand(command))
-      default:
-        dispatch(setDropdown(true))
-        return dispatch(setCommand("/"))
-    }
+export const handleSetProjectTitle = (status) => (dispatch) => {
+  if (status) {
+    dispatch(handleSetTask(null))
   }
-  return dispatch(setCommand(""))
+  return dispatch(setProjectTitle(status))
+}
+
+export const handleSetRightPanel = (status) => (dispatch, getState) => {
+  const { app: { isLeftPanelOpened } } = getState()
+  if (status && isLeftPanelOpened) {
+    dispatch(setLeftPanel(false))
+  }
+  return dispatch(setRightPanel(status))
+}
+
+export const handleSetLeftPanel = (status) => (dispatch, getState) => {
+  const { app: { isRightPanelOpened } } = getState()
+  if (status && isRightPanelOpened) {
+    dispatch(setRightPanel(false))
+  }
+  return dispatch(setLeftPanel(status))
 }

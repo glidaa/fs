@@ -1,65 +1,121 @@
-import { rword } from 'rword';
-import { v4 as uuidv4 } from 'uuid';
+import generateID from './utils/generateID'
+import generateRandomWords from './utils/generateRandomWords';
 
 export const PENDING = "PENDING"
 export const OK = "OK"
+export const CREATING = "CREATING"
+export const REMOVING = "REMOVING"
+export const LOADING = "LOADING"
+export const READY = "READY"
 export const NOT_ASSIGNED = "NOT_ASSIGNED"
 
-export const SIGNIN = '/s';
-export const SIGNUP = '/l';
-export const MARKASDONE = '/x';
-export const MARKASUNDONE = '/u';
-export const COPY = '/c';
-export const DUPLICATE = '/b';
-export const DESCRIPTION = '/d';
-export const SIGNOUT = '/q';
-export const suggestionsList =  [
-  's',
-  'l',
-  'x',
-  'u',
-  'c',
-  'b',
-  'd',
-  'q'
-]
+export const commandIntents = {
+  ASSIGN: "ASSIGN",
+  STATUS: "STATUS",
+  DESCRIPTION: "DESCRIPTION",
+  DUE: "DUE",
+  TAGS: "TAGS",
+  COPY: "COPY",
+  DUPLICATE: "DUPLICATE",
+  REORDER: "REORDER",
+  DELETE: "DELETE",
+  UNKNOWN: "UNKNOWN"
+}
 
-export const suggestionsDescription = [
-  'Login to save your tasks',
-  'Create a new account',
-  'Mark this note as done',
-  'Mark this note as undone',
-  'Copy this note',
-  'Duplicate this note',
-  'Add a description to this note',
-  'Logout'
-]
+export const supportedCommands = {
+  ASSIGN: {
+    description: "Search for a user to assign him",
+    alias: "a"
+  },
+  STATUS: {
+    description: "Change status of the task",
+    alias: null
+  },
+  DESCRIPTION: {
+    description: "Add a long description to the task",
+    alias: null
+  },
+  DUE: {
+    description: "Set a deadline date for the task",
+    alias: null
+  },
+  TAGS: {
+    description: "Add comma separated tags",
+    alias: null
+  },
+  COPY: {
+    description: "Copy this task to the clipboard",
+    alias: null
+  },
+  DUPLICATE: {
+    description: "Create a clone for the selected task",
+    alias: null
+  },
+  DELETE: {
+    description: "Delete this task permanently",
+    alias: null
+  }
+}
+
+export const panelPages = {
+  TASK_HUB: "TASK_HUB",
+  PROJECTS: "PROJECTS",
+  NOTIFICATIONS: "NOTIFICATIONS",
+  ASSIGNEE_CHOOSER: "ASSIGNEE_CHOOSER",
+  WATCHER_CHOOSER: "WATCHER_CHOOSER",
+  ACCOUNT_SETTINGS: "ACCOUNT_SETTINGS",
+  PROJECT_SETTINGS: "PROJECT_SETTINGS",
+  APP_SETTINGS: "APP_SETTINGS"
+}
 
 export const initProjectState = (prevProject = null, nextProject = null) => {
-  const randomWords = rword.generate(2, { capitalize: 'first' })
   return {
-    id: uuidv4(),
-    title: randomWords.join(" "),
-    permalink: randomWords.join("-").toLowerCase(),
+    id: generateID(),
+    title: null,
+    permalink: generateRandomWords().join("-"),
     prevProject: prevProject,
     nextProject: nextProject,
+    todoCount: 0,
+    pendingCount: 0,
+    doneCount: 0,
+    privacy: "public",
+    permissions: "rw",
+    members: [],
     createdAt: new Date().toISOString()
   }
 }
 
-export const initNoteState = (projectID, prevNote = null, nextNote = null) => ({
-  id: uuidv4(),
+export const initTaskState = (projectID, prevTask = null, nextTask = null) => ({
+  id: generateID(),
   projectID: projectID,
-  note: "",
-  prevNote: prevNote,
-  nextNote: nextNote,
-  isDone: false,
-  task: null,
+  task: "",
+  prevTask: prevTask,
+  nextTask: nextTask,
   description: null,
-  steps: null,
-  due: Date.now(),
-  watcher: null,
-  tag: null,
-  sprint: null,
-  status: null
+  due: null,
+  tags: [],
+  assignees: [],
+  status: "todo",
+  priority: "normal"
 })
+
+export const AuthState = {
+  SignUp: "signup",
+  SignOut: "signout",
+  SignIn: "signin",
+  Loading: "loading",
+  SignedOut: "signedout",
+  SignedIn: "signedin",
+  SigningUp: "signingup",
+  ConfirmSignUp: "confirmSignUp",
+  confirmingSignUpCustomFlow: "confirmsignupcustomflow",
+  ConfirmSignIn: "confirmSignIn",
+  confirmingSignInCustomFlow: "confirmingsignincustomflow",
+  VerifyingAttributes: "verifyingattributes",
+  ForgotPassword: "forgotpassword",
+  ResetPassword: "resettingpassword",
+  SettingMFA: "settingMFA",
+  TOTPSetup: "TOTPSetup",
+  CustomConfirmSignIn: "customConfirmSignIn",
+  VerifyContact: "verifyContact"
+}

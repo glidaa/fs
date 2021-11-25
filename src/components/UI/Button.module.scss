@@ -1,0 +1,18 @@
+.Button {
+  padding: 15px 0;
+  @include themify(background-color, "primary");
+  @include themify(color, "onPrimaryColor");
+  border-radius: 100000000000000px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  &:hover {
+    @include themify(background-color, "primaryDark");
+  }
+  &:disabled {
+    background-color: #CCCCCC!important;
+    color: #FFFFFF!important;
+    cursor: not-allowed;
+  }
+}

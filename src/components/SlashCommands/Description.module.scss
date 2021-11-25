@@ -1,0 +1,27 @@
+.DescriptionSuggestion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+  font-size: 14px;
+  background-color: transparent;
+  &.active {
+    @include themify(background-color, "hover");
+  }
+  padding: 10px 20px;
+  cursor: pointer;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.NoDescription {
+  display: flex;
+  width: 100%;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  @include themify(color, "txtColor");
+}

@@ -1,0 +1,31 @@
+.AccordionContainer {
+  padding: 15px;
+  border-radius: 15px;
+  margin-top: 10px;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  overflow: hidden;
+  @include themify(background-color, "fieldBg");
+  @media only screen and (max-width: 768px) {
+    padding: 5px;
+    box-shadow: none;
+    font-size: 16.5px;
+    border-radius: 0;
+  }
+}
+
+.AccordionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-weight: 600;
+  font-size: 24px;
+  @include themify(color, "txtColor");
+  & > svg {
+    cursor: pointer;
+  }
+  @media only screen and (max-width: 768px) {
+    padding: 5px 20px 5px 20px;
+    font-size: 16.5px;
+  }
+}

@@ -1,0 +1,66 @@
+.NoTasksContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  &.loader {
+    & > svg {
+      width: 150px;
+    }
+    @media only screen and (max-width: 768px) {
+      & > svg {
+        width: 180px;
+      }
+    }
+  }
+  & > svg {
+    width: 250px;
+    height: 250px;
+    @include themify(color, "primary");
+  }
+  & > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    & > span {
+      font-weight: bold;
+      font-size: 28px;
+      @include themify(color, "txtColor");
+    }
+    & > button {
+      @include themify(color, "primary");
+      @include themify(background-color, "primaryLight");
+      border-radius: 8px;
+      max-width: fit-content;
+      outline: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    & > *:not(:last-child) {
+      margin-bottom: 40px;
+    }
+    & > *:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    & > svg {
+      width: 240px;
+      height: 240px;
+    }
+    & > div {
+      & > span {
+        font-size: 20px;
+      }
+      & > button {
+        font-size: 16px;
+      }
+    }
+  }
+}

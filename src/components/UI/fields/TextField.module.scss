@@ -1,0 +1,85 @@
+.TextFieldShell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  & > span {
+    color: #FF0000;
+    font-size: 12px;
+    margin-left: 10px;
+  }
+}
+
+.TextFieldContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: calc(100% - 24px);
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: transparent;
+  @include themify(border-color, "outline");
+  & > label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 3px;
+    margin-left: -3px;
+    transform-origin: bottom left;
+    transition: transform 150ms cubic-bezier(0.4,0,0.2,1);
+    @include themify(color, "outline");
+    @include themify(background-color, "secondaryBg");
+  }
+  & > span {
+    color: #C0C0C0;
+  }
+  & > input {
+    font-size: 14px;
+    border: none;
+    outline: none;
+    padding: 0;
+    width: 100%;
+    background-color: transparent;
+    z-index: 1;
+    @include themify(color, "txtColor");
+    &:disabled {
+      background-color: transparent;
+    }
+    &::placeholder {
+      color: #C0C0C0;
+    }
+  }
+  &.focused:not(.readOnly:not(.filled)), &.filled {
+    & > label {
+      transform: scale(0.9) translate3d(0, -25px, 0);
+    }
+  }
+  &.focused:not(.readOnly:not(.filled)) {
+    @include themify(border-color, "primary");
+    & > label {
+      @include themify(color, "primary");
+    }
+  }
+  &.error {
+    border-color: #FF0000!important;
+    & > label {
+      color: #FF0000!important;
+    }
+  }
+  &.disabled {
+    background-color: #FFFFFF2E!important;
+  }
+  & *:not(input):not(label) {
+    @include themify(color, "outline");
+  }
+}

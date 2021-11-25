@@ -1,0 +1,32 @@
+@keyframes openAnim {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 300px;
+  }
+}
+
+.DropdownContainer {
+  position: fixed!important;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  z-index: 999;
+  border-radius: 10px;
+  border: none;
+  padding: 15px 0;
+  width: 320px;
+  max-height: 300px;
+  @include themify(background-color, "secondaryBg");
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  animation: openAnim 0.3s ease;
+  @media only screen and (max-width: 768px) {
+    left: 0;
+    max-height: 200px;
+    width: 100vw;
+    border-radius: 0px;
+    box-shadow: none;
+  }
+}

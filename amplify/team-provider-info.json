@@ -12,20 +12,54 @@
       "AmplifyAppId": "dq757k0acraow"
     },
     "categories": {
-      "auth": {
-        "forwardslashe21e583a": {}
-      },
-      "function": {
-        "AdminQueries7d56620a": {
-          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
-          "s3Key": "amplify-builds/AdminQueries7d56620a-574a6c7a4b6f30663855-build.zip"
-        }
-      },
       "hosting": {
         "amplifyhosting": {
           "appId": "dq757k0acraow",
           "type": "manual"
         }
+      },
+      "function": {
+        "fsCognitoPostConfirmation": {
+          "GROUP": "free",
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-47577561796663755154-build.zip"
+        },
+        "fsCoreApiResolver": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCoreApiResolver-444e6475714332493563-build.zip"
+        },
+        "fsCognitoPostConfirmationInvoker": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmationInvoker-2b6e7742464651426843-build.zip"
+        },
+        "fsDailyReport": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsDailyReport-45476977466f41396b59-build.zip"
+        },
+        "fsUserDisconnection": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsUserDisconnection-546b5765426c55332f30-build.zip"
+        },
+        "fsLeaveProject": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsLeaveProject-302f4c69704c482b786b-build.zip"
+        },
+        "fsUserConnection": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsUserConnection-44412f7a763879394765-build.zip"
+        },
+        "fsSendRealtimeData": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsSendRealtimeData-73654646506c45582f37-build.zip"
+        },
+        "fsJoinProject": {
+          "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
+          "s3Key": "amplify-builds/fsJoinProject-5766557a362f79595546-build.zip"
+        }
+      },
+      "auth": {
+        "userPoolGroups": {},
+        "fsCognito": {}
       }
     }
   }

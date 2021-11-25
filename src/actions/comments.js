@@ -1,14 +1,17 @@
-import { API, graphqlOperation } from "aws-amplify";
-import { AuthState } from '@aws-amplify/ui-components';
-import { listCommentsForNote } from "../graphql/queries"
-import * as mutations from "../graphql/mutations"
+import { graphqlOperation } from "@aws-amplify/api";
+import { AuthState } from '../constants';
+import { listCommentsForTask } from "../graphql/queries"
 import * as usersActions from "./users"
+import * as mutationsActions from "./mutations"
+import * as cacheController from "../controllers/cache"
+import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_COMMENT = "CREATE_COMMENT";
 export const UPDATE_COMMENT = "UPDATE_COMMENT";
 export const REMOVE_COMMENT = "REMOVE_COMMENT";
 export const EMPTY_COMMENTS = "EMPTY_COMMENTS";
 export const FETCH_COMMENTS = "FETCH_COMMENTS";
+export const FETCH_CACHED_COMMENTS = "FETCH_CACHED_COMMENTS";
 
 export const createComment = (commentState) => ({
   type: CREATE_COMMENT,
@@ -29,40 +32,60 @@ export const emptyComments = () => ({
   type: EMPTY_COMMENTS
 });
 
-const fetchComments = (comments) => ({
+const fetchComments = (comments, taskID) => ({
   type: FETCH_COMMENTS,
+  comments,
+  taskID
+});
+
+const fetchCachedComments = (comments) => ({
+  type: FETCH_CACHED_COMMENTS,
   comments
 });
 
 export const handleCreateComment = (commentState) => (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    if (commentState.noteID === getState().app.selectedNote) {
-      dispatch(createComment(commentState))
-    }
-    return API.graphql(graphqlOperation(mutations.createComment, { input: commentState }))
-      .catch(() => {
-        if (commentState.noteID === getState().app.selectedNote) {
-          return dispatch(removeComment(commentState.id))
-        }
-      })
+    dispatch(createComment({
+      ...commentState,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      owner: user.data.username,
+      isVirtual: true
+    }))
+    dispatch(mutationsActions.scheduleMutation(
+      "createComment",
+      commentState,
+      (incoming) => {
+        dispatch(updateComment({
+          ...incoming.data.createComment,
+          isVirtual: false
+        }))
+      },
+      () => {
+        dispatch(removeComment(commentState.id))
+      }
+    ))
   }
 }
 
 export const handleUpdateComment = (update) => (dispatch, getState) => {
   const { user, comments } = getState()
   const prevCommentState = {...comments[update.id]}
-  const updateWithID = {id: prevCommentState.id, ...update };
   if (user.state === AuthState.SignedIn) {
-    if (comments[prevCommentState.id]) {
-      dispatch(updateComment(updateWithID))
+    if (comments[update.id]) {
+      dispatch(updateComment(update))
     }
-    return API.graphql(graphqlOperation(mutations.updateComment, { input: updateWithID }))
-      .catch(() => {
-        if (comments[prevCommentState.id]) {
-          return dispatch(updateComment(prevCommentState))
+    return dispatch(mutationsActions.scheduleMutation(
+      "updateComment",
+      update,
+      null,
+      () => {
+        if (getState().comments[update.id]) {
+          dispatch(updateComment(prevCommentState))
         }
-      })
+      }
+    ))
   }
 }
 
@@ -72,26 +95,39 @@ export const handleRemoveComment = (commentState) => (dispatch, getState) => {
     if (comments[commentState.id]) {
       dispatch(removeComment(commentState.id))
     }
-    return API.graphql(graphqlOperation(mutations.deleteComment, { commentID: commentState.id }))
-      .catch(() => {
-        if (comments[commentState.id]) {
+    return dispatch(mutationsActions.scheduleMutation(
+      "deleteComment",
+      { id: commentState.id },
+      null,
+      () => {
+        if (getState().app.selectedTask === commentState.taskID) {
           dispatch(createComment(commentState))
         }
-      })
+      }
+    ))
   }
 }
 
-export const handleFetchComments = (noteID) => (dispatch, getState) => {
+export const handleFetchComments = (taskID) => async (dispatch, getState) => {
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    return API.graphql(graphqlOperation(listCommentsForNote, { noteID }))
-      .then(e => {
-        const result = e.data.listCommentsForNote.items;
-        for (const item of result) {
-          dispatch(usersActions.handleAddUser(item.owner))
-        }
-        dispatch(fetchComments(e.data.listCommentsForNote.items))
-      })
-      .catch(e => console.error(e))
+    try {
+      const res = await execGraphQL(graphqlOperation(listCommentsForTask, { taskID }))
+      const items = res.data.listCommentsForTask.items;
+      let usersToBeFetched = []
+      for (const item of items) {
+        usersToBeFetched = [...new Set([
+          ...usersToBeFetched,
+          item.owner
+        ])]
+      }
+      await dispatch(usersActions.handleAddUsers(usersToBeFetched))
+      dispatch(fetchComments(items, taskID))
+    } catch (err) {
+      if (err.errors[0].message === 'Network Error') {
+        dispatch(fetchCachedComments(cacheController.getCommentsByTaskID(taskID)))
+      }
+    }
+    return getState().comments
   }
 }

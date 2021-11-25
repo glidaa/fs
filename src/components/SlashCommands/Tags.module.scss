@@ -1,0 +1,40 @@
+.TagsSuggestion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+  background-color: transparent;
+  &.active {
+    @include themify(background-color, "hover");
+  }
+  padding: 10px 20px;
+  cursor: pointer;
+  & > *:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.TagItem {
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 14px;
+  width: fit-content;
+  height: fit-content;
+  @include themify(color, "primary");
+  @include themify(background-color, "primaryLight");
+  flex-direction: row;
+  align-items: center;
+}
+
+.NoTags {
+  display: flex;
+  width: 100%;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  @include themify(color, "txtColor");
+}

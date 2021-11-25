@@ -1,0 +1,72 @@
+.CommandSuggestion {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: transparent;
+  padding: 10px 20px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  &.selected {
+    @include themify(background-color, "hover");
+  }
+  & > svg {
+    @include themify(color, "primary");
+    @include themify(fill, "primary");
+  }
+  & > div {
+    display: flex;
+    flex-direction: column;
+    & > div:nth-child(1) {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      & > span:nth-child(1) {
+        @include themify(color, "txtColor");
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: lowercase;
+        &::first-letter {
+          text-transform: capitalize;
+        }
+      }
+      & > span:nth-child(2) {
+        line-height: 0;
+        height: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        @include themify(color, "primary");
+        @include themify(background-color, "primaryLight");
+        font-weight: 600;
+        padding: 2px;
+        border-radius: 4px;
+        font-size: 12px;
+        text-transform: lowercase;
+      }
+      & > *:not(:last-child) {
+        margin-right: 5px;
+      }
+    }
+    & > span:nth-child(2) {
+      @include themify(color, "txtColor");
+      font-weight: 400;
+      font-size: 12px;
+    }
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.NoIntent {
+  display: flex;
+  width: 100%;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  @include themify(color, "txtColor");
+}

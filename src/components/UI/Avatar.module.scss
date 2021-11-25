@@ -1,0 +1,12 @@
+.ImageAvatar {
+  display: inline;
+}
+
+.LetterAvatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  @include themify(color, "primary");
+  @include themify(background-color, "primaryLight");
+  line-height: 0;
+}

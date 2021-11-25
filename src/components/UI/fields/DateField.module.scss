@@ -1,0 +1,104 @@
+.DateFieldShell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  & > span {
+    color: #FF0000;
+    font-size: 12px;
+    margin-left: 10px;
+  }
+}
+
+.DateFieldContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 24px);
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: transparent;
+  @include themify(border-color, "outline");
+  &.error {
+    border-color: #ff0000;
+  }
+  &.readOnly > input {
+    cursor: default;
+  }
+  & > label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    margin-bottom: 0;
+    width: max-content;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 3px;
+    margin-left: -3px;
+    transform-origin: bottom left;
+    transition: transform 150ms cubic-bezier(0.4,0,0.2,1);
+    @include themify(color, "outline");
+    @include themify(background-color, "secondaryBg");
+  }
+  &.filled {
+    & > label {
+      transform: scale(0.9) translate3d(0, -25px, 0);
+    }
+  }
+  &.error {
+    border-color: #FF0000!important;
+    & > label {
+      color: #FF0000!important;
+    }
+  }
+  &.disabled {
+    background-color: #FFFFFF2E!important;
+  }
+  & > input {
+    font-size: 14px;
+    border: none;
+    outline: none;
+    padding: 0;
+    width: 100%;
+    background-color: transparent;
+    z-index: 1;
+    @include themify(color, "txtColor");
+    &:disabled {
+      background-color: transparent;
+    }
+    &::placeholder {
+      color: #C0C0C0;
+    }
+  }
+}
+
+.PickerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #000000aa;
+  z-index: 9999;
+  div.Calendar {
+    @include themify(background-color, "secondaryBg");
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border: none;
+  }
+}
+
+.ClearBtn {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  line-height: 0;
+  cursor: pointer;
+  @include themify(color, "txtColor");
+}

@@ -1,0 +1,120 @@
+.PanelPageToolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 25px;
+  padding-top: 25px;
+}
+
+.PanelPageTitle {
+  @include themify(color, "txtColor");
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.PanelPageToolbarAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 100%;
+  outline: none;
+  padding: 5px;
+  margin: 0;
+  background-color: transparent;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  @include themify(color, "primary");
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.KeywordField {
+  position: relative;
+  width: calc(100% - 70px);
+  outline: none;
+  border: none;
+  padding: 10px;
+  margin: 0 25px;
+  font-size: 14px;
+  font-weight: 400;
+  transition: opacity 0.3s;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  @include themify(color, "txtColor");
+  @include themify(background-color, "fieldBg");
+  &::placeholder {
+    color: #c0c0c0;
+  }
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.SearchResults {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.SearchResultsItem {
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  align-items: center;
+  font-size: 12px;
+  padding: 10px 25px;
+  border: none;
+  background-color: transparent;
+  text-align: start;
+  transition: background-color 0.3s, opacity 0.3s;
+  & > div:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    & > span:nth-child(1) {
+      font-weight: bold;
+      @include themify(color, "txtColor");
+    }
+    & > span:nth-child(2) {
+      font-style: italic;
+      @include themify(color, "txtColor");
+    }
+  }
+  &:not(:disabled):hover {
+    @include themify(background-color, "hover");
+  }
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.WatcherChooserIllustartion {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin-top: -25px;
+  & > svg {
+    width: 250px;
+    height: auto;
+    @include themify(color, "primary");
+  }
+  & > span {
+    font-weight: bold;
+    font-size: 18px;
+    @include themify(color, "txtColor");
+  }
+  & > *:not(:last-child) {
+    margin-bottom: 40px;
+  }
+}

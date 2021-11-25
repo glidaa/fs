@@ -1,6 +1,51 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onPushUserUpdate = /* GraphQL */ `
+  subscription OnPushUserUpdate($username: String!) {
+    onPushUserUpdate(username: $username) {
+      username
+      firstName
+      lastName
+      gender
+      birthdate
+      email
+      plan
+      avatar
+      sharedProjects
+      watchedTasks
+      assignedTasks
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onPushNotification = /* GraphQL */ `
+  subscription OnPushNotification($owner: String!) {
+    onPushNotification(owner: $owner) {
+      id
+      type
+      payload
+      createdAt
+      updatedAt
+      owner
+      sender
+    }
+  }
+`;
+export const onDismissNotification = /* GraphQL */ `
+  subscription OnDismissNotification($owner: String!) {
+    onDismissNotification(owner: $owner) {
+      id
+      type
+      payload
+      createdAt
+      updatedAt
+      owner
+      sender
+    }
+  }
+`;
 export const onCreateOwnedProject = /* GraphQL */ `
   subscription OnCreateOwnedProject($owner: String!) {
     onCreateOwnedProject(owner: $owner) {
@@ -9,10 +54,17 @@ export const onCreateOwnedProject = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
+      members
+      mutationID
     }
   }
 `;
@@ -26,10 +78,16 @@ export const onImportOwnedProjects = /* GraphQL */ `
         nextProject
         permalink
         title
-        notesCount
+        tasksCount
+        todoCount
+        pendingCount
+        doneCount
+        privacy
+        permissions
         createdAt
         updatedAt
         owner
+        members
       }
     }
   }
@@ -42,10 +100,15 @@ export const onUpdateOwnedProject = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
-      createdAt
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       updatedAt
       owner
+      mutationID
     }
   }
 `;
@@ -57,233 +120,163 @@ export const onDeleteOwnedProject = /* GraphQL */ `
       nextProject
       permalink
       title
-      notesCount
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
       createdAt
       updatedAt
       owner
+      members
+      mutationID
     }
   }
 `;
-export const onAssignNote = /* GraphQL */ `
-  subscription OnAssignNote($assignee: String!) {
-    onAssignNote(assignee: $assignee) {
+export const onUpdateProject = /* GraphQL */ `
+  subscription OnUpdateProject($id: String!) {
+    onUpdateProject(id: $id) {
+      id
+      prevProject
+      nextProject
+      permalink
+      title
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
+      updatedAt
+      owner
+      mutationID
+    }
+  }
+`;
+export const onDeleteProject = /* GraphQL */ `
+  subscription OnDeleteProject($id: String!) {
+    onDeleteProject(id: $id) {
+      id
+      prevProject
+      nextProject
+      permalink
+      title
+      tasksCount
+      todoCount
+      pendingCount
+      doneCount
+      privacy
+      permissions
+      createdAt
+      updatedAt
+      owner
+      members
+      mutationID
+    }
+  }
+`;
+export const onCreateTaskByProjectId = /* GraphQL */ `
+  subscription OnCreateTaskByProjectId($projectID: ID!) {
+    onCreateTaskByProjectID(projectID: $projectID) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
+      priority
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
+      mutationID
     }
   }
 `;
-export const onDisallowNote = /* GraphQL */ `
-  subscription OnDisallowNote($assignee: String!) {
-    onDisallowNote(assignee: $assignee) {
+export const onUpdateTaskByProjectId = /* GraphQL */ `
+  subscription OnUpdateTaskByProjectId($projectID: ID!) {
+    onUpdateTaskByProjectID(projectID: $projectID) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
-      createdAt
+      priority
+      watchers
+      assignees
       updatedAt
-      owner
-      assignee
+      mutationID
     }
   }
 `;
-export const onUpdateAssignedNoteByProjectId = /* GraphQL */ `
-  subscription OnUpdateAssignedNoteByProjectId(
-    $projectID: ID!
-    $assignee: String!
-  ) {
-    onUpdateAssignedNoteByProjectID(
-      projectID: $projectID
-      assignee: $assignee
-    ) {
+export const onDeleteTaskByProjectId = /* GraphQL */ `
+  subscription OnDeleteTaskByProjectId($projectID: ID!) {
+    onDeleteTaskByProjectID(projectID: $projectID) {
       id
       projectID
-      prevNote
-      nextNote
+      prevTask
+      nextTask
       permalink
-      note
-      isDone
       task
       description
-      steps
       due
-      watcher
-      tag
-      sprint
+      tags
       status
+      priority
       createdAt
       updatedAt
       owner
-      assignee
+      watchers
+      assignees
+      mutationID
     }
   }
 `;
-export const onDeleteAssignedNoteByProjectId = /* GraphQL */ `
-  subscription OnDeleteAssignedNoteByProjectId(
-    $projectID: ID!
-    $assignee: String!
-  ) {
-    onDeleteAssignedNoteByProjectID(
-      projectID: $projectID
-      assignee: $assignee
-    ) {
+export const onCreateCommentByTaskId = /* GraphQL */ `
+  subscription OnCreateCommentByTaskId($taskID: ID!) {
+    onCreateCommentByTaskID(taskID: $taskID) {
       id
-      projectID
-      prevNote
-      nextNote
-      permalink
-      note
-      isDone
-      task
-      description
-      steps
-      due
-      watcher
-      tag
-      sprint
-      status
-      createdAt
-      updatedAt
-      owner
-      assignee
-    }
-  }
-`;
-export const onCreateOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnCreateOwnedNoteByProjectId($projectID: ID!) {
-    onCreateOwnedNoteByProjectID(projectID: $projectID) {
-      id
-      projectID
-      prevNote
-      nextNote
-      permalink
-      note
-      isDone
-      task
-      description
-      steps
-      due
-      watcher
-      tag
-      sprint
-      status
-      createdAt
-      updatedAt
-      owner
-      assignee
-    }
-  }
-`;
-export const onUpdateOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnUpdateOwnedNoteByProjectId($projectID: ID!) {
-    onUpdateOwnedNoteByProjectID(projectID: $projectID) {
-      id
-      projectID
-      prevNote
-      nextNote
-      permalink
-      note
-      isDone
-      task
-      description
-      steps
-      due
-      watcher
-      tag
-      sprint
-      status
-      createdAt
-      updatedAt
-      owner
-      assignee
-    }
-  }
-`;
-export const onDeleteOwnedNoteByProjectId = /* GraphQL */ `
-  subscription OnDeleteOwnedNoteByProjectId($projectID: ID!) {
-    onDeleteOwnedNoteByProjectID(projectID: $projectID) {
-      id
-      projectID
-      prevNote
-      nextNote
-      permalink
-      note
-      isDone
-      task
-      description
-      steps
-      due
-      watcher
-      tag
-      sprint
-      status
-      createdAt
-      updatedAt
-      owner
-      assignee
-    }
-  }
-`;
-export const onCreateCommentByNoteId = /* GraphQL */ `
-  subscription OnCreateCommentByNoteId($noteID: ID!) {
-    onCreateCommentByNoteID(noteID: $noteID) {
-      id
-      noteID
+      taskID
       content
       createdAt
       updatedAt
       owner
+      mutationID
     }
   }
 `;
-export const onUpdateCommentByNoteId = /* GraphQL */ `
-  subscription OnUpdateCommentByNoteId($noteID: ID!) {
-    onUpdateCommentByNoteID(noteID: $noteID) {
+export const onUpdateCommentByTaskId = /* GraphQL */ `
+  subscription OnUpdateCommentByTaskId($taskID: ID!) {
+    onUpdateCommentByTaskID(taskID: $taskID) {
       id
-      noteID
+      taskID
+      content
+      updatedAt
+      mutationID
+    }
+  }
+`;
+export const onDeleteCommentByTaskId = /* GraphQL */ `
+  subscription OnDeleteCommentByTaskId($taskID: ID!) {
+    onDeleteCommentByTaskID(taskID: $taskID) {
+      id
+      taskID
       content
       createdAt
       updatedAt
       owner
-    }
-  }
-`;
-export const onDeleteCommentByNoteId = /* GraphQL */ `
-  subscription OnDeleteCommentByNoteId($noteID: ID!) {
-    onDeleteCommentByNoteID(noteID: $noteID) {
-      id
-      noteID
-      content
-      createdAt
-      updatedAt
-      owner
+      mutationID
     }
   }
 `;

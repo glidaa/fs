@@ -1,8 +1,8 @@
 projects:
-  todo:
+  fsCoreAPI:
     schemaPath: src/graphql/schema.json
     includes:
-      - src/graphql/*.*
+      - src/graphql/**/*.js
     excludes:
       - ./amplify/**
     extensions:

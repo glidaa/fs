@@ -3,34 +3,44 @@
 
 const awsmobile = {
     "aws_project_region": "us-east-1",
-    "aws_appsync_graphqlEndpoint": "https://or4dtgsmabhythzsmhvxesktmy.appsync-api.us-east-1.amazonaws.com/graphql",
+    "aws_appsync_graphqlEndpoint": "https://wc4bxcmfu5gkrlmeqyoj2ilvcm.appsync-api.us-east-1.amazonaws.com/graphql",
     "aws_appsync_region": "us-east-1",
     "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
-    "aws_cloud_logic_custom": [
-        {
-            "name": "AdminQueries",
-            "endpoint": "https://y5iyjp3nhb.execute-api.us-east-1.amazonaws.com/dev",
-            "region": "us-east-1"
-        }
-    ],
-    "aws_cognito_identity_pool_id": "us-east-1:b4012bec-9c7f-4ba9-8d16-a26c1f12243e",
+    "aws_cognito_identity_pool_id": "us-east-1:83b9baef-6204-481d-9c31-3ff39e0a6a9a",
     "aws_cognito_region": "us-east-1",
-    "aws_user_pools_id": "us-east-1_uaRbTTy59",
-    "aws_user_pools_web_client_id": "6p4ckmi4b1ulal0h8sfgv76bpg",
-    "oauth": {
-        "domain": "forwardslashc5dd4dd3-c5dd4dd3-dev.auth.us-east-1.amazoncognito.com",
-        "scope": [
-            "phone",
-            "email",
-            "openid",
-            "profile",
-            "aws.cognito.signin.user.admin"
-        ],
-        "redirectSignIn": "https://forwardslash.ch/,https://forwardslash.ch/",
-        "redirectSignOut": "https://forwardslash.ch/,https://forwardslash.ch/",
-        "responseType": "code"
+    "aws_user_pools_id": "us-east-1_jllb3Qjdd",
+    "aws_user_pools_web_client_id": "7ojagvnc5f5tvnfcfpp3fg9l67",
+    "oauth": {},
+    "aws_cognito_username_attributes": [],
+    "aws_cognito_social_providers": [],
+    "aws_cognito_signup_attributes": [
+        "BIRTHDATE",
+        "EMAIL",
+        "FAMILY_NAME",
+        "GENDER",
+        "GIVEN_NAME",
+        "PHONE_NUMBER"
+    ],
+    "aws_cognito_mfa_configuration": "OPTIONAL",
+    "aws_cognito_mfa_types": [
+        "SMS",
+        "TOTP"
+    ],
+    "aws_cognito_password_protection_settings": {
+        "passwordPolicyMinLength": "8",
+        "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_SYMBOLS"
+        ]
     },
-    "federationTarget": "COGNITO_USER_POOLS"
+    "aws_cognito_verification_mechanisms": [
+        "EMAIL"
+    ],
+    "aws_cognito_login_mechanisms": [
+        "PREFERRED_USERNAME"
+    ]
 };
 
 

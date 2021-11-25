@@ -1,0 +1,60 @@
+.PanelPageContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  & > *:not(:last-child) {
+    margin-bottom: 25px;
+  }
+}
+
+.PanelPageToolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 25px;
+  padding-top: 25px;
+}
+
+.PanelPageTitle {
+  @include themify(color, "txtColor");
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ProjectItems {
+  overflow: auto;
+  flex: 1;
+  height: 0;
+  min-height: 0;
+  & :global(.simplebar-content-wrapper) {
+    min-height: 100%;
+  }
+  & :global(.simplebar-content) > div > div {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-bottom: 25px;
+    & > *:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.PanelPageToolbarAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 100%;
+  outline: none;
+  padding: 5px;
+  margin: 0;
+  background-color: transparent;
+  cursor: pointer;
+  @include themify(color, "primary");
+  &:disabled {
+    cursor: not-allowed;
+    color: #CCCCCC!important;
+  }
+}

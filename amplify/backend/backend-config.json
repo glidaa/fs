@@ -1,6 +1,6 @@
 {
   "api": {
-    "todo": {
+    "fsCoreAPI": {
       "service": "AppSync",
       "providerPlugin": "awscloudformation",
       "output": {
@@ -8,7 +8,7 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authforwardslashe21e583a"
+              "userPoolId": "authfsCognito"
             }
           },
           "additionalAuthenticationProviders": [
@@ -18,57 +18,181 @@
           ]
         }
       }
-    },
-    "AdminQueries": {
-      "service": "API Gateway",
+    }
+  },
+  "auth": {
+    "userPoolGroups": {
+      "service": "Cognito-UserPool-Groups",
       "providerPlugin": "awscloudformation",
-      "authorizationType": "AMAZON_COGNITO_USER_POOLS",
       "dependsOn": [
         {
           "category": "auth",
-          "resourceName": "forwardslashe21e583a",
+          "resourceName": "fsCognito",
           "attributes": [
-            "UserPoolId"
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
           ]
-        },
+        }
+      ]
+    },
+    "fsCognito": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
         {
           "category": "function",
-          "resourceName": "AdminQueries7d56620a",
+          "resourceName": "fsCognitoPostConfirmationInvoker",
+          "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
             "Name"
           ]
         }
-      ]
-    }
-  },
-  "auth": {
-    "forwardslashe21e583a": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
+      ],
       "customAuth": false
     }
   },
   "function": {
-    "AdminQueries7d56620a": {
-      "service": "Lambda",
-      "providerPlugin": "awscloudformation",
+    "fsCognitoPostConfirmation": {
       "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
       "dependsOn": [
         {
           "category": "auth",
-          "resourceName": "forwardslashe21e583a",
+          "resourceName": "fsCognito",
+          "attributes": [
+            "UserPoolId"
+          ]
+        },
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
+    },
+    "fsCoreApiResolver": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ]
+        },
+        {
+          "category": "auth",
+          "resourceName": "fsCognito",
           "attributes": [
             "UserPoolId"
           ]
         }
       ]
     },
-    "graphqlresolver": {
+    "fsCognitoPostConfirmationInvoker": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "fsDailyReport": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
+    },
+    "fsUserConnection": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
+    },
+    "fsUserDisconnection": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
+    },
+    "fsJoinProject": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "fsCognito",
+          "attributes": [
+            "UserPoolId"
+          ]
+        },
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
+    },
+    "fsLeaveProject": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
+    },
+    "fsSendRealtimeData": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "fsCoreAPI",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
     }
   },
   "hosting": {
@@ -76,6 +200,64 @@
       "service": "amplifyhosting",
       "providerPlugin": "awscloudformation",
       "type": "manual"
+    }
+  },
+  "custom": {
+    "fsRealtimeDataManager": {
+      "service": "customCloudformation",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "fsUserConnection",
+          "attributes": [
+            "Name",
+            "Arn",
+            "Region",
+            "LambdaExecutionRole"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "fsUserDisconnection",
+          "attributes": [
+            "Name",
+            "Arn",
+            "Region",
+            "LambdaExecutionRole"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "fsJoinProject",
+          "attributes": [
+            "Name",
+            "Arn",
+            "Region",
+            "LambdaExecutionRole"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "fsLeaveProject",
+          "attributes": [
+            "Name",
+            "Arn",
+            "Region",
+            "LambdaExecutionRole"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "fsSendRealtimeData",
+          "attributes": [
+            "Name",
+            "Arn",
+            "Region",
+            "LambdaExecutionRole"
+          ]
+        }
+      ]
     }
   }
 }
