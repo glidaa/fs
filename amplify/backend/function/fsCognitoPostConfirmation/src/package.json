@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "axios": "latest",
-    "@sendgrid/mail": "^7.6.0"
+    "@sendgrid/mail": "^7.6.0",
+    "dotenv": "^10.0.0"
   }
 }
