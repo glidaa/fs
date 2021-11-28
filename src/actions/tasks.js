@@ -8,11 +8,9 @@ import * as usersActions from "./users"
 import * as commentsActions from "./comments"
 import * as observersActions from "./observers"
 import * as mutationsActions from "./mutations"
-import * as mutations from "../graphql/mutations"
 import * as cacheController from "../controllers/cache"
 import { READY, LOADING } from "../constants";
 import prepareTaskToBeSent from "../utils/prepareTaskToBeSent";
-import generateID from "../utils/generateID";
 import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_TASK = "CREATE_TASK";
@@ -53,12 +51,13 @@ const fetchCachedTasks = (tasks) => ({
 });
 
 export const handleCreateTask = (taskState) => (dispatch, getState) => {
-  const { user } = getState()
+  const { user, tasks } = getState()
   if (user.state === AuthState.SignedIn) {
     const dataToSend = prepareTaskToBeSent(taskState, user.data.username)
     if (taskState.projectID === getState().app.selectedProject) {
       dispatch(createTask({
         watchers: [],
+        permalink: Object.values(tasks).sort((a, b) => b.permalink - a.permalink)[0].permalink + 1,
         owner: user.data.username,
         isVirtual: true,
         ...taskState
@@ -68,8 +67,10 @@ export const handleCreateTask = (taskState) => (dispatch, getState) => {
     dispatch(mutationsActions.scheduleMutation(
       "createTask",
       dataToSend,
-      () => {
+      (incoming) => {
         dispatch(updateTask({
+          id: incoming.data.createTask.id,
+          permalink: incoming.data.createTask.permalink,
           isVirtual: false
         }))
         if (getState().app.selectedTask === taskState.id) {
