@@ -3,11 +3,9 @@ import { listOwnedProjects, listAssignedProjects, listWatchedProjects } from "..
 import * as appActions from "./app"
 import * as mutationsActions from "./mutations"
 import * as observersActions from "./observers"
-import * as mutations from "../graphql/mutations"
 import * as cacheController from "../controllers/cache"
-import { OK, PENDING, AuthState } from "../constants";
+import { AuthState } from "../constants";
 import prepareProjectToBeSent from "../utils/prepareProjectToBeSent";
-import generateID from "../utils/generateID";
 import execGraphQL from "../utils/execGraphQL";
 
 export const CREATE_PROJECT = "CREATE_PROJECT";
@@ -70,8 +68,9 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
     dispatch(mutationsActions.scheduleMutation(
       "createProject",
       dataToSend,
-      () => {
+      (incoming) => {
         dispatch(updateProject({
+          id: incoming.data.createProject.id,
           isVirtual: false
         }))
         if (getState().app.selectedProject === projectState.id) {
@@ -96,8 +95,8 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
   const { app, user, projects } = getState()
   const prevProjectState = {...projects[update.id]}
   dispatch(updateProject(update, OWNED))
-  if (app.selectedProject === update.id && update.permalink !== prevProjectState.permalink) {
-    app?.navigate("/" + (user.state !== AuthState.SignedIn ? "local/" : "") + update.permalink, { replace: true })
+  if (app.selectedProject === update.id && Object.prototype.hasOwnProperty.call(update, "permalink")) {
+    app?.navigate("/" + (user.state === AuthState.SignedIn ? user.data.username + "/" : "local/") + update.permalink, { replace: true })
   }
   if (user.state === AuthState.SignedIn) {
     return dispatch(mutationsActions.scheduleMutation(
@@ -107,7 +106,7 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
       () => {
         if (getState().projects[update.id]) {
           dispatch(updateProject(prevProjectState))
-          if (getState().app.selectedProject === update.id && update.permalink !== prevProjectState.permalink) {
+          if (getState().app.selectedProject === update.id && Object.prototype.hasOwnProperty.call(update, "permalink")) {
             app?.navigate("/" + prevProjectState.permalink, { replace: true })
           }
         }

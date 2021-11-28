@@ -56,8 +56,9 @@ export const handleCreateComment = (commentState) => (dispatch, getState) => {
     dispatch(mutationsActions.scheduleMutation(
       "createComment",
       commentState,
-      () => {
+      (incoming) => {
         dispatch(updateComment({
+          id: incoming.data.createComment.id,
           isVirtual: false
         }))
       },
