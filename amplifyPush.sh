@@ -32,6 +32,8 @@ init_env () {
         [[ -z ${CATEGORIES} ]] && amplify init --amplify ${AMPLIFY} --providers ${PROVIDERS} --codegen ${CODEGEN} --yes || amplify init --amplify ${AMPLIFY} --providers ${PROVIDERS} --codegen ${CODEGEN} --categories ${CATEGORIES} --yes
         echo "# Environment ${ENV} details:"
         amplify env get --name ${ENV}
+        echo "# Pushing changes to the cloud"
+        amplify push --yes
     fi
     echo "# Done initializing Amplify environment: ${ENV}"
 }
