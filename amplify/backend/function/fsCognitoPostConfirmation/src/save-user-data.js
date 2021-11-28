@@ -36,7 +36,7 @@ exports.handler = async (event) => {
       Item: userData
     };
     const addUserParams = {
-      GroupName: process.env.GROUP,
+      GroupName: "free",
       UserPoolId: event.userPoolId,
       Username: event.userName,
     };

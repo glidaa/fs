@@ -70,9 +70,8 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
     dispatch(mutationsActions.scheduleMutation(
       "createProject",
       dataToSend,
-      (incoming) => {
+      () => {
         dispatch(updateProject({
-          ...incoming.data.createProject,
           isVirtual: false
         }))
         if (getState().app.selectedProject === projectState.id) {

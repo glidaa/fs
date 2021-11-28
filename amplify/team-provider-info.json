@@ -20,7 +20,6 @@
       },
       "function": {
         "fsCognitoPostConfirmation": {
-          "GROUP": "free",
           "deploymentBucketName": "amplify-forwardslashtesting-mainn-131231-deployment",
           "s3Key": "amplify-builds/fsCognitoPostConfirmation-47577561796663755154-build.zip"
         },
