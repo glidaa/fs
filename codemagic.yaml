@@ -109,7 +109,7 @@ workflows:
                   # CM_KEY_ALIAS_USERNAME <-- Put your keystore alias username here
                 - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put CONTENTS of your Gloud crendentials file here)
                 - other
-            node: latest
+            node: stable
         triggering:
             events:
                 - push
