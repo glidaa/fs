@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@capacitor/android": "^3.3.2",
+    "@capacitor/cli": "^3.3.2",
+    "@capacitor/core": "^3.3.2",
+    "@capacitor/ios": "^3.3.2",
     "@dnd-kit/core": "4.0.3",
     "@dnd-kit/modifiers": "4.0.0",
     "@dnd-kit/sortable": "5.1.0",
@@ -80,22 +84,22 @@
     ]
   },
   "devDependencies": {
-    "smap": "^0.2.0",
-    "core-js": "^3.19.1",
-    "autoprefixer": "^10.4.0",
-    "cross-env": "^7.0.3",
     "@babel/core": "^7.16.0",
     "@babel/eslint-parser": "^7.16.0",
     "@craco/craco": "^6.4.1",
+    "autoprefixer": "^10.4.0",
     "babel-loader": "^8.2.3",
     "compression-webpack-plugin": "^9.0.1",
+    "core-js": "^3.19.1",
     "craco-sass-resources-loader": "^1.1.0",
     "craco-workbox": "^0.2.0",
+    "cross-env": "^7.0.3",
     "crypto-browserify": "3.12.0",
     "eslint": "^7.25.0",
     "eslint-config-airbnb": "^18.2.1",
     "prettier": "^2.5.0",
     "sass": "^1.43.5",
+    "smap": "^0.2.0",
     "stream-browserify": "3.0.0",
     "webpack-bundle-analyzer": "^4.5.0"
   }
