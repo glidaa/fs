@@ -68,9 +68,8 @@ export const handleCreateTask = (taskState) => (dispatch, getState) => {
     dispatch(mutationsActions.scheduleMutation(
       "createTask",
       dataToSend,
-      (incoming) => {
+      () => {
         dispatch(updateTask({
-          ...incoming.data.createTask,
           isVirtual: false
         }))
         if (getState().app.selectedTask === taskState.id) {

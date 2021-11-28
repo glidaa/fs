@@ -1,0 +1,28 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - '# Execute Amplify CLI with the helper script'
+        - envCache --set stackInfo ""
+        - echo "SENDGRID_API_KEY=$SENDGRID_API_KEY" >> amplify/backend/function/fsCoreApiResolver/src/.env
+        - echo "SENDGRID_API_KEY=$SENDGRID_API_KEY" >> amplify/backend/function/fsCognitoPostConfirmation/src/.env
+        - yum install -y jq
+        - chmod +x ./amplifyPush.sh
+        - ./amplifyPush.sh -e $AWS_BRANCH --simple
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install --force
+        - npm install immutable --force
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: build
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*

@@ -107,6 +107,16 @@ const ActionSheet = (props) => {
     )
   }
 
+  const markTaskAsDone = () => {
+    closeActionSheet()
+    dispatch(
+      tasksActions.handleUpdateTask({
+        id: tasks[selectedTask].id,
+        status: "done",
+      })
+    );
+  }
+
   const openRightPanel = () => {
     closeActionSheet()
     if (!isRightPanelOpened) {
@@ -172,7 +182,7 @@ const ActionSheet = (props) => {
         </button>
         <button
           className={styles.Action}
-          onClick={removeTask}
+          onClick={markTaskAsDone}
         >
           <CheckmarkIcon
             width={24}
