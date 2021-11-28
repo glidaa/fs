@@ -15,7 +15,9 @@ module.exports = {
   webpack: {
     configure: {
       plugins: [
-        new CompressionPlugin(),
+        new CompressionPlugin({
+          test: process.argv.includes('--no-compression') ? /^$/g : undefined
+        }),
         // new BundleAnalyzerPlugin()
       ],
       resolve: {

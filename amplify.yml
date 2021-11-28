@@ -4,6 +4,7 @@ backend:
     build:
       commands:
         - '# Execute Amplify CLI with the helper script'
+        - rm -f ./src/aws-exports.js
         - envCache --set stackInfo ""
         - echo "SENDGRID_API_KEY=$SENDGRID_API_KEY" >> amplify/backend/function/fsCoreApiResolver/src/.env
         - echo "SENDGRID_API_KEY=$SENDGRID_API_KEY" >> amplify/backend/function/fsCognitoPostConfirmation/src/.env

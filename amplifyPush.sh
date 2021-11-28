@@ -24,6 +24,11 @@ init_env () {
         [[ -z ${CATEGORIES} ]] && amplify init --amplify ${AMPLIFY} --providers ${PROVIDERS} --codegen ${CODEGEN} --yes || amplify init --amplify ${AMPLIFY} --providers ${PROVIDERS} --codegen ${CODEGEN} --categories ${CATEGORIES} --yes
         echo "# Environment ${ENV} details:"
         amplify env get --name ${ENV}
+        echo "# Adding appId to team-provider-info.json"
+        tmp=$(mktemp)
+        jq --arg env "${ENV}" --arg appId "${AWS_APP_ID}" '.[$env].categories.hosting.amplifyhosting.appId = $appId' ./amplify/team-provider-info.json > "$tmp" && mv "$tmp" ./amplify/team-provider-info.json
+        echo "# Pushing changes to the cloud"
+        amplify push --yes
     else
         echo "STACKINFO="${STACKINFO}
         echo "# Importing Amplify environment: ${ENV} (amplify env import)"
@@ -32,9 +37,9 @@ init_env () {
         [[ -z ${CATEGORIES} ]] && amplify init --amplify ${AMPLIFY} --providers ${PROVIDERS} --codegen ${CODEGEN} --yes || amplify init --amplify ${AMPLIFY} --providers ${PROVIDERS} --codegen ${CODEGEN} --categories ${CATEGORIES} --yes
         echo "# Environment ${ENV} details:"
         amplify env get --name ${ENV}
+        echo "# Adding appId to team-provider-info.json"
         tmp=$(mktemp)
         jq --arg env "${ENV}" --arg appId "${AWS_APP_ID}" '.[$env].categories.hosting.amplifyhosting.appId = $appId' ./amplify/team-provider-info.json > "$tmp" && mv "$tmp" ./amplify/team-provider-info.json
-        cat ./amplify/team-provider-info.json
         echo "# Pushing changes to the cloud"
         amplify push --yes
     fi
