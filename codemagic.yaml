@@ -135,9 +135,6 @@ workflows:
             - name: Build web application
               script: |
                 npm run build -- --no-compression # <- build web app
-            - name: Remove compressed files
-              script: |
-                find $FCI_BUILD_DIR/build . -name '*.gz' -type f -delete # <- Remove all nested .gz files
             - name: Update dependencies and copy web assets to native project
               script: |
                 npx cap sync # <- update native dependencies and copy web assets to native project
