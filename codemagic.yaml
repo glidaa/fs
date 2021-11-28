@@ -39,10 +39,7 @@ workflows:
                 cd ios/App && pod install
             - name: Build web application
               script: |
-                npm run build # <- build web app
-            - name: Remove compressed files
-              script: |
-                find $FCI_BUILD_DIR/build . -name '*.gz' -type f -delete # <- Remove all nested .gz files
+                npm run build -- --no-compression # <- build web app
             - name: Update dependencies and copy web assets to native project
               script: |
                 npx cap sync # <- update native dependencies and copy web assets to native project
@@ -137,7 +134,7 @@ workflows:
                 EOF
             - name: Build web application
               script: |
-                npm run build # <- build web app
+                npm run build -- --no-compression # <- build web app
             - name: Remove compressed files
               script: |
                 find $FCI_BUILD_DIR/build . -name '*.gz' -type f -delete # <- Remove all nested .gz files
