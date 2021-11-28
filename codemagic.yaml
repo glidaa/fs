@@ -33,13 +33,18 @@ workflows:
         scripts:
             - name: Install npm dependencies for Ionic project
               script: |
-                npm install
+                npm install --force
             - name: Cocoapods installation
               script: |
                 cd ios/App && pod install
+            - name: Build web application
+              script: |
+                npm run build # <- build web app
+            - name: Remove compressed files
+              script: |
+                find $FCI_BUILD_DIR/build . -name '*.gz' -type f -delete # <- Remove all nested .gz files
             - name: Update dependencies and copy web assets to native project
               script: |
-                # npx cap copy # <- use this is you don't need to update native dependencies
                 npx cap sync # <- update native dependencies and copy web assets to native project
             - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
               script: |
@@ -117,7 +122,7 @@ workflows:
         scripts:
             - name: Install npm dependencies for Ionic project
               script: |
-                npm install
+                npm install --force
             - name: Set Android SDK location
               script: |
                 echo "sdk.dir=$ANDROID_SDK_ROOT" > "$FCI_BUILD_DIR/android/local.properties"
@@ -130,9 +135,14 @@ workflows:
                 keyAlias=$CM_KEY_ALIAS_USERNAME
                 storeFile=/tmp/keystore.keystore
                 EOF
+            - name: Build web application
+              script: |
+                npm run build # <- build web app
+            - name: Remove compressed files
+              script: |
+                find $FCI_BUILD_DIR/build . -name '*.gz' -type f -delete # <- Remove all nested .gz files
             - name: Update dependencies and copy web assets to native project
               script: |
-                # npx cap copy # <- use this is you don't need to update native dependencies
                 npx cap sync # <- update native dependencies and copy web assets to native project
             - name: Build Android release
               script: |
