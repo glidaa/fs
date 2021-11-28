@@ -1,0 +1,155 @@
+workflows:
+    ionic-capacitor-ios-workflow:
+        name: Ionic Capacitor iOS Workflow
+        max_build_duration: 120
+        instance_type: mac_mini
+        environment:
+            groups:
+            # Add the group environment variables in Codemagic UI (either in Application/Team variables) - https://docs.codemagic.io/variables/environment-variable-groups/
+              # - manual_code_signing # <-- (Includes CM_CERTIFICATE, CM_CERTIFICATE_PASSWORD, CM_PROVISIONING_PROFILE)
+                - app_store_credentials # <-- (Includes APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY)
+                  # APP_STORE_CONNECT_ISSUER_ID <-- Put your App Store Connect Issuer Id here 
+                  # APP_STORE_CONNECT_KEY_IDENTIFIER <-- Put your App Store Connect Key Identifier here 
+                  # APP_STORE_CONNECT_PRIVATE_KEY <-- Put your App Store Connect Private Key here
+                  # See the following link for more details - https://docs.codemagic.io/code-signing-yaml/signing-ios/
+                  # https://appstoreconnect.apple.com/access/api
+                - certificate_credentials # <-- (Includes CERTIFICATE_PRIVATE_KEY - Put your Certificate Private Key here)
+                - other
+            vars:
+                # Ionic Xcode worskspace and scheme
+                XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+                XCODE_SCHEME: "App"
+                APP_STORE_APP_ID: 1555555551 # <-- Put the app id number here. This is found in App Store Connect > App > General > App Information
+            node: stable
+            xcode: latest
+            cocoapods: default
+        triggering:
+            events:
+                - push
+            branch_patterns:
+                - pattern: develop
+                  include: true
+                  source: true
+        scripts:
+            - name: Install npm dependencies for Ionic project
+              script: |
+                npm install --force
+            - name: Cocoapods installation
+              script: |
+                cd ios/App && pod install
+            - name: Build web application
+              script: |
+                npm run build -- --no-compression # <- build web app
+            - name: Update dependencies and copy web assets to native project
+              script: |
+                npx cap sync # <- update native dependencies and copy web assets to native project
+            - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
+              script: |
+                keychain initialize
+            # - name: Set up Provisioning profiles from environment variables (Use with manual code signing)
+            #   script: |
+            #     PROFILES_HOME="$HOME/Library/MobileDevice/Provisioning Profiles"
+            #     mkdir -p "$PROFILES_HOME"
+            #     PROFILE_PATH="$(mktemp "$PROFILES_HOME"/$(uuidgen).mobileprovision)"
+            #     echo ${CM_PROVISIONING_PROFILE} | base64 --decode > "$PROFILE_PATH"
+            #     echo "Saved provisioning profile $PROFILE_PATH"
+            - name: Fetch signing files
+              script: |
+                # app-store-connect fetch-signing-files "com.nevercode.ncionicapp" --type IOS_APP_STORE --create
+                app-store-connect fetch-signing-files $(xcode-project detect-bundle-id) --type IOS_APP_STORE --create
+            # - name: Set up signing certificate (Use with manual code signing)
+            #   script: |
+            #     echo $CM_CERTIFICATE | base64 --decode > /tmp/certificate.p12
+            #     keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
+           
+            - name: Add certificates to keychain
+              script: |
+                keychain add-certificates
+            - name: Increment build number
+              script: |
+                #!/bin/sh
+                set -e
+                set -x
+                cd $FCI_BUILD_DIR/ios/App
+                # agvtool new-version -all $(($BUILD_NUMBER +1))
+                agvtool new-version -all $(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID") + 1))
+            - name: Set up code signing settings on Xcode project
+              script: |
+                xcode-project use-profiles
+            - name: Build ipa for distribution
+              script: |
+                xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+        artifacts:
+            - build/ios/ipa/*.ipa
+            - /tmp/xcodebuild_logs/*.log
+            - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+            - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+        publishing:
+          email:
+            recipients:
+                - user_one@example.com
+                - user_two@example.com
+            notify:
+                success: false     # To not receive a notification when a build succeeds
+                failure: false     # To not receive a notification when a build fails
+    ionic-capacitor-android-workflow:
+        name: Ionic Capacitor Android Workflow
+        max_build_duration: 120
+        instance_type: mac_mini
+        environment:
+            groups:
+            # Add the group environment variables in Codemagic UI (either in Application/Team variables) - https://docs.codemagic.io/variables/environment-variable-groups/
+                - keystore_credentials # <-- (Includes CM_KEYSTORE, CM_KEYSTORE_PASSWORD, CM_KEY_ALIAS_PASSWORD, CM_KEY_ALIAS_USERNAME)
+                  # CM_KEYSTORE <-- Put your keystore file here
+                  # CM_KEYSTORE_PASSWORD <-- Put your keystore password here
+                  # CM_KEY_ALIAS_PASSWORD <-- Put your keystore alias password here
+                  # CM_KEY_ALIAS_USERNAME <-- Put your keystore alias username here
+                - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS <-- Put CONTENTS of your Gloud crendentials file here)
+                - other
+            node: stable
+        triggering:
+            events:
+                - push
+                - tag
+                - pull_request
+            branch_patterns:
+                - pattern: develop
+                  include: true
+                  source: true
+        scripts:
+            - name: Install npm dependencies for Ionic project
+              script: |
+                npm install --force
+            - name: Set Android SDK location
+              script: |
+                echo "sdk.dir=$ANDROID_SDK_ROOT" > "$FCI_BUILD_DIR/android/local.properties"
+            - name: Set up keystore
+              script: |
+                echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
+                cat >> "$FCI_BUILD_DIR/android/key.properties" <<EOF
+                storePassword=$CM_KEYSTORE_PASSWORD
+                keyPassword=$CM_KEY_ALIAS_PASSWORD
+                keyAlias=$CM_KEY_ALIAS_USERNAME
+                storeFile=/tmp/keystore.keystore
+                EOF
+            - name: Build web application
+              script: |
+                npm run build -- --no-compression # <- build web app
+            - name: Update dependencies and copy web assets to native project
+              script: |
+                npx cap sync # <- update native dependencies and copy web assets to native project
+            - name: Build Android release
+              script: |
+                cd android
+                chmod +x ./gradlew
+                ./gradlew assembleRelease
+        artifacts:
+            - android/app/build/outputs/**/*.apk
+        publishing:
+            email:
+                recipients:
+                    - user_one@example.com
+                    - user_two@example.com
+                notify:
+                  success: true     # To not receive a notification when a build succeeds
+                  failure: false     # To not receive a notification when a build fails
