@@ -20,7 +20,7 @@
         },
         "fsCoreApiResolver": {
           "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
-          "s3Key": "amplify-builds/fsCoreApiResolver-354d47465a6b5a446b77-build.zip"
+          "s3Key": "amplify-builds/fsCoreApiResolver-496b796b6f33494f656f-build.zip"
         },
         "fsCognitoPostConfirmationInvoker": {
           "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",

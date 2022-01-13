@@ -1063,14 +1063,6 @@ exports.handler = async function (ctx) {
           ...((updateData.lastName && [{
             Name: 'family_name',
             Value: updateData.lastName
-          }]) || []),
-          ...((updateData.birthdate && [{
-            Name: 'birthdate',
-            Value: updateData.birthdate
-          }]) || []),
-          ...((updateData.gender && [{
-            Name: 'gender',
-            Value: updateData.gender
           }]) || [])
         ],
         UserPoolId: USERPOOL,
@@ -2315,8 +2307,6 @@ exports.handler = async function (ctx) {
           username
           firstName
           lastName
-          gender
-          birthdate
           email
           plan
           avatar
