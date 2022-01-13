@@ -178,12 +178,19 @@ Resources:
         ]
 
       Schema:
+        - Name: birthdate
+          Required: true
+          Mutable: true
 
         - Name: email
           Required: true
           Mutable: true
 
         - Name: family_name
+          Required: true
+          Mutable: true
+
+        - Name: gender
           Required: true
           Mutable: true
 
