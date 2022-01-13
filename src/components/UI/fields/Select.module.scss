@@ -6,7 +6,7 @@
   justify-content: center;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   background-color: transparent;
   @include themify(border-color, "outline");
   & > label {
@@ -30,7 +30,7 @@
 .Selection {
   position: relative;
   padding: 3px 10px;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   font-weight: 600;
   font-size: 14px;
   border-radius: 100000000000000px;

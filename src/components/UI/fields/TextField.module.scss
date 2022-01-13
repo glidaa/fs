@@ -22,7 +22,7 @@
   font-weight: 400;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   background-color: transparent;
   @include themify(border-color, "outline");
   & > label {

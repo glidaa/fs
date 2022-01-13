@@ -2,7 +2,7 @@
   "providers": [
     "awscloudformation"
   ],
-  "projectName": "forwardslash",
+  "projectName": "fstestttt",
   "version": "3.1",
   "frontend": "javascript",
   "javascript": {
@@ -10,8 +10,8 @@
     "config": {
       "SourceDir": "src",
       "DistributionDir": "build",
-      "BuildCommand": "yarn",
-      "StartCommand": "yarn start"
+      "BuildCommand": "npm.cmd run-script build",
+      "StartCommand": "npm.cmd run-script start"
     }
   }
 }

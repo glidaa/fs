@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "dev": {
     "awscloudformation": {
       "AuthRoleName": "amplify-fstestttt-dev-115806-authRole",
@@ -62,6 +63,8 @@
       }
     }
   },
+=======
+>>>>>>> parent of 5d784d6 (changed birthdate and gender)
   "mainn": {
     "awscloudformation": {
       "AuthRoleName": "amplify-forwardslashtesting-mainn-131231-authRole",

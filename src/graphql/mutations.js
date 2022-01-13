@@ -7,6 +7,8 @@ export const pushUserUpdate = /* GraphQL */ `
       username
       firstName
       lastName
+      gender
+      birthdate
       email
       plan
       avatar
@@ -167,6 +169,8 @@ export const updateUser = /* GraphQL */ `
       username
       firstName
       lastName
+      gender
+      birthdate
       email
       plan
       avatar

@@ -21,12 +21,14 @@ const NewAccount = (props) => {
   const [email, setEmail] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [password, setPassword] = useState("")
+  const [dateOfBirth, setDateOfBirth] = useState("")
+  const [gender, setGender] = useState("male")
   const [firstNameError, setFirstNameError] = useState(null)
   const [lastNameError, setLastNameError] = useState(null)
   const [usernameError, setUsernameError] = useState(null)
   const [emailError, setEmailError] = useState(null)
   const [passwordError, setPasswordError] = useState(null)
-
+  const [dateOfBirthError, setDateOfBirthError] = useState(null)
   const [verificationCodeError, setVerificationCodeError] = useState(null)
   const [isBusy, setIsBusy] = useState(false)
   const validateFirstName = (value = firstName) => {
@@ -47,9 +49,9 @@ const NewAccount = (props) => {
       setUsernameError("Required field.")
       return
     }
-    //const re = /^\w+$/;
-    //const isValid = re.test(value)
-    //if (!isValid) setUsernameError("Only letters, numbers and underscore are allowed.")
+    const re = /^\w+$/;
+    const isValid = re.test(value)
+    if (!isValid) setUsernameError("Only letters, numbers and underscore are allowed.")
   }
   const validateEmail = (value = email) => {
     setEmailError(null)
@@ -75,18 +77,25 @@ const NewAccount = (props) => {
     const isValid = re.test(value)
     if (!isValid) setPasswordError("Password must contain lowercase, uppercase, numerical and symbolic characters.")
   }
-  
+  const validateDateOfBirth = (value = dateOfBirth) => {
+    setDateOfBirthError(null)
+    if (!value) {
+      setDateOfBirthError("Required field.")
+    }
+  }
   const getIsSubmissionPossible = (
     firstName,
     lastName,
     username,
     email,
     password,
+    dateOfBirth,
     firstNameError,
     lastNameError,
     usernameError,
     emailError,
     passwordError,
+    dateOfBirthError
   ) => {
     return !(
       !firstName ||
@@ -94,11 +103,13 @@ const NewAccount = (props) => {
       !username ||
       !email ||
       !password ||
+      !dateOfBirth ||
       firstNameError ||
       lastNameError ||
       usernameError ||
       emailError ||
-      passwordError 
+      passwordError ||
+      dateOfBirthError
     )
   }
   const isSubmissionPossible = useMemo(() => getIsSubmissionPossible(
@@ -107,21 +118,26 @@ const NewAccount = (props) => {
     username,
     email,
     password,
+    dateOfBirth,
     firstNameError,
     lastNameError,
     usernameError,
-    emailError
+    emailError,
+    passwordError,
+    dateOfBirthError
   ), [
     firstName,
     lastName,
     username,
     email,
     password,
+    dateOfBirth,
     firstNameError,
     lastNameError,
     usernameError,
     emailError,
-    passwordError
+    passwordError,
+    dateOfBirthError
   ])
   const handleNewAccount = async (e) => {
     e.preventDefault()
@@ -134,6 +150,8 @@ const NewAccount = (props) => {
             given_name: firstName.trim(),
             family_name: lastName.trim(),
             email: email.trim(),
+            birthdate: new Date(dateOfBirth).toISOString().substring(0, 10),
+            gender: gender,
             phone_number: phoneNumber,
             
         }
@@ -197,6 +215,13 @@ const NewAccount = (props) => {
       case "password":
         setPassword(value)
         validatePassword(value)
+        break
+      case "dateOfBirth":
+        setDateOfBirth(value)
+        validateDateOfBirth(value)
+        break
+      case "gender":
+        setGender(value)
         break
       case "verificationCode":
         setVerificationCode(value)
@@ -266,7 +291,23 @@ const NewAccount = (props) => {
           error={passwordError}
           value={password}
         />
-        
+        <DateField
+          name="dateOfBirth"
+          label="Date Of Birth"
+          onChange={handleChange}
+          placeholder="no date selected"
+          error={dateOfBirthError}
+          value={dateOfBirth}
+          clearable
+        />
+        <Select
+          name="gender"
+          label="Gender"
+          values={["male", "female"]}
+          options={["Male", "Female"]}
+          onChange={handleChange}
+          value={gender}
+        />
         <SubmitBtn
           type="submit"
           value={isBusy ? "Signing Up" : "Sign Up"}

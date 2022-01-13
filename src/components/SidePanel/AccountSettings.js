@@ -23,6 +23,8 @@ const AccountSettings = (props) => {
         firstName,
         lastName,
         email,
+        gender,
+        birthdate,
         plan,
         avatar,
         abbr
@@ -38,29 +40,44 @@ const AccountSettings = (props) => {
   const [newFirstName, setNewFirstName] = useState(firstName)
   const [newLastName, setNewLastName] = useState(lastName)
   const [newEmail, setNewEmail] = useState(email)
+  const [newGender, setNewGender] = useState(gender)
+  const [newBirthdate, setNewBirthdate] = useState(birthdate)
   const [newAvatar, setNewAvatar] = useState(avatar)
 
   const checkIsChanaged = (
     newFirstName,
     newLastName,
+    newBirthdate,
+    newGender,
     firstName,
-    lastName
-
+    lastName,
+    birthdate,
+    gender
   ) => (
     !(newFirstName === firstName &&
-    newLastName === lastName)
+    newLastName === lastName &&
+    newBirthdate === birthdate &&
+    newGender === gender)
   )
 
   const isChanged = useMemo(() => checkIsChanaged(
     newFirstName,
     newLastName,
+    newBirthdate,
+    newGender,
     firstName,
     lastName,
+    birthdate,
+    gender
   ), [
     newFirstName,
     newLastName,
+    newBirthdate,
+    newGender,
     firstName,
     lastName,
+    birthdate,
+    gender
   ])
   
   const closePanel = () => {
@@ -75,7 +92,9 @@ const AccountSettings = (props) => {
       input: {
         username,
         ...(newFirstName !== firstName && { firstName: newFirstName }),
-        ...(newLastName !== lastName && { lastName: newLastName })
+        ...(newLastName !== lastName && { lastName: newLastName }),
+        ...(newBirthdate !== birthdate && { birthdate: newBirthdate }),
+        ...(newGender !== gender && { gender: newGender })
       }
     })).then((res) => {
       setIsBusy(false)
@@ -143,7 +162,23 @@ const AccountSettings = (props) => {
             value={newEmail}
             readOnly={!isSynced}
           />
-          
+          <DateField
+            name="dateOfBirth"
+            label="Date Of Birth"
+            onChange={(e) => setNewBirthdate(new Date(e.target.value).toISOString().substring(0, 10))}
+            placeholder="no date selected"
+            value={newBirthdate}
+            readOnly={!isSynced}
+          />
+          <Select
+            name="gender"
+            label="Gender"
+            values={["male", "female"]}
+            options={["Male", "Female"]}
+            onChange={(e) => setNewGender(e.target.value)}
+            value={newGender}
+            readOnly={!isSynced}
+          />
         </form>
       </SimpleBar>
       <Button
