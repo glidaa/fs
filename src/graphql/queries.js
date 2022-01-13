@@ -7,8 +7,6 @@ export const getUserByUsername = /* GraphQL */ `
       username
       firstName
       lastName
-      gender
-      birthdate
       email
       plan
       avatar
@@ -27,8 +25,6 @@ export const listUsersByUsernames = /* GraphQL */ `
         username
         firstName
         lastName
-        gender
-        birthdate
         email
         plan
         avatar
@@ -237,8 +233,6 @@ export const searchUsers = /* GraphQL */ `
         username
         firstName
         lastName
-        gender
-        birthdate
         email
         plan
         avatar

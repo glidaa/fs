@@ -1,4 +1,67 @@
 {
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-fstestttt-dev-115806-authRole",
+      "UnauthRoleArn": "arn:aws:iam::026152918307:role/amplify-fstestttt-dev-115806-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::026152918307:role/amplify-fstestttt-dev-115806-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+      "UnauthRoleName": "amplify-fstestttt-dev-115806-unauthRole",
+      "StackName": "amplify-fstestttt-dev-115806",
+      "StackId": "arn:aws:cloudformation:us-east-1:026152918307:stack/amplify-fstestttt-dev-115806/72d63fb0-5042-11ec-8a38-1293b79fe18b",
+      "AmplifyAppId": "de6e5rijl3m8h"
+    },
+    "categories": {
+      "function": {
+        "fsCognitoPostConfirmation": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-563936524c325968536e-build.zip"
+        },
+        "fsCoreApiResolver": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsCoreApiResolver-496b796b6f33494f656f-build.zip"
+        },
+        "fsCognitoPostConfirmationInvoker": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmationInvoker-2b6e7742464651426843-build.zip"
+        },
+        "fsDailyReport": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsDailyReport-45476977466f41396b59-build.zip"
+        },
+        "fsUserConnection": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsUserConnection-44412f7a763879394765-build.zip"
+        },
+        "fsUserDisconnection": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsUserDisconnection-415176574d4b446c4e35-build.zip"
+        },
+        "fsJoinProject": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsJoinProject-647266325278636f724d-build.zip"
+        },
+        "fsLeaveProject": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsLeaveProject-6932724c69364d67446a-build.zip"
+        },
+        "fsSendRealtimeData": {
+          "deploymentBucketName": "amplify-fstestttt-dev-115806-deployment",
+          "s3Key": "amplify-builds/fsSendRealtimeData-446b4d2b53376d6a3775-build.zip"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "de6e5rijl3m8h",
+          "type": "manual"
+        }
+      },
+      "auth": {
+        "userPoolGroups": {},
+        "fsCognito": {}
+      }
+    }
+  },
   "mainn": {
     "awscloudformation": {
       "AuthRoleName": "amplify-forwardslashtesting-mainn-131231-authRole",

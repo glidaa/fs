@@ -7,8 +7,6 @@ export const onPushUserUpdate = /* GraphQL */ `
       username
       firstName
       lastName
-      gender
-      birthdate
       email
       plan
       avatar

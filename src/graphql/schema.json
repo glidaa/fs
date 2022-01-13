@@ -345,36 +345,6 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "gender",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "NON_NULL",
-            "name" : null,
-            "ofType" : {
-              "kind" : "ENUM",
-              "name" : "Gender",
-              "ofType" : null
-            }
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "birthdate",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "NON_NULL",
-            "name" : null,
-            "ofType" : {
-              "kind" : "SCALAR",
-              "name" : "String",
-              "ofType" : null
-            }
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
           "name" : "email",
           "description" : null,
           "args" : [ ],
@@ -515,25 +485,6 @@
         "inputFields" : null,
         "interfaces" : null,
         "enumValues" : null,
-        "possibleTypes" : null
-      }, {
-        "kind" : "ENUM",
-        "name" : "Gender",
-        "description" : null,
-        "fields" : null,
-        "inputFields" : null,
-        "interfaces" : null,
-        "enumValues" : [ {
-          "name" : "male",
-          "description" : null,
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "female",
-          "description" : null,
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        } ],
         "possibleTypes" : null
       }, {
         "kind" : "SCALAR",
@@ -1645,15 +1596,6 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "birthdate",
-          "description" : null,
-          "type" : {
-            "kind" : "INPUT_OBJECT",
-            "name" : "SearchableStringFilterInput",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
           "name" : "email",
           "description" : null,
           "type" : {
@@ -2088,11 +2030,6 @@
           "deprecationReason" : null
         }, {
           "name" : "lastName",
-          "description" : null,
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "birthdate",
           "description" : null,
           "isDeprecated" : false,
           "deprecationReason" : null
@@ -2670,28 +2607,6 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "gender",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "ENUM",
-            "name" : "Gender",
-            "ofType" : null
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
-          "name" : "birthdate",
-          "description" : null,
-          "args" : [ ],
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "isDeprecated" : false,
-          "deprecationReason" : null
-        }, {
           "name" : "email",
           "description" : null,
           "args" : [ ],
@@ -2845,24 +2760,6 @@
           "defaultValue" : null
         }, {
           "name" : "lastName",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "gender",
-          "description" : null,
-          "type" : {
-            "kind" : "ENUM",
-            "name" : "Gender",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "birthdate",
           "description" : null,
           "type" : {
             "kind" : "SCALAR",
@@ -4873,25 +4770,7 @@
             "ofType" : null
           },
           "defaultValue" : null
-        }, {
-          "name" : "gender",
-          "description" : null,
-          "type" : {
-            "kind" : "ENUM",
-            "name" : "Gender",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        }, {
-          "name" : "birthdate",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : null
-        } ],
+        }],
         "interfaces" : null,
         "enumValues" : null,
         "possibleTypes" : null
