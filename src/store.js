@@ -12,3 +12,5 @@ export default createStore(
   combineReducers(reducers),
   applyMiddleware(thunk, caching)
 )
+
+
