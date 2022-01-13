@@ -12,7 +12,7 @@ import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import { ReactComponent as CopyIcon } from "../../assets/copy-outline.svg"
 import { ReactComponent as DuplicateIcon } from "../../assets/duplicate-outline.svg"
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
-import { ReactComponent as DetailsIcon } from "../../assets/information-circle-outline.svg";
+import { ReactComponent as DetailsIcon } from "../../assets/chevron-right-outline.svg";
 import SlashCommands from "../SlashCommands";
 import { OK, initTaskState, AuthState } from "../../constants";
 import AvatarGroup from "../UI/AvatarGroup";
@@ -304,7 +304,7 @@ const TaskItem = (props) => {
               </button>
             </div> :
             <button className={styles.TaskItemOptsBtn} onClick={() => openActionSheet(item)}>
-              <OptionsIcon width={18} />
+              <OptionsIcon width={18} /> hello
             </button>}
           </div>
         </div>
@@ -314,14 +314,14 @@ const TaskItem = (props) => {
             ...(item.id === selectedTask && [styles.focused] || []),
           ].join(" ")}
         >
-          <span className={styles.TaskItemDueDate}>
+          <span className={styles.TaskItemDueDate} onClick={() => openRightPanel(item)}>
             {item.due ? formatDate(item.due) : "No Due"}
           </span>
-          <AvatarGroup
-            max={4}
+          <span onClick={() => openRightPanel(item)}><AvatarGroup
+            max={1}
             users={processedAssingees}
             size={ width > 768 ? 24 : 18 }
-          />
+          /></span>
         </div>
       </div>
       {(command && selectedTask === item.id) && (

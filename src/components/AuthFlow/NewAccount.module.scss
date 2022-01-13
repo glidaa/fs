@@ -48,8 +48,6 @@
     'username username' auto 
     'email email' auto 
     'password password' auto 
-    'dateOfBirth dateOfBirth' auto 
-    'gender gender' auto 
     'signUp signUp' auto /
     1fr 1fr;
   gap: 15px;
@@ -70,12 +68,6 @@
   }
   & > *:nth-child(5) {
     grid-area: password;
-  }
-  & > *:nth-child(6) {
-    grid-area: dateOfBirth;
-  }
-  & > *:nth-child(7) {
-    grid-area: gender;
   }
   & > *:nth-child(8) {
     grid-area: signUp;
