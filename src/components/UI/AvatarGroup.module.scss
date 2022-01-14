@@ -6,7 +6,7 @@
 .ImageAvatar {
   display: inline;
   border-radius: 100%;
-  border: 2px solid;
+  border: 1px solid;
   @include themify(border-color, "primaryBg");
 }
 
@@ -16,7 +16,7 @@
   justify-content: center;
   border-radius: 100%;
   line-height: 0;
-  border: 2px solid;
+  border: 1px solid;
   @include themify(color, "primary");
   @include themify(background-color, "primaryLight");
   @include themify(border-color, "primaryBg");
@@ -25,7 +25,7 @@
 .DumpAvatar {
   display: inline-flex;
   border-radius: 100%;
-  border: 2px solid;
+  border: 1px solid;
   @include themify(background-color, "primaryLight");
   @include themify(border-color, "primaryBg");
 }
