@@ -10,7 +10,7 @@
   font-weight: 600;
   margin: 0;
   padding: 0;
-  font-size: 32px;
+  font-size: 24px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -32,7 +32,7 @@
   & > input {
     background-color: transparent;
     @include themify(color, "txtColor");
-    font-size: 32px;
+    font-size: 24px;
     width: 100%;
     font-weight: 600;
     padding: 0;
