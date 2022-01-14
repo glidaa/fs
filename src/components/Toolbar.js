@@ -39,7 +39,7 @@ const Toolbar = (props) => {
   return (
     <div className={styles.ToolbarContainer}>
       <div className={styles.TopControls}>
-        <span className={styles.Logo}>/.</span>
+        <button onClick={() => openLeftPanel(panelPages.NOTIFICATIONS)}><span className={styles.Logo}>/</span></button>
         <div className={styles.Spacer} />
         <button
           className={[

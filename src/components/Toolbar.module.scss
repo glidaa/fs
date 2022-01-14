@@ -90,8 +90,8 @@
   &.LoginBtn {
     width: 46px;
     height: 46px;
-    @include themify(background-color, "primary");
-    @include themify(color, "onPrimaryColor");
+    @include themify(background-color, "onPrimaryColor");
+    @include themify(color, "primary");
   }
 }
 
