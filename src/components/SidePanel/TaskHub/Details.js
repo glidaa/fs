@@ -46,7 +46,6 @@ const Details = (props) => {
       <form onSubmit={(e) => e.preventDefault()}>
         <input type="submit" name="submit" value="Submit"></input>
         
-        
         <TextField
           type="text"
           name="task"
