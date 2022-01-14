@@ -6,7 +6,7 @@ import { panelPages, AuthState } from "../constants"
 import { ReactComponent as ProjectsIcon } from "../assets/albums-outline.svg"
 import { ReactComponent as NotificationIcon } from "../assets/notifications-outline.svg"
 import { ReactComponent as SettingsIcon } from "../assets/settings-outline.svg"
-import { ReactComponent as LoginIcon } from "../assets/log-in-outline.svg"
+import { ReactComponent as LoginIcon } from "../assets/person-add-outline.svg"
 import Avatar from './UI/Avatar';
 import { useNavigate } from 'react-router-dom';
 
@@ -38,7 +38,7 @@ const Toolbar = (props) => {
   }
   return (
     <div className={styles.ToolbarContainer}>
-      <div className={styles.TopControls}>
+      <div className={styles.TopControls}> 
         <button onClick={() => openLeftPanel(panelPages.NOTIFICATIONS)}><span className={styles.Logo}>/</span></button>
         <div className={styles.Spacer} />
         <button
