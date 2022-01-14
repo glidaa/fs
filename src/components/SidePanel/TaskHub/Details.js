@@ -45,12 +45,7 @@ const Details = (props) => {
     <SimpleBar className={styles.DetailsForm}>
       <form onSubmit={(e) => e.preventDefault()}>
         <input type="submit" name="submit" value="Submit"></input>
-        <AssigneeField
-          name="assignees"
-          label="Assigned To"
-          value={tasks[selectedTask].assignees}
-          readOnly={readOnly}
-        />
+        
         {user.state === AuthState.SignedIn && (
           <WatcherField
             name="watchers"
@@ -109,6 +104,12 @@ const Details = (props) => {
           values={["low", "normal", "high"]}
           options={["Low", "Normal", "High"]}
           value={tasks[selectedTask].priority}
+          readOnly={readOnly}
+        />
+        <AssigneeField
+          name="assignees"
+          label="Assigned To"
+          value={tasks[selectedTask].assignees}
           readOnly={readOnly}
         />
       </form>
