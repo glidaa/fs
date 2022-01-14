@@ -46,14 +46,7 @@ const Details = (props) => {
       <form onSubmit={(e) => e.preventDefault()}>
         <input type="submit" name="submit" value="Submit"></input>
         
-        {user.state === AuthState.SignedIn && (
-          <WatcherField
-            name="watchers"
-            label="Watched By"
-            value={tasks[selectedTask].watchers}
-            readOnly={readOnly}
-          />
-        )}
+        
         <TextField
           type="text"
           name="task"
@@ -112,6 +105,14 @@ const Details = (props) => {
           value={tasks[selectedTask].assignees}
           readOnly={readOnly}
         />
+        {user.state === AuthState.SignedIn && (
+          <WatcherField
+            name="watchers"
+            label="Watched By"
+            value={tasks[selectedTask].watchers}
+            readOnly={readOnly}
+          />
+        )}
       </form>
     </SimpleBar>
   )
