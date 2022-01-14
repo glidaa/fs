@@ -44,10 +44,10 @@ const ProjectNotSelected = (props) => {
       <div>
         <span>
           {params.projectPermalink && "Requested Project Not Found"}
-          {!params.projectPermalink && "Create a project to get started"}
+          {!params.projectPermalink && "Create A Project To Get Started"}
         </span>
         {params.projectPermalink && <button onClick={openProjectsPanel}>My Projects</button>}
-        {!params.projectPermalink && <button onClick={createNewProject}>+ Create New Project</button>}
+        {!params.projectPermalink && <button onClick={createNewProject}>+ Create New</button>}
       </div>
     </div>
   )
