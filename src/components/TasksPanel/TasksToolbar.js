@@ -54,16 +54,7 @@ const TasksToolbar = (props) => {
   }
   return (
     <div className={styles.ToolbarContainer}>
-      <button
-        className={styles.PasteBtn}
-        onClick={pasteTask}
-      >
-        <ClipboardIcon
-          width={14}
-          height={14}
-        />
-        <span>Paste</span>
-      </button>
+      
       <HeadingTextField
         name="searchKeyword"
         placeholder="Search tasks…"
@@ -84,6 +75,16 @@ const TasksToolbar = (props) => {
           flex: 1
         }}
       />
+      <button
+        className={styles.PasteBtn}
+        onClick={pasteTask}
+      >
+        <ClipboardIcon
+          width={14}
+          height={14}
+        />
+        <span>Paste</span>
+      </button>
       <div className={styles.SortingSettings}>
         <span>Sorted By</span>
         <Dropdown
