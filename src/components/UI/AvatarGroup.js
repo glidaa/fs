@@ -9,6 +9,7 @@ const AvatarGroup = (props) => {
 	} = props
 
 	return (
+
 		<div
       className={styles.AvatarGroupContainer}
 			style={{

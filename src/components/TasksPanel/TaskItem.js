@@ -12,7 +12,7 @@ import { ReactComponent as RemoveIcon } from "../../assets/trash-outline.svg"
 import { ReactComponent as CopyIcon } from "../../assets/copy-outline.svg"
 import { ReactComponent as DuplicateIcon } from "../../assets/duplicate-outline.svg"
 import { ReactComponent as ShareIcon } from "../../assets/share-outline.svg"
-import { ReactComponent as DetailsIcon } from "../../assets/information-circle-outline.svg";
+import { ReactComponent as DetailsIcon } from "../../assets/chevron-right-outline.svg";
 import SlashCommands from "../SlashCommands";
 import { OK, initTaskState, AuthState } from "../../constants";
 import AvatarGroup from "../UI/AvatarGroup";

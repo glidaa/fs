@@ -28,7 +28,7 @@
     @include themify(color, "txtColor");
     margin-bottom: 0;
     width: max-content;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
   }
   & > *:not(:last-child) {
