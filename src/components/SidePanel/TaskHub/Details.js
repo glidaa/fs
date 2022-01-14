@@ -11,7 +11,7 @@ import Textarea from '../../UI/fields/Textarea';
 import WatcherField from '../../UI/fields/WatcherField';
 import TextField from '../../UI/fields/TextField';
 import Select from '../../UI/fields/Select';
-
+import Comments from "./Comments";
 const Details = (props) => {
   const {
     tasks,
@@ -113,6 +113,7 @@ const Details = (props) => {
           />
         )}
       </form>
+      <Comments />
     </SimpleBar>
   )
 }

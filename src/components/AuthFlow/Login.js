@@ -144,7 +144,8 @@ const Login = (props) => {
       <div className={styles.LoginFormHeader}>
         <span>forwardslash</span>
         <span>Confirm Account</span>
-        <span>Enter code sent to your email.</span>
+        <span>Enter code sent to your email. </span>
+        <span>May take up to ten minutes. </span>
       </div>
       <form
         className={styles.LoginStepTwoForm}
