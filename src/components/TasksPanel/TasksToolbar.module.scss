@@ -1,4 +1,25 @@
 .ToolbarContainer {
+  opacity:0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  margin: 0 12px 12px 12px;
+  padding: 10px 0;
+  border-radius: 15px;
+  & > span {
+    font-size: 12px;
+  }
+  & > *:not(:last-child) {
+    margin-right: 10px;
+  }
+  @media only screen and (max-width: 768px) {
+    margin: 0 20px 9px 20px;
+  }
+}
+
+.ToolbarContainer:hover {
+  opacity: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
