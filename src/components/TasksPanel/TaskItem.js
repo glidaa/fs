@@ -237,20 +237,7 @@ const TaskItem = (props) => {
       >
         <div className={styles.TaskItemLeftPart}>
           <div className={styles.TaskItemLeftLeftPart}>
-            <button
-              className={[
-                styles.TaskItemStatusToggle,
-                ...(item.status === "done" && [styles.done] || [])
-              ].join(" ")}
-              onClick={() => toggleStatus(item)}
-            >
-              {item.status === "done" && (
-                <CheckmarkIcon
-                  width={24}
-                  height={24}
-                />
-              )}
-            </button>
+            
             {selectedTask === item.id ? (
               <div className={styles.TaskItemInput}>
                 <input
@@ -283,6 +270,37 @@ const TaskItem = (props) => {
           <div className={styles.TaskItemLeftRightPart}>
             {width > 768 ?
             <div className={styles.TaskItemActions}>
+              <button
+              className={[
+                styles.TaskItemStatusToggle,
+                ...(item.id === selectedTask && [styles.focused]  || []),
+                ...(item.status === "done" && [styles.done] || [])
+              ].join(" ")}
+              onClick={() => toggleStatus(item)}
+            >
+              {item.status === "done" && (
+                <CheckmarkIcon
+                  width={24}
+                  height={24}
+                />
+              )}
+            </button>
+            <div
+          className={[
+            styles.TaskItemRightPart,
+            ...(item.id === selectedTask && [styles.focused] || []),
+          ].join(" ")} onClick={() => openRightPanel(item)}
+        >
+          <span className={styles.TaskItemDueDate}>
+            {item.due ? formatDate(item.due) : "No Due"}
+          </span>
+          <AvatarGroup
+            max={4}
+            users={processedAssingees}
+            size={ width > 768 ? 24 : 18 }
+          />
+          
+        </div>
               <button className={styles.TaskItemAction} onClick={() => copyTask(item)}>
                 <CopyIcon height={18} />
               </button>
@@ -308,21 +326,7 @@ const TaskItem = (props) => {
             </button>}
           </div>
         </div>
-        <div
-          className={[
-            styles.TaskItemRightPart,
-            ...(item.id === selectedTask && [styles.focused] || []),
-          ].join(" ")}
-        >
-          <span className={styles.TaskItemDueDate}>
-            {item.due ? formatDate(item.due) : "No Due"}
-          </span>
-          <AvatarGroup
-            max={4}
-            users={processedAssingees}
-            size={ width > 768 ? 24 : 18 }
-          />
-        </div>
+        
       </div>
       {(command && selectedTask === item.id) && (
         <SlashCommands

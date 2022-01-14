@@ -57,7 +57,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid transparent;
+  border: 0px solid transparent;
   border-radius: 10px;
   padding: 8px 12px;
   margin: 4px 0;
@@ -67,6 +67,13 @@
     margin-right: 10px;
   }
   &.focused {
+    @include themify(border-color, "primary");
+    & .TaskItemActions {
+      opacity: 0;
+      width: auto;
+    }
+  }
+  &.focused:hover {
     @include themify(border-color, "primary");
     & .TaskItemActions {
       opacity: 1;
@@ -170,7 +177,7 @@
     @include themify(color, "txtColor");
     border: none;
     background-color: transparent;
-    font-size: 16px;
+    font-size: 1rem;
     width: 100%;
     padding: 0;
     margin: 0;
@@ -246,7 +253,7 @@
   align-items: center;
   justify-content: center;
   outline: none;
-  border: 1px solid;
+  border: none;
   background-color: transparent;
   border-radius: 100%;
   width: 20px;
@@ -261,4 +268,20 @@
     @include themify(border-color, "primary");
     @include themify(background-color, "primary");
   }
+  &:focused {
+    border: 1px solid;
+    @include themify(border-color, "primary");
+  
 }
+&:hover {
+  border: 1px solid;
+  @include themify(border-color, "primary");
+
+}
+&:active {
+  border: 1px solid;
+  @include themify(border-color, "primary");
+
+}
+}
+
