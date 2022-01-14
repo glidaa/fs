@@ -4,7 +4,7 @@ import * as appActions from "../../../actions/app";
 import { AuthState } from "../../../constants";
 import styles from "./index.module.scss"
 import Comments from "./Comments";
-import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-back-outline.svg";
+import { ReactComponent as BackArrowIcon } from "../../../assets/chevron-right-outline.svg";
 import { ReactComponent as ShareIcon } from "../../../assets/share-outline.svg"
 import PanelTabs from '../../PanelTabs';
 import Details from './Details';
