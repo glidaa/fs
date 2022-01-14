@@ -54,7 +54,7 @@ const TasksPanel = (props) => {
     >
       {selectedProject ? (
         <>
-          <ProjectToolbar />
+
           <TasksToolbar
                 searchKeyword={searchKeyword}
                 setSearchKeyword={setSearchKeyword}
@@ -82,7 +82,7 @@ const TasksPanel = (props) => {
           )}
         </>
       ) : <ProjectNotSelected />}
-       
+                 <ProjectToolbar />
     </div>
   )
 }

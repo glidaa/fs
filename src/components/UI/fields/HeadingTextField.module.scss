@@ -3,6 +3,7 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
+    @include themify(background-color, "fieldBg");
     & > *:not(:last-child) {
       margin-bottom: 5px;
     }
@@ -17,6 +18,7 @@
       color: #FF0000;
       font-size: 12px;
     }
+
   }
   
   .HeadingTextFieldContainer {
