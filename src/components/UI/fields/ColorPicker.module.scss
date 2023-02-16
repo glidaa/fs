@@ -3,69 +3,62 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  width: calc(100% - 20px);
-  & > *:not(:last-child) {
-    margin-bottom: 5px;
-  }
+  width: 100%;
   & > label {
-    @include themify(color, "txtColor");
-    margin-bottom: 0;
     width: max-content;
-    font-size: 14px;
-    font-weight: 600;
+    margin-bottom: 0;
+    color: var(--color-fill-color-text-primary);
+    font-size: 0.875rem;
+    transition: color 0.2s;
   }
-  & > span {
-    color: #FF0000;
-    font-size: 12px;
-  }
+  gap: 5px;
 }
   
 .ColorPickerContainer {
-  position: relative;
-  width: 100%;
-  padding: 10px;
   display: grid;
+  position: relative;
   grid-template-rows: repeat(2, 1fr);
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  border: 1px solid transparent;
-  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
-  @include themify(background-color, "fieldBg");
+  width: calc(100% - 12px);
+  padding: 5px;
+  gap: 5px;
+  border: 1px solid;
+  border-radius: 4px;
+  border-color: var(--color-stroke-color-card-stroke-default);
+  background-color: var(--color-background-fill-color-card-background-default);
+  transition: background-color 0.2s;
   & > * {
     align-self: center;
     justify-self: center;
   }
-  &.error {
-    border-color: #FF0000;
-  }
-  &.focused {
-    @include themify(border-color, "primary");
-  }
   &.disabled {
-    background-color: #FFFFFF2E;
+    opacity: 0.6;
   }
 }
+
 .ColorPickerOption {
-  width: 48px;
-  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 2px solid transparent;
   border-radius: 100%;
-  border: 1px solid transparent;
+  cursor: pointer;
   transition: border 0.3s, border-color 0.3s;
   & > div {
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     border-radius: 100%;
-    transition: width 0.3s, height 0.3s, margin 0.3s;
   }
   &.selected {
-    @include themify(border-color, "txtColor");
-    & > div {
-      width: 38px;
-      height: 38px;
-      margin: 5px;
-    }
+    border-color: var(--color-stroke-color-focus-stroke-outer);
+    cursor: default;
+  }
+  &.readOnly {
+    cursor: default;
+  }
+  &.disabled {
+    cursor: not-allowed;
   }
 }

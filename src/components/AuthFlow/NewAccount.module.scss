@@ -1,43 +1,44 @@
 .NewAccountFormContainer {
   display: flex;
   flex-direction: column;
-  margin: 40px 0;
   justify-content: center;
-  @include themify(background-color, "secondaryBg");
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  border-radius: 25px;
-  height: fit-content;
   width: 350px;
+  height: fit-content;
+  margin: 40px 0;
   padding: 35px;
-  & > *:not(:last-child) {
-    margin-bottom: 15px;
-  }
+  border: 1px solid;
+  border-radius: 25px;
+  border-color: var(--color-stroke-color-card-stroke-default);
+  background-color: var(--color-background-fill-color-card-background-default);
+  transition: background-color 0.2s, border-color 0.2s;
+  gap: 15px;
   @media only screen and (max-width: 768px) {
     position: absolute;
     width: calc(100% - 70px);
     height: calc(100% - 70px);
-    border-radius: 0;
     margin: 0;
+    border-radius: 0;
   }
 }
 
 .NewAccountFormHeader {
   display: flex;
   flex-direction: column;
+  color: var(--color-fill-color-text-primary);
   text-align: center;
-  @include themify(color, "txtColor");
+  transition: color 0.2s;
   & > span:nth-child(1) {
+    color: var(--color-fill-color-accent-primary);
     font-weight: bold;
-    font-size: 24px;
-    @include themify(color, "primary");
+    font-size: 1.5rem;
+    transition: color 0.2s;
   }
   & > span:nth-child(2) {
     font-weight: 600;
-    font-size: 24px;
+    font-size: 1.5rem;
   }
   & > span:nth-child(3) {
-    font-weight: 400;
-    font-size: 16px;
+    font-size: 1rem;
   }
 }
 
@@ -48,8 +49,6 @@
     'username username' auto 
     'email email' auto 
     'password password' auto 
-    'dateOfBirth dateOfBirth' auto 
-    'gender gender' auto 
     'signUp signUp' auto /
     1fr 1fr;
   gap: 15px;
@@ -72,12 +71,6 @@
     grid-area: password;
   }
   & > *:nth-child(6) {
-    grid-area: dateOfBirth;
-  }
-  & > *:nth-child(7) {
-    grid-area: gender;
-  }
-  & > *:nth-child(8) {
     grid-area: signUp;
   }
 }

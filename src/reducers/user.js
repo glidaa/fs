@@ -6,7 +6,7 @@ const initState = {
   data: null
 }
 
-export default function (state = initState, action) {
+const userReducer = (state = initState, action) => {
   switch(action.type) {
     case SET_STATE:
       return {...state, state: action.userSate}
@@ -18,3 +18,5 @@ export default function (state = initState, action) {
       return state
   }
 }
+
+export default userReducer;

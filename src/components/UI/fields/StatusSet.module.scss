@@ -1,0 +1,31 @@
+.StatusSetShell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  gap: 5px;
+}
+
+.StatusSetHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  & > label {
+    width: max-content;
+    margin-bottom: 0;
+    color: var(--color-fill-color-text-primary);
+    font-size: 0.875rem;
+    transition: color 0.2s;
+  }
+}
+
+.StatusSetContainer {
+  grid-gap: 5px;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 2fr 2fr;
+  justify-items: center;
+}

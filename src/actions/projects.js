@@ -1,12 +1,15 @@
-import { graphqlOperation } from "@aws-amplify/api";
 import { listOwnedProjects, listAssignedProjects, listWatchedProjects } from "../graphql/queries"
 import * as appActions from "./app"
-import * as mutationsActions from "./mutations"
-import * as observersActions from "./observers"
+import * as statusActions from "./status"
 import * as cacheController from "../controllers/cache"
-import { AuthState } from "../constants";
+import { AuthState, ThingStatus } from "../constants";
 import prepareProjectToBeSent from "../utils/prepareProjectToBeSent";
-import execGraphQL from "../utils/execGraphQL";
+import { navigate } from "../components/Router"
+import API from "../amplify/API"
+import PubSub from "../amplify/PubSub";
+import { getPreviousItem } from "../utils/getAdjacentItem";
+import sortByRank from "../utils/sortByRank";
+import filterObj from "../utils/filterObj";
 
 export const CREATE_PROJECT = "CREATE_PROJECT";
 export const UPDATE_PROJECT = "UPDATE_PROJECT";
@@ -57,33 +60,32 @@ export const handleCreateProject = (projectState) => (dispatch, getState) => {
   if (user.state === AuthState.SignedIn) {
     dispatch(createProject({
       ...projectState,
-      permalink: user.data.username + "/" + projectState.permalink,
+      permalink: projectState.permalink,
       owner: user.data.username,
       isVirtual: true
     }, OWNED))
     dispatch(appActions.handleSetProject(projectState.id))
-    dispatch(appActions.handleSetLeftPanel(false))
     dispatch(appActions.handleSetProjectTitle(true))
     const dataToSend = prepareProjectToBeSent(projectState)
-    dispatch(mutationsActions.scheduleMutation(
-      "createProject",
-      dataToSend,
-      (incoming) => {
+    API.mutate({
+      type: "createProject",
+      variables: dataToSend,
+      success: (incoming) => {
         dispatch(updateProject({
           id: incoming.data.createProject.id,
           isVirtual: false
         }))
         if (getState().app.selectedProject === projectState.id) {
-          dispatch(observersActions.handleSetTasksObservers(projectState.id))
+          PubSub.subscribeTopic("tasks", incoming.data.createProject.id)
         }
       },
-      () => {
+      error: () => {
         if (getState().app.selectedProject === projectState.id) {
           dispatch(appActions.handleSetProject(null))
         }
         dispatch(removeProject(projectState.id))
       }
-    ))
+    })
   } else {
     dispatch(createProject(projectState, OWNED))
     dispatch(appActions.handleSetProject(null))
@@ -96,57 +98,97 @@ export const handleUpdateProject = (update) => (dispatch, getState) => {
   const prevProjectState = {...projects[update.id]}
   dispatch(updateProject(update, OWNED))
   if (app.selectedProject === update.id && Object.prototype.hasOwnProperty.call(update, "permalink")) {
-    app?.navigate("/" + (user.state === AuthState.SignedIn ? user.data.username + "/" : "local/") + update.permalink, { replace: true })
+    navigate("/" + (user.state === AuthState.SignedIn ? user.data.username + "/" : "local/") + update.permalink, true)
   }
   if (user.state === AuthState.SignedIn) {
-    return dispatch(mutationsActions.scheduleMutation(
-      "updateProject",
-      update,
-      null,
-      () => {
+    return API.mutate({
+      type: "updateProject",
+      variables: update,
+      success: null,
+      error: () => {
         if (getState().projects[update.id]) {
           dispatch(updateProject(prevProjectState))
           if (getState().app.selectedProject === update.id && Object.prototype.hasOwnProperty.call(update, "permalink")) {
-            app?.navigate("/" + prevProjectState.permalink, { replace: true })
+            navigate("/" + prevProjectState.permalink, true)
           }
         }
       }
-    ))
+    })
+  }
+}
+
+export const handleUpdateProjectTitle = (update) => (dispatch, getState) => {
+  const { user, projects } = getState()
+  const prevProjectState = {...projects[update.id]}
+  dispatch(updateProject(update, OWNED))
+  if (user.state === AuthState.SignedIn) {
+    return API.mutate({
+      type: "updateProjectTitle",
+      variables: update,
+      success: null,
+      error: () => {
+        if (getState().projects[update.id]) {
+          dispatch(updateProject(prevProjectState))
+        }
+      }
+    })
   }
 }
 
 export const handleRemoveProject = (projectState) => (dispatch, getState) => {
-  const { user, app } = getState()
+  const { user, app, projects } = getState()
   if (app.selectedProject === projectState.id) {
-    dispatch(appActions.handleSetProject(projectState.prevProject))
+    const sortedOwnedProjects = sortByRank(filterObj(projects, x => x.isOwned));
+    const sortedAssignedProjects = sortByRank(filterObj(projects, x => x.isAssigned));
+    const sortedWatchedProjects = sortByRank(filterObj(projects, x => x.isWatched));
+    const previousItem = projectState.isOwned && sortedOwnedProjects.length > 1
+      ? getPreviousItem(sortedOwnedProjects, projectState)
+      : projectState.isAssigned && sortedAssignedProjects.length > 1
+      ? getPreviousItem(sortedAssignedProjects, projectState)
+      : projectState.isWatched && sortedWatchedProjects.length > 1
+      ? getPreviousItem(sortedWatchedProjects, projectState)
+      : !projectState.isOwned && sortedOwnedProjects.length
+      ? sortedOwnedProjects[0]
+      : !projectState.isAssigned && sortedAssignedProjects.length
+      ? sortedAssignedProjects[0]
+      : !projectState.isWatched && sortedWatchedProjects.length
+      ? sortedWatchedProjects[0]
+      : null;
+    dispatch(appActions.handleSetProject(previousItem?.id))
   }
   dispatch(removeProject(projectState.id, OWNED))
   if (user.state === AuthState.SignedIn) {
-    return dispatch(mutationsActions.scheduleMutation(
-      "deleteProjectAndTasks",
-      { id: projectState.id },
-      null,
-      () => {
+    return API.mutate({
+      type: "deleteProjectAndTasks",
+      variables: { id: projectState.id },
+      success: null,
+      error: () => {
         dispatch(createProject(projectState, OWNED))
       }
-    ))
+    })
   }
 }
 
 export const handleFetchOwnedProjects = (isSync = false) => async (dispatch, getState) => {
+  dispatch(statusActions.setProjectsStatus(ThingStatus.FETCHING))
   const { user } = getState()
   // if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
-      const res = await execGraphQL(graphqlOperation(listOwnedProjects))
+      const res = await API.execute(listOwnedProjects)
       dispatch(fetchProjects(res.data.listOwnedProjects.items, OWNED))
+      dispatch(statusActions.setProjectsStatus(ThingStatus.READY))
     } catch (err) {
-      if (err.errors[0].message === 'Network Error') {
+      if (err.message === 'Failed to fetch') {
         dispatch(fetchCachedProjects(cacheController.getProjects()))
+        dispatch(statusActions.setProjectsStatus(ThingStatus.READY))
+      } else {
+        dispatch(statusActions.setProjectsStatus(ThingStatus.ERROR))
       }
     }
   } else {
     dispatch(fetchCachedProjects(cacheController.getProjects()))
+    dispatch(statusActions.setProjectsStatus(ThingStatus.READY))
   }
   return getState().projects
 }
@@ -156,14 +198,14 @@ export const handleFetchAssignedProjects = (isSync = false) => async (dispatch, 
   // if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
-      const res = await execGraphQL(graphqlOperation(listAssignedProjects))
+      const res = await API.execute(listAssignedProjects)
       const fetchedAssignedProjects = res.data.listAssignedProjects.items
       dispatch(fetchProjects(fetchedAssignedProjects, ASSIGNED))
       for (const fetchedAssignedProject of fetchedAssignedProjects) {
-        await dispatch(observersActions.handleSetProjectObservers(fetchedAssignedProject.id))
+        PubSub.subscribeTopic("project", fetchedAssignedProject.id)
       }
     } catch(err) {
-      if (err.errors.message === 'Network Error') {
+      if (err.message === 'Failed to fetch') {
         dispatch(fetchCachedProjects(cacheController.getProjects()))
       }
     }
@@ -178,14 +220,14 @@ export const handleFetchWatchedProjects = (isSync = false) => async (dispatch, g
   // if (!isSync) dispatch(appActions.handleSetProject(null))
   if (user.state === AuthState.SignedIn) {
     try {
-      const res = await execGraphQL(graphqlOperation(listWatchedProjects))
+      const res = await API.execute(listWatchedProjects)
       const fetchedWatchedProjects = res.data.listWatchedProjects.items
       dispatch(fetchProjects(fetchedWatchedProjects, WATCHED))
       for (const fetchedWatchedProject of fetchedWatchedProjects) {
-        await dispatch(observersActions.handleSetProjectObservers(fetchedWatchedProject.id))
+        PubSub.subscribeTopic("project", fetchedWatchedProject.id)
       }
     } catch(err) {
-      if (err.errors.message === 'Network Error') {
+      if (err.message === 'Failed to fetch') {
         dispatch(fetchCachedProjects(cacheController.getProjects()))
       }
     }
@@ -193,22 +235,4 @@ export const handleFetchWatchedProjects = (isSync = false) => async (dispatch, g
     dispatch(fetchProjects([], WATCHED))
   }
   return getState().projects
-}
-
-export const handleUpdateTaskCount = (projectID, prevStatus, nextStatus) => (dispatch, getState) => {
-  const { projects } = getState()
-  const prevProjectState = {...projects[projectID]}
-  const prevTodoCount = prevProjectState.todoCount
-  const prevPendingCount = prevProjectState.pendingCount
-  const prevDoneCount = prevProjectState.doneCount
-  const todoCountInc = (prevStatus === "todo" ? -1 : 0) || (nextStatus === "todo" ? 1 : 0)
-  const pendingCountInc = (prevStatus === "pending" ? -1 : 0) || (nextStatus === "pending" ? 1 : 0)
-  const doneCountInc = (prevStatus === "done" ? -1 : 0) || (nextStatus === "done" ? 1 : 0)
-  const update = {
-    id: projectID,
-    todoCount: prevTodoCount + todoCountInc,
-    pendingCount: prevPendingCount + pendingCountInc,
-    doneCount: prevDoneCount + doneCountInc
-  }
-  dispatch(updateProject(update, OWNED));
 }

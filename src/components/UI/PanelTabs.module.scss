@@ -1,0 +1,38 @@
+.PanelTabsShell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: fit-content;
+}
+
+.PanelTabsContainer {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+  padding: 5px;
+  gap: 5px;
+  &.disabled {
+    opacity: 0.6;
+    &, & * {
+      cursor: not-allowed!important;
+    }
+  }
+}
+
+.PanelTab {
+  display: flex;
+  justify-content: center;
+  padding: 4px 15px;
+  border-bottom: 3px solid transparent;
+  color: var(--color-fill-color-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  &.selected {
+    border-bottom-color: var(--color-fill-color-accent-primary);
+    cursor: default;
+  }
+}

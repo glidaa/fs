@@ -1,40 +1,42 @@
 .TagsSuggestion {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
-  flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
+  padding: 8px 8px 8px 12px;
+  border-radius: 6px;
   background-color: transparent;
-  &.active {
-    @include themify(background-color, "hover");
-  }
-  padding: 10px 20px;
+  color: var(--color-fill-color-text-primary);
   cursor: pointer;
-  & > *:not(:last-child) {
-    margin-right: 5px;
+  transition: background-color 0.2s;
+  &.active {
+    background-color: var(--color-fill-color-subtle-secondary);
   }
+  gap: 5px;
 }
 
 .TagItem {
   display: inline-flex;
-  padding: 5px 10px;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 14px;
-  width: fit-content;
-  height: fit-content;
-  @include themify(color, "primary");
-  @include themify(background-color, "primaryLight");
   flex-direction: row;
   align-items: center;
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  background-color: var(--color-fill-color-subtle-secondary);
+  color: var(--color-fill-color-accent-primary);
+  font-size: 0.875rem;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .NoTags {
   display: flex;
-  width: 100%;
-  font-size: 14px;
   align-items: center;
   justify-content: center;
-  @include themify(color, "txtColor");
+  width: 100%;
+  color: var(--color-fill-color-text-primary);
+  font-size: 0.875rem;
+  transition: color 0.2s;
 }

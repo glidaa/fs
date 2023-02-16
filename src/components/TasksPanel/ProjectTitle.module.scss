@@ -1,27 +1,26 @@
 .ProjectTitleShell {
   display: flex;
   flex-direction: column;
-  & > *:not(:last-child) {
-    margin-bottom: 10px;
-  }
+  gap: 10px;
 }
 
 .ProjectTitleHeader {
-  font-weight: 600;
   margin: 0;
   padding: 0;
-  font-size: 24px;
+  overflow: hidden;
+  color: var(--color-fill-color-text-primary);
+  font-weight: 600;
+  font-size: 2rem;
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
   cursor: text;
-  @include themify(color, "txtColor");
+  transition: color 0.2s;
   &.placeholder {
-    color: #C0C0C0!important;
+    color: var(--color-fill-color-text-secondary) !important;
   }
   @media only screen and (max-width: 768px) {
     padding: 0;
-    font-size: 22px;
+    font-size: 1.375rem;
   }
 }
 
@@ -30,24 +29,25 @@
   margin: 0;
   padding: 0;
   & > input {
-    background-color: transparent;
-    @include themify(color, "txtColor");
-    font-size: 24px;
     width: 100%;
-    font-weight: 600;
-    padding: 0;
     margin: 0;
+    padding: 0;
     border: none;
     outline: none;
+    background-color: transparent;
+    color: var(--color-fill-color-text-primary);
+    font-weight: 600;
+    font-size: 2rem;
+    transition: color 0.2s;
     &::placeholder {
       color: #c0c0c0;
     }
   }
   @media only screen and (max-width: 768px) {
-    padding: 0;
     width: calc(100% - 40px);
+    padding: 0;
     & > input {
-      font-size: 22px;
+      font-size: 1.375rem;
     }
   }
 }

@@ -1,20 +1,142 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const searchUserToAssign = /* GraphQL */ `
+  query SearchUserToAssign($searchQuery: String!, $taskId: ID!) {
+    searchUserToAssign(searchQuery: $searchQuery, taskId: $taskId) {
+      items {
+        username
+        firstName
+        lastName
+        email
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const searchUserToWatch = /* GraphQL */ `
+  query SearchUserToWatch($searchQuery: String!, $taskId: ID!) {
+    searchUserToWatch(searchQuery: $searchQuery, taskId: $taskId) {
+      items {
+        username
+        firstName
+        lastName
+        email
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const initializeUpload = /* GraphQL */ `
+  query InitializeUpload($contentType: String!, $taskId: ID!) {
+    initializeUpload(contentType: $contentType, taskId: $taskId) {
+      presignedUrl
+    }
+  }
+`;
+export const listOwnedProjects = /* GraphQL */ `
+  query ListOwnedProjects($owner: String) {
+    listOwnedProjects(owner: $owner) {
+      items {
+        id
+        permalink
+        rank
+        title
+        privacy
+        permissions
+        statusSet {
+          id
+          title
+          synonym
+        }
+        defaultStatus
+        totalTasks
+        createdAt
+        updatedAt
+        owner
+      }
+    }
+  }
+`;
+export const listAssignedProjects = /* GraphQL */ `
+  query ListAssignedProjects($assignee: String) {
+    listAssignedProjects(assignee: $assignee) {
+      items {
+        id
+        permalink
+        rank
+        title
+        privacy
+        permissions
+        statusSet {
+          id
+          title
+          synonym
+        }
+        defaultStatus
+        totalTasks
+        createdAt
+        updatedAt
+        owner
+      }
+    }
+  }
+`;
+export const listWatchedProjects = /* GraphQL */ `
+  query ListWatchedProjects($watcher: String) {
+    listWatchedProjects(watcher: $watcher) {
+      items {
+        id
+        permalink
+        rank
+        title
+        privacy
+        permissions
+        statusSet {
+          id
+          title
+          synonym
+        }
+        defaultStatus
+        totalTasks
+        createdAt
+        updatedAt
+        owner
+      }
+    }
+  }
+`;
+export const listNotifications = /* GraphQL */ `
+  query ListNotifications {
+    listNotifications {
+      items {
+        id
+        projectId
+        taskId
+        commentId
+        action
+        field
+        value
+        hint
+        read
+        link
+        mutator
+        createdAt
+        updatedAt
+        owner
+      }
+    }
+  }
+`;
 export const getUserByUsername = /* GraphQL */ `
   query GetUserByUsername($username: String!) {
     getUserByUsername(username: $username) {
       username
       firstName
       lastName
-      gender
-      birthdate
       email
-      plan
-      avatar
-      sharedProjects
-      watchedTasks
-      assignedTasks
       createdAt
       updatedAt
     }
@@ -27,229 +149,120 @@ export const listUsersByUsernames = /* GraphQL */ `
         username
         firstName
         lastName
-        gender
-        birthdate
         email
-        plan
-        avatar
-        sharedProjects
-        watchedTasks
-        assignedTasks
         createdAt
         updatedAt
+      }
+    }
+  }
+`;
+export const listAttachmentsByTaskId = /* GraphQL */ `
+  query ListAttachmentsByTaskId($taskId: ID!) {
+    listAttachmentsByTaskId(taskId: $taskId) {
+      items {
+        id
+        filename
+        contentType
+        size
+        url
       }
     }
   }
 `;
 export const getProjectById = /* GraphQL */ `
-  query GetProjectById($projectID: ID!) {
-    getProjectByID(projectID: $projectID) {
+  query GetProjectById($projectId: ID!) {
+    getProjectById(projectId: $projectId) {
       id
-      prevProject
-      nextProject
       permalink
+      rank
       title
-      tasksCount
-      todoCount
-      pendingCount
-      doneCount
       privacy
       permissions
+      statusSet {
+        id
+        title
+        synonym
+      }
+      defaultStatus
+      totalTasks
       createdAt
       updatedAt
       owner
-      members
     }
   }
 `;
 export const getProjectByPermalink = /* GraphQL */ `
-  query GetProjectByPermalink($permalink: String!) {
-    getProjectByPermalink(permalink: $permalink) {
+  query GetProjectByPermalink($permalink: String!, $owner: String!) {
+    getProjectByPermalink(permalink: $permalink, owner: $owner) {
       id
-      prevProject
-      nextProject
       permalink
+      rank
       title
-      tasksCount
-      todoCount
-      pendingCount
-      doneCount
       privacy
       permissions
+      statusSet {
+        id
+        title
+        synonym
+      }
+      defaultStatus
+      totalTasks
       createdAt
       updatedAt
       owner
-      members
     }
   }
 `;
-export const getNotificationById = /* GraphQL */ `
-  query GetNotificationById($notificationID: String!) {
-    getNotificationByID(notificationID: $notificationID) {
-      id
-      type
-      payload
-      createdAt
-      updatedAt
-      owner
-      sender
-    }
-  }
-`;
-export const listOwnedProjects = /* GraphQL */ `
-  query ListOwnedProjects {
-    listOwnedProjects {
+export const listHistoryByTaskId = /* GraphQL */ `
+  query ListHistoryByTaskId($taskId: ID!) {
+    listHistoryByTaskId(taskId: $taskId) {
       items {
         id
-        prevProject
-        nextProject
-        permalink
-        title
-        tasksCount
-        todoCount
-        pendingCount
-        doneCount
-        privacy
-        permissions
+        action
+        field
+        value
         createdAt
         updatedAt
         owner
-        members
-      }
-    }
-  }
-`;
-export const listAssignedProjects = /* GraphQL */ `
-  query ListAssignedProjects {
-    listAssignedProjects {
-      items {
-        id
-        prevProject
-        nextProject
-        permalink
-        title
-        tasksCount
-        todoCount
-        pendingCount
-        doneCount
-        privacy
-        permissions
-        createdAt
-        updatedAt
-        owner
-        members
-      }
-    }
-  }
-`;
-export const listWatchedProjects = /* GraphQL */ `
-  query ListWatchedProjects {
-    listWatchedProjects {
-      items {
-        id
-        prevProject
-        nextProject
-        permalink
-        title
-        tasksCount
-        todoCount
-        pendingCount
-        doneCount
-        privacy
-        permissions
-        createdAt
-        updatedAt
-        owner
-        members
-      }
-    }
-  }
-`;
-export const listNotifications = /* GraphQL */ `
-  query ListNotifications {
-    listNotifications {
-      items {
-        id
-        type
-        payload
-        createdAt
-        updatedAt
-        owner
-        sender
       }
     }
   }
 `;
 export const listTasksForProject = /* GraphQL */ `
-  query ListTasksForProject($projectID: ID!) {
-    listTasksForProject(projectID: $projectID) {
+  query ListTasksForProject($projectId: ID!) {
+    listTasksForProject(projectId: $projectId) {
       items {
         id
-        projectID
-        prevTask
-        nextTask
+        projectId
         permalink
+        rank
         task
         description
         due
         tags
         status
         priority
+        assignees
+        anonymousAssignees
+        invitedAssignees
+        watchers
         createdAt
         updatedAt
-        owner
-        watchers
-        assignees
       }
     }
   }
 `;
 export const listCommentsForTask = /* GraphQL */ `
-  query ListCommentsForTask($taskID: ID!) {
-    listCommentsForTask(taskID: $taskID) {
+  query ListCommentsForTask($taskId: ID!) {
+    listCommentsForTask(taskId: $taskId) {
       items {
         id
-        taskID
+        taskId
         content
         createdAt
         updatedAt
         owner
       }
-    }
-  }
-`;
-export const searchUsers = /* GraphQL */ `
-  query SearchUsers(
-    $filter: SearchableUserFilterInput
-    $sort: SearchableUserSortInput
-    $limit: Int
-    $nextToken: String
-    $from: Int
-  ) {
-    searchUsers(
-      filter: $filter
-      sort: $sort
-      limit: $limit
-      nextToken: $nextToken
-      from: $from
-    ) {
-      items {
-        username
-        firstName
-        lastName
-        gender
-        birthdate
-        email
-        plan
-        avatar
-        sharedProjects
-        watchedTasks
-        assignedTasks
-        createdAt
-        updatedAt
-      }
-      nextToken
-      total
     }
   }
 `;

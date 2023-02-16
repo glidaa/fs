@@ -1,0 +1,282 @@
+.TaskItemActions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  background-color: transparent;
+  opacity: 0;
+  &:hover {
+    transition: opacity 0.2s;
+  }
+  gap: 2px;
+}
+
+.TaskItemShell {
+  display: flex;
+  flex-direction: column;
+  &.sorting {
+    z-index: -1;
+  }
+  &.dragging {
+    z-index: 99;
+  }
+}
+
+.TaskItemCore {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 28px;
+  margin: 2px 0;
+  padding: 0px 30px 0px 10px;
+  overflow: hidden;
+  transition: transform 0.2s, background-color 0.2s;
+  @media only screen and (max-width: 768px) {
+    min-height: 20px;
+    margin: 0;
+    padding: 2px 5px 2px 5px;
+    gap: 2px;
+  }
+  &.focused {
+    & .TaskItemActions {
+      width: auto;
+      opacity: 1;
+    }
+  }
+  &.batchSelected {
+    background-color: var(--color-fill-color-accent-primary);
+    .TaskItemExtras {
+      opacity: 1;
+    }
+    .TaskItemInput {
+      color: var(--color-fill-color-text-on-accent-primary) !important;
+      &:empty::after,
+      &:focus:empty::after {
+        color: var(--color-fill-color-text-on-accent-primary) !important;
+      }
+    }
+  }
+  &.dragging {
+    background-color: var(--color-fill-color-subtle-secondary);
+  }
+  &.sorting:not(.dragging) {
+    opacity: 0.5;
+  }
+  &.dragging,
+  &.sorting,
+  &.isBatchSelecting {
+    & * {
+      pointer-events: none !important;
+    }
+  }
+  &:not(.focused):not(.dragging):not(.sorting):hover {
+    & .TaskItemActions {
+      width: auto;
+      opacity: 1;
+    }
+  }
+  &:not(.dragging):not(.sorting):hover,
+  &.isBatchSelecting {
+    & .TaskItemExtras {
+      opacity: 1;
+    }
+  }
+  &.isBatchSelecting {
+    cursor: pointer;
+  }
+}
+
+.TaskItemExtras {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  width: fit-content;
+  margin-right: 5px !important;
+  opacity: 0;
+  transition: opacity 0.2s;
+  @media only screen and (max-width: 768px) {
+    margin-right: 5px !important;
+    opacity: 1;
+  }
+  & > .BatchCheckboxOverride {
+    padding: 0 !important;
+  }
+}
+
+.TaskItemLeftPart {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  @media only screen and (max-width: 768px) {
+    gap: 2px;
+  }
+  gap: 10px;
+}
+
+.TaskItemRightPart {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: width 0.3s ease-in-out;
+  gap: 8px;
+  &.focused {
+    width: 0;
+  }
+}
+
+.TaskItemInput {
+  flex: 1 1;
+  width: 0;
+  overflow: hidden;
+  color: var(--color-fill-color-text-primary);
+  font-size: 1rem;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: text;
+  transition: color 0.2s;
+  &:focus {
+    text-overflow: clip;
+  }
+  &:empty::after {
+    content: "Untitled Task";
+    color: var(--color-fill-color-text-secondary) !important;
+  }
+  &:focus:empty::after {
+    content: "Task…";
+  }
+  &:not(:focus).done {
+    text-decoration: line-through;
+  }
+}
+
+.TaskItemCommandInput {
+  display: block;
+  flex: 1;
+  width: 100%;
+  word-break: break-all;
+  & > span:not([contenteditable]) {
+    color: var(--color-fill-color-text-tertiary);
+  }
+  & > span[contenteditable] {
+    display: inline-block;
+    position: relative;
+    margin-left: 15.54px;
+    color: var(--color-fill-color-text-primary);
+    font-size: 1rem;
+    transition: color 0.2s;
+    &::before {
+      position: absolute;
+      left: -15.54px;
+      content: "\00a0 /\00a0 ";
+    }
+    &:empty::after {
+      content: "Type a command here\00a0 ";
+      color: var(--outline);
+      cursor: text;
+    }
+    &::after {
+      content: "\00a0 ";
+    }
+  }
+}
+
+.TaskItemDueDate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background-color: var(--color-fill-color-accent-primary);
+  color: var(--color-fill-color-text-on-accent-primary);
+  font-size: 0.7rem;
+  white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s;
+  &.clickable {
+    cursor: pointer;
+  }
+  @media only screen and (max-width: 768px) {
+    width: 48px;
+    font-size: 0.5rem;
+  }
+}
+
+.TaskItemOptsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 100%;
+  outline: none;
+  background-color: transparent;
+  cursor: pointer;
+  & > svg {
+    fill: var(--color-fill-color-text-primary);
+    transition: fill 0.2s;
+  }
+}
+
+.TaskItemLeftLeftPart {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  @media only screen and (max-width: 768px) {
+    justify-content: flex-start;
+  }
+  gap: 10px;
+}
+
+.TaskItemLeftRightPart {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  @media only screen and (max-width: 768px) {
+    justify-content: flex-start;
+  }
+  gap: 10px;
+}
+
+.TaskItemStatusToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  min-height: 20px;
+  padding: 2.5px;
+  border: 1px solid;
+  border-radius: 100%;
+  border-color: var(--color-stroke-color-control-strong-stroke-default);
+  outline: none;
+  background-color: transparent;
+  background-color: var(--color-fill-color-control-alt-secondary);
+  cursor: pointer;
+  transition: border-color 0.2s;
+  &.done {
+    border-color: var(--color-fill-color-accent-primary);
+    background-color: var(--color-fill-color-accent-primary);
+    color: var(--color-fill-color-text-on-accent-primary);
+    & > svg * {
+      stroke-width: 64px;
+    }
+  }
+}
+
+.DragIconPlaceholder {
+  width: 16px;
+  height: 16px;
+}

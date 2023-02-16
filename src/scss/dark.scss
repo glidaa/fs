@@ -1,0 +1,166 @@
+
+
+html.dark {
+  --color-fill-color-text-primary: rgba(255,255,255,1);
+  --color-fill-color-text-secondary: rgba(255,255,255,0.786);
+  --color-fill-color-text-tertiary: rgba(255,255,255,0.544);
+  --color-fill-color-text-disabled: rgba(255,255,255,0.363);
+  --color-fill-color-accent-text-disabled: rgba(255,255,255,0.363);
+  --color-fill-color-text-on-accent-primary: rgba(0,0,0,1);
+  --color-fill-color-text-on-accent-secondary: rgba(0,0,0,0.500);
+  --color-fill-color-text-on-accent-disabled: rgba(255,255,255,0.530);
+  --color-fill-color-text-on-accent-selected-text: rgba(255,255,255,1);
+  --color-fill-color-control-transparent: rgba(255,255,255,0.000);
+  --color-fill-color-control-default: rgba(255,255,255,0.060);
+  --color-fill-color-control-secondary: rgba(255,255,255,0.084);
+  --color-fill-color-control-tertiary: rgba(255,255,255,0.033);
+  --color-fill-color-control-input-active: rgba(30,30,30,0.700);
+  --color-fill-color-control-disabled: rgba(255,255,255,0.042);
+  --color-fill-color-control-strong-default: rgba(255,255,255,0.544);
+  --color-fill-color-control-strong-disabled: rgba(255,255,255,0.247);
+  --color-fill-color-subtle-transparent: rgba(255,255,255,0.000);
+  --color-fill-color-subtle-secondary: rgba(255,255,255,0.060);
+  --color-fill-color-subtle-tertiary: rgba(255,255,255,0.042);
+  --color-fill-color-subtle-disabled: rgba(255,255,255,0.000);
+  --color-fill-color-control-solid-default: rgba(69,69,69,1);
+  --color-fill-color-control-alt-transparent: rgba(255,255,255,0.000);
+  --color-fill-color-control-alt-secondary: rgba(0,0,0,0.100);
+  --color-fill-color-control-alt-tertiary: rgba(255,255,255,0.042);
+  --color-fill-color-control-alt-quarternary: rgba(255,255,255,0.070);
+  --color-fill-color-control-alt-disabled: rgba(255,255,255,0.000);
+  --color-fill-color-accent-primary: rgba(var(--primary), 1);
+  --color-fill-color-accent-secondary: rgba(var(--primary), 0.90);
+  --color-fill-color-accent-tertiary: rgba(var(--primary), 0.80);
+  --color-fill-color-accent-disabled: rgba(255,255,255,0.158);
+  --color-fill-color-system-critical: rgba(255,153,164,1);
+  --color-fill-color-system-success: rgba(108,203,95,1);
+  --color-fill-color-system-attention: rgba(96,205,255,1);
+  --color-fill-color-system-caution: rgba(252,225,0,1);
+  --color-fill-color-system-attention-background: rgba(255,255,255,0.033);
+  --color-fill-color-system-success-background: rgba(57,61,27,1);
+  --color-fill-color-system-caution-background: rgba(67,53,25,1);
+  --color-fill-color-system-critical-background: rgba(68,39,38,1);
+  --color-fill-color-system-neutral: rgba(255,255,255,0.544);
+  --color-fill-color-system-neutral-background: rgba(255,255,255,0.033);
+  --color-fill-color-system-solid-neutral: rgba(157,157,157,1);
+  --color-fill-color-system-solid-attention-background: rgba(46,46,46,1);
+  --color-fill-color-system-solid-neutral-background: rgba(46,46,46,1);
+  --color-fill-color-control-on-image-default: rgba(28,28,28,0.700);
+  --color-fill-color-control-on-image-secondary: rgba(26,26,26,1);
+  --color-fill-color-control-on-image-tertiary: rgba(19,19,19,1);
+  --color-fill-color-control-on-image-disabled: rgba(30,30,30,0.000);
+  --color-stroke-color-control-stroke-default: rgba(255,255,255,0.070);
+  --color-stroke-color-control-stroke-secondary: rgba(255,255,255,0.093);
+  --color-stroke-color-control-stroke-on-accent-default: rgba(255,255,255,0.080);
+  --color-stroke-color-control-stroke-on-accent-secondary: rgba(0,0,0,0.140);
+  --color-stroke-color-control-stroke-on-accent-tertiary: rgba(0,0,0,0.217);
+  --color-stroke-color-control-stroke-on-accent-disabled: rgba(0,0,0,0.200);
+  --color-stroke-color-control-stroke-for-strong-fill-when-on-image: rgba(0,0,0,0.420);
+  --color-stroke-color-control-strong-stroke-default: rgba(255,255,255,0.544);
+  --color-stroke-color-control-strong-stroke-disabled: rgba(255,255,255,0.158);
+  --color-stroke-color-card-stroke-default: rgba(0,0,0,0.100);
+  --color-stroke-color-card-stroke-default-solid: rgba(28,28,28,1);
+  --color-stroke-color-divider-stroke-default: rgba(255,255,255,0.084);
+  --color-stroke-color-surface-stroke-default: rgba(117,117,117,0.400);
+  --color-stroke-color-surface-stroke-flyout: rgba(0,0,0,0.200);
+  --color-stroke-color-focus-stroke-outer: rgba(255,255,255,1);
+  --color-stroke-color-focus-stroke-inner: rgba(0,0,0,0.700);
+  --color-background-fill-color-card-background-default: rgba(255,255,255,0.051);
+  --color-background-fill-color-card-background-secondary: rgba(255,255,255,0.033);
+  --color-background-fill-color-smoke-default: rgba(0,0,0,0.300);
+  --color-background-fill-color-layer-default: rgba(58,58,58,0.300);
+  --color-background-fill-color-layer-alt: rgba(255,255,255,0.054);
+  --color-background-fill-color-solid-background-base: rgba(32,32,32,1);
+  --color-background-fill-color-solid-background-secondary: rgba(28,28,28,1);
+  --color-background-fill-color-solid-background-tertiary: rgba(40,40,40,1);
+  --color-background-fill-color-solid-background-quarternary: rgba(44,44,44,1);
+  --color-background-fill-color-acrylic-background:
+    linear-gradient(0deg, #2C2C2Ce6, #2C2C2Ce6),
+    url(../assets/noise.svg),
+    linear-gradient(0deg, var(--micaCore), var(--micaCore));
+  --effect-style-shadow-card-rest: 0.00px 2.00px 4.00px rgba(0,0,0,0.130);
+  --effect-style-shadow-card-hover: 0.00px 2.00px 4.00px rgba(0,0,0,0.260);
+  --effect-style-shadow-tooltip: 0.00px 4.00px 8.00px rgba(0,0,0,0.260);
+  --effect-style-shadow-flyout: 0.00px 8.00px 16.00px rgba(0,0,0,0.260);
+  --effect-style-shadow-dialog: 0.00px 2.00px 21.00px rgba(0,0,0,0.370);
+  --effect-style-shell-shadows-inactive-window: 0.00px 2.00px 10.67px rgba(0,0,0,0.370);
+  --effect-style-shell-shadows-active-window: 0.00px 2.00px 21.00px rgba(0,0,0,0.550);
+  --color-background-fill-color-mica-background:
+    #202020
+    radial-gradient(ellipse at bottom center, var(--micaCore) 0%, var(--micaBounds) 75%) no-repeat fixed;
+  @media only screen and (max-width: 768px) {
+    --color-background-fill-color-mica-background:
+      #202020
+      radial-gradient(ellipse at bottom right, var(--micaCore) 0%, var(--micaBounds) 75%) no-repeat fixed;
+  }
+  &.red {
+    --primary: 244, 103, 98;
+    --auxiliarySurface: #2e1a1b;
+    --micaCore: #3b1e1f;
+    --micaBounds: #211b1c;
+    --outline: #938f99;
+  }
+  &.gold {
+    --primary: 255, 213, 42;
+    --auxiliarySurface: #22201a;
+    --micaCore: #3b331d;
+    --micaBounds: #211e1b;
+    --outline: #938f99;
+  }
+  &.orange {
+    --primary: 251, 154, 68;
+    --auxiliarySurface: #261e1a;
+    --micaCore: #3b2c1d;
+    --micaBounds: #211d1b;
+    --outline: #938f99;
+  }
+  &.green {
+    --primary: 69, 229, 50;
+    --auxiliarySurface: #1a241a;
+    --micaCore: #1f3b1e;
+    --micaBounds: #1c211b;
+    --outline: #938f99;
+  }
+  &.turquoise {
+    --primary: 41, 247, 255;
+    --auxiliarySurface: #1a2323;
+    --micaCore: #173139;
+    --micaBounds: #151b1b;
+    --outline: #938f99;
+  }
+  &.blue {
+    --primary: 76, 194, 255;
+    --auxiliarySurface: #1a2229;
+    --micaCore: #1d253b;
+    --micaBounds: #1b1d21;
+    --outline: #938f99;
+  }
+  &.pink {
+    --primary: 255, 79, 203;
+    --auxiliarySurface: #2b1a24;
+    --micaCore: #3b1d34;
+    --micaBounds: #211b20;
+    --outline: #938f99;
+  }
+  &.purple {
+    --primary: 181, 173, 235;
+    --auxiliarySurface: #1e1d33;
+    --micaCore: #241d3b;
+    --micaBounds: #1b1b21;
+    --outline: #938f99;
+  }
+  &.grey {
+    --primary: 173, 187, 197;
+    --auxiliarySurface: #1e2024;
+    --micaCore: #1D1D1D;
+    --micaBounds: #1D1D1D;
+    --outline: #938f99;
+  }
+  &.black {
+    --primary: 255, 255, 255;
+    --auxiliarySurface: #202020;
+    --micaCore: #202020;
+    --micaBounds: #202020;
+    --outline: #938f99;
+  }
+}

@@ -8,29 +8,11 @@
   "resourceName": "fsCognitoPostConfirmation",
   "parentStack": "auth",
   "triggerEnvs": [],
-  "triggerDir": "C:\\Users\\Ahmed Hassan\\AppData\\Roaming\\npm\\node_modules\\@aws-amplify\\cli\\node_modules\\amplify-category-auth\\provider-utils\\awscloudformation\\triggers\\PostConfirmation",
+  "triggerDir": "C:\\snapshot\\repo\\build\\node_modules\\@aws-amplify\\amplify-category-auth\\provider-utils\\awscloudformation\\triggers\\PostConfirmation",
   "triggerTemplate": "PostConfirmation.json.ejs",
   "triggerEventPath": "PostConfirmation.event.json",
   "roleName": "fsCognitoPostConfirmation",
   "skipEdit": true,
   "GROUP": "free",
-  "enableCors": false,
-  "permissions": {
-    "auth": {
-      "fsCognito": [
-        "create",
-        "read",
-        "update",
-        "delete"
-      ]
-    },
-    "storage": {
-      "User:@model(appsync)": [
-        "create",
-        "read",
-        "update",
-        "delete"
-      ]
-    }
-  }
+  "enableCors": false
 }

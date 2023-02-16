@@ -1,0 +1,48 @@
+.Calendar {
+  --cl-color-primary: var(--color-fill-color-accent-primary) !important;
+  --cl-color-primary-light: var(--color-fill-color-text-on-accent-primary) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  padding: 1.2em 0 !important;
+  box-shadow: none !important;
+  border: 1px solid !important;
+  border-radius: 4px !important;
+  border-color: var(--color-stroke-color-card-stroke-default) !important;
+  background-color: var(--color-background-fill-color-card-background-default) !important;
+  color: var(--color-fill-color-text-primary) !important;
+  .Calendar__day, button {
+    border-radius: 4px !important;
+    &:not([aria-pressed="true"]):not(.-selected):not(.-blank):not(.-selectedStart):not(.-selectedEnd):not(.-selectedBetween) {
+      color: var(--color-fill-color-text-primary) !important;
+      &:hover {
+        background-color: var(--color-fill-color-subtle-secondary) !important;
+      }
+    }
+  }
+  .Calendar__day {
+    width: calc(100% / 7 - 10px) !important;
+  }
+  .Calendar__day.-weekend:not(.-selected):not(.-blank):not(.-selectedStart):not(.-selectedEnd):not(.-selectedBetween) {
+    color: var(--color-fill-color-system-critical) !important;
+  }
+  .Calendar__monthArrow {
+    -webkit-mask: url('@fluentui/svg-icons/icons/chevron_up_24_regular.svg') center/cover no-repeat;
+    mask: url('@fluentui/svg-icons/icons/chevron_up_24_regular.svg') center/cover no-repeat;
+    background-image: none !important;
+    background-color: var(--color-fill-color-text-primary) !important;
+  }
+  .Calendar__weekRow, .Calendar__weekDays {
+    gap: 10px !important;
+  }
+  .Calcendar__weekRow {
+    width: calc(100% + 10px) !important;
+  }
+  .Calendar__weekDays {
+    padding: 0 32px !important;
+    justify-content: flex-start !important;
+  }
+  .Calendar__weekDay {
+    width: calc(100% / 7 - 10px) !important;
+  }
+}

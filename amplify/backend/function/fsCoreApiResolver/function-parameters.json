@@ -15,32 +15,6 @@
         "update",
         "delete"
       ]
-    },
-    "storage": {
-      "User:@model(appsync)": [
-        "create",
-        "read",
-        "update",
-        "delete"
-      ],
-      "Project:@model(appsync)": [
-        "create",
-        "read",
-        "update",
-        "delete"
-      ],
-      "Task:@model(appsync)": [
-        "create",
-        "read",
-        "update",
-        "delete"
-      ],
-      "Comment:@model(appsync)": [
-        "create",
-        "read",
-        "update",
-        "delete"
-      ]
     }
   },
   "lambdaLayers": []

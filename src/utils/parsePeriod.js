@@ -1,4 +1,4 @@
-export default (date) => {
+const parsePeriod = (date) => {
   const currTime = Date.now();
   const timeDiff = parseInt((currTime - date) / 1000, 10);
   if (timeDiff === 0) {
@@ -13,3 +13,5 @@ export default (date) => {
     return new Date(date).toLocaleDateString();
   }
 };
+
+export default parsePeriod;

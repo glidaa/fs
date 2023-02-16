@@ -1,6 +1,6 @@
 import { ADD_CACHED_USERS, ADD_USERS } from "../actions/users"
 
-export default function (state = {}, action) {
+const usersReducer = (state = {}, action) => {
   const stateClone = {...state}
   switch(action.type) {
     case ADD_USERS:
@@ -14,3 +14,5 @@ export default function (state = {}, action) {
       return state
   }
 }
+
+export default usersReducer;

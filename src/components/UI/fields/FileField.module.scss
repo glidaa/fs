@@ -1,0 +1,23 @@
+.FileFieldContainer {
+  padding: 40px 0;
+  border: 1px dashed;
+  cursor: pointer;
+  border-color: var(--color-fill-color-text-tertiary);
+  & > input {
+    display: none;
+  }
+}
+
+.FieldLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  & > span:nth-child(2) {
+    color: var(--color-fill-color-text-primary);
+  }
+  & > span:nth-child(3) {
+    color: var(--color-fill-color-text-secondary);
+  }
+}

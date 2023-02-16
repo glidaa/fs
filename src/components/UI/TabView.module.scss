@@ -1,0 +1,89 @@
+.TabViewContainer {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100% - 5px);
+  min-width: 0;
+  padding: 5px 0px 0px 0px;
+  &.disabled {
+    opacity: 0.6;
+    &, & * {
+      cursor: not-allowed!important;
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    margin: 0 10px;
+    padding: 5px;
+    width: calc(100% - 10px - 20px);
+  }
+}
+
+.TabViewTabs {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  width: calc(100% - 8px);
+  gap: 5px;
+  padding-top: 7px;
+  & > div > div {
+    padding-bottom: 12px;
+    padding-left: 6px;
+  }
+}
+
+.TabViewTab {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: calc(240px - 14px);
+  height: calc(32px - 14px);
+  padding: 7px;
+  border-radius: 4px;
+  color: var(--color-fill-color-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
+  &.selected {
+    background-color: var(--color-background-fill-color-card-background-default);
+    box-shadow: var(--effect-style-shadow-tooltip);
+    cursor: default;
+  }
+  &:not(.selected) {
+    &:hover {
+      background-color: var(--color-fill-color-subtle-secondary);
+    }
+  }
+  & > span {
+    flex: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  & > svg {
+    margin-right: 5px;
+  }
+}
+
+.TabsContents {
+  flex: 1;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px 8px 0 0;
+  border-color: var(--color-stroke-color-card-stroke-default);
+  background-color: var(--color-background-fill-color-layer-default);
+  transition: background-color 0.2s;
+  @media only screen and (max-width: 768px) {
+    border-radius: 8px;
+  }
+}
+
+.TabContents {
+  display: none;
+  &.selected {
+    display: contents;
+  }
+}

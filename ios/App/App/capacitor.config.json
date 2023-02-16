@@ -1,6 +1,6 @@
 {
-	"appId": "com.forwardslash.fs",
-	"appName": "forwardslash",
-	"webDir": "build",
-	"bundledWebRuntime": false
+  "appId": "com.forwardslash.fs",
+  "appName": "forwardslash",
+  "webDir": "build",
+  "bundledWebRuntime": false
 }

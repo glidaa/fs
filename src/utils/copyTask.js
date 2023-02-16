@@ -1,11 +1,10 @@
-import generateID from "./generateID";
+import generateId from "./generateId";
 
-export default (taskState, projectID, prevTask = null, nextTask = null) => {
+const copyTask = (taskState, projectId, rank, existingIds) => {
   return {
-    id: generateID(),
-    projectID: projectID,
-    prevTask: prevTask,
-    nextTask: nextTask,
+    id: generateId(existingIds),
+    projectId: projectId,
+    rank: rank,
     task: taskState.task,
     description: taskState.description,
     due: taskState.due,
@@ -13,5 +12,9 @@ export default (taskState, projectID, prevTask = null, nextTask = null) => {
     status: taskState.status,
     priority: taskState.priority,
     assignees: [],
+    anonymousAssignees: [],
+    invitedAssignees: [],
   };
 };
+
+export default copyTask;

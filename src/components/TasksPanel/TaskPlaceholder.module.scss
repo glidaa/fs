@@ -1,0 +1,13 @@
+.TaskPlaceholder {
+  margin: 2px 0;
+  padding: 2px 59px;
+  color: var(--color-fill-color-text-tertiary) !important;
+  cursor: text;
+  &:hover {
+    color: var(--color-fill-color-text-secondary) !important;
+  }
+  @media only screen and (max-width: 768px) {
+    margin: 0;
+    padding: 2px 26px;
+  }
+}

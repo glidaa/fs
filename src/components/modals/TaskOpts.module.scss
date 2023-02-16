@@ -1,0 +1,55 @@
+.TaskOptsShell {
+  display: block;
+  z-index: 99999;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+}
+
+.TaskOptsContainer {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  flex-direction: column;
+  width: calc(100% - 40px);
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  background-color: var(--auxiliarySurface);
+  touch-action: none;
+  transition: background-color 0.2s;
+  gap: 10px;
+}
+
+.TaskOptsHeader {
+  width: 100%;
+  color: var(--color-fill-color-text-primary);
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.Actions {
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.Action {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 15px;
+  border: 1px solid;
+  border-radius: 10px;
+  border-color: var(--color-stroke-color-card-stroke-default);
+  outline: none;
+  background-color: var(--color-background-fill-color-card-background-default);
+  color: var(--color-fill-color-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  gap: 5px;
+}
+  

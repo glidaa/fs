@@ -1,20 +1,20 @@
 import { panelPages, AuthState } from "../constants"
 import * as tasksActions from "./tasks"
-import * as observersActions from "./observers"
-import * as collaborationActions from "./collaboration"
 import * as commentsActions from "./comments"
+import * as attachmentsActions from "./attachments"
+import * as historyActions from "./history"
+import { clearTabs } from "../components/TabViewManager"
+import { navigate } from "../components/Router"
+import PubSub from "../amplify/PubSub"
 
 export const SET_PROJECT = "SET_PROJECT";
 export const SET_TASK = "SET_TASK";
-export const SET_COMMAND = "SET_COMMAND";
-export const SET_PROJECT_ADDING_STATUS = "SET_PROJECT_ADDING_STATUS";
-export const SET_TASK_ADDING_STATUS = "SET_TASK_ADDING_STATUS";
-export const SET_NAVIGATE = "SET_NAVIGATE";
+export const BATCH_SELECT_TASK = "BATCH_SELECT_TASK";
+export const BATCH_DESELECT_TASK = "BATCH_DESELECT_TASK";
 export const SET_OFFLINE = "SET_OFFLINE";
 export const SET_SYNCED = "SET_SYNCED";
-export const SET_PROJECT_PANEL = "SET_PROJECT_PANEL";
-export const SET_DETAILS_PANEL = "SET_DETAILS_PANEL";
-export const SET_ACTION_SHEET = "SET_ACTION_SHEET";
+export const SET_LEFT_PANEL = "SET_LEFT_PANEL";
+export const SET_RIGHT_PANEL = "SET_RIGHT_PANEL";
 export const SET_PROJECT_TITLE = "SET_PROJECT_TITLE";
 export const SET_LOCKED_TASK_FIELD = "SET_LOCKED_TASK_FIELD";
 export const SET_RIGHT_PANEL_PAGE = "SET_RIGHT_PANEL_PAGE";
@@ -30,24 +30,29 @@ const setTask = (id) => ({
   id
 });
 
+const batchSelectTask = (id) => ({
+  type: BATCH_SELECT_TASK,
+  id
+});
+
+const batchDeselectTask = (id) => ({
+  type: BATCH_DESELECT_TASK,
+  id
+});
+
 const setProjectTitle = (status) => ({
   type: SET_PROJECT_TITLE,
   status
 });
 
 const setLeftPanel = (status) => ({
-  type: SET_PROJECT_PANEL,
+  type: SET_LEFT_PANEL,
   status
 });
 
 const setRightPanel = (status) => ({
-  type: SET_DETAILS_PANEL,
+  type: SET_RIGHT_PANEL,
   status
-});
-
-export const setCommand = (command) => ({
-  type: SET_COMMAND,
-  command
 });
 
 export const setOffline = (isOffline) => ({
@@ -75,80 +80,61 @@ export const setLockedTaskField = (fieldName) => ({
   fieldName
 });
 
-export const setProjectAddingStatus = (status) => ({
-  type: SET_PROJECT_ADDING_STATUS,
-  status
-});
-
-export const setTaskAddingStatus = (status) => ({
-  type: SET_TASK_ADDING_STATUS,
-  status
-});
-
-export const setNavigate = (navigate) => ({
-  type: SET_NAVIGATE,
-  navigate
-});
-
-export const setActionSheet = (status) => ({
-  type: SET_ACTION_SHEET,
-  status
-});
-
 export const handleSetProject = (id, shouldChangeURL = true) => (dispatch, getState) => {
   const { user, app, projects } = getState()
   if (app.selectedProject !== id) {
-    dispatch(observersActions.handleClearTasksObservers())
+    PubSub.unsubscribeTopic("tasks");
     dispatch(handleSetTask(null, shouldChangeURL));
     dispatch(tasksActions.emptyTasks());
     if (id) {
       if (projects[id]) {
         dispatch(setProject(id))
         if (shouldChangeURL) {
-          if (user.state === AuthState.SignedIn) {
-            app.navigate(`/${projects[id].permalink}`)
+          if (user.state === AuthState.SignedIn || projects[id].isTemp) {
+            navigate(`/${projects[id].owner}/${projects[id].permalink}`)
           } else {
-            app.navigate(`/local/${projects[id].permalink}`)
+            navigate(`/local/${projects[id].permalink}`)
           }
         }
       }
       if (!getState().projects[id].isVirtual) {
         dispatch(tasksActions.handleFetchTasks(id))
-        if (user.state === AuthState.SignedIn) {
-          dispatch(collaborationActions.handleJoinProject(id))
-          dispatch(observersActions.handleSetTasksObservers(id))
+        if (user.state === AuthState.SignedIn || projects[id].isTemp) {
+          PubSub.subscribeTopic("tasks", id)
         }
       }
     } else {
       if (shouldChangeURL) {
-        app.navigate("/")
+        navigate("/")
       }
       dispatch(setProject(null))
+    }
+    if (shouldChangeURL) {
+      clearTabs();
+      dispatch(setRightPanel(false));
+      dispatch(setLeftPanel(false));
+      dispatch(setRightPanelPage(null));
+      dispatch(setLeftPanelPage(null));
     }
   }
 }
 
 export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState) => {
   const { user, projects, tasks, app } = getState()
-  dispatch(observersActions.handleClearCommentsObservers())
+  dispatch(attachmentsActions.emptyAttachments())
+  dispatch(historyActions.emptyHistory())
+  PubSub.unsubscribeTopic("comments")
   dispatch(commentsActions.emptyComments())
   dispatch(setProjectTitle(false))
   if (!id && app.selectedTask) {
-    if (user.state === AuthState.SignedIn) {
-      dispatch(collaborationActions.handleSendAction({
-        action: "UNFOCUS_TASK",
-        taskID: app.selectedTask
-      }))
-    }
     if (app.isRightPanelOpened) {
       dispatch(setRightPanel(false))
     }
     if (shouldChangeURL) {
-      if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.navigate(`/${projects[app.selectedProject].permalink}`)
+      if (app.selectedProject && (user.state === AuthState.SignedIn || projects[app.selectedProject].isTemp)) {
+        navigate(`/${projects[app.selectedProject].owner}/${projects[app.selectedProject].permalink}`)
       }
     }
-    dispatch(setCommand(""))
     dispatch(setTask(null))
   } else if (!id) {
     if (app.isRightPanelOpened) {
@@ -160,24 +146,48 @@ export const handleSetTask = (id, shouldChangeURL = true) => (dispatch, getState
       dispatch(setRightPanelPage(panelPages.TASK_HUB))
     }
     if (shouldChangeURL) {
-      if (app.selectedProject && user.state === AuthState.SignedIn) {
-        app.navigate(`/${projects[app.selectedProject].permalink}/${tasks[id].permalink}`)
+      if (app.selectedProject && (user.state === AuthState.SignedIn || projects[app.selectedProject].isTemp)) {
+        navigate(`/${projects[app.selectedProject].owner}/${projects[app.selectedProject].permalink}/${tasks[id].permalink}`)
       }
     }
     dispatch(setTask(id))
     dispatch(setLockedTaskField(null))
     if (!tasks[id].isVirtual) {
+      dispatch(attachmentsActions.handleFetchAttachments(id))
+      dispatch(historyActions.handleFetchHistory(id))
       dispatch(commentsActions.handleFetchComments(id))
       if (user.state === AuthState.SignedIn) {
-        dispatch(collaborationActions.handleSendAction({
-          action: "FOCUS_TASK",
-          taskID: id
-        }))
-        dispatch(observersActions.handleSetCommentsObservers(id))
+        PubSub.subscribeTopic("comments", id)
       }
     }
   }
 }
+
+export const handleBatchSelectTask = (id) => (dispatch, getState) => {
+  const { app } = getState();
+  if (app.selectedTask) {
+    const isRightPanelOpened = app.isRightPanelOpened;
+    dispatch(handleSetTask(null));
+    if (isRightPanelOpened) {
+      dispatch(setRightPanel(true));
+      dispatch(setRightPanelPage(panelPages.BATCH_HUB));
+    }
+  }
+  dispatch(batchSelectTask(id));
+};
+
+export const handleBatchDeselectTask = (id) => (dispatch, getState) => {
+  const { app } = getState();
+  if (app.selectedTasks?.length === 1) {
+    const isRightPanelOpened = app.isRightPanelOpened;
+    dispatch(handleSetTask(app.selectedTasks[0]));
+    if (isRightPanelOpened) {
+      dispatch(setRightPanel(true));
+      dispatch(setRightPanelPage(panelPages.TASK_HUB));
+    }
+  }
+  dispatch(batchDeselectTask(id));
+};
 
 export const handleSetProjectTitle = (status) => (dispatch) => {
   if (status) {

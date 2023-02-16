@@ -1,0 +1,31 @@
+.ModalHeaderBody {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow: hidden;
+  background-color: var(--color-background-fill-color-layer-alt);
+}
+
+.ModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  color: var(--color-fill-color-text-primary);
+  font-weight: 600;
+}
+
+.ModalBody {
+  flex: 1;
+  max-height: calc(100vh - 300px);
+  overflow: auto;
+  color: var(--color-fill-color-text-primary);
+}
+
+.ModalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  gap: 10px;
+}

@@ -1,10 +1,11 @@
 .NoTasksContainer {
   display: flex;
-  flex-direction: column;
-  width: 100%;
   flex: 1;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  text-align: center;
   &.loader {
     & > svg {
       width: 150px;
@@ -18,35 +19,33 @@
   & > svg {
     width: 250px;
     height: 250px;
-    @include themify(color, "primary");
+    color: var(--color-fill-color-accent-primary);
+    transition: color 0.2s;
   }
   & > div {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
     & > span {
-      font-weight: bold;
-      font-size: 28px;
-      @include themify(color, "txtColor");
+      color: var(--color-fill-color-text-primary);
+      font-size: 1.75rem;
+      transition: color 0.2s;
+      transition: color 0.2s;
     }
     & > button {
-      @include themify(color, "primary");
-      @include themify(background-color, "primaryLight");
-      border-radius: 8px;
       max-width: fit-content;
-      outline: none;
-      border: none;
-      cursor: pointer;
       padding: 5px 10px;
-      font-weight: 600;
-      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      background-color: var(--color-fill-color-subtle-secondary);
+      color: var(--color-fill-color-accent-primary);
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
     }
-    & > *:not(:last-child) {
-      margin-bottom: 40px;
-    }
-    & > *:not(:last-child) {
-      margin-bottom: 10px;
+    gap: 40px;    gap: 40px; margin-bottom: 10px;
     }
   }
   @media only screen and (max-width: 768px) {
@@ -56,10 +55,10 @@
     }
     & > div {
       & > span {
-        font-size: 20px;
+        font-size: 1.25rem;
       }
       & > button {
-        font-size: 16px;
+        font-size: 1rem;
       }
     }
   }

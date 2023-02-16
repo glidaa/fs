@@ -1,34 +1,35 @@
 .LoadingContainer {
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
   position: fixed;
-  @include themify(background-color, "primaryBg");
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-background-fill-color-layer-default);
+  transition: background-color 0.2s;
   & > span:nth-child(1) {
+    color: var(--color-fill-color-accent-primary);
     font-weight: bold;
-    font-size: 42px;
-    @include themify(color, "primary");
+    font-size: 2.625rem;
+    transition: color 0.2s;
   }
   & > span:nth-child(3) {
-    font-weight: bold;
-    font-size: 18px;
-    @include themify(color, "txtColor");
+    color: var(--color-fill-color-text-primary);
+    font-size: 1.125rem;
+    text-align: center;
+    transition: color 0.2s;
   }
   & > div {
     width: 250px;
   }
-  & > *:not(:last-child) {
-    margin-bottom: 30px;
-  }
+  gap: 30px;
   @media only screen and (max-width: 768px) {
     & > span:nth-child(1) {
-      font-size: 36px;
+      font-size: 2.25rem;
     }
     & > span:nth-child(3) {
-      font-size: 16px;
+      font-size: 1rem;
     }
     & > div {
       width: 200px;

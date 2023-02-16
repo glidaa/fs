@@ -5,8 +5,9 @@
   "main": "index.js",
   "license": "Apache-2.0",
   "dependencies": {
-    "axios": "latest",
-    "@sendgrid/mail": "^7.6.0",
-    "dotenv": "^10.0.0"
+    "@sendgrid/mail": "^7.7.0",
+    "dotenv": "^16.0.1",
+    "forwardslash": "file:../../../../..",
+    "mariadb": "^3.0.0"
   }
 }

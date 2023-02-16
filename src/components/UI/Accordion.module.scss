@@ -1,15 +1,29 @@
 .AccordionContainer {
-  padding: 15px;
-  border-radius: 15px;
-  margin-top: 10px;
-  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
+  padding-bottom: 15px;
   overflow: hidden;
-  @include themify(background-color, "fieldBg");
   @media only screen and (max-width: 768px) {
-    padding: 5px;
-    box-shadow: none;
-    font-size: 16.5px;
-    border-radius: 0;
+    font-size: 1.031rem;
+  }
+  &.contained {
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid;
+    border-radius: 15px;
+    border-color: var(--color-stroke-color-card-stroke-default);
+    background-color: var(--color-background-fill-color-card-background-default);
+    transition: background-color 0.2s, border-color 0.2s;
+    @media only screen and (max-width: 768px) {
+      padding: 5px;
+      border-radius: 0;
+    }
+  }
+  &:not(.contained) {
+    & .AccordionHeader {
+      justify-content: flex-start;
+      & > svg {
+        padding: 0 5px;
+      }
+    }
   }
 }
 
@@ -17,15 +31,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 12px;
-  font-weight: 600;
-  font-size: 24px;
-  @include themify(color, "txtColor");
+  padding: 0 59px;
+  color: var(--color-fill-color-text-primary);
+  font-size: 1.2rem;
+  transition: color 0.2s;
   & > svg {
     cursor: pointer;
   }
   @media only screen and (max-width: 768px) {
-    padding: 5px 20px 5px 20px;
-    font-size: 16.5px;
+    padding: 5px 26px 5px 26px;
+    font-size: 1.031rem;
+  }
+}
+
+.AccordionContent {
+  margin-top: 5px;
+  @media only screen and (max-width: 768px) {
+    margin-top: 0;
   }
 }

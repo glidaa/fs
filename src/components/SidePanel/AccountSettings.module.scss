@@ -1,55 +1,15 @@
 .AccountSettingsForm {
-  overflow: auto;
-  flex: 1;
-  height: 0;
-  min-height: 0;
-  & :global(.simplebar-content) > form {
-    display: flex;
-    flex-direction: column;
-    margin: 5px 25px 25px 25px;
-    & > h2 > span {
-      cursor: pointer;
-    }
-    & > input[type="submit"] {
-      display: none;
-    }
-    & > *:not(:last-child) {
-      margin-bottom: 20px;
-    }
-  }
-}
-
-.PanelPageToolbar {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 25px;
-  padding-top: 25px;
-}
-
-.PanelPageTitle {
-  @include themify(color, "txtColor");
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.PanelPageToolbarAction {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 100%;
-  outline: none;
-  padding: 5px;
-  margin: 0;
-  background-color: transparent;
-  cursor: pointer;
-  @include themify(color, "primary");
-  &:disabled {
-    cursor: not-allowed;
-    color: #CCCCCC!important;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 8px;
+  & > h2 > span {
+    cursor: pointer;
   }
+  & > input[type="submit"] {
+    display: none;
+  }
+  gap: 15px;
 }
 
 .AccountSettingsHeader {
@@ -58,16 +18,16 @@
   align-items: center;
   justify-content: center;
   & > span:nth-child(2) {
-    @include themify(color, "txtColor");
-    font-size: 26px;
+    color: var(--color-fill-color-text-primary);
+    font-size: 1.625rem;
     line-height: 0;
+    transition: color 0.2s;
   }
   & > span:nth-child(3) {
-    @include themify(color, "txtColor");
-    font-size: 14px;
+    color: var(--color-fill-color-text-primary);
+    font-size: 0.875rem;
     line-height: 0;
+    transition: color 0.2s;
   }
-  & > *:not(:last-child) {
-    margin-bottom: 25px;
-  }
+  gap: 25px;
 }

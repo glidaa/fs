@@ -3,7 +3,7 @@ module.exports = {
     commonjs: true,
     node: true,
     browser: true,
-    es6: true,
+    es2022: true,
     jest: true,
   },
   extends: ["eslint:recommended", "plugin:react/recommended"],
@@ -26,7 +26,7 @@ module.exports = {
   },
   settings: {
     react: {
-      version: "latest"
+      version: "detect"
     },
   },
 };

@@ -1,14 +1,76 @@
+@keyframes enteringAnim {
+  from {
+    margin-right: -330px;
+  }
 
+  to {
+    margin-right: 10px;
+  }
+}
+
+@keyframes exitingAnim {
+  from {
+    margin-right: 10px;
+  }
+
+  to {
+    margin-right: -330px;
+  }
+}
+
+@keyframes enteringAnimMobile {
+  from {
+    margin-top: -48px;
+  }
+
+  to {
+    margin-top: 10px;
+  }
+}
+
+@keyframes exitingAnimMobile {
+  from {
+    margin-top: 10px;
+  }
+
+  to {
+    margin-top: -48px;
+  }
+}
 
 .NotificationsContainer {
-  position: fixed;
-  right: 0;
-  top: 0;
   display: flex;
-  background-color: transparent;
-  flex-direction: column;
   z-index: 9999999;
+  position: fixed;
+  top: 0;
+  right: 0;
+  flex-direction: column;
+  background-color: transparent;
   @media only screen and (max-width: 768px) {
     width: 100%;
+  }
+}
+
+.NotificationOverride {
+  width: 300px;
+  margin: 10px 10px 10px 0;
+  border-radius: 4px;
+  background-color: var(--auxiliarySurface);
+  animation: 0.4s ease-in-out forwards;
+  &.entering {
+    animation-name: enteringAnim;
+  }
+  &.exiting {
+    animation-name: exitingAnim;
+  }
+  @media only screen and (max-width: 768px) {
+    width: calc(100% - 20px);
+    margin: 10px;
+    &.entering {
+      animation-name: enteringAnimMobile;
+    }
+    &.exiting {
+      animation-name: exitingAnimMobile;
+    }
   }
 }

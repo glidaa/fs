@@ -1,14 +1,25 @@
 import {
-  createStore,
+  legacy_createStore as createStore,
   combineReducers,
-  applyMiddleware 
-} from "redux"
+  applyMiddleware,
+  compose,
+} from "redux";
 
-import thunk from "redux-thunk"
-import caching from "./middleware/caching"
-import reducers from "./reducers"
+import thunk from "redux-thunk";
+import caching from "./middleware/caching";
+import reducers from "./reducers";
 
-export default createStore(
+const composeEnhancers =
+  (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      trace: true,
+      traceLimit: 25,
+    })) ||
+  compose;
+
+const store = createStore(
   combineReducers(reducers),
-  applyMiddleware(thunk, caching)
-)
+  composeEnhancers(applyMiddleware(thunk, caching))
+);
+
+export default store;

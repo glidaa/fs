@@ -1,88 +1,92 @@
 .TextareaContainer {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
+  & > label {
+    width: max-content;
+    margin-bottom: 0;
+    color: var(--color-fill-color-text-primary);
+    font-size: 0.875rem;
+    cursor: text;
+    transition: color 0.2s;
+  }
   & > div {
-    position: relative;
     display: grid;
+    position: relative;
     width: calc(100% - 24px);
-    padding: 10px;
-    border-radius: 8px;
+    padding: 6px 10px;
     border: 1px solid transparent;
-    background-color: transparent;
-    @include themify(border-color, "outline");
-    & > label {
+    border-radius: 4px;
+    border-color: var(--color-stroke-color-control-stroke-default);
+    border-bottom-color: var(--color-stroke-color-control-strong-stroke-default);
+    background-color: var(--color-fill-color-control-default);
+    cursor: text;
+    &::before {
       position: absolute;
-      top: 1px;
-      left: 0px;
-      margin-bottom: 0;
-      width: max-content;
-      font-size: 14px;
-      font-weight: 600;
-      padding: 0 3px;
-      margin-left: -3px;
-      transform-origin: bottom left;
-      transform: scale(1) translate3d(10px, 10px, 0);
-      transition: transform 150ms cubic-bezier(0.4,0,0.2,1);
-      @include themify(color, "outline");
-      @include themify(background-color, "secondaryBg");
+      bottom: -1px;
+      left: -1px;
+      width: calc(100% + 2px);
+      height: 0;
+      background-color: var(--color-stroke-color-control-strong-stroke-default);
+      content: "";
     }
     &::after {
+      visibility: hidden;
       content: attr(data-replicated-value) " ";
       white-space: pre-wrap;
-      visibility: hidden;
     }
     & > textarea {
-      resize: none;
+      padding: 0;
       overflow: hidden;
-      &:disabled {
-        background-color: #fafafa;
-      }
+      resize: none;
       &::placeholder {
         color: #c0c0c0;
       }
     }
     & > textarea,
     &::after {
-      width: calc(100% - 24px);
-      outline: none;
-      border: none;
-      background: none;
-      font-size: 14px;
-      font-weight: 400;
       z-index: 1;
       grid-area: 1 / 1 / 2 / 2;
-      @include themify(color, "txtColor");
+      width: calc(100% - 24px);
+      border: none;
+      outline: none;
+      background: none;
+      color: var(--color-fill-color-text-primary);
+      caret-color: var(--color-fill-color-text-primary);
+      font-size: 0.875rem;
     }
   }
   &.error {
     & > div {
-      border-color: #FF0000!important;
-      & > label {
-        color: #FF0000!important;
-      }
+      border-color: var(--color-fill-color-system-critical) !important;
     }
   }
-  &.focused:not(.readOnly:not(.filled)), &.filled {
-    & > div {
-      & > label {
-        transform: scale(0.9) translate3d(10px, -14px, 0);
-      }
+  &.disabled {
+    opacity: 0.6;
+    &, & * {
+      cursor: not-allowed;
     }
   }
-  &.focused:not(.readOnly:not(.filled)) {
+  &:hover:not(:focus-within) {
     & > div {
-      @include themify(border-color, "primary");
-      & > label {
-        @include themify(color, "primary");
+      background-color: var(--color-fill-color-control-secondary);
+    }
+  }
+  &:focus-within:not(.readOnly:not(.filled)) {
+    & > div {
+      border-radius: 4px 4px 0 0;
+      background-color: var(--color-fill-color-control-input-active);
+      &::before {
+        height: 2px;
+        background-color: var(--color-fill-color-accent-primary);
       }
     }
   }
   & > span {
-    color: #FF0000;
-    font-size: 12px;
-    margin-left: 10px;
+    margin-left: 12px;
+    color:  var(--color-fill-color-system-critical);
+    font-size: 0.75rem;
   }
+  gap: 5px;
 }

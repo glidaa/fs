@@ -1,0 +1,22 @@
+.SheetShell {
+  display: block;
+  z-index: 99999;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  will-change: background-color;
+}
+
+.SheetContainer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-height: calc(100vh - 20px);
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  background-color: var(--color-background-fill-color-solid-background-base);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  touch-action: none;
+  transition: background-color 0.2s;
+  will-change: transform;
+}

@@ -1,0 +1,23 @@
+.DialogShell {
+  display: flex;
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.DialogContainer {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 30px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: var(--color-background-fill-color-solid-background-base);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}

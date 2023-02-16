@@ -1,4 +1,4 @@
-export default async () => {
+const isOnline = async () => {
   try {
     const testFile = "https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png"
     const options = {
@@ -11,3 +11,5 @@ export default async () => {
     return false;
   }
 };
+
+export default isOnline;

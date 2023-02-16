@@ -1,0 +1,62 @@
+.FilesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.FileItem {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: calc(100% - 22px);
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 8px;
+  border-color: var(--color-stroke-color-card-stroke-default);
+  background-color: var(--color-background-fill-color-card-background-default);
+  font-size: 0.875rem;
+  gap: 10px;
+  &.error {
+    border-color: var(--color-fill-color-system-critical) !important;
+    & > label {
+      color: var(--color-fill-color-system-critical) !important;
+    }
+  }
+}
+
+.FileName {
+  color: var(--color-fill-color-text-primary);
+}
+
+.FileSize {
+  color: var(--color-fill-color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.SupportedProviders {
+  margin-top: 15px;
+  & > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+    & > svg {
+      height: 18px;
+      width: 18px;
+    }
+  }
+}
+
+.ModeChanger {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  color: var(--color-fill-color-accent-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  margin: auto;
+  margin-top: 15px;
+}

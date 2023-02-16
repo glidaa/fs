@@ -1,6 +1,6 @@
 import { CREATE_COMMENT, UPDATE_COMMENT, REMOVE_COMMENT, EMPTY_COMMENTS, FETCH_COMMENTS, FETCH_CACHED_COMMENTS } from "../actions/comments"
 
-export default function (state = {}, action) {
+const commentsReducer = (state = {}, action) => {
   switch(action.type) {
     case CREATE_COMMENT:
       return {...state, [action.commentState.id]: action.commentState}
@@ -30,3 +30,5 @@ export default function (state = {}, action) {
       return state
   }
 }
+
+export default commentsReducer;

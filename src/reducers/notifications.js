@@ -5,10 +5,9 @@ const initState = {
   pushed: []
 }
 
-export default function (state = initState, action) {
+const notificationsReducer = (state = initState, action) => {
   switch(action.type) {
     case ADD_NOTIFICATION:
-      action.notification.payload = JSON.parse(action.notification.payload)
       return {
         ...state,
         stored: [
@@ -35,14 +34,9 @@ export default function (state = initState, action) {
         stored: state.stored.filter(x => x.id !== action.id)
       }
     case FETCH_NOTIFICATIONS:
-      const newStored = []
-      for (const notification of action.notifications) {
-        notification.payload = JSON.parse(notification.payload)
-        newStored.push(notification)
-      }
       return {
         ...state,
-        stored: newStored.sort((a, b) => b.createdAt - a.createdAt)
+        stored: action.notifications.sort((a, b) => b.createdAt - a.createdAt)
       }
     case EMPTY_NOTIFICATIONS:
       return {
@@ -53,3 +47,5 @@ export default function (state = initState, action) {
       return state
   }
 }
+
+export default notificationsReducer;

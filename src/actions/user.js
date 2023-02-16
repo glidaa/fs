@@ -1,13 +1,10 @@
 import { AuthState } from '../constants';
 import getGravatar from '../utils/getGravatar';
-import * as observersActions from "./observers"
 import * as queries from "../graphql/queries"
 import * as cacheController from "../controllers/cache"
-import * as notificationsActions from "./notifications"
-import isLoggedIn from '../utils/isLoggedIn';
-import Auth from '@aws-amplify/auth';
-import execGraphQL from '../utils/execGraphQL';
-import { graphqlOperation } from '@aws-amplify/api-graphql';
+import Auth from '../amplify/Auth';
+import API from '../amplify/API';
+import PubSub from '../amplify/PubSub';
 
 export const SET_STATE = "SET_STATE";
 export const SET_DATA = "SET_DATA";
@@ -30,21 +27,19 @@ const fetchCachedUser = (user) => ({
 
 export const handleSetState = (userState) => (dispatch) => {
   if (userState !== AuthState.SignedIn) {
-    dispatch(observersActions.handleClearUserObservers())
+    PubSub.unsubscribeTopic("user")
   }
   dispatch(setState(userState))
   if (userState === AuthState.SignedIn) {
-    dispatch(observersActions.handleSetUserObservers())
-    dispatch(notificationsActions.handleFetchNotifications())
-    dispatch(observersActions.handleSetNotificationsObservers())
+    PubSub.subscribeTopic("user")
   }
 }
 
 export const handleSetData = (userData) => (dispatch, getState) => {
   if (userData) {
     const { firstName, lastName } = userData
-    const abbr = firstName[0].toUpperCase() + lastName[0].toUpperCase()
-    dispatch(setData({...userData, abbr}))
+    const initials = firstName[0].toUpperCase() + lastName[0].toUpperCase()
+    dispatch(setData({...userData, initials}))
     if (!userData.avatar) {
       getGravatar(userData.email).then((avatar) => {
         dispatch(setData({...getState().user.data, avatar}))
@@ -56,24 +51,30 @@ export const handleSetData = (userData) => (dispatch, getState) => {
 }
 
 export const handleFetchUser = () => async (dispatch, getState) => {
-  if (await isLoggedIn() || cacheController.getUser().state === AuthState.SignedIn) {
+  const { app } = getState();
+  const isLoggedIn = await Auth.isLoggedIn();
+  if (!app.isOffline && isLoggedIn) {
     try {
-      const userData = (await execGraphQL(
-        graphqlOperation(
-          queries.getUserByUsername, {
-            username: (await Auth.currentAuthenticatedUser()).username
-          }
-        )
-      )).data.getUserByUsername
-      const jwt = (await Auth.currentSession()).getAccessToken().getJwtToken();
-      userData.jwt = jwt
+      const userData = (
+        await API.execute(queries.getUserByUsername, {
+          username: (await Auth.getUser()).username,
+        })
+      ).data.getUserByUsername;
+      userData.jwt = await Auth.getAccessToken();
       dispatch(handleSetData(userData))
       dispatch(handleSetState(AuthState.SignedIn))
     } catch (err) {
-      console.error(err)
-      if (err.errors?.[0]?.message === 'Network Error') {
+      if (err.message === 'Failed to fetch') {
         dispatch(fetchCachedUser(cacheController.getUser()))
       }
+    }
+  } else if (cacheController.getUser().state === AuthState.SignedIn) {
+    if (isLoggedIn) {
+      dispatch(fetchCachedUser(cacheController.getUser()));
+    } else {
+      cacheController.resetCache();
+      dispatch(handleSetState(AuthState.SignedOut))
+      dispatch(handleSetData(null))
     }
   } else {
     dispatch(handleSetState(AuthState.SignedOut))
@@ -87,6 +88,6 @@ export const handleSignOut = (shouldResetCache = false) => async (dispatch, getS
   await Auth.signOut()
   dispatch(handleSetState(AuthState.SignedOut))
   dispatch(handleSetData(null))
-  window.location.reload()
+  if (shouldResetCache) window.location.reload();
   return getState().user
 }

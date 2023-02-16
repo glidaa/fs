@@ -5,27 +5,21 @@
 
 .ImageAvatar {
   display: inline;
+  border: 2px solid;
   border-radius: 100%;
-  border: 1px solid;
-  @include themify(border-color, "primaryBg");
+  border-color: var(--color-fill-color-accent-primary);
+  transition: border-color 0.2s;
 }
 
 .LetterAvatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid;
   border-radius: 100%;
+  border-color: var(--color-fill-color-accent-primary);
+  background-color: var(--auxiliarySurface);
+  color: var(--color-fill-color-accent-primary);
   line-height: 0;
-  border: 1px solid;
-  @include themify(color, "primary");
-  @include themify(background-color, "primaryLight");
-  @include themify(border-color, "primaryBg");
-}
-
-.DumpAvatar {
-  display: inline-flex;
-  border-radius: 100%;
-  border: 1px solid;
-  @include themify(background-color, "primaryLight");
-  @include themify(border-color, "primaryBg");
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }

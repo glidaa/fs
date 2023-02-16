@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#1560FB" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <script type="text/javascript">
+      window.global = window;
+      var appSettings = window.localStorage.getItem("appSettings")
+      appSettings = appSettings ? JSON.parse(appSettings) : {
+        theme: "blue",
+        isDarkMode: false,
+        showDueDate: true,
+        showAssignees: true,
+        showDoneIndicator: true,
+        showCopyButton: true,
+        showDuplicateButton: true,
+        showShareButton: true,
+      }
+      const availColors = {
+        "red": "#D20E1E",
+        "gold": "#E19D00",
+        "orange": "#E05307",
+        "green": "#0E6D0E",
+        "turquoise": "#009FAA",
+        "blue": "#0067C0",
+        "pink": "#CD007B",
+        "purple": "#4F4DCE",
+        "grey": "#586579",
+        "black": "#000000",
+      }
+      document.documentElement.className = appSettings.theme + " " + (appSettings.isDarkMode ? "dark" : "light");
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', appSettings.isDarkMode ? "#272727" : availColors[appSettings.theme]);
+      document.write([
+       "<style>",
+         "@media only screen and (max-width: 768px) and (orientation: portrait) and (max-height: " + (Math.max(window.innerWidth, window.innerHeight) - 80) + "px)",
+         "{ .no-keyboard-portrait-flex, .no-keyboard-portrait-block { display: none !important; } .no-keyboard-portrait-padding-bottom-68 { padding-bottom: 0 !important; } .no-keyboard-portrait-padding-bottom-83 { padding-bottom: 15px !important; } }",
+         "@media only screen and (max-width: 768px) and (orientation: portrait) and (min-height: " + (Math.max(window.innerWidth, window.innerHeight) - 80) + "px)",
+         "{ .no-keyboard-portrait-block { display: block !important; } .no-keyboard-portrait-flex { display: flex !important; } .no-keyboard-portrait-padding-bottom-68 { padding-bottom: 68px !important; } .no-keyboard-portrait-padding-bottom-83 { padding-bottom: 83px !important; } }",
+         "@media only screen and (max-width: 768px) and (orientation: landscape)",
+         "{ .no-keyboard-portrait-block { display: block !important; } .no-keyboard-portrait-flex { display: flex !important; } .no-keyboard-portrait-padding-bottom-68 { padding-bottom: 68px !important; } .no-keyboard-portrait-padding-bottom-83 { padding-bottom: 83px !important; } }",
+         "@media only screen and (max-width: 768px) and (hover: hover)",
+         "{ .no-keyboard-portrait-block { display: block !important; } .no-keyboard-portrait-flex { display: flex !important; } .no-keyboard-portrait-padding-bottom-68 { padding-bottom: 68px !important; } .no-keyboard-portrait-padding-bottom-83 { padding-bottom: 83px !important; } }",
+       "</style>"
+      ].join(" "));
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JC7TBWD81K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-JC7TBWD81K');
+    </script>
+    <title>Forward Slash</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="./index.jsx"></script>
+  </body>
+</html>

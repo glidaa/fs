@@ -1,10 +1,9 @@
-import { graphqlOperation } from "@aws-amplify/api";
-import { AuthState } from '../constants';
+import { AuthState, ThingStatus } from '../constants';
 import { listCommentsForTask } from "../graphql/queries"
+import * as statusActions from "./status"
 import * as usersActions from "./users"
-import * as mutationsActions from "./mutations"
 import * as cacheController from "../controllers/cache"
-import execGraphQL from "../utils/execGraphQL";
+import API from '../amplify/API';
 
 export const CREATE_COMMENT = "CREATE_COMMENT";
 export const UPDATE_COMMENT = "UPDATE_COMMENT";
@@ -32,10 +31,10 @@ export const emptyComments = () => ({
   type: EMPTY_COMMENTS
 });
 
-const fetchComments = (comments, taskID) => ({
+const fetchComments = (comments, taskId) => ({
   type: FETCH_COMMENTS,
   comments,
-  taskID
+  taskId
 });
 
 const fetchCachedComments = (comments) => ({
@@ -53,19 +52,19 @@ export const handleCreateComment = (commentState) => (dispatch, getState) => {
       owner: user.data.username,
       isVirtual: true
     }))
-    dispatch(mutationsActions.scheduleMutation(
-      "createComment",
-      commentState,
-      (incoming) => {
+    API.mutate({
+      type: "createComment",
+      variables: commentState,
+      success: (incoming) => {
         dispatch(updateComment({
           id: incoming.data.createComment.id,
           isVirtual: false
         }))
       },
-      () => {
+      error: () => {
         dispatch(removeComment(commentState.id))
       }
-    ))
+    })
   }
 }
 
@@ -76,16 +75,16 @@ export const handleUpdateComment = (update) => (dispatch, getState) => {
     if (comments[update.id]) {
       dispatch(updateComment(update))
     }
-    return dispatch(mutationsActions.scheduleMutation(
-      "updateComment",
-      update,
-      null,
-      () => {
+    return API.mutate({
+      type: "updateComment",
+      variables: update,
+      success: null,
+      error: () => {
         if (getState().comments[update.id]) {
           dispatch(updateComment(prevCommentState))
         }
       }
-    ))
+    })
   }
 }
 
@@ -95,24 +94,25 @@ export const handleRemoveComment = (commentState) => (dispatch, getState) => {
     if (comments[commentState.id]) {
       dispatch(removeComment(commentState.id))
     }
-    return dispatch(mutationsActions.scheduleMutation(
-      "deleteComment",
-      { id: commentState.id },
-      null,
-      () => {
-        if (getState().app.selectedTask === commentState.taskID) {
+    return API.mutate({
+      type: "deleteComment",
+      variables: { id: commentState.id },
+      success: null,
+      error: () => {
+        if (getState().app.selectedTask === commentState.taskId) {
           dispatch(createComment(commentState))
         }
       }
-    ))
+    })
   }
 }
 
-export const handleFetchComments = (taskID) => async (dispatch, getState) => {
-  const { user } = getState()
-  if (user.state === AuthState.SignedIn) {
+export const handleFetchComments = (taskId) => async (dispatch, getState) => {
+  dispatch(statusActions.setCommentsStatus(ThingStatus.FETCHING))
+  const { user, app, projects } = getState()
+  if (user.state === AuthState.SignedIn || projects[app.selectedProject].isTemp) {
     try {
-      const res = await execGraphQL(graphqlOperation(listCommentsForTask, { taskID }))
+      const res = await API.execute(listCommentsForTask, { taskId })
       const items = res.data.listCommentsForTask.items;
       let usersToBeFetched = []
       for (const item of items) {
@@ -122,10 +122,14 @@ export const handleFetchComments = (taskID) => async (dispatch, getState) => {
         ])]
       }
       await dispatch(usersActions.handleAddUsers(usersToBeFetched))
-      dispatch(fetchComments(items, taskID))
+      dispatch(fetchComments(items, taskId))
+      dispatch(statusActions.setCommentsStatus(ThingStatus.READY))
     } catch (err) {
-      if (err.errors[0].message === 'Network Error') {
-        dispatch(fetchCachedComments(cacheController.getCommentsByTaskID(taskID)))
+      if (err.message === 'Failed to fetch') {
+        dispatch(fetchCachedComments(cacheController.getCommentsByTaskId(taskId)))
+        dispatch(statusActions.setCommentsStatus(ThingStatus.READY))
+      } else {
+        dispatch(statusActions.setCommentsStatus(ThingStatus.ERROR))
       }
     }
     return getState().comments

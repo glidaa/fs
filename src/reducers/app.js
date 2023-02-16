@@ -1,47 +1,49 @@
-import { SET_PROJECT, SET_TASK, SET_COMMAND, SET_PROJECT_ADDING_STATUS, SET_TASK_ADDING_STATUS, SET_NAVIGATE, SET_PROJECT_PANEL, SET_DETAILS_PANEL, SET_ACTION_SHEET, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE, SET_OFFLINE, SET_SYNCED } from "../actions/app"
-import { panelPages, OK } from "../constants"
+import { SET_PROJECT, SET_TASK, SET_LEFT_PANEL, SET_RIGHT_PANEL, SET_PROJECT_TITLE, SET_LOCKED_TASK_FIELD, SET_RIGHT_PANEL_PAGE, SET_LEFT_PANEL_PAGE, SET_OFFLINE, SET_SYNCED, BATCH_SELECT_TASK, BATCH_DESELECT_TASK } from "../actions/app"
 
 const initState = {
   selectedProject: null,
   selectedTask: null,
-  command: "",
-  projectsTab: "owned",
-  projectAddingStatus: OK,
-  taskAddingStatus: OK,
+  selectedTasks: null,
   navigate: null,
   isOffline: false,
   isSynced: true,
   isLeftPanelOpened: false,
   isRightPanelOpened: false,
-  isActionSheetOpened: false,
   isProjectTitleSelected: false,
   lockedTaskField: null,
-  rightPanelPage: panelPages.TASK_HUB,
-  leftPanelPage: panelPages.PROJECTS
+  rightPanelPage: null,
+  leftPanelPage: null
 }
 
-export default function (state = initState, action) {
+const appReducer = (state = initState, action) => {
   switch(action.type) {
     case SET_PROJECT:
       return {...state, selectedProject: action.id}
     case SET_TASK:
       return {...state, selectedTask: action.id}
-    case SET_COMMAND:
-      return {...state, command: action.command}
-    case SET_PROJECT_PANEL:
+    case BATCH_SELECT_TASK:
+      if (!state.selectedTasks) {
+        return {...state, selectedTasks: [action.id]}
+      } else if (state.selectedTasks.includes(action.id)) {
+        return { ...state }
+      } else {
+        return {...state, selectedTasks: [...state.selectedTasks, action.id] }
+      }
+    case BATCH_DESELECT_TASK:
+      if (state.selectedTasks?.length === 1) {
+        if (state.selectedTasks[0] === action.id) {
+          return {...state, selectedTasks: null}
+        }
+      } else if (state.selectedTasks?.includes(action.id)) {
+        return {...state, selectedTasks: state.selectedTasks.filter(id => id !== action.id)}
+      }
+      return {...state}
+    case SET_LEFT_PANEL:
       return {...state, isLeftPanelOpened: action.status}
-    case SET_DETAILS_PANEL:
+    case SET_RIGHT_PANEL:
       return {...state, isRightPanelOpened: action.status}
-    case SET_ACTION_SHEET:
-      return {...state, isActionSheetOpened: action.status}
     case SET_PROJECT_TITLE:
       return {...state, isProjectTitleSelected: action.status}
-    case SET_PROJECT_ADDING_STATUS:
-      return {...state, projectAddingStatus: action.status}
-    case SET_TASK_ADDING_STATUS:
-      return {...state, taskAddingStatus: action.status}
-    case SET_NAVIGATE:
-      return {...state, navigate: action.navigate}
     case SET_LOCKED_TASK_FIELD:
       return {...state, lockedTaskField: action.fieldName}
     case SET_RIGHT_PANEL_PAGE:
@@ -56,3 +58,5 @@ export default function (state = initState, action) {
       return state
   }
 }
+
+export default appReducer;

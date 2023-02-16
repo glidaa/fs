@@ -30,9 +30,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-------------------------------------------------------------------
 
-import crypto from 'crypto-browserify'
-let shasum = crypto.createHash('sha1')
-
 // A SHA-1 hash generated on the server which is unique for each visit:
 const xkcd_pw_gen_server_hash = "71f76b823a817e720e2f8028f088762b075095b0";
 
@@ -294,7 +291,7 @@ function xkcd_pw_gen_time_ent()
 }
 
 // Return a pseudorandom array of four 32-bit integers:
-function xkcd_pw_gen_create_hash()
+async function xkcd_pw_gen_create_hash()
 {
   // Entropy string built in a manner inspired by David Finch:
   let entropy = xkcd_pw_gen_server_hash + xkcd_pw_gen_time_ent();
@@ -306,8 +303,10 @@ function xkcd_pw_gen_create_hash()
   entropy += xkcd_pw_gen_time_ent();
     
   // Hash and convert to 32-bit integers:
-  shasum.update(entropy)
-  const hexString = shasum.digest('hex');
+  const msgUint8 = new TextEncoder().encode(entropy);                           // encode as (utf-8) Uint8Array
+  const hashBuffer = await window.crypto.subtle.digest('SHA-1', msgUint8);           // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
+  const hexString = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
   const result = [];
   for (let i = 0; i < 32; i += 8)
   {
@@ -317,8 +316,8 @@ function xkcd_pw_gen_create_hash()
 }
 
 // Generate a new passphrase and update the document:
-const generateRandomWords = (wordsNo = 2) => {
-  const hash = xkcd_pw_gen_create_hash();
+const generateRandomWords = async (wordsNo = 2) => {
+  const hash = await xkcd_pw_gen_create_hash();
   const choices = [];
   for (let w = 0; w < wordsNo; w++) {
     const jsRandom = Math.floor(Math.random() * 0x100000000);
@@ -328,4 +327,4 @@ const generateRandomWords = (wordsNo = 2) => {
   return choices
 }
 
-export default generateRandomWords
+export default generateRandomWords;

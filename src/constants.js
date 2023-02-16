@@ -1,25 +1,12 @@
-import generateID from './utils/generateID'
+import generateId from './utils/generateId'
 import generateRandomWords from './utils/generateRandomWords';
 
-export const PENDING = "PENDING"
-export const OK = "OK"
-export const CREATING = "CREATING"
-export const REMOVING = "REMOVING"
-export const LOADING = "LOADING"
-export const READY = "READY"
-export const NOT_ASSIGNED = "NOT_ASSIGNED"
-
-export const commandIntents = {
-  ASSIGN: "ASSIGN",
-  STATUS: "STATUS",
-  DESCRIPTION: "DESCRIPTION",
-  DUE: "DUE",
-  TAGS: "TAGS",
-  COPY: "COPY",
-  DUPLICATE: "DUPLICATE",
-  REORDER: "REORDER",
-  DELETE: "DELETE",
-  UNKNOWN: "UNKNOWN"
+export const ThingStatus = {
+  READY: "READY",
+  FETCHING: "FETCHING",
+  CREATING: "CREATING",
+  REMOVING: "REMOVING",
+  ERROR: "ERROR",
 }
 
 export const supportedCommands = {
@@ -29,7 +16,7 @@ export const supportedCommands = {
   },
   STATUS: {
     description: "Change status of the task",
-    alias: null
+    alias: "st"
   },
   DESCRIPTION: {
     description: "Add a long description to the task",
@@ -37,7 +24,7 @@ export const supportedCommands = {
   },
   DUE: {
     description: "Set a deadline date for the task",
-    alias: null
+    alias: "du"
   },
   TAGS: {
     description: "Add comma separated tags",
@@ -61,42 +48,56 @@ export const panelPages = {
   TASK_HUB: "TASK_HUB",
   PROJECTS: "PROJECTS",
   NOTIFICATIONS: "NOTIFICATIONS",
-  ASSIGNEE_CHOOSER: "ASSIGNEE_CHOOSER",
-  WATCHER_CHOOSER: "WATCHER_CHOOSER",
+  BATCH_HUB: "BATCH_HUB",
   ACCOUNT_SETTINGS: "ACCOUNT_SETTINGS",
   PROJECT_SETTINGS: "PROJECT_SETTINGS",
   APP_SETTINGS: "APP_SETTINGS"
 }
 
-export const initProjectState = (prevProject = null, nextProject = null) => {
+export const initProjectState = async (rank, existingIds) => {
+  const todoStatusId = generateId();
+  const pendingStatusId = generateId([todoStatusId]);
+  const doneStatusId = generateId([todoStatusId, pendingStatusId]);
   return {
-    id: generateID(),
-    title: null,
-    permalink: generateRandomWords().join("-"),
-    prevProject: prevProject,
-    nextProject: nextProject,
-    todoCount: 0,
-    pendingCount: 0,
-    doneCount: 0,
+    id: generateId(existingIds),
+    title: '',
+    permalink: (await generateRandomWords()).join("-"),
+    rank: rank,
     privacy: "public",
     permissions: "rw",
-    members: [],
+    totalTasks: 0,
+    statusSet: [{
+      id: todoStatusId,
+      title: "Todo",
+      synonym: "todo",
+    }, {
+      id: pendingStatusId,
+      title: "Pending",
+      synonym: "pending",
+    }, {
+      id: doneStatusId,
+      title: "Finished",
+      synonym: "done",
+    }],
+    defaultStatus: todoStatusId,
     createdAt: new Date().toISOString()
   }
 }
 
-export const initTaskState = (projectID, prevTask = null, nextTask = null) => ({
-  id: generateID(),
-  projectID: projectID,
-  task: "",
-  prevTask: prevTask,
-  nextTask: nextTask,
-  description: null,
-  due: null,
-  tags: [],
+export const initTaskState = (projectId, rank, status, existingIds, preset = {}) => ({
+  id: generateId(existingIds),
+  projectId: projectId,
+  task: preset.task || "",
+  rank: rank,
+  description: preset.description || "",
+  due: preset.due || null,
+  tags: preset.tags || [],
   assignees: [],
-  status: "todo",
-  priority: "normal"
+  anonymousAssignees: [],
+  invitedAssignees: [],
+  watchers: [],
+  status: preset.status || status,
+  priority: preset.priority || "normal"
 })
 
 export const AuthState = {

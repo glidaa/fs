@@ -1,32 +1,30 @@
-@keyframes openAnim {
-  from {
-    height: 0;
-  }
-
-  to {
-    height: 300px;
+.ComboBoxContainer {
+  display: flex;
+  z-index: 999;
+  position: fixed!important;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: auto;
+  width: 320px;
+  max-height: 300px;
+  padding: 4px;
+  border: 1px solid;
+  border-radius: 8px;
+  border-color: var(--color-stroke-color-card-stroke-default);
+  background-image: var(--color-background-fill-color-acrylic-background);
+  box-shadow: rgb(0 0 0 / 14%) 0px 8px 16px 0px;
+  transition: background-color 0.2s;
+  @media only screen and (max-width: 768px) {
+    left: 0!important;
+    width: calc(100vw - 8px);
+    max-height: 200px;
+    border: none;
+    border-radius: 0px;
   }
 }
 
-.DropdownContainer {
-  position: fixed!important;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  z-index: 999;
-  border-radius: 10px;
-  border: none;
-  padding: 15px 0;
-  width: 320px;
-  max-height: 300px;
-  @include themify(background-color, "secondaryBg");
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  animation: openAnim 0.3s ease;
-  @media only screen and (max-width: 768px) {
-    left: 0;
-    max-height: 200px;
-    width: 100vw;
-    border-radius: 0px;
-    box-shadow: none;
-  }
+.DemoMsg {
+  padding: 5px;
+  color: var(--color-fill-color-text-primary);
+  text-align: center;
 }

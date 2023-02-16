@@ -1,24 +1,15 @@
-import { graphqlOperation } from "@aws-amplify/api";
 import * as cacheController from "../controllers/cache"
-import * as mutations from "../graphql/mutations"
-import execGraphQL from "./execGraphQL";
+import { importLocalData } from "../graphql/mutations"
+import API from '../amplify/API';
 
-export default async () => {
-  const { localCache } = cacheController.getCache()
-  if (localCache) {
-    const dataToBeSent = Object.values(localCache.projects);
-    if (dataToBeSent.length) {
-      for (const [index, project] of [...dataToBeSent].entries()) {
-        dataToBeSent[index].tasks = Object.values(localCache.tasks[project.id] || {});
-      }
-      try {
-        await execGraphQL(graphqlOperation(mutations.importData, {
-          data: JSON.stringify(dataToBeSent)
-        }))
-        cacheController.deleteLocalCache()
-      } catch (err) {
-        console.error(err)
-      }
-    }
+const uploadLocal = async () => {
+  const localData = cacheController.getLocalData();
+  if (localData) {
+    try {
+      await API.execute(importLocalData, { input: JSON.stringify(localData) });
+      cacheController.deleteLocalData();
+    } catch { /* empty */ }
   }
 }
+
+export default uploadLocal;

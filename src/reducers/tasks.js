@@ -1,59 +1,25 @@
-import injectItemOrder from "../utils/injectItemOrder"
-import removeItemOrder from "../utils/removeItemOrder"
 import { CREATE_TASK, UPDATE_TASK, REMOVE_TASK, EMPTY_TASKS, FETCH_TASKS, FETCH_CACHED_TASKS } from "../actions/tasks"
 
-export default function (state = {}, action) {
+const tasksReducer = (state = {}, action) => {
   let stateClone = {...state}
   switch(action.type) {
     case CREATE_TASK:
-      stateClone = injectItemOrder(
-        stateClone,
-        action.taskState,
-        action.taskState.prevTask,
-        action.taskState.nextTask,
-        "prevTask",
-        "nextTask"
-      )
       return {...stateClone, [action.taskState.id]: action.taskState}
     case UPDATE_TASK:
-      const update = Object.fromEntries(Object.entries(action.update).filter(item => (
-        item[0] === "prevTask" ||
-        item[0] === "nextTask" ||
-        item[0] === "task" ||
-        item[0] === "description" ||
-        item[0] === "due" ||
-        item[0] === "tags" ||
-        item[1] != null
-      )))
-      if (update.prevTask !== undefined || update.nextTask !== undefined) {
-        stateClone = removeItemOrder(
-          stateClone, 
-          stateClone[update.id],
-          "prevTask",
-          "nextTask"
-        )
-        stateClone = injectItemOrder(
-          stateClone,
-          stateClone[update.id],
-          update.prevTask,
-          update.nextTask,
-          "prevTask",
-          "nextTask"
-        )
+      const { id, field, value, action: updateAction } = action.update
+      if (updateAction === "append") {
+        if (!stateClone[id][field]) stateClone[id][field] = []
+        if (stateClone[id][field].indexOf(value) === -1) {
+          stateClone[id][field].push(value)
+        }
+      } else if (updateAction === "remove") {
+        if (!stateClone[id][field]) stateClone[id][field] = []
+        stateClone[id][field] = stateClone[id][field].filter(item => item !== value)
+      } else {
+        stateClone[id][field] = value
       }
-      return {
-        ...stateClone,
-        [update.id]: {
-          ...stateClone[update.id],
-          ...update
-        }}
+      return stateClone
     case REMOVE_TASK:
-      stateClone = removeItemOrder(
-        stateClone,
-        stateClone[action.id],
-        "prevTask",
-        "nextTask"
-      )
       delete stateClone[action.id]
       return stateClone
     case EMPTY_TASKS:
@@ -70,3 +36,5 @@ export default function (state = {}, action) {
       return state
   }
 }
+
+export default tasksReducer;

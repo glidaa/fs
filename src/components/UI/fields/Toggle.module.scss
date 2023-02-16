@@ -1,58 +1,73 @@
 .ToggleShell {
-  width: calc(100% - 20px);
+  width: 100%;
   & > span {
-    color: #FF0000;
-    font-size: 12px;
+    margin-left: 10px;
+    color: var(--color-fill-color-system-critical);
+    font-size: 0.75rem;
+  }
+  &.disabled {
+    opacity: 0.6;
+    & .ToggleHandle {
+      cursor: not-allowed;
+    }
   }
 }
   
 .ToggleContainer {
-  position: relative;
-  width: 100%;
-  padding: 10px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position: relative;
   flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 22px);
+  padding: 10px;
+  border: 1px solid;
   border-radius: 8px;
-  font-size: 14px;
-  font-weight: 400;
-  border: 1px solid transparent;
-  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
-  @include themify(background-color, "fieldBg");
+  border-color: var(--color-stroke-color-card-stroke-default);
+  background-color: var(--color-background-fill-color-card-background-default);
+  font-size: 0.875rem;
   & > label {
-    @include themify(color, "txtColor");
-    margin-bottom: 0;
     width: max-content;
-    font-size: 14px;
-    font-weight: 600;
+    margin-bottom: 0;
+    color: var(--color-fill-color-text-primary);
+    font-size: 0.875rem;
+    transition: color 0.2s;
   }
   &.error {
-    border-color: #FF0000;
+    border-color: var(--color-fill-color-system-critical)!important;
+    & > label {
+      color: var(--color-fill-color-system-critical)!important;
+    }
   }
-  &.disabled {
-    background-color: #FFFFFF2E;
+  &.readOnly {
+    & .ToggleHandle {
+      cursor: default;
+    }
   }
 }
 .ToggleHandle {
-  @include themify(background-color, "primaryLight");
+  width: 35px;
+  padding: 3px 5px;
+  border: 1px solid transparent;
   border-radius: 50px;
-  width: 45px;
-  padding: 5px;
-  transition: background-color 0.2s ease-in-out;
+  border-color: var(--color-stroke-color-control-strong-stroke-default);
+  background-color: var(--color-fill-color-control-alt-secondary);
   cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
   &.selected {
-    @include themify(background-color, "primary");
+    border-color: var(--color-fill-color-accent-primary);
+    background-color: var(--color-fill-color-accent-primary);
     & > div {
-      transform: translateX(200%);
+      transform: translateX(calc(100% + 7.5px));
+      background-color: var(--color-fill-color-text-on-accent-primary);
     }
   }
   & > div {
-    height: 15px;
     width: 15px;
-    border-radius: 100%;
+    height: 15px;
     transform: translateX(0);
+    border-radius: 100%;
+    background-color: var(--color-fill-color-text-secondary);
     transition: transform 0.2s ease-in-out;
-    @include themify(background-color, "onPrimaryColor");
   }
 }

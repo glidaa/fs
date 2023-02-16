@@ -1,9 +1,8 @@
-export default (taskState) => {
+const prepareTaskToBeSent = (taskState) => {
   return {
     id: taskState.id,
-    projectID: taskState.projectID,
-    prevTask: taskState.prevTask,
-    nextTask: taskState.nextTask,
+    projectId: taskState.projectId,
+    rank: taskState.rank,
     task: taskState.task,
     description: taskState.description,
     due: taskState.due,
@@ -12,3 +11,5 @@ export default (taskState) => {
     priority: taskState.priority,
   };
 };
+
+export default prepareTaskToBeSent;

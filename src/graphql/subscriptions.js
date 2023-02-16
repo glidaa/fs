@@ -1,35 +1,33 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onPushNotification = /* GraphQL */ `
+  subscription OnPushNotification($owner: String!) {
+    onPushNotification(owner: $owner) {
+      id
+      projectId
+      taskId
+      commentId
+      action
+      field
+      value
+      hint
+      read
+      link
+      mutator
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
 export const onPushUserUpdate = /* GraphQL */ `
   subscription OnPushUserUpdate($username: String!) {
     onPushUserUpdate(username: $username) {
       username
       firstName
       lastName
-      gender
-      birthdate
-      email
-      plan
-      avatar
-      sharedProjects
-      watchedTasks
-      assignedTasks
-      createdAt
       updatedAt
-    }
-  }
-`;
-export const onPushNotification = /* GraphQL */ `
-  subscription OnPushNotification($owner: String!) {
-    onPushNotification(owner: $owner) {
-      id
-      type
-      payload
-      createdAt
-      updatedAt
-      owner
-      sender
     }
   }
 `;
@@ -37,12 +35,9 @@ export const onDismissNotification = /* GraphQL */ `
   subscription OnDismissNotification($owner: String!) {
     onDismissNotification(owner: $owner) {
       id
-      type
-      payload
-      createdAt
       updatedAt
       owner
-      sender
+      mutationId
     }
   }
 `;
@@ -50,45 +45,22 @@ export const onCreateOwnedProject = /* GraphQL */ `
   subscription OnCreateOwnedProject($owner: String!) {
     onCreateOwnedProject(owner: $owner) {
       id
-      prevProject
-      nextProject
       permalink
+      rank
       title
-      tasksCount
-      todoCount
-      pendingCount
-      doneCount
       privacy
       permissions
+      statusSet {
+        id
+        title
+        synonym
+      }
+      defaultStatus
+      totalTasks
       createdAt
       updatedAt
       owner
-      members
-      mutationID
-    }
-  }
-`;
-export const onImportOwnedProjects = /* GraphQL */ `
-  subscription OnImportOwnedProjects($owner: String!) {
-    onImportOwnedProjects(owner: $owner) {
-      owner
-      items {
-        id
-        prevProject
-        nextProject
-        permalink
-        title
-        tasksCount
-        todoCount
-        pendingCount
-        doneCount
-        privacy
-        permissions
-        createdAt
-        updatedAt
-        owner
-        members
-      }
+      mutationId
     }
   }
 `;
@@ -96,19 +68,20 @@ export const onUpdateOwnedProject = /* GraphQL */ `
   subscription OnUpdateOwnedProject($owner: String!) {
     onUpdateOwnedProject(owner: $owner) {
       id
-      prevProject
-      nextProject
       permalink
+      rank
       title
-      tasksCount
-      todoCount
-      pendingCount
-      doneCount
       privacy
       permissions
+      statusSet {
+        id
+        title
+        synonym
+      }
+      defaultStatus
       updatedAt
       owner
-      mutationID
+      mutationId
     }
   }
 `;
@@ -116,21 +89,9 @@ export const onDeleteOwnedProject = /* GraphQL */ `
   subscription OnDeleteOwnedProject($owner: String!) {
     onDeleteOwnedProject(owner: $owner) {
       id
-      prevProject
-      nextProject
-      permalink
-      title
-      tasksCount
-      todoCount
-      pendingCount
-      doneCount
-      privacy
-      permissions
-      createdAt
       updatedAt
       owner
-      members
-      mutationID
+      mutationId
     }
   }
 `;
@@ -138,19 +99,20 @@ export const onUpdateProject = /* GraphQL */ `
   subscription OnUpdateProject($id: String!) {
     onUpdateProject(id: $id) {
       id
-      prevProject
-      nextProject
       permalink
+      rank
       title
-      tasksCount
-      todoCount
-      pendingCount
-      doneCount
       privacy
       permissions
+      statusSet {
+        id
+        title
+        synonym
+      }
+      defaultStatus
       updatedAt
       owner
-      mutationID
+      mutationId
     }
   }
 `;
@@ -158,125 +120,78 @@ export const onDeleteProject = /* GraphQL */ `
   subscription OnDeleteProject($id: String!) {
     onDeleteProject(id: $id) {
       id
-      prevProject
-      nextProject
-      permalink
-      title
-      tasksCount
-      todoCount
-      pendingCount
-      doneCount
-      privacy
-      permissions
-      createdAt
       updatedAt
       owner
-      members
-      mutationID
+      mutationId
     }
   }
 `;
 export const onCreateTaskByProjectId = /* GraphQL */ `
-  subscription OnCreateTaskByProjectId($projectID: ID!) {
-    onCreateTaskByProjectID(projectID: $projectID) {
+  subscription OnCreateTaskByProjectId($projectId: ID!) {
+    onCreateTaskByProjectId(projectId: $projectId) {
       id
-      projectID
-      prevTask
-      nextTask
+      projectId
       permalink
+      rank
       task
       description
       due
       tags
       status
       priority
+      assignees
+      watchers
+      anonymousAssignees
+      invitedAssignees
       createdAt
       updatedAt
-      owner
-      watchers
-      assignees
-      mutationID
+      mutationId
     }
   }
 `;
 export const onUpdateTaskByProjectId = /* GraphQL */ `
-  subscription OnUpdateTaskByProjectId($projectID: ID!) {
-    onUpdateTaskByProjectID(projectID: $projectID) {
+  subscription OnUpdateTaskByProjectId($projectId: ID!) {
+    onUpdateTaskByProjectId(projectId: $projectId) {
       id
-      projectID
-      prevTask
-      nextTask
-      permalink
-      task
-      description
-      due
-      tags
-      status
-      priority
-      watchers
-      assignees
+      projectId
+      action
+      field
+      value
       updatedAt
-      mutationID
+      mutationId
     }
   }
 `;
 export const onDeleteTaskByProjectId = /* GraphQL */ `
-  subscription OnDeleteTaskByProjectId($projectID: ID!) {
-    onDeleteTaskByProjectID(projectID: $projectID) {
+  subscription OnDeleteTaskByProjectId($projectId: ID!) {
+    onDeleteTaskByProjectId(projectId: $projectId) {
       id
-      projectID
-      prevTask
-      nextTask
-      permalink
-      task
-      description
-      due
-      tags
-      status
-      priority
-      createdAt
+      projectId
       updatedAt
-      owner
-      watchers
-      assignees
-      mutationID
+      mutationId
     }
   }
 `;
 export const onCreateCommentByTaskId = /* GraphQL */ `
-  subscription OnCreateCommentByTaskId($taskID: ID!) {
-    onCreateCommentByTaskID(taskID: $taskID) {
+  subscription OnCreateCommentByTaskId($taskId: ID!) {
+    onCreateCommentByTaskId(taskId: $taskId) {
       id
-      taskID
+      taskId
       content
       createdAt
       updatedAt
       owner
-      mutationID
-    }
-  }
-`;
-export const onUpdateCommentByTaskId = /* GraphQL */ `
-  subscription OnUpdateCommentByTaskId($taskID: ID!) {
-    onUpdateCommentByTaskID(taskID: $taskID) {
-      id
-      taskID
-      content
-      updatedAt
-      mutationID
+      mutationId
     }
   }
 `;
 export const onDeleteCommentByTaskId = /* GraphQL */ `
-  subscription OnDeleteCommentByTaskId($taskID: ID!) {
-    onDeleteCommentByTaskID(taskID: $taskID) {
+  subscription OnDeleteCommentByTaskId($taskId: ID!) {
+    onDeleteCommentByTaskId(taskId: $taskId) {
       id
-      taskID
-      content
-      createdAt
+      taskId
       updatedAt
-      owner
-      mutationID
+      mutationId
     }
   }
 `;

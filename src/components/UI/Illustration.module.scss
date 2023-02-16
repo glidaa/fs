@@ -1,0 +1,50 @@
+.IllustrationContainer {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+  text-align: center;
+  & > svg {
+    width: 360px;
+    height: 250px;
+    color: var(--color-fill-color-accent-primary);
+    transition: color 0.2s;
+  }
+  & > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    & > span {
+      color: var(--color-fill-color-text-primary);
+      font-size: 1.75rem;
+      transition: color 0.2s;
+    }
+    gap: 10px;
+  }
+  &.secondary {
+    & > svg {
+      width: 250px;
+      height: 163px;
+    }
+    & > div {
+      & > span {
+        font-size: 1.125rem;
+      }
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    & > svg {
+      width: 240px;
+      height: 160px;
+    }
+    & > div {
+      & > span {
+        font-size: 1.25rem;
+      }
+    }
+  }
+}

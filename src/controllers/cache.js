@@ -1,9 +1,12 @@
 import { AuthState } from "../constants";
 
 const initCacheValue = {
+  notifications: [],
   projects: {},
   tasks: {},
   comments: {},
+  attachments: {},
+  history: {},
   users: {},
   user: {
     state: AuthState.SignedOut,
@@ -19,31 +22,56 @@ export const getCache = () => {
 };
 
 export const resetCache = (isSigningIn = false) => {
+  const localCache = getCache();
+  const localData = Object.values(localCache.projects);
+  for (const project of localData) {
+    const projectId = project.id;
+    project.tasks = Object.values(localCache.tasks[projectId] || {});
+  }
   window.localStorage.setItem(
     "cachedData",
     JSON.stringify({
       ...initCacheValue,
-      ...(isSigningIn && { localCache: { ...getCache() } }),
+      ...(isSigningIn && {
+        localData,
+      }),
     })
   );
 };
 
-export const deleteLocalCache = () => {
+
+export const getLocalData = () => {
+  return getCache().localData || null;
+}
+
+export const deleteLocalData = () => {
   const cache = getCache();
-  delete cache.localCache;
+  delete cache.localData;
   window.localStorage.setItem("cachedData", JSON.stringify(cache));
+};
+
+export const getNotifications = () => {
+  return getCache().notifications;
 };
 
 export const getProjects = () => {
   return getCache().projects;
 };
 
-export const getTasksByProjectID = (projectID) => {
-  return getCache().tasks[projectID] || {};
+export const getTasksByProjectId = (projectId) => {
+  return getCache().tasks[projectId] || {};
 };
 
-export const getCommentsByTaskID = (taskID) => {
-  return getCache().comments[taskID] || {};
+export const getCommentsByTaskId = (taskId) => {
+  return getCache().comments[taskId] || {};
+};
+
+export const getHistoryByTaskId = (taskId) => {
+  return getCache().history[taskId] || [];
+};
+
+export const getAttachmentsByTaskId = (taskId) => {
+  return getCache().attachments[taskId] || [];
 };
 
 export const getUser = () => {
@@ -54,6 +82,13 @@ export const getUsers = () => {
   return getCache().users;
 };
 
+export const setNotifications = (notifications) => {
+  window.localStorage.setItem(
+    "cachedData",
+    JSON.stringify({ ...getCache(), notifications })
+  );
+};
+
 export const setProjects = (projects) => {
   window.localStorage.setItem(
     "cachedData",
@@ -61,22 +96,42 @@ export const setProjects = (projects) => {
   );
 };
 
-export const setTasksByProjectID = (projectID, tasks) => {
+export const setTasksByProjectId = (projectId, tasks) => {
   window.localStorage.setItem(
     "cachedData",
     JSON.stringify({
       ...getCache(),
-      tasks: { ...getCache().tasks, [projectID]: tasks },
+      tasks: { ...getCache().tasks, [projectId]: tasks },
     })
   );
 };
 
-export const setCommentsByTaskID = (taskID, comments) => {
+export const setCommentsByTaskId = (taskId, comments) => {
   window.localStorage.setItem(
     "cachedData",
     JSON.stringify({
       ...getCache(),
-      comments: { ...getCache().comments, [taskID]: comments },
+      comments: { ...getCache().comments, [taskId]: comments },
+    })
+  );
+};
+
+export const setHistoryByTaskId = (taskId, history) => {
+  window.localStorage.setItem(
+    "cachedData",
+    JSON.stringify({
+      ...getCache(),
+      history: { ...getCache().history, [taskId]: history },
+    })
+  );
+};
+
+export const setAttachmentsByTaskId = (taskId, attachments) => {
+  window.localStorage.setItem(
+    "cachedData",
+    JSON.stringify({
+      ...getCache(),
+      attachments: { ...getCache().attachments, [taskId]: attachments },
     })
   );
 };

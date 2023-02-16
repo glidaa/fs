@@ -1,8 +1,9 @@
-import { graphqlOperation } from "@aws-amplify/api";
-import { AuthState } from '../constants';
+import { AuthState, ThingStatus } from '../constants';
 import * as usersActions from './users';
+import * as statusActions from "./status"
 import { listNotifications } from "../graphql/queries"
-import execGraphQL from "../utils/execGraphQL";
+import * as cacheController from "../controllers/cache"
+import API from '../amplify/API';
 
 export const ADD_NOTIFICATION = "ADD_NOTIFICATION";
 export const PUSH_NOTIFICATION = "PUSH_NOTIFICATION";
@@ -41,23 +42,30 @@ const fetchNotifications = (notifications) => ({
   notifications
 });
 
-export const handleFetchNotifications = (taskID) => async (dispatch, getState) => {
+export const handleFetchNotifications = () => async (dispatch, getState) => {
+  dispatch(statusActions.setNotificationsStatus(ThingStatus.FETCHING))
   const { user } = getState()
   if (user.state === AuthState.SignedIn) {
     try {
-      const res = await execGraphQL(graphqlOperation(listNotifications, { taskID }))
+      const res = await API.execute(listNotifications)
       const items = res.data.listNotifications.items;
       let usersToBeFetched = []
       for (const item of items) {
         usersToBeFetched = [...new Set([
           ...usersToBeFetched,
-          item.sender
+          item.mutator,
         ])]
       }
       await dispatch(usersActions.handleAddUsers(usersToBeFetched))
       dispatch(fetchNotifications(items))
+      dispatch(statusActions.setNotificationsStatus(ThingStatus.READY))
     } catch (err) {
-      console.error(err)
+      if (err.message === 'Failed to fetch') {
+        dispatch(fetchNotifications(cacheController.getNotifications()))
+        dispatch(statusActions.setNotificationsStatus(ThingStatus.READY))
+      } else {
+        dispatch(statusActions.setNotificationsStatus(ThingStatus.ERROR))
+      }
     }
   }
 }

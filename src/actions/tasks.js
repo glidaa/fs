@@ -1,17 +1,15 @@
-import { graphqlOperation } from "@aws-amplify/api";
-import { AuthState } from '../constants';
+import { AuthState, ThingStatus } from '../constants';
 import { listTasksForProject } from "../graphql/queries"
 import * as appActions from "./app"
 import * as statusActions from "./status"
-import * as projectsActions from "./projects"
 import * as usersActions from "./users"
 import * as commentsActions from "./comments"
-import * as observersActions from "./observers"
-import * as mutationsActions from "./mutations"
+import * as attachmentsActions from "./attachments"
+import * as historyActions from "./history"
 import * as cacheController from "../controllers/cache"
-import { READY, LOADING } from "../constants";
 import prepareTaskToBeSent from "../utils/prepareTaskToBeSent";
-import execGraphQL from "../utils/execGraphQL";
+import API from '../amplify/API';
+import PubSub from '../amplify/PubSub';
 
 export const CREATE_TASK = "CREATE_TASK";
 export const UPDATE_TASK = "UPDATE_TASK";
@@ -39,10 +37,10 @@ export const emptyTasks = () => ({
   type: EMPTY_TASKS
 });
 
-const fetchTasks = (tasks, projectID) => ({
+const fetchTasks = (tasks, projectId) => ({
   type: FETCH_TASKS,
   tasks,
-  projectID
+  projectId
 });
 
 const fetchCachedTasks = (tasks) => ({
@@ -51,44 +49,52 @@ const fetchCachedTasks = (tasks) => ({
 });
 
 export const handleCreateTask = (taskState) => (dispatch, getState) => {
-  const { user, tasks } = getState()
+  const { app, user, projects } = getState()
   if (user.state === AuthState.SignedIn) {
     const dataToSend = prepareTaskToBeSent(taskState, user.data.username)
-    if (taskState.projectID === getState().app.selectedProject) {
+    if (taskState.projectId === getState().app.selectedProject) {
       dispatch(createTask({
         watchers: [],
-        permalink: Object.values(tasks).sort((a, b) => b.permalink - a.permalink)[0].permalink + 1,
+        permalink: projects[app.selectedProject].totalTasks + 1,
         owner: user.data.username,
         isVirtual: true,
         ...taskState
       }))
       dispatch(appActions.handleSetTask(taskState.id))
     }
-    dispatch(mutationsActions.scheduleMutation(
-      "createTask",
-      dataToSend,
-      (incoming) => {
+    API.mutate({
+      type: "createTask",
+      variables: dataToSend,
+      success: (incoming) => {
         dispatch(updateTask({
           id: incoming.data.createTask.id,
-          permalink: incoming.data.createTask.permalink,
-          isVirtual: false
+          action: "update",
+          field: "permalink",
+          value: incoming.data.createTask.permalink,
+        }))
+        dispatch(updateTask({
+          id: incoming.data.createTask.id,
+          action: "update",
+          field: "isVirtual",
+          value: false
         }))
         if (getState().app.selectedTask === taskState.id) {
+          dispatch(attachmentsActions.handleFetchAttachments(taskState.id))
+          dispatch(historyActions.handleFetchHistory(taskState.id))
           dispatch(commentsActions.handleFetchComments(taskState.id))
-          dispatch(observersActions.handleSetCommentsObservers(taskState.id))
+          PubSub.subscribeTopic("comments", taskState.id)
         }
       },
-      () => {
+      error: () => {
         if (getState().app.selectedTask === taskState.id) {
           dispatch(appActions.handleSetTask(null))
         }
         dispatch(removeTask(taskState.id))
       }
-    ))
+    })
   } else {
-    if (taskState.projectID === getState().app.selectedProject) {
+    if (taskState.projectId === getState().app.selectedProject) {
       dispatch(createTask(taskState))
-      dispatch(projectsActions.handleUpdateTaskCount(taskState.projectID, null, taskState.status))
       dispatch(appActions.handleSetTask(taskState.id))
     }
   }
@@ -96,195 +102,316 @@ export const handleCreateTask = (taskState) => (dispatch, getState) => {
 
 export const handleUpdateTask = (update) => (dispatch, getState) => {
   const { user, tasks } = getState()
-  const prevTaskState = {...tasks[update.id]}
-  if (update.task) {
-    const tREADYens = /^(.*?)(\/.*||)$/m.exec(update.task)
-    update.task = tREADYens[1];
-    dispatch(appActions.setCommand(tREADYens[2]))
-  }
+  if (
+    (update.action === "update" && tasks[update.id][update.field] === update.value) ||
+    (update.action === "append" && tasks[update.id][update.field].includes(update.value)) ||
+    (update.action === "remove" && !tasks[update.id][update.field].includes(update.value))
+  ) { return; }
+  const snapshot = {
+    id: update.id,
+    action:
+      update.action === "append"
+        ? "remove"
+        : update.action === "remove"
+        ? "append"
+        : "update",
+    field: update.field,
+    value:
+      update.action === "append" || update.action === "remove"
+        ? update.value
+        : tasks[update.id][update.field],
+  };
   if (tasks[update.id]) {
     dispatch(updateTask(update))
   }
   if (user.state === AuthState.SignedIn) {
-    dispatch(mutationsActions.scheduleMutation(
-      "updateTask",
-      update,
-      null,
-      () => {
+    API.mutate({
+      type: "updateTask" + update.field[0].toUpperCase() + update.field.slice(1),
+      variables: {
+        id: update.id,
+        [update.field]: update.value
+      },
+      success: null,
+      error: () => {
         if (getState().tasks[update.id]) {
-          dispatch(updateTask(prevTaskState))
+          dispatch(updateTask(snapshot))
         }
       }
-    ))
-  } else {
-    if (tasks[update.id]) {
-      if (update.status && prevTaskState.status !== update.status) {
-        dispatch(projectsActions.handleUpdateTaskCount(prevTaskState.projectID, prevTaskState.status, update.status))
-      }
-    }
+    })
   }
 }
 
-export const handleRemoveTask = (taskState) => (dispatch, getState) => {
+export const handleRemoveTask = (taskState, prevTask = null) => (dispatch, getState) => {
   const { user, tasks, app } = getState()
   if (app.selectedTask === taskState.id) {
-    dispatch(appActions.handleSetTask(taskState.prevTask))
+    dispatch(appActions.handleSetTask(prevTask))
   }
   if (tasks[taskState.id]) {
     dispatch(removeTask(taskState.id))
   }
   if (user.state === AuthState.SignedIn) {
-    dispatch(mutationsActions.scheduleMutation(
-      "deleteTaskAndComments",
-      { id: taskState.id },
-      null,
-      () => {
-        if (getState().app.selectedProject === taskState.projectID) {
+    API.mutate({
+      type: "deleteTaskAndComments",
+      variables: { id: taskState.id },
+      success: null,
+      error: () => {
+        if (getState().app.selectedProject === taskState.projectId) {
           dispatch(createTask(taskState))
         }
       }
-    ))
-  } else {
-    if (tasks[taskState.id]) {
-      dispatch(projectsActions.handleUpdateTaskCount(taskState.projectID, taskState.status, null))
-    }
+    })
   }
 }
 
-export const handleAssignTask = (taskID, username) => async (dispatch, getState) => {
-  const { tasks, user } = getState()
-  const prevAssignees = [...tasks[taskID].assignees]
+export const handleAddAssignee = (taskId, username) => async (dispatch, getState) => {
+  const { user } = getState()
   if (user.state === AuthState.SignedIn) {
-    if (/^user:.*$/.test(username)) {
-      await dispatch(usersActions.handleAddUsers([username.replace(/^user:/, "")]))
-    }
     dispatch(updateTask({
-      id: taskID,
-      assignees: [...new Set([...prevAssignees, username])]
+      id: taskId,
+      action: "append",
+      field: "assignees",
+      value: username
     }))
-    dispatch(mutationsActions.scheduleMutation(
-      "assignTask",
-      { id: taskID, assignee: username },
-      null,
-      () => {
-        if (getState().tasks[taskID]) {
+    API.mutate({
+      type: "addAssignee",
+      variables: { id: taskId, assignee: username },
+      success: null,
+      error: () => {
+        if (getState().tasks[taskId]) {
           dispatch(updateTask({
-            id: taskID,
-            assignees: prevAssignees
+            id: taskId,
+            action: "remove",
+            field: "assignees",
+            value: username
           }))
         }
       }
-    ))
-  } else if (/^anonymous:.*$/.test(username)) {
-    dispatch(updateTask({
-      id: taskID,
-      assignees: [...new Set([...prevAssignees, username])]
-    }))
+    })
   }
 }
 
-export const handleAddWatcher = (taskID, username) => async (dispatch, getState) => {
-  const { tasks, user } = getState()
-  if (user.state === AuthState.SignedIn) {
-    const prevWatchers = [...tasks[taskID].watchers]
-    dispatch(updateTask({
-      id: taskID,
-      watchers: [...new Set([...prevWatchers, username])]
-    }))
-    await dispatch(usersActions.handleAddUsers([username]))
-    dispatch(mutationsActions.scheduleMutation(
-      "addWatcher",
-      { id: taskID, watcher: username },
-      null,
-      () => {
-        if (getState().tasks[taskID]) {
-          dispatch(updateTask({
-            id: taskID,
-            watchers: prevWatchers
-          }))
-        }
-      }
-    ))
-  }
-}
-
-export const handleUnassignTask = (taskID, username) => async (dispatch, getState) => {
-  const { tasks, user } = getState()
-  const prevAssignees = [...tasks[taskID].assignees]
+export const handleRemoveAssignee = (taskId, username) => async (dispatch, getState) => {
+  const { user } = getState()
   dispatch(updateTask({
-    id: taskID,
-    assignees: [...prevAssignees].filter(x => x !== username)
+    id: taskId,
+    action: "remove",
+    field: "assignees",
+    value: username
   }))
   if (user.state === AuthState.SignedIn) {
-    dispatch(mutationsActions.scheduleMutation(
-      "unassignTask",
-      { id: taskID, assignee: username },
-      null,
-      () => {
-        if (getState().tasks[taskID]) {
+    API.mutate({
+      type: "removeAssignee",
+      variables: { id: taskId, assignee: username },
+      success: null,
+      error: () => {
+        if (getState().tasks[taskId]) {
           dispatch(updateTask({
-            id: taskID,
-            assignees: prevAssignees
+            id: taskId,
+            action: "append",
+            field: "assignees",
+            value: username
           }))
         }
       }
-    ))
+    })
   }
 }
 
-export const handleRemoveWatcher = (taskID, username) => async (dispatch, getState) => {
-  const { tasks, user } = getState()
-  if (user.state === AuthState.SignedIn) {
-    const prevWatchers = [...tasks[taskID].watchers]
-    dispatch(updateTask({
-      id: taskID,
-      watchers: [...prevWatchers].filter(x => x !== username)
-    }))
-    dispatch(mutationsActions.scheduleMutation(
-      "removeWatcher",
-      { id: taskID, watcher: username },
-      null,
-      () => {
-        if (getState().tasks[taskID]) {
-          dispatch(updateTask({
-            id: taskID,
-            watchers: prevWatchers
-          }))
-        }
-      }
-    ))
-  }
-}
-
-export const handleFetchTasks = (projectID, isInitial = false) => async (dispatch, getState) => {
+export const handleAddAnonymousAssignee = (taskId, username) => async (dispatch, getState) => {
   const { user } = getState()
+  dispatch(updateTask({
+    id: taskId,
+    action: "append",
+    field: "anonymousAssignees",
+    value: username
+  }))
+  if (user.state === AuthState.SignedIn) {
+    API.mutate({
+      type: "addAnonymousAssignee",
+      variables: { id: taskId, assignee: username },
+      success: null,
+      error: () => {
+        if (getState().tasks[taskId]) {
+          dispatch(updateTask({
+            id: taskId,
+            action: "remove",
+            field: "anonymousAssignees",
+            value: username
+          }))
+        }
+      }
+    })
+  }
+}
+
+export const handleRemoveAnonymousAssignee = (taskId, username) => async (dispatch, getState) => {
+  const { user } = getState()
+  dispatch(updateTask({
+    id: taskId,
+    action: "remove",
+    field: "anonymousAssignees",
+    value: username
+  }))
+  if (user.state === AuthState.SignedIn) {
+    API.mutate({
+      type: "removeAnonymousAssignee",
+      variables: { id: taskId, assignee: username },
+      success: null,
+      error: () => {
+        if (getState().tasks[taskId]) {
+          dispatch(updateTask({
+            id: taskId,
+            action: "append",
+            field: "anonymousAssignees",
+            value: username
+          }))
+        }
+      }
+    })
+  }
+}
+
+export const handleAddInvitedAssignee = (taskId, username) => async (dispatch, getState) => {
+  const { user } = getState()
+  dispatch(updateTask({
+    id: taskId,
+    action: "append",
+    field: "invitedAssignees",
+    value: username
+  }))
+  if (user.state === AuthState.SignedIn) {
+    API.mutate({
+      type: "addInvitedAssignee",
+      variables: { id: taskId, assignee: username },
+      success: null,
+      error: () => {
+        if (getState().tasks[taskId]) {
+          dispatch(updateTask({
+            id: taskId,
+            action: "remove",
+            field: "invitedAssignees",
+            value: username
+          }))
+        }
+      }
+    })
+  }
+}
+
+export const handleRemoveInvitedAssignee = (taskId, username) => async (dispatch, getState) => {
+  const { user } = getState()
+  dispatch(updateTask({
+    id: taskId,
+    action: "remove",
+    field: "invitedAssignees",
+    value: username
+  }))
+  if (user.state === AuthState.SignedIn) {
+    API.mutate({
+      type: "removeInvitedAssignee",
+      variables: { id: taskId, assignee: username },
+      success: null,
+      error: () => {
+        if (getState().tasks[taskId]) {
+          dispatch(updateTask({
+            id: taskId,
+            action: "append",
+            field: "invitedAssignees",
+            value: username
+          }))
+        }
+      }
+    })
+  }
+}
+
+export const handleAddWatcher = (taskId, username) => async (dispatch, getState) => {
+  const { user } = getState()
+  if (user.state === AuthState.SignedIn) {
+    dispatch(updateTask({
+      id: taskId,
+      action: "append",
+      field: "watchers",
+      value: username
+    }))
+    await dispatch(usersActions.handleAddUsers([username]))
+    API.mutate({
+      type: "addWatcher",
+      variables: { id: taskId, watcher: username },
+      success: null,
+      error: () => {
+        if (getState().tasks[taskId]) {
+          dispatch(updateTask({
+            id: taskId,
+            action: "remove",
+            field: "watchers",
+            value: username
+          }))
+        }
+      }
+    })
+  }
+}
+
+export const handleRemoveWatcher = (taskId, username) => async (dispatch, getState) => {
+  const { user } = getState()
+  if (user.state === AuthState.SignedIn) {
+    dispatch(updateTask({
+      id: taskId,
+      action: "remove",
+      field: "watchers",
+      value: username
+    }))
+    API.mutate({
+      type: "removeWatcher",
+      variables: { id: taskId, watcher: username },
+      success: null,
+      error: () => {
+        if (getState().tasks[taskId]) {
+          dispatch(updateTask({
+            id: taskId,
+            action: "append",
+            field: "watchers",
+            value: username
+          }))
+        }
+      }
+    })
+  }
+}
+
+export const handleFetchTasks = (projectId, isInitial = false) => async (dispatch, getState) => {
+  dispatch(statusActions.setTasksStatus(ThingStatus.FETCHING))
+  const { user, projects } = getState()
   if (!isInitial) {
     dispatch(appActions.handleSetTask(null))
   }
-  if (user.state === AuthState.SignedIn) {
+  if (user.state === AuthState.SignedIn || projects[projectId].isTemp) {
     try {
-      dispatch(statusActions.setTasksStatus(LOADING))
-      const res = await execGraphQL(graphqlOperation(listTasksForProject, { projectID }))
+      const res = await API.execute(listTasksForProject, { projectId })
       const items = res.data.listTasksForProject.items
       let usersToBeFetched = []
       for (const item of items) {
         usersToBeFetched = [...new Set([
           ...usersToBeFetched,
-          ...item.assignees.filter(x => /^user:.*$/.test(x)).map(x => x.replace(/^user:/, "")),
+          ...item.assignees,
           ...item.watchers
         ])]
       }
       await dispatch(usersActions.handleAddUsers(usersToBeFetched))
-      dispatch(fetchTasks(items, projectID))
-      dispatch(statusActions.setTasksStatus(READY))
+      dispatch(fetchTasks(items, projectId))
+      dispatch(statusActions.setTasksStatus(ThingStatus.READY))
     } catch (err) {
-      dispatch(statusActions.setTasksStatus(READY))
-      if (err.errors[0].message === 'Network Error') {
-        dispatch(fetchCachedTasks(cacheController.getTasksByProjectID(projectID)))
+      if (err.message === 'Failed to fetch') {
+        dispatch(fetchCachedTasks(cacheController.getTasksByProjectId(projectId)))
+        dispatch(statusActions.setTasksStatus(ThingStatus.READY))
+      } else {
+        dispatch(statusActions.setTasksStatus(ThingStatus.ERROR))
       }
     }
   } else {
-    dispatch(fetchCachedTasks(cacheController.getTasksByProjectID(projectID)))
+    dispatch(fetchCachedTasks(cacheController.getTasksByProjectId(projectId)))
+    dispatch(statusActions.setTasksStatus(ThingStatus.READY))
   }
   return getState().tasks
 }

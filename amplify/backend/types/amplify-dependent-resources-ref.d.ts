@@ -22,24 +22,6 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "function": {
-        "fsCognitoPostConfirmation": {
-            "Name": "string",
-            "Arn": "string",
-            "LambdaExecutionRole": "string",
-            "Region": "string"
-        },
-        "fsCoreApiResolver": {
-            "Name": "string",
-            "Arn": "string",
-            "Region": "string",
-            "LambdaExecutionRole": "string"
-        },
-        "fsCognitoPostConfirmationInvoker": {
-            "Name": "string",
-            "Arn": "string",
-            "Region": "string",
-            "LambdaExecutionRole": "string"
-        },
         "fsDailyReport": {
             "Name": "string",
             "Arn": "string",
@@ -47,40 +29,17 @@ export type AmplifyDependentResourcesAttributes = {
             "LambdaExecutionRole": "string",
             "CloudWatchEventRule": "string"
         },
-        "fsUserConnection": {
+        "fsCoreApiResolver": {
             "Name": "string",
             "Arn": "string",
             "Region": "string",
             "LambdaExecutionRole": "string"
         },
-        "fsUserDisconnection": {
+        "fsCognitoPostConfirmation": {
             "Name": "string",
             "Arn": "string",
-            "Region": "string",
-            "LambdaExecutionRole": "string"
-        },
-        "fsJoinProject": {
-            "Name": "string",
-            "Arn": "string",
-            "Region": "string",
-            "LambdaExecutionRole": "string"
-        },
-        "fsLeaveProject": {
-            "Name": "string",
-            "Arn": "string",
-            "Region": "string",
-            "LambdaExecutionRole": "string"
-        },
-        "fsSendRealtimeData": {
-            "Name": "string",
-            "Arn": "string",
-            "Region": "string",
-            "LambdaExecutionRole": "string"
-        }
-    },
-    "custom": {
-        "fsRealtimeDataManager": {
-            "WebSocketURI": "string"
+            "LambdaExecutionRole": "string",
+            "Region": "string"
         }
     }
 }

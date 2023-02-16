@@ -3,65 +3,78 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  & > label {
-    @include themify(color, "txtColor");
-    margin-bottom: 0;
-    width: max-content;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  & > *:not(:last-child) {
-    margin-bottom: 5px;
-  }
-}
-
-.Selection {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
   width: 100%;
-  text-align: left;
-  padding: 12px;
-  border: 1px solid transparent;
-  outline: none;
-  cursor: pointer;
-  border-radius: 8px;
-  @include themify(background-color, "fieldBg");
-  box-shadow: 0px 2px 4px rgb(0 0 0 / 6%);
-  transition: color 0.2s, border-color 0.2s;
-  & > span:nth-child(1) {
-    font-size: 24px;
-    font-weight: 600;
-    @include themify(color, "primaryLight");
+  & > label {
+    width: max-content;
+    margin-bottom: 0;
+    color: var(--color-fill-color-text-primary);
+    font-size: 0.875rem;
+    transition: color 0.2s;
   }
-  & > span:nth-child(2) {
-    font-size: 14px;
-    font-weight: 400;
-    color: #aaa8ac;
-  }
-  &.selected {
-    @include themify(border-color, "primary");
-    & > span:nth-child(1) {
-      @include themify(color, "primary");
-    }
-    & > span:nth-child(2) {
-      color: #5d6969;
-    }
-  }
+  gap: 5px;
 }
 
 .SelectContainer {
   display: flex;
   flex-direction: column;
   width: 100%;
+  gap: 5px;
+  &.row {
+    flex-direction: row;
+  }
+  &.centeredText {
+    text-align: center;
+  }
+}
+
+.Selection {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  border: 2px solid;
+  border-radius: 4px;
+  border-color: var(--color-stroke-color-control-stroke-on-accent-tertiary);
+  outline: none;
+  background-color: var(--color-background-fill-color-card-background-default);
+  text-align: left;
+  text-align: inherit;
+  cursor: pointer;
   opacity: 1;
-  transition: opacity 0.3s;
-  & > *:not(:last-child) {
-    margin-bottom: 5px;
+  transition: color 0.2s, border-color 0.2s, opacity 0.3s;
+  & > span:nth-child(1) {
+    width: inherit;
+    color: var(--color-fill-color-text-secondary);
+    font-size: 1.5rem;
+    transition: color 0.2s;
+  }
+  & > span:nth-child(2) {
+    width: inherit;
+    color: #aaa8ac;
+    font-size: 0.875rem;
+  }
+  &:hover, &:active {
+    background-color: var(--color-fill-color-subtle-secondary) !important;
+  }
+  &.selected {
+    border-color: var(--color-fill-color-accent-primary);
+    background-color: var(--color-fill-color-subtle-tertiary);
+    cursor: default;
+    & > span:nth-child(1) {
+      color: var(--color-fill-color-accent-primary);
+    }
+    & > span:nth-child(2) {
+      color: var(--color-fill-color-text-primary);
+    }
+  }
+  &.readOnly {
+    cursor: default;
   }
   &.disabled {
+    cursor: not-allowed;
     opacity: 0.6;
   }
 }

@@ -6,7 +6,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  @include themify(color, "primary");
-  @include themify(background-color, "primaryLight");
+  border: 1px solid var(--color-stroke-color-card-stroke-default);
+  background-clip: padding-box;
+  background-color: var(--color-fill-color-control-alt-quarternary);
+  color: var(--color-fill-color-text-primary);
   line-height: 0;
+  transition: background-color 0.2s, color 0.2s;
+  &.borderless {
+    border: none;
+  }
 }

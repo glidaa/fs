@@ -4,22 +4,24 @@ backend:
     build:
       commands:
         - '# Execute Amplify CLI with the helper script'
-        - rm -f ./src/aws-exports.js
-        - envCache --set stackInfo ""
         - echo "SENDGRID_API_KEY=$SENDGRID_API_KEY" >> amplify/backend/function/fsCoreApiResolver/src/.env
+        - echo "RDS_HOST=$RDS_HOST" >> amplify/backend/function/fsCoreApiResolver/src/.env
+        - echo "RDS_USER=$RDS_USER" >> amplify/backend/function/fsCoreApiResolver/src/.env
+        - echo "RDS_PASSWORD=$RDS_PASSWORD" >> amplify/backend/function/fsCoreApiResolver/src/.env
         - echo "SENDGRID_API_KEY=$SENDGRID_API_KEY" >> amplify/backend/function/fsCognitoPostConfirmation/src/.env
-        - yum install -y jq
-        - chmod +x ./amplifyPush.sh
-        - ./amplifyPush.sh -e $AWS_BRANCH --simple
+        - echo "RDS_HOST=$RDS_HOST" >> amplify/backend/function/fsCognitoPostConfirmation/src/.env
+        - echo "RDS_USER=$RDS_USER" >> amplify/backend/function/fsCognitoPostConfirmation/src/.env
+        - echo "RDS_PASSWORD=$RDS_PASSWORD" >> amplify/backend/function/fsCognitoPostConfirmation/src/.env
+        - amplifyPush --simple
 frontend:
   phases:
     preBuild:
       commands:
         - npm install --force
-        - npm install immutable --force
     build:
       commands:
         - npm run build
+        - npx chromatic --project-token $CHROMATIC_TOKEN --exit-zero-on-changes --exit-once-uploaded
   artifacts:
     baseDirectory: build
     files:
