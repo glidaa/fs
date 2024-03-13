@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import generateId from "../../../utils/generateId";
+import generateId from "../../../utils/generateID";
 import Button from "../Button";
 import ComboBox from "./ComboBox";
 import TextField from "./TextField";
