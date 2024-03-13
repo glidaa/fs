@@ -1,4 +1,4 @@
-import generateId from './utils/generateId'
+import generateId from './utils/generateID'
 import generateRandomWords from './utils/generateRandomWords';
 
 export const ThingStatus = {
