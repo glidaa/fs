@@ -2,7 +2,7 @@ import awsconfig from "../aws-exports";
 import Auth from "./Auth";
 import signAwsReq from "./signAwsReq";
 import * as mutationsGraphQL from "../graphql/mutations";
-import * as mutationId from "../utils/mutationID";
+import * as mutationId from "../utils/mutationId";
 
 class API {
   constructor() {
