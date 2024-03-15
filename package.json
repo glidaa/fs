@@ -36,6 +36,7 @@
     "backend": "npm install -C amplify/backend/function/fsCoreApiResolver/src && npm install -C amplify/backend/function/fsCognitoPostConfirmation/src && npm install -C amplify/backend/function/fsDailyReport/src && rm -rf amplify/backend/api/fsCoreAPI/build && rm -rf amplify/backend/api/fsCoreAPI/pipelineFunctions && rm -rf amplify/backend/api/fsCoreAPI/resolvers && amplify api gql-compile --allow-destructive-graphql-schema-updates && amplify mock api",
     "preview": "vite preview",
     "storybook": "sb dev -p 6006",
+    "chromatic": "npx chromatic --project-token=chpt_e1500eabe549791",
     "build-storybook": "sb build"
   },
   "babel": {
