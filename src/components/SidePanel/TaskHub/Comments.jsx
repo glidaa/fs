@@ -9,7 +9,7 @@ import { ReactComponent as CommentsIllustartion } from "../../../assets/undraw_P
 import { ReactComponent as RemoveIcon } from "@fluentui/svg-icons/icons/delete_24_regular.svg"
 import * as commentsActions from "../../../actions/comments";
 import Avatar from '../../UI/Avatar';
-import generateId from '../../../utils/generateId';
+import generateId from '../../../utils/generateID';
 import Illustration from '../../UI/Illustration';
 import formatDate from '../../../utils/formatDate';
 import Button from '../../UI/Button';

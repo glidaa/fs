@@ -6,11 +6,11 @@ import * as appActions from "../actions/app"
 import * as userActions from "../actions/user"
 import * as usersActions from "../actions/users"
 import * as historyActions from "../actions/history"
-import * as mutationId from "../utils/mutationId"
+import * as mutationId from "../utils/mutationID"
 import filterObj from "../utils/filterObj";
 import updateAssignedTasks from "../pushedUpdates/updateAssignedTasks";
 import updateWatchedTasks from "../pushedUpdates/updateWatchedTasks";
-import generateId from "../utils/generateId";
+import generateId from "../utils/generateID";
 import store from "../store"
 import { navigate } from "../components/Router"
 import PubSub from "./PubSub"
