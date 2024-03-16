@@ -1,4 +1,44 @@
 {
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-fsapp-staging-25002-authRole",
+      "UnauthRoleArn": "arn:aws:iam::026152918307:role/amplify-fsapp-staging-25002-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::026152918307:role/amplify-fsapp-staging-25002-authRole",
+      "Region": "ap-southeast-2",
+      "DeploymentBucketName": "amplify-fsapp-staging-25002-deployment",
+      "UnauthRoleName": "amplify-fsapp-staging-25002-unauthRole",
+      "StackName": "amplify-fsapp-staging-25002",
+      "StackId": "arn:aws:cloudformation:ap-southeast-2:026152918307:stack/amplify-fsapp-staging-25002/e312a9c0-e33f-11ee-96e4-02d2a4cdb4db",
+      "AmplifyAppId": "d39xr3epr9nf02",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-fsapp-staging-25002-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d39xr3epr9nf02",
+          "type": "manual"
+        }
+      },
+      "auth": {
+        "fsCognito": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "fsCognitoPostConfirmation": {
+          "deploymentBucketName": "amplify-fsapp-staging-25002-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-4a58483365676b364d42-build.zip"
+        },
+        "fsCoreApiResolver": {
+          "deploymentBucketName": "amplify-fsapp-staging-25002-deployment",
+          "s3Key": "amplify-builds/fsCoreApiResolver-304a767634443146676b-build.zip"
+        },
+        "fsDailyReport": {
+          "deploymentBucketName": "amplify-fsapp-staging-25002-deployment",
+          "s3Key": "amplify-builds/fsDailyReport-6a644a79466b69554b33-build.zip"
+        }
+      }
+    }
+  },
   "experiment": {
     "awscloudformation": {
       "AuthRoleName": "amplify-fs-experiment-115527-authRole",
