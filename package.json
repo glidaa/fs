@@ -85,7 +85,7 @@
     "postcss-scss": "^4.0.5",
     "prettier": "^2.7.1",
     "sass": "^1.56.1",
-    "vite": "^3.2.4",
+    "vite": "^3.2.8",
     "vite-plugin-pwa": "^0.13.3"
   },
   "readme": "ERROR: No README data found!",
