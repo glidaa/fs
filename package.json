@@ -63,6 +63,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-react": "^7.23.3",
     "@storybook/addon-a11y": "^7.0.0-alpha.54",
     "@storybook/addon-essentials": "^7.0.0-alpha.54",
     "@storybook/addon-interactions": "^7.0.0-alpha.54",
