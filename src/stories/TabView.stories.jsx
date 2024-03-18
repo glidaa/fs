@@ -1,7 +1,7 @@
 import React from "react";
 import { useArgs } from "@storybook/client-api";
-
-import TabView from "../components/UI/TabView";
+import TabView from "../components/UI/TabView.jsx";
+import { FaUserAlt, FaList, FaEye } from 'react-icons/fa';
 
 export default {
   title: "ForwardSlash/TabView",
@@ -19,12 +19,13 @@ export const Default = Template.bind({});
 Default.args = {
   value: "owned",
   tabs: [
-    ["owned", "Live Makkah"],
-    ["assigned", "Assigned"],
-    ["watched", "Watched"]
+    ["owned", "Live Makkah", FaUserAlt],
+    ["assigned", "Assigned", FaList],
+    ["watched", "Watched", FaEye]
   ],
   disabled: false
 };
+
 
 export const Disabled = Template.bind({});
 Disabled.args = {

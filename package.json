@@ -24,6 +24,7 @@
     "nanoid": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
     "react-outer-click": "3.8.0",
     "react-redux": "^8.0.5",
     "redux": "^4.2.0",
@@ -35,8 +36,9 @@
     "build": "sed -i 's/global/globalFlag/' ./node_modules/highlight.js/lib/core.js && vite build",
     "backend": "npm install -C amplify/backend/function/fsCoreApiResolver/src && npm install -C amplify/backend/function/fsCognitoPostConfirmation/src && npm install -C amplify/backend/function/fsDailyReport/src && rm -rf amplify/backend/api/fsCoreAPI/build && rm -rf amplify/backend/api/fsCoreAPI/pipelineFunctions && rm -rf amplify/backend/api/fsCoreAPI/resolvers && amplify api gql-compile --allow-destructive-graphql-schema-updates && amplify mock api",
     "preview": "vite preview",
-    "storybook": "sb dev -p 6006",
-    "build-storybook": "sb build"
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=chpt_4e941880a34d608"
   },
   "babel": {
     "presets": [
@@ -68,14 +70,18 @@
     "@storybook/addon-essentials": "^7.0.0-alpha.54",
     "@storybook/addon-interactions": "^7.0.0-alpha.54",
     "@storybook/addon-links": "^7.0.0-alpha.54",
+    "@storybook/addon-onboarding": "^1.0.11",
+    "@storybook/blocks": "^7.6.17",
     "@storybook/builder-vite": "^7.0.0-alpha.34",
     "@storybook/cli": "^7.0.0-alpha.54",
     "@storybook/client-api": "^7.0.0-alpha.54",
     "@storybook/react": "^7.0.0-alpha.54",
     "@storybook/react-vite": "^7.0.0-alpha.54",
+    "@storybook/test": "^7.6.17",
     "@vitejs/plugin-react": "^2.2.0",
     "autoprefixer": "^10.4.13",
     "babel-loader": "^9.1.0",
+    "chromatic": "^11.0.8",
     "cross-env": "^7.0.3",
     "css-declaration-sorter": "^6.3.1",
     "eslint": "^8.28.0",
@@ -84,10 +90,10 @@
     "postcss-cli": "^10.0.0",
     "postcss-scss": "^4.0.5",
     "prettier": "^2.7.1",
+    "prop-types": "^15.8.1",
     "sass": "^1.56.1",
+    "storybook": "^7.6.17",
     "vite": "^3.2.4",
     "vite-plugin-pwa": "^0.13.3"
-  },
-  "readme": "ERROR: No README data found!",
-  "_id": "forwardslash@0.1.0"
+  }
 }
