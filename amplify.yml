@@ -21,7 +21,7 @@ frontend:
     build:
       commands:
         - npm run build
-        - npx chromatic --project-token=chpt_4e941880a34d608 --exit-zero-on-changes --exit-once-uploaded
+        - npx chromatic --project-token $CHROMATIC_TOKEN --exit-zero-on-changes --exit-once-uploaded
   artifacts:
     baseDirectory: build
     files:
