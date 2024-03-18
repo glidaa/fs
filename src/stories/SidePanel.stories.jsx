@@ -17,7 +17,7 @@ const Template = (args) => {
       onClose={handleClose}
       header={
         <center>
-          <b>Can you read this?!</b>
+          <b>Can you read this?</b>
         </center>
       }
       footer={
