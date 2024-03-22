@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Lambda resource stack creation using Amplify CLI",
+  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.10.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "GROUP": {
       "Type": "String",
@@ -213,6 +213,14 @@
     "Region": {
       "Value": {
         "Ref": "AWS::Region"
+      }
+    },
+    "LambdaExecutionRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "LambdaExecutionRole",
+          "Arn"
+        ]
       }
     }
   }

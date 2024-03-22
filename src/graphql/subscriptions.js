@@ -18,6 +18,7 @@ export const onPushNotification = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -28,6 +29,7 @@ export const onPushUserUpdate = /* GraphQL */ `
       firstName
       lastName
       updatedAt
+      __typename
     }
   }
 `;
@@ -38,6 +40,7 @@ export const onDismissNotification = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -54,6 +57,7 @@ export const onCreateOwnedProject = /* GraphQL */ `
         id
         title
         synonym
+        __typename
       }
       defaultStatus
       totalTasks
@@ -61,6 +65,7 @@ export const onCreateOwnedProject = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -77,11 +82,13 @@ export const onUpdateOwnedProject = /* GraphQL */ `
         id
         title
         synonym
+        __typename
       }
       defaultStatus
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -92,6 +99,7 @@ export const onDeleteOwnedProject = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -108,11 +116,13 @@ export const onUpdateProject = /* GraphQL */ `
         id
         title
         synonym
+        __typename
       }
       defaultStatus
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -123,6 +133,7 @@ export const onDeleteProject = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -146,6 +157,7 @@ export const onCreateTaskByProjectId = /* GraphQL */ `
       createdAt
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -159,6 +171,7 @@ export const onUpdateTaskByProjectId = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -169,6 +182,7 @@ export const onDeleteTaskByProjectId = /* GraphQL */ `
       projectId
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -182,6 +196,7 @@ export const onCreateCommentByTaskId = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -192,6 +207,7 @@ export const onDeleteCommentByTaskId = /* GraphQL */ `
       taskId
       updatedAt
       mutationId
+      __typename
     }
   }
 `;

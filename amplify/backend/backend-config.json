@@ -1,127 +1,193 @@
 {
   "api": {
     "fsCoreAPI": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
       "output": {
         "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
               "userPoolId": "authfsCognito"
             }
-          },
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AWS_IAM"
-            }
-          ]
+          }
         }
-      }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
     }
   },
   "auth": {
-    "userPoolGroups": {
-      "service": "Cognito-UserPool-Groups",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [
-        {
-          "category": "auth",
-          "resourceName": "fsCognito",
-          "attributes": [
-            "UserPoolId",
-            "AppClientIDWeb",
-            "AppClientID",
-            "IdentityPoolId"
-          ]
-        }
-      ]
-    },
     "fsCognito": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
+      "customAuth": false,
       "dependsOn": [
         {
-          "category": "function",
-          "resourceName": "fsCognitoPostConfirmation",
-          "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
             "Name"
-          ]
+          ],
+          "category": "function",
+          "resourceName": "fsCognitoPostConfirmation",
+          "triggerProvider": "Cognito"
         }
       ],
-      "customAuth": false,
       "frontendAuthConfig": {
-        "socialProviders": [],
-        "usernameAttributes": [],
+        "mfaConfiguration": "OPTIONAL",
+        "mfaTypes": [
+          "SMS",
+          "TOTP"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_SYMBOLS"
+          ],
+          "passwordPolicyMinLength": "8"
+        },
         "signupAttributes": [
           "EMAIL",
           "FAMILY_NAME",
           "GIVEN_NAME",
           "PHONE_NUMBER"
         ],
-        "passwordProtectionSettings": {
-          "passwordPolicyMinLength": "8",
-          "passwordPolicyCharacters": [
-            "REQUIRES_LOWERCASE",
-            "REQUIRES_UPPERCASE",
-            "REQUIRES_NUMBERS",
-            "REQUIRES_SYMBOLS"
-          ]
-        },
-        "mfaConfiguration": "OPTIONAL",
-        "mfaTypes": [
-          "SMS",
-          "TOTP"
-        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
         "verificationMechanisms": [
           "EMAIL"
         ]
-      }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    },
+    "userPoolGroups": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "fsCognito"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito-UserPool-Groups"
     }
   },
+  "custom": {},
   "function": {
-    "fsDailyReport": {
+    "fsCognitoPostConfirmation": {
       "build": true,
       "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": []
+      "service": "Lambda"
     },
     "fsCoreApiResolver": {
       "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
       "dependsOn": [
         {
-          "category": "api",
-          "resourceName": "fsCoreAPI",
           "attributes": [
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
-          ]
+          ],
+          "category": "api",
+          "resourceName": "fsCoreAPI"
         },
         {
-          "category": "auth",
-          "resourceName": "fsCognito",
           "attributes": [
             "UserPoolId"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "fsCognito"
         }
-      ]
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     },
-    "fsCognitoPostConfirmation": {
+    "fsDailyReport": {
       "build": true,
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "hosting": {
     "amplifyhosting": {
-      "service": "amplifyhosting",
       "providerPlugin": "awscloudformation",
+      "service": "amplifyhosting",
       "type": "manual"
     }
   },
-  "custom": {}
+  "parameters": {
+    "AMPLIFY_function_fsCognitoPostConfirmation_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "fsCognitoPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_fsCognitoPostConfirmation_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "fsCognitoPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_fsCoreApiResolver_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "fsCoreApiResolver"
+        }
+      ]
+    },
+    "AMPLIFY_function_fsCoreApiResolver_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "fsCoreApiResolver"
+        }
+      ]
+    },
+    "AMPLIFY_function_fsDailyReport_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "fsDailyReport"
+        }
+      ]
+    },
+    "AMPLIFY_function_fsDailyReport_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "fsDailyReport"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    }
+  }
 }

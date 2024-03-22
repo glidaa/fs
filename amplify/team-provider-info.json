@@ -1,47 +1,39 @@
 {
-  "experiment": {
+  "live": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-fs-experiment-115527-authRole",
-      "UnauthRoleArn": "arn:aws:iam::026152918307:role/amplify-fs-experiment-115527-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::026152918307:role/amplify-fs-experiment-115527-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-fs-experiment-115527-deployment",
-      "UnauthRoleName": "amplify-fs-experiment-115527-unauthRole",
-      "StackName": "amplify-fs-experiment-115527",
-      "StackId": "arn:aws:cloudformation:us-east-1:026152918307:stack/amplify-fs-experiment-115527/245cb470-f58a-11ec-98a3-12031e9b437d",
-      "AmplifyAppId": "d2ixad7dedjidg"
+      "AuthRoleName": "amplify-forwardslash-live-12321-authRole",
+      "UnauthRoleArn": "arn:aws:iam::026152918307:role/amplify-forwardslash-live-12321-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::026152918307:role/amplify-forwardslash-live-12321-authRole",
+      "Region": "ap-southeast-2",
+      "DeploymentBucketName": "amplify-forwardslash-live-12321-deployment",
+      "UnauthRoleName": "amplify-forwardslash-live-12321-unauthRole",
+      "StackName": "amplify-forwardslash-live-12321",
+      "StackId": "arn:aws:cloudformation:ap-southeast-2:026152918307:stack/amplify-forwardslash-live-12321/c563f550-e7ea-11ee-925a-06c799251653",
+      "AmplifyAppId": "d1gk5z33epfleh"
     },
     "categories": {
       "auth": {
-        "userPoolGroups": {},
-        "fsCognito": {}
+        "fsCognito": {},
+        "userPoolGroups": {}
       },
       "function": {
-        "fsDailyReport": {
-          "deploymentBucketName": "amplify-fs-experiment-115527-deployment",
-          "s3Key": "amplify-builds/fsDailyReport-7934642b415473725775-build.zip"
+        "fsCognitoPostConfirmation": {
+          "deploymentBucketName": "amplify-forwardslash-live-12321-deployment",
+          "s3Key": "amplify-builds/fsCognitoPostConfirmation-44384a7646566b595745-build.zip"
         },
         "fsCoreApiResolver": {
-          "deploymentBucketName": "amplify-fs-experiment-115527-deployment",
-          "s3Key": "amplify-builds/fsCoreApiResolver-457a6f447156566d7666-build.zip"
+          "deploymentBucketName": "amplify-forwardslash-live-12321-deployment",
+          "s3Key": "amplify-builds/fsCoreApiResolver-45566e422b68417a5375-build.zip"
         },
-        "fsCognitoPreAuthentication": {},
-        "fsCognitoPostConfirmation": {
-          "GROUP": "free",
-          "deploymentBucketName": "amplify-fs-experiment-115527-deployment",
-          "s3Key": "amplify-builds/fsCognitoPostConfirmation-7770325a697569366e6f-build.zip"
+        "fsDailyReport": {
+          "deploymentBucketName": "amplify-forwardslash-live-12321-deployment",
+          "s3Key": "amplify-builds/fsDailyReport-476244565868714d6234-build.zip"
         }
       },
       "hosting": {
         "amplifyhosting": {
-          "appId": "d2ixad7dedjidg",
+          "appId": "d1gk5z33epfleh",
           "type": "manual"
-        }
-      },
-      "storage": {
-        "forwardslash9f6e4158": {
-          "bucketName": "fs-attachments",
-          "region": "us-east-1"
         }
       }
     }

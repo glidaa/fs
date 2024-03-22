@@ -11,7 +11,9 @@ export const searchUserToAssign = /* GraphQL */ `
         email
         createdAt
         updatedAt
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -25,7 +27,9 @@ export const searchUserToWatch = /* GraphQL */ `
         email
         createdAt
         updatedAt
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -33,6 +37,7 @@ export const initializeUpload = /* GraphQL */ `
   query InitializeUpload($contentType: String!, $taskId: ID!) {
     initializeUpload(contentType: $contentType, taskId: $taskId) {
       presignedUrl
+      __typename
     }
   }
 `;
@@ -46,17 +51,14 @@ export const listOwnedProjects = /* GraphQL */ `
         title
         privacy
         permissions
-        statusSet {
-          id
-          title
-          synonym
-        }
         defaultStatus
         totalTasks
         createdAt
         updatedAt
         owner
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -70,17 +72,14 @@ export const listAssignedProjects = /* GraphQL */ `
         title
         privacy
         permissions
-        statusSet {
-          id
-          title
-          synonym
-        }
         defaultStatus
         totalTasks
         createdAt
         updatedAt
         owner
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -94,17 +93,14 @@ export const listWatchedProjects = /* GraphQL */ `
         title
         privacy
         permissions
-        statusSet {
-          id
-          title
-          synonym
-        }
         defaultStatus
         totalTasks
         createdAt
         updatedAt
         owner
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -126,7 +122,9 @@ export const listNotifications = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -139,6 +137,7 @@ export const getUserByUsername = /* GraphQL */ `
       email
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -152,7 +151,9 @@ export const listUsersByUsernames = /* GraphQL */ `
         email
         createdAt
         updatedAt
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -165,7 +166,9 @@ export const listAttachmentsByTaskId = /* GraphQL */ `
         contentType
         size
         url
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -182,12 +185,14 @@ export const getProjectById = /* GraphQL */ `
         id
         title
         synonym
+        __typename
       }
       defaultStatus
       totalTasks
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -204,12 +209,14 @@ export const getProjectByPermalink = /* GraphQL */ `
         id
         title
         synonym
+        __typename
       }
       defaultStatus
       totalTasks
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -224,7 +231,9 @@ export const listHistoryByTaskId = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -248,7 +257,9 @@ export const listTasksForProject = /* GraphQL */ `
         watchers
         createdAt
         updatedAt
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -262,7 +273,9 @@ export const listCommentsForTask = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        __typename
       }
+      __typename
     }
   }
 `;

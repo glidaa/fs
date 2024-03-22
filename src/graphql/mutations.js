@@ -18,6 +18,7 @@ export const pushNotification = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -28,6 +29,7 @@ export const pushUserUpdate = /* GraphQL */ `
       firstName
       lastName
       updatedAt
+      __typename
     }
   }
 `;
@@ -35,6 +37,7 @@ export const uploadExternal = /* GraphQL */ `
   mutation UploadExternal($url: AWSURL!, $taskId: ID!) {
     uploadExternal(url: $url, taskId: $taskId) {
       success
+      __typename
     }
   }
 `;
@@ -51,6 +54,7 @@ export const createProject = /* GraphQL */ `
         id
         title
         synonym
+        __typename
       }
       defaultStatus
       totalTasks
@@ -58,6 +62,7 @@ export const createProject = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -81,6 +86,7 @@ export const createTask = /* GraphQL */ `
       createdAt
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -94,6 +100,7 @@ export const createComment = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -110,11 +117,13 @@ export const updateProject = /* GraphQL */ `
         id
         title
         synonym
+        __typename
       }
       defaultStatus
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -126,6 +135,7 @@ export const updateProjectTitle = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -139,6 +149,7 @@ export const updateTaskRank = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -152,6 +163,7 @@ export const updateTaskTask = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -165,6 +177,7 @@ export const updateTaskDescription = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -178,6 +191,7 @@ export const updateTaskDue = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -191,6 +205,7 @@ export const updateTaskTags = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -204,6 +219,7 @@ export const updateTaskStatus = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -217,6 +233,7 @@ export const updateTaskPriority = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -227,6 +244,7 @@ export const updateUser = /* GraphQL */ `
       firstName
       lastName
       updatedAt
+      __typename
     }
   }
 `;
@@ -237,6 +255,7 @@ export const deleteProjectAndTasks = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -247,6 +266,7 @@ export const deleteTaskAndComments = /* GraphQL */ `
       projectId
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -257,6 +277,7 @@ export const deleteComment = /* GraphQL */ `
       taskId
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -267,6 +288,7 @@ export const dismissNotification = /* GraphQL */ `
       updatedAt
       owner
       mutationId
+      __typename
     }
   }
 `;
@@ -288,7 +310,9 @@ export const dismissNotifications = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -302,6 +326,7 @@ export const addAssignee = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -315,6 +340,7 @@ export const removeAssignee = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -328,6 +354,7 @@ export const addAnonymousAssignee = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -341,6 +368,7 @@ export const removeAnonymousAssignee = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -354,6 +382,7 @@ export const addInvitedAssignee = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -367,6 +396,7 @@ export const removeInvitedAssignee = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -380,6 +410,7 @@ export const addWatcher = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -393,6 +424,7 @@ export const removeWatcher = /* GraphQL */ `
       value
       updatedAt
       mutationId
+      __typename
     }
   }
 `;
@@ -400,6 +432,7 @@ export const importLocalData = /* GraphQL */ `
   mutation ImportLocalData($input: AWSJSON!) {
     importLocalData(input: $input) {
       result
+      __typename
     }
   }
 `;

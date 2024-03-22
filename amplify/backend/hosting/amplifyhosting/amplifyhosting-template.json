@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Branch stack creation for AWS Amplify Console",
+  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.10.1\",\"stackType\":\"hosting-amplifyhosting\",\"metadata\":{}}",
   "Parameters": {
     "env": {
       "Type": "String"
