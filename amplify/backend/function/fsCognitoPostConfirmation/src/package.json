@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
+    "aws-sdk": "^2.1584.0",
     "dotenv": "^16.0.1",
     "forwardslash": "file:../../../../..",
     "mariadb": "^3.0.0"
