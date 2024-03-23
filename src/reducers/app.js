@@ -8,8 +8,8 @@ const initState = {
   isOffline: false,
   isSynced: true,
   isLeftPanelOpened: false,
-  isRightPanelOpened: false,
-  isProjectTitleSelected: false,
+  isRightPanelOpened: true,
+  isProjectTitleSelected: true,
   lockedTaskField: null,
   rightPanelPage: null,
   leftPanelPage: null
