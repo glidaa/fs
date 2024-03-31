@@ -51,6 +51,7 @@ const ForgotPassword = () => {
       setIsBusy(false)
     } catch (error) {
       console.error('error signing in', error);
+      console.log('Detailed error:', error);
       switch (error.code) {
         case "CodeMismatchException":
           setVerificationCodeError("Code is incorrect. Please check the code sent to your email and try again.")
